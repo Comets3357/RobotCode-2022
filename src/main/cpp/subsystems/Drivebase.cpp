@@ -32,6 +32,22 @@ void Drivebase::RobotInit()
     dbRB.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
 
     // NEED TO SET CURRENT LIMIT
+    /**
+  * Configure the current limits that will be used
+  * Stator Current is the current that passes through the motor stators.
+  *  Use stator current limits to limit rotor acceleration/heat production
+  * Supply Current is the current that passes into the controller from the supply
+  *  Use supply current limits to prevent breakers from tripping
+  *
+  *                                                               enabled | Limit(amp) | Trigger Threshold(amp) | Trigger Threshold Time(s)  */
+    dbLF.ConfigStatorCurrentLimit(StatorCurrentLimitConfiguration(true, 45, 50, 1.0));
+    dbLC.ConfigStatorCurrentLimit(StatorCurrentLimitConfiguration(true, 45, 50, 1.0));
+    dbLB.ConfigStatorCurrentLimit(StatorCurrentLimitConfiguration(true, 45, 50, 1.0));
+    dbRF.ConfigStatorCurrentLimit(StatorCurrentLimitConfiguration(true, 45, 50, 1.0));
+    dbRC.ConfigStatorCurrentLimit(StatorCurrentLimitConfiguration(true, 45, 50, 1.0));
+    dbRB.ConfigStatorCurrentLimit(StatorCurrentLimitConfiguration(true, 45, 50, 1.0));
+
+
     dbLF.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
     dbRF.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
    

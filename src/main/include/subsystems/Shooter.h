@@ -27,9 +27,10 @@ public:
 
 private:
     void updateData(const RobotData &robotData, ShooterData &shooterData);
-
     void manual(const RobotData &robotData, ShooterData &shooterData);
     void semiAuto(const RobotData &robotData, ShooterData &shooterData);
+
+    void setShooterPID(rev::SparkMaxPIDController motor, int pidSlot, double p, double i, double d, double ff);
 
     //CHANGE MOTOr ID STUFF  (just outline lol don't take your life too seriously:))
     rev::CANSparkMax shooterWheel = rev::CANSparkMax(31, rev::CANSparkMax::MotorType::kBrushless);

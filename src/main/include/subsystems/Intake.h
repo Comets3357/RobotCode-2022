@@ -29,14 +29,19 @@ public:
 
 private:
     void updateData(const RobotData &robotData, IntakeData &intakeData);
-
     void manual(const RobotData &robotData, IntakeData &intakeData);
     void semiAuto(const RobotData &robotData, IntakeData &intakeData);
 
+
+    
     //CHANGE MOTOr ID STUFF  (just outline )
-    rev::CANSparkMax intakeRollers = rev::CANSparkMax(11, rev::CANSparkMax::MotorType::kBrushless);
+    rev::CANSparkMax intakeRollers = rev::CANSparkMax(intakeRollerID, rev::CANSparkMax::MotorType::kBrushless);
     rev::SparkMaxRelativeEncoder intakeRollersEncoder = intakeRollers.GetEncoder();
     rev::SparkMaxPIDController intakeRollers_pidController = intakeRollers.GetPIDController();
+
+    rev::CANSparkMax intakePivot = rev::CANSparkMax(intakePivotID, rev::CANSparkMax::MotorType::kBrushless);
+    rev::SparkMaxRelativeEncoder intakePivotEncoder = intakePivot.GetEncoder();
+    rev::SparkMaxPIDController intakePivot_pidController = intakePivot.GetPIDController();
 
 
 

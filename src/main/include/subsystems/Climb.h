@@ -22,14 +22,14 @@ class Climb
 
 public:
     void RobotInit();
-    void RobotPeriodic(const RobotData &robotData, ClimbData &climbData);
+    void RobotPeriodic(const RobotData &robotData, ClimbData &climbData);    
     void DisabledInit();
 
 private:
     void updateData(const RobotData &robotData, ClimbData &climbData);
-
-    void manual(const RobotData &robotData, ClimbData &climbData);
     void semiAuto(const RobotData &robotData, ClimbData &climbData);
+    void manual(const RobotData &robotData, ClimbData &climbData);
+
 
     //CHANGE MOTOr ID STUFF  (just outline lol don't take your life too seriously:))
     rev::CANSparkMax climb1 = rev::CANSparkMax(61, rev::CANSparkMax::MotorType::kBrushless);
