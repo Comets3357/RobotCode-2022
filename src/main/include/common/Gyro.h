@@ -1,24 +1,26 @@
 #pragma once
 
-//#include <adi/ADIS16448_IMU.h>
+#include <frc/TimedRobot.h>
+#include <frc/smartdashboard/SmartDashboard.h>
+#include <frc/SPI.h>
+#include "AHRS.h"
 
 struct GyroData
 {
     double rawYaw = 0;
-    double yaw = 0;
-
     double rawPitch = 0;
-    double pitch = 0;
-
     double rawRoll = 0;
-    double roll = 0;
 };
 
 class Gyro
 {
 
 public:
+    void RobotInit();
+    void TeleopInit();
+    void RobotPeriodic(GyroData &gyroData);
 
 private:
+    AHRS gyro{frc::SPI::Port::kMXP};
 
 };
