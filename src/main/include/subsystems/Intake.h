@@ -8,9 +8,7 @@
 #include <rev/CANSparkMax.h>
 #include <rev/SparkMaxPIDController.h>
 #include <rev/CANEncoder.h>
-// sparkmax??
-
-
+#include <frc/DigitalInput.h>
 
 struct RobotData;
 
@@ -32,8 +30,6 @@ private:
     void manual(const RobotData &robotData, IntakeData &intakeData);
     void semiAuto(const RobotData &robotData, IntakeData &intakeData);
 
-
-    
     //CHANGE MOTOr ID STUFF  (just outline )
     rev::CANSparkMax intakeRollers = rev::CANSparkMax(intakeRollerID, rev::CANSparkMax::MotorType::kBrushless);
     rev::SparkMaxRelativeEncoder intakeRollersEncoder = intakeRollers.GetEncoder();

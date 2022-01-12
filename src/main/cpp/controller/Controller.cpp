@@ -114,4 +114,6 @@ void Controller::updateBtnData(ControllerData &controllerData)
     controllerData.sRCenterBtnToggled = getBtnToggled(1, 8);
 
     controllerData.sDPad = getPOV(1, 0);
+
+
 }

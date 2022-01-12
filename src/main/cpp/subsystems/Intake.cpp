@@ -49,11 +49,77 @@ void Intake::RobotPeriodic(const RobotData &robotData, IntakeData &intakeData)
 }
 
 void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
-
+     if (robotData.controlData.saIntake)
+    {
+        // pivot down
+        if (intakePivotEncoder.GetPosition() < 12)
+        {
+            intakePivot.Set(intakePivotSpeed);
+            intakeRollers.Set(intakeRollerSpeed);
+        }
+        // once you're down
+        else
+        {
+            intakePivot.Set(0);
+        }
+    }
+    // otherise, bring the intake back up slowly
+    else if (robotData.controlData.saIntakeBackward)
+    {
+        intakeRollers.Set(-intakeRollerSpeed);
+    }
+    // else if (robotData.controlData.saEjectBallsBackwards)
+    // {
+    //     intakeRollers.Set(-intakeRollersEjectSpeed);
+    // }
+    else
+    {
+        intakeRollers.Set(0);
+        if (intakePivotEncoder.GetPosition() > 0)
+        {
+            intakePivot.Set(-intakePivotSpeed);
+        }
+        else
+        {
+            intakePivot.Set(0);
+        }
+    }
 }
 
 void Intake::manual(const RobotData &robotData, IntakeData &intakeData){
-    
+    if(robotData.controlData.mIntakeDown){
+        if (intakePivotEncoder.GetPosition() < 12)
+        {
+            intakePivot.Set(intakePivotSpeed);
+        }
+        // once you're down
+        else
+        {
+            intakePivot.Set(0);
+        }
+    }else{
+         if (intakePivotEncoder.GetPosition() > 0)
+        {
+            intakePivot.Set(-intakePivotSpeed);
+        }
+        else
+        {
+            intakePivot.Set(0);
+        }
+    }
+
+    if (robotData.controlData.mIntakeRollers)
+    {
+        intakeRollers.Set(intakeRollerSpeed);
+    }
+    else if (robotData.controlData.mIntakeRollersBackward)
+    {
+        intakeRollers.Set(-intakeRollerSpeed);
+    }
+    else
+    {
+        intakeRollers.Set(0);
+    }
 }
 
 void Intake::DisabledInit()

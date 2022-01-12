@@ -20,6 +20,13 @@ struct ControlData
     bool dbInverted;
     double maxStraight = 1;
     double maxTurn = 0.4;
+
+    //intakae:
+    bool mIntakeDown;
+    bool mIntakeRollers;
+    bool mIntakeRollersBackward;
+    bool saIntake;
+    bool saIntakeBackward;
 };
 
 struct ControllerData
@@ -78,6 +85,12 @@ public:
     void TeleopPeriodic(const RobotData &robotData, ControllerData &controllerData, ControlData &controlData);
 
 private:
+    /**
+     * Don't touch "Controller.cpp" that is for the direct access to joystick buttons
+     * when writing code and assigning it to specific button or axis, 
+     * write to it through "ControlData.cpp"
+     * */
+
     void updateBtnData(ControllerData &controllerData);
     void updateControlData(const ControllerData &controllerData, ControlData &controlData);
 
