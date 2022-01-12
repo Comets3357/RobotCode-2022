@@ -14,7 +14,6 @@ struct RobotData;
 
 struct IntakeData
 {
-
 };
 
 class Intake
@@ -29,6 +28,9 @@ private:
     void updateData(const RobotData &robotData, IntakeData &intakeData);
     void manual(const RobotData &robotData, IntakeData &intakeData);
     void semiAuto(const RobotData &robotData, IntakeData &intakeData);
+
+    const double intakePivotSpeed = 0.2;
+    const double intakeRollerSpeed = 0.2;
 
     //CHANGE MOTOr ID STUFF  (just outline )
     rev::CANSparkMax intakeRollers = rev::CANSparkMax(intakeRollerID, rev::CANSparkMax::MotorType::kBrushless);
