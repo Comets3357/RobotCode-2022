@@ -3,33 +3,23 @@
 
 void Drivebase::RobotInit()
 {
+    dbL.ConfigFactoryDefault();
     dbLF.ConfigFactoryDefault();
-    dbLC.ConfigFactoryDefault();
-    dbLB.ConfigFactoryDefault();
+    dbR.ConfigFactoryDefault();
     dbRF.ConfigFactoryDefault();
-    dbRC.ConfigFactoryDefault();
-    dbRB.ConfigFactoryDefault();
     
+    dbRF.Follow(dbR);
+    dbLF.Follow(dbL);
 
-    dbLC.Follow(dbLF);
-    dbLB.Follow(dbLF);
-    dbRC.Follow(dbRF);
-    dbRB.Follow(dbRF);
-
+    dbL.SetInverted(true);
     dbLF.SetInverted(true);
-    dbLC.SetInverted(true);
-    dbLB.SetInverted(true);
+    dbR.SetInverted(false);
+    dbRF.SetInverted(false);
 
-    dbRF.SetInverted(false);    
-    dbRC.SetInverted(false);
-    dbRB.SetInverted(false);
-
+    dbL.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
     dbLF.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
-    dbLC.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
-    dbLB.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
+    dbR.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
     dbRF.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
-    dbRC.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
-    dbRB.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
 
     // NEED TO SET CURRENT LIMIT
     /**
@@ -40,16 +30,14 @@ void Drivebase::RobotInit()
   *  Use supply current limits to prevent breakers from tripping
   *
   *                                                               enabled | Limit(amp) | Trigger Threshold(amp) | Trigger Threshold Time(s)  */
+    dbL.ConfigStatorCurrentLimit(StatorCurrentLimitConfiguration(true, 45, 50, 1.0));
     dbLF.ConfigStatorCurrentLimit(StatorCurrentLimitConfiguration(true, 45, 50, 1.0));
-    dbLC.ConfigStatorCurrentLimit(StatorCurrentLimitConfiguration(true, 45, 50, 1.0));
-    dbLB.ConfigStatorCurrentLimit(StatorCurrentLimitConfiguration(true, 45, 50, 1.0));
+    dbR.ConfigStatorCurrentLimit(StatorCurrentLimitConfiguration(true, 45, 50, 1.0));
     dbRF.ConfigStatorCurrentLimit(StatorCurrentLimitConfiguration(true, 45, 50, 1.0));
-    dbRC.ConfigStatorCurrentLimit(StatorCurrentLimitConfiguration(true, 45, 50, 1.0));
-    dbRB.ConfigStatorCurrentLimit(StatorCurrentLimitConfiguration(true, 45, 50, 1.0));
 
 
-    dbLF.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
-    dbRF.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
+    dbL.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
+    dbR.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
    
 }
 
@@ -59,12 +47,10 @@ void Drivebase::RobotPeriodic(const RobotData &robotData, DrivebaseData &driveba
 
     if (frc::DriverStation::IsEnabled())
     {
+        dbL.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
         dbLF.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
-        dbLC.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
-        dbLB.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
+        dbR.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
         dbRF.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
-        dbRC.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
-        dbRB.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
     }
 
     teleopControl(robotData);
@@ -73,14 +59,13 @@ void Drivebase::RobotPeriodic(const RobotData &robotData, DrivebaseData &driveba
 void Drivebase::DisabledInit()
 {
     
-    dbLF.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
-    dbRF.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
+    dbL.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
+    dbR.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
+
+    dbL.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
     dbLF.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
-    dbLC.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
-    dbLB.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
+    dbR.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
     dbRF.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
-    dbRC.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
-    dbRB.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
 }
 
 // updates encoder and gyro values
@@ -126,6 +111,6 @@ void Drivebase::teleopControl(const RobotData &robotData)
     }
 
     //set as percent vbus
-    dbLF.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, tempLDrive);
-    dbRF.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, tempRDrive);
+    dbL.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, tempLDrive);
+    dbR.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, tempRDrive);
 }
