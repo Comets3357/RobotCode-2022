@@ -47,6 +47,12 @@ void Drivebase::RobotInit()
     dbRC.ConfigStatorCurrentLimit(StatorCurrentLimitConfiguration(true, 45, 50, 1.0));
     dbRB.ConfigStatorCurrentLimit(StatorCurrentLimitConfiguration(true, 45, 50, 1.0));
 
+    dbLF.Config_kP(0, 0.039271);
+    dbLF.Config_kD(0, 0);
+
+    dbRF.Config_kP(0, 0.039271);
+    dbRF.Config_kD(0, 0);
+
 
     dbLF.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
     dbRF.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
@@ -68,6 +74,8 @@ void Drivebase::RobotPeriodic(const RobotData &robotData, DrivebaseData &driveba
     }
 
     teleopControl(robotData);
+
+    frc::SmartDashboard::PutNumber("rEncoder", dbLF.GetSelectedSensorPosition());
 }
 
 void Drivebase::DisabledInit()
@@ -99,7 +107,11 @@ void Drivebase::updateData(const RobotData &robotData, DrivebaseData &drivebaseD
 void Drivebase::teleopControl(const RobotData &robotData)
 {
 
-    double tempLDrive = robotData.controlData.lDrive;
+    dbLF.Set(ctre::phoenix::motorcontrol::ControlMode::Velocity, 2*2048*10);
+    dbRF.Set(ctre::phoenix::motorcontrol::ControlMode::Velocity, 2*2048*10);
+    
+
+    /* double tempLDrive = robotData.controlData.lDrive;
     double tempRDrive = robotData.controlData.rDrive;
 
     // converts from tank to arcade drive, limits the difference between left and right drive
@@ -127,5 +139,5 @@ void Drivebase::teleopControl(const RobotData &robotData)
 
     //set as percent vbus
     dbLF.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, tempLDrive);
-    dbRF.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, tempRDrive);
+    dbRF.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, tempRDrive); */
 }

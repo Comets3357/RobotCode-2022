@@ -32,7 +32,7 @@ private:
     void updateData(const RobotData &robotData, DrivebaseData &drivebaseData);
     void teleopControl(const RobotData &robotData);
 
-
+    // forwards are leads
     ctre::phoenix::motorcontrol::can::TalonFX dbLF{1};
     ctre::phoenix::motorcontrol::can::TalonFX dbLC{2};
     ctre::phoenix::motorcontrol::can::TalonFX dbLB{6};
@@ -40,7 +40,7 @@ private:
     ctre::phoenix::motorcontrol::can::TalonFX dbRC{4};
     ctre::phoenix::motorcontrol::can::TalonFX dbRB{5};
 
-
+    
 
 
 
