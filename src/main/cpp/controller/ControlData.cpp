@@ -43,5 +43,14 @@ void Controller::updateControlData(const ControllerData &controllerData, Control
         controlData.rDrive = controllerData.pRYStick;
     }
 
+
+    //INTAKE::
+    controlData.mIntakeDown = controllerData.sYBtn;
+    controlData.mIntakeRollers = controllerData.sRBumper;
+    controlData.mIntakeRollersBackward = controllerData.sABtn;
+    controlData.saIntake = controllerData.sRBumper;
+    controlData.saIntakeBackward = controllerData.sABtn;
+
+
     
 }

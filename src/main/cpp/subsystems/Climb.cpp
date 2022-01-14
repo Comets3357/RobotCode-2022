@@ -19,6 +19,7 @@ void Climb::RobotPeriodic(const RobotData &robotData, ClimbData &climbData)
         semiAuto(robotData, climbData);
     }
 
+
 }
 
 void Climb::manual(const RobotData &robotData, ClimbData &climbData){

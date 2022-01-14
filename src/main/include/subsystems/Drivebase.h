@@ -5,6 +5,8 @@
 #include <frc/DriverStation.h>
 #include <frc/TimedRobot.h>
 #include <ctre/Phoenix.h>
+#include <wpi/uv/Error.h>
+
 
 
 
@@ -44,6 +46,7 @@ private:
 
     // ctre::phoenix::motorcontrol::can::TalonFX dbLF2{6};
     // ctre::phoenix::motorcontrol::can::TalonFX dbRF{3};
+
 
 
 

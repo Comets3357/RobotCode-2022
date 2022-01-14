@@ -8,7 +8,7 @@
 #include <rev/CANSparkMax.h>
 #include <rev/SparkMaxPIDController.h>
 #include <rev/CANEncoder.h>
-
+#include <frc/DigitalInput.h>
 
 struct RobotData;
 
@@ -30,6 +30,10 @@ private:
     void updateData(const RobotData &robotData, IndexerData &indexerData);
     void manual(const RobotData &robotData, IndexerData &indexerData);
     void semiAuto(const RobotData &robotData, IndexerData &indexerData);
+
+    /**sensors if needed
+    frc::DigitalInput indexerfront{2};
+    **/
 
 
     //CHANGE MOTOr ID STUFF  (just outline lol don't take your life too seriously:))

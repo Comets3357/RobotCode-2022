@@ -10,10 +10,14 @@ static const int
 //intake:
 static const int
     intakeRollerID = 10,
-    intakePivotID = 11;
-    
+    intakePivotID = 11,
+    intakeMecanumID = 12;
+
+//intake PID constants:
 static const double
-    wkP = 1, wkI = 0, wkD = 0, wkIz = 0, wkFF = 0, wkMaxOutput = 1, wkMinOutput = -1;
+    pkP = 0.02, pkI = 0, pkD = 0, pkIz = 0, pkFF = 0, pkMaxOutput = 1, pkMinOutput = -1,
+    wkP = 1, wkI = 0, wkD = 0, wkIz = 0, wkFF = 0, wkMaxOutput = 1, wkMinOutput = -1,
+    mkP = 1, mkI = 0, mkD = 0, mkIz = 0, mkFF = 0, mkMaxOutput = 1, mkMinOutput = -1;
 
 //indexer
 static const int
