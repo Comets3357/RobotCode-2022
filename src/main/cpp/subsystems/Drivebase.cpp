@@ -10,7 +10,6 @@ void Drivebase::RobotInit()
     dbRC.ConfigFactoryDefault();
     dbRB.ConfigFactoryDefault();
     
-
     dbLC.Follow(dbLF);
     dbLB.Follow(dbLF);
     dbRC.Follow(dbRF);
@@ -68,6 +67,8 @@ void Drivebase::RobotPeriodic(const RobotData &robotData, DrivebaseData &driveba
     }
 
     teleopControl(robotData);
+    
+
 }
 
 void Drivebase::DisabledInit()

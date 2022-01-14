@@ -9,6 +9,7 @@
 #include <rev/SparkMaxPIDController.h>
 #include <rev/CANEncoder.h>
 #include <frc/DigitalInput.h>
+#include <frc/Preferences.h>
 
 struct RobotData;
 
@@ -29,8 +30,16 @@ private:
     void manual(const RobotData &robotData, IntakeData &intakeData);
     void semiAuto(const RobotData &robotData, IntakeData &intakeData);
 
+    void rollersInit();
+    void pivotInit();
+    void mecanumInit();
+
+
     const double intakePivotSpeed = 0.2;
     const double intakeRollerSpeed = 0.2;
+    const double intakeMecanumSpeed = 0.2;
+
+    double armDownPosition = frc::Preferences::GetDouble("ArmDownPosition", 12.0);
 
     //CHANGE MOTOr ID STUFF  (just outline )
     rev::CANSparkMax intakeRollers = rev::CANSparkMax(intakeRollerID, rev::CANSparkMax::MotorType::kBrushless);
@@ -41,6 +50,8 @@ private:
     rev::SparkMaxRelativeEncoder intakePivotEncoder = intakePivot.GetEncoder();
     rev::SparkMaxPIDController intakePivot_pidController = intakePivot.GetPIDController();
 
-
+    rev::CANSparkMax intakeMecanum = rev::CANSparkMax(intakeMecanumID, rev::CANSparkMax::MotorType::kBrushless);
+    rev::SparkMaxRelativeEncoder intakeMecanumEncoder = intakeMecanum.GetEncoder();
+    rev::SparkMaxPIDController intakeMecanum_pidController = intakeMecanum.GetPIDController();
 
 };
