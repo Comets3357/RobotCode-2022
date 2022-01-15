@@ -51,6 +51,9 @@ void Controller::updateControlData(const ControllerData &controllerData, Control
     controlData.saIntake = controllerData.sRBumper;
     controlData.saIntakeBackward = controllerData.sABtn;
 
-
-    
+    //INDEXER:
+    controlData.mIndexerBackwards = controllerData.sBBtn;
+    controlData.mIndexer = controllerData.sXBtn;
+    controlData.saEjectBalls = controllerData.sBBtn;
+  
 }
