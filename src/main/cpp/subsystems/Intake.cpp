@@ -11,7 +11,9 @@ void Intake::RobotInit()
     intakeRollersEncoder.SetPosition(0);
     intakeMecanumEncoder.SetPosition(0);
 
-    
+    intakePivot.Set(0);
+    intakeRollers.Set(0);
+    intakeMecanum.Set(0);
 }
 
 void Intake::RobotPeriodic(const RobotData &robotData, IntakeData &intakeData)
@@ -39,7 +41,7 @@ void Intake::RobotPeriodic(const RobotData &robotData, IntakeData &intakeData)
 }
 
 void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
-    if (robotData.controlData.saIntake)
+    if (robotData.controlData.saIntake) //you are intaking
     {
         // pivot down
         if (intakePivotEncoder.GetPosition() < armDownPosition)
@@ -59,7 +61,7 @@ void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
         intakeRollers.Set(-intakeRollerSpeed);
         //intakeMecanum.Set(-intakeMecanumSpeed);
     }
-    else if (robotData.controlData.saEjectBalls)
+    else if (robotData.controlData.saEjectBalls) //rollers backwards, pivot down
     {
         intakeRollers.Set(-intakeRollersEjectSpeed);
         if (intakePivotEncoder.GetPosition() < armDownPosition)
@@ -90,7 +92,7 @@ void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
 
 void Intake::manual(const RobotData &robotData, IntakeData &intakeData){
     if(robotData.controlData.mIntakeDown){
-        if (intakePivotEncoder.GetPosition() < 12)
+        if (intakePivotEncoder.GetPosition() < armDownPosition)
         {
             intakePivot.Set(intakePivotSpeed);
         }
@@ -159,7 +161,6 @@ void Intake::rollersInit(){
 
     intakeRollers.SetSmartCurrentLimit(45);
 
-    intakeRollersEncoder.SetPosition(0);
 }
 
 void Intake::pivotInit(){
