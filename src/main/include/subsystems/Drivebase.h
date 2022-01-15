@@ -36,16 +36,14 @@ private:
 
 
     // dbL and dbR are lead motors, LFs and RFs are following motors
-    ctre::phoenix::motorcontrol::can::TalonFX dbL{1};
-    ctre::phoenix::motorcontrol::can::TalonFX dbLF{2};
+    ctre::phoenix::motorcontrol::can::TalonFX dbL{leftLeadDeviceID};
+    ctre::phoenix::motorcontrol::can::TalonFX dbLF{leftFollowDeviceID};
 
-    ctre::phoenix::motorcontrol::can::TalonFX dbR{4};
-    ctre::phoenix::motorcontrol::can::TalonFX dbRF{5};
+    ctre::phoenix::motorcontrol::can::TalonFX dbR{rightLeadDeviceID};
+    ctre::phoenix::motorcontrol::can::TalonFX dbRF{rightFollowDeviceID};
 
 
 
-    // ctre::phoenix::motorcontrol::can::TalonFX dbLF2{6};
-    // ctre::phoenix::motorcontrol::can::TalonFX dbRF{3};
 
 
 

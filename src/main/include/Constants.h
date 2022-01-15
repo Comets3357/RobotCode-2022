@@ -4,14 +4,14 @@
 static const int
     leftLeadDeviceID = 1,
     leftFollowDeviceID = 2,
-    rightLeadDeviceID = 3,
-    rightFollowDeviceID = 4;
+    rightLeadDeviceID = 4,
+    rightFollowDeviceID = 5;
 
 //intake:
 static const int
-    intakeRollerID = 10,
-    intakePivotID = 11,
-    intakeMecanumID = 12;
+    intakeRollerID = 11,
+    intakePivotID = 12,
+    intakeMecanumID = 13;
 
 //intake PID constants:
 static const double
@@ -25,8 +25,8 @@ static const int
 
 // shooter
 static const int
-    shooterWheelMID = 21,
-    shooterWheelSID = 22,
+    shooterWheelLeadID = 21,
+    shooterWheelFollowID = 22,
     shooterHoodID = 23,
     shooterKickID = 24,
     shooterTurretID = 25;
