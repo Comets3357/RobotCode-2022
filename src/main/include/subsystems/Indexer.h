@@ -31,16 +31,20 @@ private:
     void manual(const RobotData &robotData, IndexerData &indexerData);
     void semiAuto(const RobotData &robotData, IndexerData &indexerData);
 
-    /**sensors if needed
-    frc::DigitalInput indexerfront{2};
-    **/
+    void indexerBeltInit();
+    void indexerWheelInit();
 
+
+    frc::DigitalInput proxIndexerFront{2};
+    frc::DigitalInput proxIndexerBack{3};
 
     //CHANGE MOTOr ID STUFF  (just outline lol don't take your life too seriously:))
     rev::CANSparkMax indexerBelt = rev::CANSparkMax(indexerBeltsID, rev::CANSparkMax::MotorType::kBrushless);
     rev::SparkMaxRelativeEncoder indexerBeltEncoder = indexerBelt.GetEncoder();
     rev::SparkMaxPIDController indexerBelt_pidController = indexerBelt.GetPIDController();
 
-
+    rev::CANSparkMax indexerWheel = rev::CANSparkMax(indexerWheelID, rev::CANSparkMax::MotorType::kBrushless);
+    rev::SparkMaxRelativeEncoder indexerWheelEncoder = indexerWheel.GetEncoder();
+    rev::SparkMaxPIDController indexerWheel_pidController = indexerWheel.GetPIDController();
 
 };

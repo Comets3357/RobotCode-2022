@@ -21,19 +21,20 @@ static const double
 
 //indexer
 static const int
-    indexerBeltsID = 15;
+    indexerBeltsID = 21,
+    indexerWheelID = 22;
 
 // shooter
 static const int
-    shooterWheelMID = 21,
-    shooterWheelSID = 22,
-    shooterHoodID = 23,
-    shooterKickID = 24,
-    shooterTurretID = 25;
+    shooterWheelMID = 31,
+    shooterWheelSID = 32,
+    shooterHoodID = 33,
+    shooterKickID = 34,
+    shooterTurretID = 35;
 
 // climb
 static const int
-    climbLiftID = 32;
+    climbLiftID = 41;
 
 
 

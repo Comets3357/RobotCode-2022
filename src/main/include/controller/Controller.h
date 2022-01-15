@@ -81,26 +81,26 @@ struct ControllerData
 class Controller
 {
 
-public:
-    void TeleopPeriodic(const RobotData &robotData, ControllerData &controllerData, ControlData &controlData);
+    public:
+        void TeleopPeriodic(const RobotData &robotData, ControllerData &controllerData, ControlData &controlData);
 
-private:
-    /**
-     * Don't touch "Controller.cpp" that is for the direct access to joystick buttons
-     * when writing code and assigning it to specific button or axis, 
-     * write to it through "ControlData.cpp"
-     * */
+    private:
+        /**
+         * Don't touch "Controller.cpp" that is for the direct access to joystick buttons
+         * when writing code and assigning it to specific button or axis, 
+         * write to it through "ControlData.cpp"
+         * */
 
-    void updateBtnData(ControllerData &controllerData);
-    void updateControlData(const ControllerData &controllerData, ControlData &controlData);
+        void updateBtnData(ControllerData &controllerData);
+        void updateControlData(const ControllerData &controllerData, ControlData &controlData);
 
-    // basic btn getters:
-    bool getBtn(int js, int index);
-    bool getBtnToggled(int js, int index);
-    int getPOV(int js, int index);
-    double getAxis(int js, int index);
+        // basic btn getters:
+        bool getBtn(int js, int index);
+        bool getBtnToggled(int js, int index);
+        int getPOV(int js, int index);
+        double getAxis(int js, int index);
 
-    frc::Joystick primary{0};
-    frc::Joystick secondary{1};
+        frc::Joystick primary{0};
+        frc::Joystick secondary{1};
 };
 

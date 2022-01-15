@@ -3,13 +3,7 @@
 
 void Indexer::RobotInit()
 {
-    indexerBelt.RestoreFactoryDefaults();
-
-    indexerBelt.SetInverted(true);
-
-    indexerBelt.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-
-    indexerBelt.SetSmartCurrentLimit(45);   
+     
 }
 
 void Indexer::RobotPeriodic(const RobotData &robotData, IndexerData &indexerData)
@@ -42,4 +36,39 @@ void Indexer::DisabledInit()
 void Indexer::updateData(const RobotData &robotData, IndexerData &indexerData)
 {
     
+}
+
+void Indexer::indexerBeltInit(){
+    indexerBelt.RestoreFactoryDefaults();
+
+    indexerBelt.SetInverted(false);
+
+    indexerBelt.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+
+    indexerBelt_pidController.SetP(wkP);
+    indexerBelt_pidController.SetI(wkI);
+    indexerBelt_pidController.SetD(wkD);
+    indexerBelt_pidController.SetIZone(wkIz);
+    indexerBelt_pidController.SetFF(wkFF);
+    indexerBelt_pidController.SetOutputRange(wkMinOutput, wkMaxOutput);
+
+    indexerBelt.SetSmartCurrentLimit(45);
+}
+
+void Indexer::indexerWheelInit(){
+    indexerWheel.RestoreFactoryDefaults();
+
+    indexerWheel.SetInverted(false);
+
+    indexerWheel.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+
+    indexerBelt_pidController.SetP(wkP);
+    indexerBelt_pidController.SetI(wkI);
+    indexerBelt_pidController.SetD(wkD);
+    indexerBelt_pidController.SetIZone(wkIz);
+    indexerBelt_pidController.SetFF(wkFF);
+    indexerBelt_pidController.SetOutputRange(wkMinOutput, wkMaxOutput);
+
+    indexerWheel.SetSmartCurrentLimit(45);
+
 }
