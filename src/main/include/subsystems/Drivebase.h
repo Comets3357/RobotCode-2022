@@ -42,14 +42,7 @@ private:
     ctre::phoenix::motorcontrol::can::TalonFX dbR{4};
     ctre::phoenix::motorcontrol::can::TalonFX dbRF{5};
 
-
-
     // ctre::phoenix::motorcontrol::can::TalonFX dbLF2{6};
     // ctre::phoenix::motorcontrol::can::TalonFX dbRF{3};
-
-
-
-
-
 
 };

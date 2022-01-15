@@ -26,8 +26,8 @@ static const int
 
 // shooter
 static const int
-    shooterWheelMID = 31,
-    shooterWheelSID = 32,
+    shooterWheelLeadID = 31,
+    shooterWheelFollowID = 32,
     shooterHoodID = 33,
     shooterKickID = 34,
     shooterTurretID = 35;

@@ -34,9 +34,14 @@ private:
     void indexerBeltInit();
     void indexerWheelInit();
 
-
     frc::DigitalInput proxIndexerFront{2};
     frc::DigitalInput proxIndexerBack{3};
+
+    const double mIndexerWheelSpeed = 0.2;
+    const double mIndexerBeltSpeed = 0.2;
+    const double saIndexerWheelIntakeSpeed = 0.2;
+    const double saIndexerBeltIntakeSpeed = 0.2;
+
 
     //CHANGE MOTOr ID STUFF  (just outline lol don't take your life too seriously:))
     rev::CANSparkMax indexerBelt = rev::CANSparkMax(indexerBeltsID, rev::CANSparkMax::MotorType::kBrushless);

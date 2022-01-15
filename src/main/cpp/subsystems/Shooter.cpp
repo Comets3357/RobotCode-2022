@@ -3,8 +3,12 @@
 
 void Shooter::RobotInit()
 {
-    
-   
+    shooterWheelLeadInit();
+    shooterWheelFollowInit();
+    shooterHoodInit();
+
+    shooterWheelLead.Set(0);
+    shooterHood.Set(0);
 }
 
 void Shooter::RobotPeriodic(const RobotData &robotData, ShooterData &shooterData)
@@ -48,5 +52,52 @@ void Shooter::DisabledInit()
 void Shooter::updateData(const RobotData &robotData, ShooterData &shooterData)
 {
     
+}
+
+void Shooter::shooterWheelLeadInit(){
+    shooterWheelLead.RestoreFactoryDefaults();
+
+    shooterWheelLead.SetInverted(false);
+
+    shooterWheelLead.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+
+    // shooterWheelLead_pidController.SetP(mkP);
+    // shooterWheelLead_pidController.SetI(mkI);
+    // shooterWheelLead_pidController.SetD(mkD);
+    // shooterWheelLead_pidController.SetIZone(mkIz);
+    // shooterWheelLead_pidController.SetFF(mkFF);
+    // shooterWheelLead_pidController.SetOutputRange(mkMinOutput, mkMaxOutput);
+
+    shooterWheelLead.SetSmartCurrentLimit(45);
+}
+
+void Shooter::shooterWheelFollowInit(){
+    shooterWheelFollow.RestoreFactoryDefaults();
+
+    shooterWheelFollow.SetInverted(false);
+
+    shooterWheelFollow.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+
+    shooterWheelFollow.SetSmartCurrentLimit(45);
+
+    shooterWheelFollow.Follow(shooterWheelLead);
+
+}
+
+void Shooter::shooterHoodInit(){
+    shooterHood.RestoreFactoryDefaults();
+
+    shooterHood.SetInverted(false);
+
+    shooterHood.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+
+    // shooterWheelLead_pidController.SetP(mkP);
+    // shooterWheelLead_pidController.SetI(mkI);
+    // shooterWheelLead_pidController.SetD(mkD);
+    // shooterWheelLead_pidController.SetIZone(mkIz);
+    // shooterWheelLead_pidController.SetFF(mkFF);
+    // shooterWheelLead_pidController.SetOutputRange(mkMinOutput, mkMaxOutput);
+
+    shooterHood.SetSmartCurrentLimit(45);
 }
 

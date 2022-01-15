@@ -21,12 +21,20 @@ struct ControlData
     double maxStraight = 1;
     double maxTurn = 0.4;
 
-    //intakae:
+    //intake:
     bool mIntakeDown;
     bool mIntakeRollers;
     bool mIntakeRollersBackward;
     bool saIntake;
     bool saIntakeBackward;
+
+    //indexer:
+    bool mIndexerBackwards;
+    bool mIndexer;
+    bool saEjectBalls;
+
+    //shooter:
+
 };
 
 struct ControllerData
@@ -102,5 +110,6 @@ class Controller
 
         frc::Joystick primary{0};
         frc::Joystick secondary{1};
+
 };
 
