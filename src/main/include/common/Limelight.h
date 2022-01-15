@@ -1,4 +1,6 @@
 #pragma once
+#include "Constants.h"
+
 
 struct LimelightData
 {

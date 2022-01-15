@@ -45,7 +45,9 @@ void Shooter::setShooterPID(rev::SparkMaxPIDController motor, int pidSlot, doubl
 
 void Shooter::DisabledInit()
 {
-    
+    shooterHood.Set(0);
+    shooterWheelLead.Set(0);
+    shooterWheelFollow.Set(0);
 }
 
 // updates encoder and gyro values
@@ -76,7 +78,7 @@ void Shooter::shooterWheelFollowInit(){
 
     shooterWheelFollow.SetInverted(false);
 
-    shooterWheelFollow.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+    shooterWheelFollow.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
 
     shooterWheelFollow.SetSmartCurrentLimit(45);
 

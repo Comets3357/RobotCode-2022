@@ -5,6 +5,9 @@ void Indexer::RobotInit()
 {
     indexerBeltInit();
     indexerWheelInit();
+
+    indexerBelt.Set(0);
+    indexerWheel.Set(0);
 }
 
 void Indexer::RobotPeriodic(const RobotData &robotData, IndexerData &indexerData)
@@ -21,10 +24,13 @@ void Indexer::RobotPeriodic(const RobotData &robotData, IndexerData &indexerData
 }
 
 void Indexer::semiAuto(const RobotData &robotData, IndexerData &indexerData){
-    if(robotData.controlData.saEjectBalls){
+    if(robotData.controlData.saEjectBalls){ //run belt and wheel backwards
         indexerBelt.Set(-mIndexerBeltSpeed);
         indexerWheel.Set(-mIndexerWheelSpeed);
-    }else if(robotData.controlData.saIntake){
+    }else if(robotData.controlData.saIntake){ //if intaking run belt and wheels forward
+        //once the first prox sensor senses first ball, run indexer (ball count@1)
+            //index the first ball until the first prox sensor runs false
+                //intake second ball, once the first prox sensor senses second ball run indexer until first ball hits second sensor (ball count@2)
         indexerBelt.Set(saIndexerBeltIntakeSpeed);
         indexerWheel.Set(saIndexerWheelIntakeSpeed);
     }else{
@@ -34,10 +40,10 @@ void Indexer::semiAuto(const RobotData &robotData, IndexerData &indexerData){
 }
 
 void Indexer::manual(const RobotData &robotData, IndexerData &indexerData){
-    if(robotData.controlData.mIndexerBackwards){
+    if(robotData.controlData.mIndexerBackwards){ //run belt and wheel backwards
         indexerBelt.Set(-mIndexerBeltSpeed);
         indexerWheel.Set(-mIndexerWheelSpeed);
-    }else if(robotData.controlData.mIndexer){
+    }else if(robotData.controlData.mIndexer){ //run belt and wheel forwards
         indexerBelt.Set(mIndexerBeltSpeed);
         indexerWheel.Set(mIndexerWheelSpeed);    
     }else{

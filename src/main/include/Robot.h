@@ -9,7 +9,13 @@
 #include "controller/Controller.h"
 #include "RobotData.h"
 
-#include "subsystems\Drivebase.h"
+#include "subsystems/Drivebase.h"
+#include "subsystems/Shooter.h"
+#include "subsystems/Indexer.h"
+#include "subsystems/Climb.h"
+#include "subsystems/Intake.h"
+#include "common/Limelight.h"
+#include "common/OtherComponents.h"
 
 //Robot class inherits from TimedRobot
 class Robot : public frc::TimedRobot
@@ -39,4 +45,8 @@ private:
 
     // subsystems
     Drivebase drivebase{};
+    Intake intake{};
+    Indexer indexer{};
+    Shooter shooter{};
+    Climb climb{};
 };

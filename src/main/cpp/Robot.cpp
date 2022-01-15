@@ -6,25 +6,33 @@ void Robot::RobotInit()
     gyro.RobotInit();
 
     drivebase.RobotInit();
+    intake.RobotInit();
+    indexer.RobotInit();
+    shooter.RobotInit();
+    climb.RobotInit();
 }
 
 void Robot::RobotPeriodic()
 {
     timer.RobotPeriodic(robotData.timerData);
     gyro.RobotPeriodic(robotData.gyroData);
+    limelight.RobotPeriodic(robotData, robotData.limelightData);
 
     if (IsEnabled())
     {
         otherComponents.RobotPeriodic(robotData.otherComponentsData);
-        
-
         drivebase.RobotPeriodic(robotData, robotData.drivebaseData);
+        intake.RobotPeriodic(robotData, robotData.intakeData);
+        indexer.RobotPeriodic(robotData, robotData.indexerData);
+        shooter.RobotPeriodic(robotData, robotData.shooterData);
+        climb.RobotPeriodic(robotData, robotData.climbData);
     }
 }
 
 void Robot::AutonomousInit() {}
 void Robot::AutonomousPeriodic() {}
 void Robot::TeleopInit() {
+    
     gyro.TeleopInit();
 }
 
@@ -38,6 +46,10 @@ void Robot::DisabledInit()
     timer.DisabledInit();
 
     drivebase.DisabledInit();
+    intake.DisabledInit();
+    indexer.DisabledInit();
+    shooter.DisabledInit();
+    climb.DisabledInit();
 }
 
 void Robot::DisabledPeriodic() {}
