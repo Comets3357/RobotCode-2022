@@ -107,11 +107,11 @@ void Drivebase::updateData(const RobotData &robotData, DrivebaseData &drivebaseD
 void Drivebase::teleopControl(const RobotData &robotData)
 {
 
-    dbLF.Set(ctre::phoenix::motorcontrol::ControlMode::Velocity, 2*2048*10);
-    dbRF.Set(ctre::phoenix::motorcontrol::ControlMode::Velocity, 2*2048*10);
+    // dbLF.Set(ctre::phoenix::motorcontrol::ControlMode::Velocity, 2*2048*10);
+    // dbRF.Set(ctre::phoenix::motorcontrol::ControlMode::Velocity, 2*2048*10);
     
 
-    /* double tempLDrive = robotData.controlData.lDrive;
+    double tempLDrive = robotData.controlData.lDrive;
     double tempRDrive = robotData.controlData.rDrive;
 
     // converts from tank to arcade drive, limits the difference between left and right drive
@@ -139,5 +139,5 @@ void Drivebase::teleopControl(const RobotData &robotData)
 
     //set as percent vbus
     dbLF.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, tempLDrive);
-    dbRF.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, tempRDrive); */
+    dbRF.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, tempRDrive);
 }

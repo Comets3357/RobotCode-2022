@@ -22,7 +22,10 @@ void Robot::RobotPeriodic()
     }
 }
 
-void Robot::AutonomousInit() {}
+void Robot::AutonomousInit() {
+    auton.AutonomousInit(robotData.autonData);
+    frc::SmartDashboard::PutString("autonomous init hello", "alksdjflaskjf");
+}
 void Robot::AutonomousPeriodic() {}
 void Robot::TeleopInit() {
     gyro.TeleopInit();

@@ -6,6 +6,9 @@
 #include <frc/TimedRobot.h>
 #include <ctre/Phoenix.h>
 
+#include <string>
+#include <fstream>
+
 
 
 struct RobotData;
@@ -35,10 +38,10 @@ private:
     // forwards are leads
     ctre::phoenix::motorcontrol::can::TalonFX dbLF{1};
     ctre::phoenix::motorcontrol::can::TalonFX dbLC{2};
-    ctre::phoenix::motorcontrol::can::TalonFX dbLB{6};
-    ctre::phoenix::motorcontrol::can::TalonFX dbRF{3};
-    ctre::phoenix::motorcontrol::can::TalonFX dbRC{4};
-    ctre::phoenix::motorcontrol::can::TalonFX dbRB{5};
+    ctre::phoenix::motorcontrol::can::TalonFX dbLB{3};
+    ctre::phoenix::motorcontrol::can::TalonFX dbRF{4};
+    ctre::phoenix::motorcontrol::can::TalonFX dbRC{5};
+    ctre::phoenix::motorcontrol::can::TalonFX dbRB{6};
 
     
 

@@ -36,6 +36,7 @@ private:
     Limelight limelight{};
     OtherComponents otherComponents{};
     Timer timer{};
+    Auton auton{};
 
     // subsystems
     Drivebase drivebase{};
