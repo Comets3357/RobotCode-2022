@@ -2,9 +2,20 @@
 
 #include "Constants.h"
 
+#include <frc/TimedRobot.h>
+#include <frc/Joystick.h>
 #include <frc/DriverStation.h>
 #include <frc/TimedRobot.h>
 #include <ctre/Phoenix.h>
+#include <frc/kinematics/DifferentialDriveKinematics.h>
+#include <frc/kinematics/DifferentialDriveOdometry.h>
+#include <frc/kinematics/DifferentialDriveWheelSpeeds.h>
+#include <frc/trajectory/Trajectory.h>
+#include <frc/controller/RamseteController.h>
+// #include <frc/DifferentialDriveWheelSpeeds.h>
+#include <frc/smartdashboard/SmartDashboard.h>
+#include <frc/smartdashboard/Field2d.h>
+#include <cmath>
 
 #include <string>
 #include <fstream>
@@ -15,11 +26,21 @@ struct RobotData;
 
 struct DrivebaseData
 {
-    double currentLDBPos;
-    double currentRDBPos;
+     // in meters eventually
+    double currentLDBPos = 0.0;
+    double currentRDBPos = 0.0;
 
-    double lDriveVel;
-    double rDriveVel;
+    double previousLDBPos = 0.0;
+    double previousRDBPos = 0.0;
+
+    double lDriveVel = 0.0;
+    double rDriveVel = 0.0;
+
+    // odometry
+    frc::Pose2d currentPose{};
+
+    double cumulativeX = 0.0;
+    double cumulativeY = 0.0;
 };
 
 class Drivebase
@@ -27,6 +48,7 @@ class Drivebase
 
 public:
     void RobotInit();
+    void AutonomousInit(const RobotData &robotData);
     void RobotPeriodic(const RobotData &robotData, DrivebaseData &drivebaseData);
     void DisabledInit();
 
@@ -34,14 +56,44 @@ private:
 
     void updateData(const RobotData &robotData, DrivebaseData &drivebaseData);
     void teleopControl(const RobotData &robotData);
+    void autonControl(const RobotData &robotData);
+
+    void setSpeeds(const frc::DifferentialDriveWheelSpeeds& speeds);
+    void drive(units::meters_per_second_t xSpeed, units::radians_per_second_t rot);
+    void updateOdometry(const RobotData &robotData, DrivebaseData &drivebaseData);
+    void resetOdometry(const frc::Pose2d &pose, double resetAngle);
+    void resetOdometry(double resetAngle);
+    void resetOdometry();
+    void resetOdometry(double x, double y, const RobotData &robotData);
+    void setVelocity(double leftVel, double rightVel);
+    frc::Pose2d getPose() const;
+
+
+    // odometry
+    const units::radian_t kZeroAngle{0.0};
+    units::meter_t meterX{3.167};
+    units::meter_t meterY{7.492};
+    const frc::Translation2d testTrans{meterX, meterY};
+    units::radian_t zeroRadians{0};
+    const frc::Rotation2d testRot{zeroRadians};
+    const frc::Pose2d kZeroPose{testTrans, testRot};
+    // frc::Rotation2d gyroYaw{};  // updated by robotPeriodic
+    frc::DifferentialDriveOdometry odometry{kZeroAngle};
+
+    const units::meter_t kTrackWidth{0.6096};
+    frc::DifferentialDriveKinematics kinematics{kTrackWidth};
+
+    frc::Trajectory trajectory{};
+    frc::RamseteController ramseteController{};
+
+    frc::Field2d field;
 
     // forwards are leads
-    ctre::phoenix::motorcontrol::can::TalonFX dbLF{1};
-    ctre::phoenix::motorcontrol::can::TalonFX dbLC{2};
-    ctre::phoenix::motorcontrol::can::TalonFX dbLB{3};
-    ctre::phoenix::motorcontrol::can::TalonFX dbRF{4};
-    ctre::phoenix::motorcontrol::can::TalonFX dbRC{5};
-    ctre::phoenix::motorcontrol::can::TalonFX dbRB{6};
+    ctre::phoenix::motorcontrol::can::TalonFX dbL{leftLeadDeviceID};
+    ctre::phoenix::motorcontrol::can::TalonFX dbLF{leftFollowDeviceID};
+
+    ctre::phoenix::motorcontrol::can::TalonFX dbR{rightLeadDeviceID};
+    ctre::phoenix::motorcontrol::can::TalonFX dbRF{rightFollowDeviceID};
 
     
 

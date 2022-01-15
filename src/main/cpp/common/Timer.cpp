@@ -1,27 +1,27 @@
 #include "common/Timer.h"
 
-//#include <frc/DriverStation.h>
+#include <frc/DriverStation.h>
 
 void Timer::RobotInit(TimerData &timerData)
 {
-    // timer.Reset();
-    // timer.Start();
+    timer.Reset();
+    timer.Start();
 }
 
 void Timer::RobotPeriodic(TimerData &timerData)
 {
-    // if (!enabledSPointSet && frc::DriverStation::IsEnabled())
-    // {
-    //     enabledStartPoint = timer.Get();
+    if (!enabledSPointSet && frc::DriverStation::IsEnabled())
+    {
+        enabledStartPoint = (timer.Get()).to<double>();
         
-    //     enabledSPointSet = true;
-    // }
+        enabledSPointSet = true;
+    }
 
-    // timerData.secSinceInit = timer.Get();
-    // timerData.secSinceEnabled = timer.Get() - enabledStartPoint;
+    timerData.secSinceInit = timer.Get().to<double>();
+    timerData.secSinceEnabled = timer.Get().to<double>() - enabledStartPoint;
 }
 
 void Timer::DisabledInit()
 {
-    //enabledSPointSet = false;
+    enabledSPointSet = false;
 }

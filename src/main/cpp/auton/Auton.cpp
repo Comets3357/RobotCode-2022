@@ -81,3 +81,7 @@ void Auton::intakeAlternate(const RobotData &robotData, ControllerData &controll
         controllerData.sRTrigger = false;
     }
 }
+
+void Auton::barrelRace(const RobotData &robotData, ControllerData &controllerData) {
+    
+}

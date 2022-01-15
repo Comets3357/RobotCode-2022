@@ -1,6 +1,7 @@
 #pragma once
 
-//#include <frc/Timer.h>
+#include <frc/Timer.h>
+#include <units/time.h>
 
 struct TimerData
 {
@@ -17,8 +18,8 @@ public:
     void DisabledInit();
 
 private:
-    // frc::Timer timer{};
-    // bool enabledSPointSet = false;
-    // double enabledStartPoint = 0;
-    // double teleopStartPoint = 0;
+    frc::Timer timer{};
+    bool enabledSPointSet = false;
+    double enabledStartPoint = 0;
+    double teleopStartPoint = 0;
 };

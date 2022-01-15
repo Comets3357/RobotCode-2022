@@ -16,18 +16,24 @@ void Robot::RobotPeriodic()
     if (IsEnabled())
     {
         otherComponents.RobotPeriodic(robotData.otherComponentsData);
-        
 
         drivebase.RobotPeriodic(robotData, robotData.drivebaseData);
     }
 }
 
-void Robot::AutonomousInit() {
+void Robot::AutonomousInit()
+{
     auton.AutonomousInit(robotData.autonData);
     frc::SmartDashboard::PutString("autonomous init hello", "alksdjflaskjf");
 }
-void Robot::AutonomousPeriodic() {}
-void Robot::TeleopInit() {
+
+void Robot::AutonomousPeriodic()
+{
+    auton.AutonomousPeriodic(robotData, robotData.autonData, robotData.controllerData);
+}
+
+void Robot::TeleopInit()
+{
     gyro.TeleopInit();
 }
 

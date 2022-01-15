@@ -7,9 +7,11 @@
 
 //Header files from us
 #include "controller/Controller.h"
+#include "common/Gyro.h"
+#include "auton/Auton.h"
 #include "RobotData.h"
 
-#include "subsystems\Drivebase.h"
+#include "subsystems/Drivebase.h"
 
 //Robot class inherits from TimedRobot
 class Robot : public frc::TimedRobot
