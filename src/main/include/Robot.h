@@ -9,7 +9,8 @@
 #include "controller/Controller.h"
 #include "RobotData.h"
 
-#include "subsystems\Drivebase.h"
+#include "subsystems/Drivebase.h"
+#include "common/LEDs.h"
 
 //Robot class inherits from TimedRobot
 class Robot : public frc::TimedRobot
@@ -36,6 +37,8 @@ private:
     Limelight limelight{};
     OtherComponents otherComponents{};
     Timer timer{};
+    LEDs LED{};
+    
 
     // subsystems
     Drivebase drivebase{};

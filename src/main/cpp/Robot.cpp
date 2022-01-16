@@ -12,6 +12,7 @@ void Robot::RobotPeriodic()
 {
     timer.RobotPeriodic(robotData.timerData);
     gyro.RobotPeriodic(robotData.gyroData);
+    LED.RobotPeriodic();
 
     if (IsEnabled())
     {
