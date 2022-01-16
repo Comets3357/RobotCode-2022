@@ -34,6 +34,9 @@ struct ControlData
     bool saEjectBalls;
 
     //shooter:
+    bool saShooting;
+    bool mFlyWheel;
+    double mHood;
 
 };
 

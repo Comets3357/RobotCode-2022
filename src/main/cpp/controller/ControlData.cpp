@@ -47,7 +47,7 @@ void Controller::updateControlData(const ControllerData &controllerData, Control
     //INTAKE::
     controlData.mIntakeDown = controllerData.sYBtn;
     controlData.mIntakeRollers = controllerData.sRBumper;
-    controlData.mIntakeRollersBackward = controllerData.sABtn;
+    controlData.mIntakeRollersBackward = (controllerData.sABtn&&controlData.shift);
     controlData.saIntake = controllerData.sRBumper;
     controlData.saIntakeBackward = controllerData.sABtn;
 
@@ -58,5 +58,7 @@ void Controller::updateControlData(const ControllerData &controllerData, Control
 
     //SHOOTER:
     controlData.saShooting = controllerData.sXBtn;
+    controlData.mHood = controllerData.sRYStick;
+    controlData.mFlyWheel = controllerData.sABtn;
   
 }
