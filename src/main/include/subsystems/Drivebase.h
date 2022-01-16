@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Constants.h"
+#include "auton/Auton.h"
 
 #include <frc/TimedRobot.h>
 #include <frc/Joystick.h>
@@ -48,7 +49,8 @@ class Drivebase
 
 public:
     void RobotInit();
-    void AutonomousInit(const RobotData &robotData);
+    void TeleopInit();
+    void AutonomousInit(AutonData &autonData);
     void RobotPeriodic(const RobotData &robotData, DrivebaseData &drivebaseData);
     void DisabledInit();
 
@@ -65,6 +67,8 @@ private:
     void resetOdometry(double resetAngle);
     void resetOdometry();
     void resetOdometry(double x, double y, const RobotData &robotData);
+    void resetOdometry(double x, double y, double deg);
+    void zeroEncoders();
     void setVelocity(double leftVel, double rightVel);
     frc::Pose2d getPose() const;
 
@@ -80,7 +84,7 @@ private:
     // frc::Rotation2d gyroYaw{};  // updated by robotPeriodic
     frc::DifferentialDriveOdometry odometry{kZeroAngle};
 
-    const units::meter_t kTrackWidth{0.6096};
+    const units::meter_t kTrackWidth{0.55};
     frc::DifferentialDriveKinematics kinematics{kTrackWidth};
 
     frc::Trajectory trajectory{};

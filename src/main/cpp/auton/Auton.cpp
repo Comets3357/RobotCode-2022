@@ -6,11 +6,11 @@ void Auton::AutonomousInit(AutonData &autonData)
     // get selected auton from smartdashboard
     // import pathweaver json
     fs::path deployDirectory = frc::filesystem::GetDeployDirectory();
-    fs::path pathDirectory = deployDirectory / "paths" / "barrelRace1.wpilib.json";
+    fs::path pathDirectory = deployDirectory / "paths" / "barrelRace2.wpilib.json";
     frc::Trajectory trajectory = frc::TrajectoryUtil::FromPathweaverJson(pathDirectory.string());
 
-    // frc::SmartDashboard::PutString("deployDirectory.string()", deployDirectory.string());
-    // wpi::outs() << "done in auton.cpp";
+    frc::SmartDashboard::PutString("deployDirectory.string()", deployDirectory.string());
+    wpi::outs() << "done in auton.cpp";
 
 
     fs::path autonDirectory = deployDirectory / "Autos" / "barrelRace";
@@ -35,8 +35,8 @@ void Auton::AutonomousInit(AutonData &autonData)
         frc::SmartDashboard::PutString(std::to_string(i), pathGroup[i]);
     } */
 
-    autonData.trajectory = &trajectory;
-    autonData.pathGroup = &pathGroup;
+    autonData.trajectory = trajectory;
+    // autonData.pathGroup = &pathGroup;
 }
 
 void Auton::AutonomousPeriodic(const RobotData &robotData, AutonData &autonData, ControllerData &controllerData)
@@ -83,5 +83,5 @@ void Auton::intakeAlternate(const RobotData &robotData, ControllerData &controll
 }
 
 void Auton::barrelRace(const RobotData &robotData, ControllerData &controllerData) {
-    
+
 }

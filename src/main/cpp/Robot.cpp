@@ -23,8 +23,10 @@ void Robot::RobotPeriodic()
 
 void Robot::AutonomousInit()
 {
+    frc::SmartDashboard::PutString("hello", "world");
     auton.AutonomousInit(robotData.autonData);
-    frc::SmartDashboard::PutString("autonomous init hello", "alksdjflaskjf");
+    drivebase.AutonomousInit(robotData.autonData);
+    
 }
 
 void Robot::AutonomousPeriodic()
@@ -34,6 +36,7 @@ void Robot::AutonomousPeriodic()
 
 void Robot::TeleopInit()
 {
+    drivebase.TeleopInit();
     gyro.TeleopInit();
 }
 

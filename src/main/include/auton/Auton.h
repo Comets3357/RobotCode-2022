@@ -24,9 +24,9 @@ enum AutonSelect
 
 struct AutonData
 {
-    AutonSelect autonSelect = autonSelect_potato;
-    frc::Trajectory* trajectory;
-    std::vector<std::string>* pathGroup;
+    AutonSelect autonSelect = autonSelect_barrelRace;
+    frc::Trajectory trajectory;
+    std::vector<std::string> pathGroup;
 };
 
 class Auton
