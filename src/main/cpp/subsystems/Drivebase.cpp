@@ -49,12 +49,12 @@ void Drivebase::RobotInit()
     dbR.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
    
    // odometry
-    resetOdometry(2, 3, 0);
+    // resetOdometry(2, 3, 0);
     frc::SmartDashboard::PutData("Field", &field);
 }
 
 void Drivebase::TeleopInit() {
-    resetOdometry(2, 3, 0);
+    resetOdometry(0, 0, 0);
 }
 
 void Drivebase::AutonomousInit(AutonData &autonData) {
@@ -69,7 +69,7 @@ void Drivebase::AutonomousInit(AutonData &autonData) {
     frc::SmartDashboard::PutNumber("traj test", autonData.trajectory.TotalTime().to<double>());
 
     // resetOdometry(3.167, 7.492, robotData);
-    resetOdometry(2, 3, 0);
+    resetOdometry(0, 3, 0);
 
     frc::SmartDashboard::PutNumber("trajX", 0);
     frc::SmartDashboard::PutNumber("trajY", 0);
@@ -77,7 +77,6 @@ void Drivebase::AutonomousInit(AutonData &autonData) {
 
 void Drivebase::RobotPeriodic(const RobotData &robotData, DrivebaseData &drivebaseData)
 {
-    // resetOdometry();
     updateData(robotData, drivebaseData);
 
     if (frc::DriverStation::IsEnabled())
@@ -116,8 +115,8 @@ void Drivebase::updateData(const RobotData &robotData, DrivebaseData &drivebaseD
     // drivebaseData.currentLDBPos = dbLMEncoder.GetPosition();
     // drivebaseData.currentRDBPos = dbRMEncoder.GetPosition();
 
-    drivebaseData.lDriveVel = dbL.GetSensorCollection().GetIntegratedSensorVelocity() / ((6.0 / 0.1524) * (1 / (6.0 * M_PI)) * (64.0 / 8.0) * (2048.0) * (0.1));
-    drivebaseData.rDriveVel = dbR.GetSensorCollection().GetIntegratedSensorVelocity() / ((6.0 / 0.1524) * (1 / (6.0 * M_PI)) * (64.0 / 8.0) * (2048.0) * (0.1));
+    drivebaseData.lDriveVel = dbL.GetSensorCollection().GetIntegratedSensorVelocity() / mpsToTpds;
+    drivebaseData.rDriveVel = dbR.GetSensorCollection().GetIntegratedSensorVelocity() / mpsToTpds;
 
     
     frc::SmartDashboard::PutNumber("lDriveVel", drivebaseData.lDriveVel);
@@ -128,6 +127,15 @@ void Drivebase::updateData(const RobotData &robotData, DrivebaseData &drivebaseD
 
     // drivebaseData.previousLDBPos = dbLMEncoder.GetPosition();
     // drivebaseData.previousRDBPos = dbRMEncoder.GetPosition();
+
+    frc::SmartDashboard::PutNumber("odometryPoseX", odometry.GetPose().Translation().X().to<double>());
+    frc::SmartDashboard::PutNumber("odometryPoseY", odometry.GetPose().Translation().Y().to<double>());
+
+    frc::SmartDashboard::PutNumber("currentPoseX", drivebaseData.currentPose.Translation().X().to<double>());
+    frc::SmartDashboard::PutNumber("currentPoseY", drivebaseData.currentPose.Translation().Y().to<double>());
+
+    frc::SmartDashboard::PutNumber("lEncoderPosition", dbL.GetSensorCollection().GetIntegratedSensorPosition());
+    frc::SmartDashboard::PutNumber("rEncoderPosition", dbR.GetSensorCollection().GetIntegratedSensorPosition());
 }
 // driving functions:
 
@@ -190,7 +198,7 @@ void Drivebase::autonControl(const RobotData &robotData) {
     frc::SmartDashboard::PutNumber("trajX", trajX);
     frc::SmartDashboard::PutNumber("trajY", trajY);
 
-    frc::ChassisSpeeds chassisSpeeds =  ramseteController.Calculate(robotData.drivebaseData.currentPose, trajectoryState);
+    frc::ChassisSpeeds chassisSpeeds =  ramseteController.Calculate(odometry.GetPose(), trajectoryState);
 
     frc::DifferentialDriveWheelSpeeds wheelSpeeds = kinematics.ToWheelSpeeds(chassisSpeeds);
 
@@ -245,9 +253,9 @@ void Drivebase::updateOdometry(const RobotData &robotData, DrivebaseData &driveb
     frc::Rotation2d currentRotation{currentRadians};
     frc::SmartDashboard::PutNumber("currentRadians", currentRadians.to<double>());
 
-    // NEGATIVE
-    units::meter_t leftDistance{-dbL.GetSensorCollection().GetIntegratedSensorPosition()};
-    units::meter_t rightDistance{dbR.GetSensorCollection().GetIntegratedSensorPosition()};
+    // NEGATIVE because left motor/encoder should be inverted
+    units::meter_t leftDistance{dbL.GetSensorCollection().GetIntegratedSensorPosition() / metersToTicks};
+    units::meter_t rightDistance{dbR.GetSensorCollection().GetIntegratedSensorPosition() / metersToTicks};
 
     odometry.Update(currentRotation, leftDistance, rightDistance);
 
@@ -256,14 +264,16 @@ void Drivebase::updateOdometry(const RobotData &robotData, DrivebaseData &driveb
     double libX = odometry.GetPose().Translation().X().to<double>();
     double libY = odometry.GetPose().Translation().Y().to<double>();
 
-    double libXMeters = libX / 34220;
-    double libYMeters = libY / 34220;
+    double libXMeters = libX / metersToTicks;
+    double libYMeters = libY / metersToTicks;
 
     frc::SmartDashboard::PutNumber("libX", libX);
     frc::SmartDashboard::PutNumber("libY", libY);
 
     frc::SmartDashboard::PutNumber("libXMeters", libXMeters);
     frc::SmartDashboard::PutNumber("libYMeters", libYMeters);
+
+    drivebaseData.currentPose = getPose(libXMeters, libYMeters, currentRadians.to<double>());
 }
 
 /**
@@ -312,8 +322,8 @@ void Drivebase::resetOdometry(double x, double y, const RobotData &robotData) {
 
 // reset odometry to any double x, y, deg
 void Drivebase::resetOdometry(double x, double y, double deg) {
-    const units::meter_t meterX{x};
-    const units::meter_t meterY{y};
+    const units::meter_t meterX{x * 34220};
+    const units::meter_t meterY{y * 34220};
 
     const double pi = 2 * std::acos(0.0);
     const units::radian_t radianYaw{deg / 180 * pi};
@@ -325,10 +335,6 @@ void Drivebase::resetOdometry(double x, double y, double deg) {
     odometry.ResetPosition(resetPose, resetRotation);
 
     zeroEncoders();
-}
-
-frc::Pose2d Drivebase::getPose() const {
-    return odometry.GetPose();
 }
 
 
@@ -346,17 +352,29 @@ void Drivebase::setVelocity(double leftVel, double rightVel)
     // dbR.Set(ctre::phoenix::motorcontrol::ControlMode::Velocity, 2*2048*10);
 
     // conversion factor, see Discord #advanced-auton image
-    const double mpsToTps = (6.0 / 0.1524) * (1 / (6.0 * M_PI)) * (64.0 / 8.0) * (2048.0) * (0.1);
+    // const double mpsToTps = (6.0 / 0.1524) * (1 / (6.0 * M_PI)) * (64.0 / 8.0) * (2048.0) * (0.1);
     // const double mpsToTps = (4.0 / 0.1016) * (1 / (4.0 * M_PI)) * (44.0 / 9.0) * (2048.0) * (0.1);
 
-    double leftRpm = leftVel * mpsToTps;
-    double rightRpm = rightVel * mpsToTps;
+    double leftTPDS = leftVel * mpsToTpds;
+    double rightTPDS = rightVel * mpsToTpds;
 
-    dbL.Set(ctre::phoenix::motorcontrol::ControlMode::Velocity, leftRpm);
-    dbR.Set(ctre::phoenix::motorcontrol::ControlMode::Velocity, rightRpm);
+    dbL.Set(ctre::phoenix::motorcontrol::ControlMode::Velocity, leftTPDS);
+    dbR.Set(ctre::phoenix::motorcontrol::ControlMode::Velocity, rightTPDS);
 }
 
 void Drivebase::zeroEncoders() {
     dbL.GetSensorCollection().SetIntegratedSensorPosition(0.0);
     dbR.GetSensorCollection().SetIntegratedSensorPosition(0.0);
+    frc::SmartDashboard::PutString("zeroed encoders", "yes");
+}
+
+frc::Pose2d Drivebase::getPose(double x, double y, double deg) {
+    units::meter_t meterX{x};
+    units::meter_t meterY{y};
+
+    const double pi = 2 * std::acos(0.0);
+    const units::radian_t radianYaw{deg / 180 * pi};
+    const frc::Rotation2d rotation{radianYaw};
+    frc::Pose2d pose{meterX, meterY, rotation};
+    return pose;
 }
