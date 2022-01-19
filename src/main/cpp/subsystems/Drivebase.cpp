@@ -38,10 +38,12 @@ void Drivebase::RobotInit()
     dbRF.ConfigStatorCurrentLimit(StatorCurrentLimitConfiguration(true, 45, 50, 1.0));
 
     // PIDs
-    dbL.Config_kP(0, 0.039271);
+    dbL.Config_kF(0, 0.032514);
+    dbL.Config_kP(0, 0.038723);
     dbL.Config_kD(0, 0);
 
-    dbR.Config_kP(0, 0.039271);
+    dbR.Config_kF(0, 0.032514);
+    dbR.Config_kP(0, 0.038723);
     dbR.Config_kD(0, 0);
 
 
@@ -69,7 +71,7 @@ void Drivebase::AutonomousInit(AutonData &autonData) {
     frc::SmartDashboard::PutNumber("traj test", autonData.trajectory.TotalTime().to<double>());
 
     // resetOdometry(3.167, 7.492, robotData);
-    resetOdometry(0, 3, 0);
+    resetOdometry(1.49, 0.65, 0);
 
     frc::SmartDashboard::PutNumber("trajX", 0);
     frc::SmartDashboard::PutNumber("trajY", 0);
@@ -186,12 +188,19 @@ void Drivebase::autonControl(const RobotData &robotData) {
 
     
     
-    const units::second_t secSinceEnabled{robotData.timerData.secSinceEnabled};
-    frc::Trajectory::State trajectoryState = trajectory.Sample(secSinceEnabled);
-    frc::Pose2d desiredPose = trajectoryState.pose;
+    units::second_t secSinceEnabled{robotData.timerData.secSinceEnabled};
 
     double totalTime = trajectory.TotalTime().to<double>();
     frc::SmartDashboard::PutNumber("trajTotalTime", totalTime);
+
+    double lowest;
+    if (secSinceEnabled.to<double>() < totalTime) { lowest = secSinceEnabled.to<double>(); }
+    else { lowest = totalTime; }
+    
+    units::second_t lowestSec{lowest};
+
+    frc::Trajectory::State trajectoryState = trajectory.Sample(lowestSec);
+    frc::Pose2d desiredPose = trajectoryState.pose;    
 
     double trajX = desiredPose.X().to<double>();
     double trajY = desiredPose.Y().to<double>();
@@ -322,8 +331,8 @@ void Drivebase::resetOdometry(double x, double y, const RobotData &robotData) {
 
 // reset odometry to any double x, y, deg
 void Drivebase::resetOdometry(double x, double y, double deg) {
-    const units::meter_t meterX{x * 34220};
-    const units::meter_t meterY{y * 34220};
+    const units::meter_t meterX{x};
+    const units::meter_t meterY{y};
 
     const double pi = 2 * std::acos(0.0);
     const units::radian_t radianYaw{deg / 180 * pi};

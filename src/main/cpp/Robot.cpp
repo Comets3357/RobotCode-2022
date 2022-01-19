@@ -26,7 +26,7 @@ void Robot::AutonomousInit()
     frc::SmartDashboard::PutString("hello", "world");
     auton.AutonomousInit(robotData.autonData);
     drivebase.AutonomousInit(robotData.autonData);
-    
+    gyro.AutonomousInit();
 }
 
 void Robot::AutonomousPeriodic()

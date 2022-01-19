@@ -17,6 +17,7 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc/smartdashboard/Field2d.h>
 #include <cmath>
+#include <algorithm>
 
 #include <string>
 #include <fstream>

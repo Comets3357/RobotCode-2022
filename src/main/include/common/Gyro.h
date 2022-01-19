@@ -17,6 +17,7 @@ class Gyro
 
 public:
     void RobotInit();
+    void AutonomousInit();
     void TeleopInit();
     void RobotPeriodic(GyroData &gyroData);
 

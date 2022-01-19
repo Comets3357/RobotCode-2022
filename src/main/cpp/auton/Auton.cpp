@@ -6,7 +6,7 @@ void Auton::AutonomousInit(AutonData &autonData)
     // get selected auton from smartdashboard
     // import pathweaver json
     fs::path deployDirectory = frc::filesystem::GetDeployDirectory();
-    fs::path pathDirectory = deployDirectory / "paths" / "barrelRace1.wpilib.json";
+    fs::path pathDirectory = deployDirectory / "paths" / "slalom2.wpilib.json";
     frc::Trajectory trajectory = frc::TrajectoryUtil::FromPathweaverJson(pathDirectory.string());
 
     frc::SmartDashboard::PutString("deployDirectory.string()", deployDirectory.string());
