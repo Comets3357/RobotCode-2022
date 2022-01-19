@@ -9,9 +9,6 @@
 #include "controller/Controller.h"
 #include "RobotData.h"
 
-<<<<<<< Updated upstream
-#include "subsystems\Drivebase.h"
-=======
 #include "subsystems/Drivebase.h"
 // #include "subsystems/Shooter.h"
 #include "subsystems/Indexer.h"
@@ -19,7 +16,6 @@
 #include "subsystems/Intake.h"
 #include "common/Limelight.h"
 #include "common/OtherComponents.h"
->>>>>>> Stashed changes
 
 //Robot class inherits from TimedRobot
 class Robot : public frc::TimedRobot
@@ -49,11 +45,8 @@ private:
 
     // subsystems
     Drivebase drivebase{};
-<<<<<<< Updated upstream
-=======
     Intake intake{};
     Indexer indexer{};
     // Shooter shooter{};
     Climb climb{};
->>>>>>> Stashed changes
 };

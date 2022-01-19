@@ -31,6 +31,8 @@ private:
     void manual(const RobotData &robotData, IndexerData &indexerData);
     void semiAuto(const RobotData &robotData, IndexerData &indexerData);
 
+    
+
     /**sensors if needed
     frc::DigitalInput indexerfront{2};
     **/

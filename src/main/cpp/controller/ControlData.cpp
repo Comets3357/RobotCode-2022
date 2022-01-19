@@ -46,7 +46,7 @@ void Controller::updateControlData(const ControllerData &controllerData, Control
 
     //INTAKE::
     controlData.mIntakeDown = controllerData.sLYStick;
-    controlData.mIntakeUp = controllerData.sYBtn;
+    //controlData.mIntakeUp = controllerData.sYBtn;
     controlData.mIntakeRollers = controllerData.sRYStick;
     controlData.mzeroing = controllerData.sYBtn;
     controlData.saIntake = controllerData.sRBumper;

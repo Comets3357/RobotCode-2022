@@ -21,17 +21,9 @@ struct ControlData
     double maxStraight = 1;
     double maxTurn = 0.4;
 
-<<<<<<< Updated upstream
-    //intakae:
-    bool mIntakeDown;
-    bool mIntakeRollers;
-    bool mIntakeRollersBackward;
-    bool saIntake;
-    bool saIntakeBackward;
-=======
     //intake:
     double mIntakeDown; 
-        bool mIntakeUp; //brings the intake down (default is up) MANUAL
+    bool mIntakeUp; //brings the intake down (default is up) MANUAL
 
     //brings the intake down (default is up) MANUAL
     double mIntakeRollers; //runs intake forwards MANUAL
@@ -53,7 +45,6 @@ struct ControlData
     bool mFlyWheel; //get flywheel running MANUAL
     double mHood; //moves hood up or down MANUAL
 
->>>>>>> Stashed changes
 };
 
 struct ControllerData

@@ -36,20 +36,12 @@ private:
     void mecanumInit();
 
 
-<<<<<<< Updated upstream
-    const double intakePivotSpeed = 0.2;
-    const double intakeRollerSpeed = 0.2;
-    const double intakeMecanumSpeed = 0.2;
-
-    double armDownPosition = frc::Preferences::GetDouble("ArmDownPosition", 12.0);
-=======
     double intakePivotSpeed = 0.1;
     double intakeRollerSpeed = 0.67;
     double intakeMecanumSpeed = 0.2;
     double intakeRollersEjectSpeed = 0.5;
     double armDownPosition = 0.428;
     int x = 0;
->>>>>>> Stashed changes
 
     //CHANGE MOTOr ID STUFF  (just outline )
     rev::CANSparkMax intakeRollers = rev::CANSparkMax(intakeRollerID, rev::CANSparkMax::MotorType::kBrushless);

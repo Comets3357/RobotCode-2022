@@ -9,15 +9,9 @@ static const int
 
 //intake:
 static const int
-<<<<<<< Updated upstream
-    intakeRollerID = 10,
-    intakePivotID = 11,
-    intakeMecanumID = 12;
-=======
     intakeRollerID = 12,
     intakePivotID = 11,
     intakeMecanumID = 13;
->>>>>>> Stashed changes
 
 //intake PID constants:
 static const double

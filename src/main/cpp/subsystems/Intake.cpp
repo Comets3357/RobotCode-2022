@@ -10,15 +10,12 @@ void Intake::RobotInit()
     intakePivotEncoder.SetPosition(0);
     intakeRollersEncoder.SetPosition(0);
     intakeMecanumEncoder.SetPosition(0);
-<<<<<<< Updated upstream
-=======
 
     intakePivotEncoder2.Reset();
 
     // intakePivot.Set(0);
     // intakeRollers.Set(0);
     // intakeMecanum.Set(0);
->>>>>>> Stashed changes
 }
 
 void Intake::RobotPeriodic(const RobotData &robotData, IntakeData &intakeData)
@@ -92,13 +89,6 @@ void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
         intakeRollers.Set(-intakeRollerSpeed);
         //intakeMecanum.Set(-intakeMecanumSpeed);
     }
-<<<<<<< Updated upstream
-    // else if (robotData.controlData.saEjectBallsBackwards)
-    // {
-    //     intakeRollers.Set(-intakeRollersEjectSpeed);
-    // }
-    else
-=======
     else if (robotData.controlData.saEjectBalls) //rollers backwards, pivot down
     {
         intakeRollers.Set(-intakeRollersEjectSpeed);
@@ -115,7 +105,6 @@ void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
         // }
     }
     else //default case, everything up and not running
->>>>>>> Stashed changes
     {
         intakeRollers.Set(0);
         intakeMecanum.Set(0);
@@ -135,28 +124,6 @@ void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
 }
 
 void Intake::manual(const RobotData &robotData, IntakeData &intakeData){
-<<<<<<< Updated upstream
-    if(robotData.controlData.mIntakeDown){
-        if (intakePivotEncoder.GetPosition() < 12)
-        {
-            intakePivot.Set(intakePivotSpeed);
-        }
-        // once you're down
-        else
-        {
-            intakePivot.Set(0);
-        }
-    }else{
-         if (intakePivotEncoder.GetPosition() > 0)
-        {
-            intakePivot.Set(-intakePivotSpeed);
-        }
-        else
-        {
-            intakePivot.Set(0);
-        }
-    }
-=======
     // if(robotData.controlData.mIntakeDown){
     //     if (intakePivotEncoder2.GetDistance() < armDownPosition)
     //     {
@@ -185,7 +152,6 @@ void Intake::manual(const RobotData &robotData, IntakeData &intakeData){
     // }else{
     //     intakePivot.Set(0);
     // }
->>>>>>> Stashed changes
 
 
     
@@ -262,14 +228,6 @@ void Intake::pivotInit(){
 
     intakePivot.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
 
-<<<<<<< Updated upstream
-    intakePivot_pidController.SetP(wkP);
-    intakePivot_pidController.SetI(wkI);
-    intakePivot_pidController.SetD(wkD);
-    intakePivot_pidController.SetIZone(wkIz);
-    intakePivot_pidController.SetFF(wkFF);
-    intakePivot_pidController.SetOutputRange(wkMinOutput, wkMaxOutput);
-=======
     intakePivot_pidController.SetP(0.048,0);
     intakePivot_pidController.SetI(0,0);
     intakePivot_pidController.SetD(0.025,0);
@@ -283,7 +241,6 @@ void Intake::pivotInit(){
     intakePivot_pidController.SetIZone(0,1);
     intakePivot_pidController.SetFF(0,1);
     intakePivot_pidController.SetOutputRange(-1, 1,1);
->>>>>>> Stashed changes
 
     intakePivot.SetSmartCurrentLimit(45);
 }
@@ -295,12 +252,12 @@ void Intake::mecanumInit(){
 
     intakeMecanum.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
 
-    intakeMecanum_pidController.SetP(mkP);
-    intakeMecanum_pidController.SetI(mkI);
-    intakeMecanum_pidController.SetD(mkD);
-    intakeMecanum_pidController.SetIZone(mkIz);
-    intakeMecanum_pidController.SetFF(mkFF);
-    intakeMecanum_pidController.SetOutputRange(mkMinOutput, mkMaxOutput);
+    // intakeMecanum_pidController.SetP(mkP);
+    // intakeMecanum_pidController.SetI(mkI);
+    // intakeMecanum_pidController.SetD(mkD);
+    // intakeMecanum_pidController.SetIZone(mkIz);
+    // intakeMecanum_pidController.SetFF(mkFF);
+    // intakeMecanum_pidController.SetOutputRange(mkMinOutput, mkMaxOutput);
 
     intakeMecanum.SetSmartCurrentLimit(45);
 

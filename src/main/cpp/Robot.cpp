@@ -6,13 +6,10 @@ void Robot::RobotInit()
     gyro.RobotInit();
 
     drivebase.RobotInit();
-<<<<<<< Updated upstream
-=======
     intake.RobotInit();
-    indexer.RobotInit();
+    //indexer.RobotInit();
     // shooter.RobotInit();
     climb.RobotInit();
->>>>>>> Stashed changes
 }
 
 void Robot::RobotPeriodic()
@@ -26,13 +23,10 @@ void Robot::RobotPeriodic()
         
 
         drivebase.RobotPeriodic(robotData, robotData.drivebaseData);
-<<<<<<< Updated upstream
-=======
         intake.RobotPeriodic(robotData, robotData.intakeData);
-        indexer.RobotPeriodic(robotData, robotData.indexerData);
+        //indexer.RobotPeriodic(robotData, robotData.indexerData);
         // shooter.RobotPeriodic(robotData, robotData.shooterData);
         climb.RobotPeriodic(robotData, robotData.climbData);
->>>>>>> Stashed changes
     }
 }
 
@@ -52,13 +46,10 @@ void Robot::DisabledInit()
     timer.DisabledInit();
 
     drivebase.DisabledInit();
-<<<<<<< Updated upstream
-=======
     intake.DisabledInit();
-    indexer.DisabledInit();
+    //indexer.DisabledInit();
     // shooter.DisabledInit();
     climb.DisabledInit();
->>>>>>> Stashed changes
 }
 
 void Robot::DisabledPeriodic() {}
