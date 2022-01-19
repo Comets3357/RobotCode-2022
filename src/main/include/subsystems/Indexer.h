@@ -14,7 +14,8 @@ struct RobotData;
 
 struct IndexerData
 {
-    int ballCount;
+    int ballCount = 0;
+    
 };
 
 class Indexer
@@ -34,8 +35,11 @@ private:
     void indexerBeltInit();
     void indexerWheelInit();
 
-    frc::DigitalInput proxIndexerFront{2};
-    frc::DigitalInput proxIndexerBack{3};
+    // need to make constants for these indexes??
+    frc::DigitalInput proxIndexerBottom{1};
+    frc::DigitalInput proxIndexerMiddle{2};
+    frc::DigitalInput proxIndexerTop{3};
+
 
     const double IndexerWheelSpeed = 0.2;
     const double IndexerBeltSpeed = 0.2;
