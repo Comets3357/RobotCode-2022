@@ -21,12 +21,39 @@ struct ControlData
     double maxStraight = 1;
     double maxTurn = 0.4;
 
+<<<<<<< Updated upstream
     //intakae:
     bool mIntakeDown;
     bool mIntakeRollers;
     bool mIntakeRollersBackward;
     bool saIntake;
     bool saIntakeBackward;
+=======
+    //intake:
+    double mIntakeDown; 
+        bool mIntakeUp; //brings the intake down (default is up) MANUAL
+
+    //brings the intake down (default is up) MANUAL
+    double mIntakeRollers; //runs intake forwards MANUAL
+    double mzeroing; //runs intake rollers backwards MANUAL
+    bool saIntake; //runs the intake rollers and brings intake down and the indexer to intake balls SEMIAUTO
+    bool saIntakeBackward; //runs the intake backwards SEMIAUTO
+
+    //indexer:
+    bool mIndexerBackwards; //runs indexer backwards MANUAL
+    bool mIndexer; //runs indexer foward MANUAL
+    bool saEjectBalls; //runs intake and indexer backwards to eject balls SEMIAUTO
+
+    //shooter:
+    bool saShooting; //gets hood at right angle, shooter wheel up to speed SEMIAUTO
+    bool finalShoot; //makes belts run to actually fire balls SEMIAUTO
+    bool launchPadShot; //fixed long shot from the launch pad to upper hub SEMIAUTO
+    bool hubShot;//fixed close shot to lower hub from infront of hub SEMIAUTO
+    bool wrongBall; //if the ball isn't our alliance color eject ball out shooter SEMIAUTO 
+    bool mFlyWheel; //get flywheel running MANUAL
+    double mHood; //moves hood up or down MANUAL
+
+>>>>>>> Stashed changes
 };
 
 struct ControllerData

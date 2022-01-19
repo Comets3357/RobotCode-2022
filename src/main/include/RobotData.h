@@ -25,4 +25,11 @@ struct RobotData
     AutonData autonData;
 
     DrivebaseData drivebaseData;
+<<<<<<< Updated upstream
+=======
+    IntakeData intakeData;
+    IndexerData indexerData;
+    ClimbData climbData;
+    // ShooterData shooterData;
+>>>>>>> Stashed changes
 };
