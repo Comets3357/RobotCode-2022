@@ -17,5 +17,5 @@ private:
     //in constructor port, deviceaddress
     frc::I2C arduino = frc::I2C(frc::I2C::Port::kOnboard, 1);
     bool success = false;
-    int x = 0;
+    int colorCode = 5;
 };
