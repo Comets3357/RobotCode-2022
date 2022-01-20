@@ -1,5 +1,7 @@
 #include "subsystems/Intake.h"
 #include "RobotData.h"
+#include <iostream>
+#include <cmath>
 
 void Intake::RobotInit()
 {
@@ -11,11 +13,11 @@ void Intake::RobotInit()
     intakeRollersEncoder.SetPosition(0);
     intakeMecanumEncoder.SetPosition(0);
 
-    intakePivotEncoder2.Reset();
+    //intakePivotEncoder2.Reset();
 
-    // intakePivot.Set(0);
-    // intakeRollers.Set(0);
-    // intakeMecanum.Set(0);
+    intakePivot.Set(0);
+    intakeRollers.Set(0);
+    intakeMecanum.Set(0);
 }
 
 void Intake::RobotPeriodic(const RobotData &robotData, IntakeData &intakeData)
@@ -32,12 +34,12 @@ void Intake::RobotPeriodic(const RobotData &robotData, IntakeData &intakeData)
 
     }
 
-    // if(x % 5 == 0){
-    //     intakePivotEncoder.SetPosition(((intakePivotEncoder2.GetDistance()*(-98.48485))-55.15152));
-    //     x++;
-    // }else{
-    //     x++;
-    // }
+    if(tickCount > 40){
+        intakePivotEncoder.SetPosition(absoluteToREV(intakePivotEncoder2.GetDistance()));
+        tickCount = (tickCount+1)%50;
+    }else{
+        tickCount = (tickCount+1)%50;
+    }
 
     // if(intakeRollers.GetFault(rev::CANSparkMax::FaultID::kHasReset)||intakeRollers.GetFault(rev::CANSparkMax::FaultID::kMotorFault)|intakeRollers.GetFault(rev::CANSparkMax::FaultID::kBrownout)){
     //     Intake::rollersInit();
@@ -49,41 +51,17 @@ void Intake::RobotPeriodic(const RobotData &robotData, IntakeData &intakeData)
     //     Intake::pivotInit();
     // }
 
-    frc::SmartDashboard::PutNumber("Pivot built in Pos", intakePivotEncoder.GetPosition());
-    frc::SmartDashboard::PutNumber("Pivot absolute Pos", intakePivotEncoder2.GetDistance());
-    frc::SmartDashboard::PutNumber("pivot speed", intakePivot.Get());
-
-    frc::SmartDashboard::PutNumber("roller speed", intakeRollers.Get());
-    frc::SmartDashboard::PutBoolean("manual", robotData.controlData.manualMode);
-
-    
-
-
-
 }
 
 void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
      if (robotData.controlData.saIntake)
     {
         // pivot down
+        intakePivot_pidController.SetReference(10, rev::ControlType::kPosition,1);
 
-        intakePivot_pidController.SetReference(12, rev::ControlType::kPosition,0);
-
-        // if (intakePivotEncoder.GetPosition() > 1)
-        // {
-        //     intakePivot.Set(0.03);
-        //     intakeRollers.Set(intakeRollerSpeed);
-        //     intakeMecanum.Set(intakeMecanumSpeed);
-        // }
         intakeRollers.Set(intakeRollerSpeed);
         intakeMecanum.Set(intakeMecanumSpeed);
-        // once you're down
-        // else
-        // {
-        //     intakePivot.Set(0);
-        // }
     }
-    // otherise, bring the intake back up slowly
     else if (robotData.controlData.saIntakeBackward)
     {
         intakeRollers.Set(-intakeRollerSpeed);
@@ -92,32 +70,15 @@ void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
     else if (robotData.controlData.saEjectBalls) //rollers backwards, pivot down
     {
         intakeRollers.Set(-intakeRollersEjectSpeed);
-        intakePivot_pidController.SetReference(12, rev::ControlType::kPosition,0);
+        intakePivot_pidController.SetReference(10, rev::ControlType::kPosition,0);
 
-        // if (intakePivotEncoder2.GetDistance() > armDownPosition)
-        // {
-        //     intakePivot.Set(0.05);
-        // }
-        // // once you're down
-        // else
-        // {
-        //     intakePivot.Set(0);
-        // }
     }
     else //default case, everything up and not running
     {
         intakeRollers.Set(0);
         intakeMecanum.Set(0);
 
-        // if (intakePivotEncoder2.GetDistance() < 0.56)
-        // {
-        //     intakePivot.Set(-intakePivotSpeed);
-        // }
-        // else
-        // {
-        //     intakePivot.Set(0);
-        // }
-        intakePivot_pidController.SetReference(0.5, rev::ControlType::kPosition, 1);
+        intakePivot_pidController.SetReference(0.1, rev::ControlType::kPosition, 1);
         //intakePivotEncoder.SetPosition(0);
 
     }
@@ -125,36 +86,12 @@ void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
 
 void Intake::manual(const RobotData &robotData, IntakeData &intakeData){
     // if(robotData.controlData.mIntakeDown){
-    //     if (intakePivotEncoder2.GetDistance() < armDownPosition)
-    //     {
-    //         intakePivot.Set(intakePivotSpeed);
-    //     }
-    //     // once you're down
-    //     else
-    //     {
-    //         intakePivot.Set(0);
-    //     }
-    // }else{
-    //      if (intakePivotEncoder2.GetDistance() > 0)
-    //     {
-    //         intakePivot.Set(-intakePivotSpeed);
-    //     }
-    //     else
-    //     {
-    //         intakePivot.Set(0);
-    //     }
-    // }
-
-    // if(robotData.controlData.mIntakeDown){
-    //     intakePivot.Set(0.1); 
-    // }else if(robotData.controlData.mIntakeUp){
-    //     intakePivot.Set(-0.1); 
-    // }else{
-    //     intakePivot.Set(0);
-    // }
-
-
+    //     intakePivot_pidController.SetReference(12, rev::ControlType::kPosition,0);
     
+    // }else{
+    //     intakePivot_pidController.SetReference(0, rev::ControlType::kPosition, 1);
+
+    // }
 
     //intakeRollers.Set(robotData.controlData.mIntakeRollersBackward*.55);
     intakeRollers.Set(robotData.controlData.mIntakeRollers*.75);
@@ -179,7 +116,6 @@ void Intake::manual(const RobotData &robotData, IntakeData &intakeData){
     // {
     //     intakeRollers.Set(0);
     //     intakeMecanum.Set(0);
-
     // }
 }
 
@@ -196,9 +132,16 @@ void Intake::DisabledInit()
 // updates encoder and gyro values
 void Intake::updateData(const RobotData &robotData, IntakeData &intakeData)
 {
-    // frc::SmartDashboard::PutNumber("Pivot built in Pos", intakePivotEncoder.GetPosition());
-    // frc::SmartDashboard::PutNumber("Pivot absolute Pos", intakePivotEncoder2.GetDistance());
-    // frc::SmartDashboard::PutNumber("pivot speed", intakePivot.Get());
+    frc::SmartDashboard::PutNumber("Pivot built in Pos", intakePivotEncoder.GetPosition());
+    frc::SmartDashboard::PutNumber("Pivot absolute Pos", intakePivotEncoder2.GetDistance());
+    frc::SmartDashboard::PutNumber("Changed pos", absoluteToREV(intakePivotEncoder2.GetDistance()));
+    frc::SmartDashboard::PutNumber("pivot speed", intakePivot.Get());
+
+    frc::SmartDashboard::PutNumber("roller speed", intakeRollers.Get());
+    frc::SmartDashboard::PutBoolean("manual", robotData.controlData.manualMode);
+
+    frc::SmartDashboard::PutNumber("tick count", tickCount);
+
 
 }
 
@@ -209,12 +152,12 @@ void Intake::rollersInit(){
 
     intakeRollers.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
 
-    intakeRollers_pidController.SetP(pkP);
-    intakeRollers_pidController.SetI(pkI);
-    intakeRollers_pidController.SetD(pkD);
-    intakeRollers_pidController.SetIZone(pkIz);
-    intakeRollers_pidController.SetFF(pkFF);
-    intakeRollers_pidController.SetOutputRange(pkMinOutput, pkMaxOutput);
+    // intakeRollers_pidController.SetP(pkP);
+    // intakeRollers_pidController.SetI(pkI);
+    // intakeRollers_pidController.SetD(pkD);
+    // intakeRollers_pidController.SetIZone(pkIz);
+    // intakeRollers_pidController.SetFF(pkFF);
+    // intakeRollers_pidController.SetOutputRange(pkMinOutput, pkMaxOutput);
 
     intakeRollers.SetSmartCurrentLimit(45);
 
@@ -228,19 +171,21 @@ void Intake::pivotInit(){
 
     intakePivot.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
 
-    intakePivot_pidController.SetP(0.048,0);
+    //down
+    intakePivot_pidController.SetP(0.74,0);
     intakePivot_pidController.SetI(0,0);
-    intakePivot_pidController.SetD(0.025,0);
+    intakePivot_pidController.SetD(0.2,0);
     intakePivot_pidController.SetIZone(0,0);
     intakePivot_pidController.SetFF(0,0);
-    intakePivot_pidController.SetOutputRange(-1, 1,0);
+    intakePivot_pidController.SetOutputRange(-0.205, 0.16,0);
 
-    intakePivot_pidController.SetP(0.042,1);
+    //up
+    intakePivot_pidController.SetP(0.99,1);
     intakePivot_pidController.SetI(0,1);
-    intakePivot_pidController.SetD(0.03,1);
+    intakePivot_pidController.SetD(0.3,1);
     intakePivot_pidController.SetIZone(0,1);
     intakePivot_pidController.SetFF(0,1);
-    intakePivot_pidController.SetOutputRange(-1, 1,1);
+    intakePivot_pidController.SetOutputRange(-.2, 0.15,1);
 
     intakePivot.SetSmartCurrentLimit(45);
 }
@@ -262,6 +207,10 @@ void Intake::mecanumInit(){
     intakeMecanum.SetSmartCurrentLimit(45);
 
    
+}
+
+double Intake::absoluteToREV(double value){
+    return (value*-66 + 38.1);
 }
 
 

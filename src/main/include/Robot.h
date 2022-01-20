@@ -10,7 +10,7 @@
 #include "RobotData.h"
 
 #include "subsystems/Drivebase.h"
-// #include "subsystems/Shooter.h"
+#include "subsystems/Shooter.h"
 #include "subsystems/Indexer.h"
 #include "subsystems/Climb.h"
 #include "subsystems/Intake.h"
@@ -47,6 +47,6 @@ private:
     Drivebase drivebase{};
     Intake intake{};
     Indexer indexer{};
-    // Shooter shooter{};
+    Shooter shooter{};
     Climb climb{};
 };

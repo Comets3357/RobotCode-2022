@@ -24,7 +24,6 @@ struct ControlData
     //intake:
     double mIntakeDown; 
     bool mIntakeUp; //brings the intake down (default is up) MANUAL
-
     //brings the intake down (default is up) MANUAL
     double mIntakeRollers; //runs intake forwards MANUAL
     double mzeroing; //runs intake rollers backwards MANUAL

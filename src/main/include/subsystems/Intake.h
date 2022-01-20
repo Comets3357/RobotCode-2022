@@ -34,6 +34,7 @@ private:
     void rollersInit();
     void pivotInit();
     void mecanumInit();
+    double absoluteToREV(double value);
 
 
     double intakePivotSpeed = 0.1;
@@ -41,7 +42,7 @@ private:
     double intakeMecanumSpeed = 0.2;
     double intakeRollersEjectSpeed = 0.5;
     double armDownPosition = 0.428;
-    int x = 0;
+    int tickCount = 0;
 
     //CHANGE MOTOr ID STUFF  (just outline )
     rev::CANSparkMax intakeRollers = rev::CANSparkMax(intakeRollerID, rev::CANSparkMax::MotorType::kBrushless);

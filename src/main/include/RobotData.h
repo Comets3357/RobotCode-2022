@@ -32,5 +32,5 @@ struct RobotData
     IntakeData intakeData;
     IndexerData indexerData;
     ClimbData climbData;
-    // ShooterData shooterData;
+    ShooterData shooterData;
 };
