@@ -58,7 +58,7 @@ void Indexer::DisabledInit()
     indexerWheel.Set(0);
 }
 
-// updates encoder and gyro values
+// // updates encoder and gyro values
 void Indexer::updateData(const RobotData &robotData, IndexerData &indexerData)
 {
     
