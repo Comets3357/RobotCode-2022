@@ -55,11 +55,11 @@ void Drivebase::RobotInit()
     frc::SmartDashboard::PutData("Field", &field);
 }
 
-void Drivebase::TeleopInit() {
-    resetOdometry(0, 0, 0);
+void Drivebase::TeleopInit(const RobotData &robotData) {
+    resetOdometry(0, 0, 1, 0, robotData);
 }
 
-void Drivebase::AutonomousInit(AutonData &autonData) {
+void Drivebase::AutonomousInit(const RobotData &robotData, AutonData &autonData) {
     // every time autonomous is enabled
 
     // wpi::outs() << "autonomous INIT!";
@@ -71,7 +71,9 @@ void Drivebase::AutonomousInit(AutonData &autonData) {
     frc::SmartDashboard::PutNumber("traj test", autonData.trajectory.TotalTime().to<double>());
 
     // resetOdometry(3.167, 7.492, robotData);
-    resetOdometry(1.49, 0.65, 0);
+    resetOdometry(11.473, 1, 1.821, -0.668, robotData);
+    // resetOdometry()
+    // resetOdometry(0, 1, 1, 0, robotData);
 
     frc::SmartDashboard::PutNumber("trajX", 0);
     frc::SmartDashboard::PutNumber("trajY", 0);
@@ -104,10 +106,10 @@ void Drivebase::DisabledInit()
     
     dbL.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
     dbR.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
-    dbL.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
-    dbLF.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
-    dbR.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
-    dbRF.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
+    dbL.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
+    dbLF.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
+    dbR.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
+    dbRF.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
 }
 
 // updates encoder and gyro values
@@ -283,6 +285,7 @@ void Drivebase::updateOdometry(const RobotData &robotData, DrivebaseData &driveb
     frc::SmartDashboard::PutNumber("libYMeters", libYMeters);
 
     drivebaseData.currentPose = getPose(libXMeters, libYMeters, currentRadians.to<double>());
+    frc::SmartDashboard::PutNumber("odometryRadians", odometry.GetPose().Rotation().Radians().to<double>());
 }
 
 /**
@@ -330,7 +333,7 @@ void Drivebase::resetOdometry(double x, double y, const RobotData &robotData) {
 }
 
 // reset odometry to any double x, y, deg
-void Drivebase::resetOdometry(double x, double y, double deg) {
+void Drivebase::resetOdometry(double x, double y, double deg, const RobotData &robotData) {
     const units::meter_t meterX{x};
     const units::meter_t meterY{y};
 
@@ -342,6 +345,42 @@ void Drivebase::resetOdometry(double x, double y, double deg) {
     const frc::Rotation2d resetRotation{radianYaw};
     const frc::Pose2d resetPose{meterX, meterY, radianYaw};
     odometry.ResetPosition(resetPose, resetRotation);
+
+    zeroEncoders();
+}
+
+// reset odometry to any double x, y, tanX, tanY
+void Drivebase::resetOdometry(double x, double y, double tanX, double tanY, const RobotData &robotData) {
+    const units::meter_t meterX{x};
+    const units::meter_t meterY{y};
+
+    const double pi = 2 * std::acos(0.0);
+
+    frc::SmartDashboard::PutNumber("std::tan (tanY / tanX)", (tanY / tanX));
+    frc::SmartDashboard::PutNumber("std::tan (tanY / tanX)", std::tan(tanY / tanX));
+    frc::SmartDashboard::PutString("what the", "heck");
+
+    units::radian_t radianYaw{M_PI};
+    if (tanX != 0) {
+        units::radian_t blockScopeAngle{std::tan(tanY / tanX)};
+        radianYaw = blockScopeAngle;
+    } else if (tanY < 0) {
+        units::radian_t blockScopeAngle{ 3 * M_PI / 2 };
+        radianYaw = blockScopeAngle;
+    }
+    // frc::SmartDashboard::PutNumber("Pi", pi);
+    // frc::SmartDashboard::PutNumber("radian yaw", robotData.gyroData.rawYaw / 180 * pi);
+
+    // units::radian_t radianYaw{0};
+
+    frc::SmartDashboard::PutNumber("radianYaw", radianYaw.to<double>());
+
+    const units::radian_t gyroRadians{robotData.gyroData.rawYaw / 180 * pi};
+    frc::SmartDashboard::PutNumber("RORaw Yaw", robotData.gyroData.rawYaw);
+
+    const frc::Rotation2d gyroRotation{gyroRadians};
+    const frc::Pose2d resetPose{meterX, meterY, radianYaw};
+    odometry.ResetPosition(resetPose, gyroRotation);
 
     zeroEncoders();
 }

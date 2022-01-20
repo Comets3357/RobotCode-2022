@@ -48,8 +48,8 @@ class Drivebase
 
 public:
     void RobotInit();
-    void TeleopInit();
-    void AutonomousInit(AutonData &autonData);
+    void TeleopInit(const RobotData &robotData);
+    void AutonomousInit(const RobotData &robotData, AutonData &autonData);
     void RobotPeriodic(const RobotData &robotData, DrivebaseData &drivebaseData);
     void DisabledInit();
 
@@ -66,7 +66,8 @@ private:
     void resetOdometry(double resetAngle);
     void resetOdometry();
     void resetOdometry(double x, double y, const RobotData &robotData);
-    void resetOdometry(double x, double y, double deg);
+    void resetOdometry(double x, double y, double deg, const RobotData &robotData);
+    void resetOdometry(double x, double y, double tanX, double tanY, const RobotData &robotData);
     void zeroEncoders();
     void setVelocity(double leftVel, double rightVel);
     frc::Pose2d getPose(double x, double y, double deg);

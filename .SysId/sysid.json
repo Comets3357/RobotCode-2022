@@ -1,6 +1,6 @@
 {
   "SysId": {
-    "Analysis Type": "Drivetrain",
+    "Analysis Type": "General Mechanism",
     "AnalyzerJSONLocation": "C:\\Users\\Travis-Chan Laptop\\Desktop\\COMETS\\Software\\RobotCode-2022\\sysid_data20220118-191009.json",
     "NetworkTables Settings": {
       "serverTeam": "3357"

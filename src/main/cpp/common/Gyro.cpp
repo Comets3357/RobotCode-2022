@@ -7,13 +7,19 @@ void Gyro::RobotInit() {
     // frc::SmartDashboard::PutString("lskfjl", "Calibrated1");
 }
 
-void Gyro::TeleopInit() {
+void Gyro::TeleopInit(GyroData &gyroData) {
     gyro.ZeroYaw();
+    gyroData.rawYaw = 0;
+    gyroData.rawPitch = 0;
+    gyroData.rawRoll = 0;
     // frc::SmartDashboard::PutString("asfljkdfdf", "Zeroed");
 }
 
-void Gyro::AutonomousInit() {
+void Gyro::AutonomousInit(GyroData &gyroData) {
     gyro.ZeroYaw();
+    gyroData.rawYaw = 0;
+    gyroData.rawPitch = 0;
+    gyroData.rawRoll = 0;
     // frc::SmartDashboard::PutString("asfljkdfdf", "Zeroed");
 }
 
