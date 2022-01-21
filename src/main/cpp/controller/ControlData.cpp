@@ -47,7 +47,7 @@ void Controller::updateControlData(const ControllerData &controllerData, Control
     //INTAKE::
     controlData.mIntakeDown = controllerData.sLYStick;
     //controlData.mIntakeUp = controllerData.sYBtn;
-    controlData.mIntakeRollers = controllerData.sRYStick;
+    controlData.mIntakeRollers = controllerData.sBBtn;
     controlData.mzeroing = controllerData.sYBtn;
     controlData.saIntake = controllerData.sRBumper;
     controlData.saIntakeBackward = controllerData.sABtn;
@@ -57,14 +57,16 @@ void Controller::updateControlData(const ControllerData &controllerData, Control
     controlData.mHood = controllerData.sRYStick;
     controlData.mFlyWheel = controllerData.sABtn;
     controlData.saShooting = controllerData.sXBtn;
-    //controlData.launchPadShot = controllerData.sRCenterBtn;
-    //controlData.hubShot = controllerData.sLCenterBtn;
-    //controlData.wrongBall = controllerData.sYBtn;
+    //controlData.finalShoot;
+    // controlData.launchPadShot = controllerData.sRCenterBtn;
+    // controlData.hubShot = controllerData.sLCenterBtn;
+    // controlData.wrongBall = controllerData.sYBtn;
 
   
     //INDEXER:
-    controlData.mIndexerBackwards = controllerData.sBBtn;
+    //controlData.mIndexerBackwards = controllerData.sBBtn;
     controlData.mIndexer = controllerData.sXBtn;
     controlData.saEjectBalls = controllerData.sBBtn;
+
   
 }

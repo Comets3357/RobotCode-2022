@@ -25,17 +25,39 @@ void Indexer::RobotPeriodic(const RobotData &robotData, IndexerData &indexerData
 
 void Indexer::semiAuto(const RobotData &robotData, IndexerData &indexerData){
     if(robotData.controlData.saEjectBalls){ //run belt and wheel backwards
-        indexerBelt.Set(-mIndexerBeltSpeed);
-        indexerWheel.Set(-mIndexerWheelSpeed);
-    }else if(robotData.controlData.saIntake){ //if intaking run belt and wheels forward
-        //once the first prox sensor senses first ball, run indexer (ball count@1)
-            //index the first ball until the first prox sensor runs false
-                //intake second ball, once the first prox sensor senses second ball run indexer until first ball hits second sensor (ball count@2)
-        indexerBelt.Set(saIndexerBeltIntakeSpeed);
-        indexerWheel.Set(saIndexerWheelIntakeSpeed);
-    }else{
-        indexerBelt.Set(0);
-        indexerWheel.Set(0);
+        indexerBelt.Set(-IndexerBeltSpeed);
+        indexerWheel.Set(-IndexerWheelSpeed);
+    }else if(robotData.shooterData.readyShoot && robotData.controlData.finalShoot){
+        indexerData.ballCount = 0;
+        indexerBelt.Set(IndexerBeltSpeed);
+        indexerWheel.Set(IndexerWheelSpeed);
+
+    }else if(robotData.shooterData.wrongBallReady){
+        indexerBelt.Set(IndexerBeltSpeed);
+        indexerWheel.Set(IndexerWheelSpeed);
+
+    }else if(robotData.controlData.saIntake){ // you are intaking
+        if(indexerData.ballCount == 0){
+            if(!proxIndexerBottom.Get()) { // false if it senses somthing
+                if (proxIndexerMiddle.Get()){ // until mid sensor is tripped, run both belt and wheel
+                    indexerBelt.Set(saIndexerBeltIntakeSpeed);
+                    indexerWheel.Set(saIndexerWheelIntakeSpeed);
+                } else if (!proxIndexerMiddle.Get()){ // when mid sensor is tripped, stop belt
+                    indexerBelt.Set(saIndexerBeltIntakeSpeed);
+                    indexerWheel.Set(saIndexerWheelIntakeSpeed);
+                }
+            }
+            if(proxIndexerMiddle.Get()) { // UNTIL mid sensor is tripped
+                if (!proxIndexerBottom.Get()){ // if bottom sensor is tripped run both wheel and belt
+                    indexerBelt.Set(saIndexerBeltIntakeSpeed);
+                    indexerWheel.Set(saIndexerWheelIntakeSpeed);
+                } 
+            }
+        } else if (indexerData.ballCount == 1){
+
+        } else if (indexerData.ballCount ==2){
+
+        }
     }
 }
 
