@@ -37,13 +37,22 @@ void Drivebase::RobotInit()
     dbR.ConfigStatorCurrentLimit(StatorCurrentLimitConfiguration(true, 45, 50, 1.0));
     dbRF.ConfigStatorCurrentLimit(StatorCurrentLimitConfiguration(true, 45, 50, 1.0));
 
-    // PIDs
-    dbL.Config_kF(0, 0.032514);
+    // PIDs for blue db
+    /* dbL.Config_kF(0, 0.032514);
     dbL.Config_kP(0, 0.038723);
     dbL.Config_kD(0, 0);
 
     dbR.Config_kF(0, 0.032514);
     dbR.Config_kP(0, 0.038723);
+    dbR.Config_kD(0, 0); */
+
+    // PIDs for 2022
+    dbL.Config_kF(0, 0.073067);
+    dbL.Config_kP(0, 0.19673);
+    dbL.Config_kD(0, 0);
+
+    dbR.Config_kF(0, 0.073067);
+    dbR.Config_kP(0, 0.19673);
     dbR.Config_kD(0, 0);
 
 
@@ -71,7 +80,8 @@ void Drivebase::AutonomousInit(const RobotData &robotData, AutonData &autonData)
     frc::SmartDashboard::PutNumber("traj test", autonData.trajectory.TotalTime().to<double>());
 
     // resetOdometry(3.167, 7.492, robotData);
-    resetOdometry(11.473, 1, 1.821, -0.668, robotData);
+    // resetOdometry(9.25, 3.71, 1.821, -0.668, robotData);
+    resetOdometry(0, 0, 1, 0, robotData);
     // resetOdometry()
     // resetOdometry(0, 1, 1, 0, robotData);
 
@@ -106,10 +116,10 @@ void Drivebase::DisabledInit()
     
     dbL.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
     dbR.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
-    dbL.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
-    dbLF.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
-    dbR.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
-    dbRF.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
+    dbL.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
+    dbLF.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
+    dbR.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
+    dbRF.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
 }
 
 // updates encoder and gyro values
@@ -362,7 +372,7 @@ void Drivebase::resetOdometry(double x, double y, double tanX, double tanY, cons
 
     units::radian_t radianYaw{M_PI};
     if (tanX != 0) {
-        units::radian_t blockScopeAngle{std::tan(tanY / tanX)};
+        units::radian_t blockScopeAngle{std::atan(tanY / tanX)};
         radianYaw = blockScopeAngle;
     } else if (tanY < 0) {
         units::radian_t blockScopeAngle{ 3 * M_PI / 2 };

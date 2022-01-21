@@ -92,11 +92,12 @@ private:
     frc::Field2d field;
 
     // for 6 in wheels
-    const double mpsToTpds = (6.0 / 0.1524) * (1 / (6.0 * M_PI)) * (64.0 / 8.0) * (2048.0) * (0.1);
-    const double metersToTicks = (6.0 / 0.1524) * (1 / (6.0 * M_PI)) * (64.0 / 8.0) * (2048.0);
+    // const double mpsToTpds = (6.0 / 0.1524) * (1 / (6.0 * M_PI)) * (64.0 / 8.0) * (2048.0) * (0.1);
+    // const double metersToTicks = (6.0 / 0.1524) * (1 / (6.0 * M_PI)) * (64.0 / 8.0) * (2048.0);
 
     // for 4 in wheels
-    
+    const double mpsToTpds = (4.0 / 0.1016) * (1 / (4.0 * M_PI)) * (44.0 / 9.0) * (2048.0) * (0.1);
+    const double metersToTicks = (4.0 / 0.1016) * (1 / (4.0 * M_PI)) * (44.0 / 9.0) * (2048.0);
 
     // forwards are leads
     ctre::phoenix::motorcontrol::can::TalonFX dbL{leftLeadDeviceID};
