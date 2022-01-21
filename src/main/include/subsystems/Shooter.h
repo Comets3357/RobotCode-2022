@@ -10,13 +10,13 @@
 #include <rev/SparkMaxLimitSwitch.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 
-
 struct RobotData;
 
 struct ShooterData
 {
     bool readyShoot;
     int targetVel;
+    bool wrongBallReady;
 };
 
 class Shooter
@@ -36,7 +36,6 @@ class Shooter
         void shooterWheelFollowInit();
         void shooterHoodInit();
 
-        void setShooterPID(rev::SparkMaxPIDController motor, int pidSlot, double p, double i, double d, double ff);
         double getHoodPos();
         double getWheelPos();
         double getWheelVel();

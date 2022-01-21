@@ -3,9 +3,9 @@
 
 void Shooter::RobotInit()
 {
-    shooterWheelLeadInit();
-    shooterWheelFollowInit();
-    shooterHoodInit();
+    Shooter::shooterWheelLeadInit();
+    Shooter::shooterWheelFollowInit();
+    Shooter::shooterHoodInit();
 
     shooterWheelLead.Set(0);
     shooterHood.Set(0);
@@ -37,17 +37,52 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
         //shooterWheelLead_pidController.SetReference(3400, rev::ControlType::kVelocity);
         setWheel(0.6);
 
-        //once the shooter has high enough velocity and is aimed correctly tell robot to begin shooting (start indexer)
+        //once the shooter has high enough velocity (and is aimed correctly tell robot to begin shooting)
         if ((getWheelVel() > robotData.shooterData.targetVel) /**&& (std::abs(getTurretPos() - (turretSnapshot + robotData.calcTurretPos)) <= 1) && (std::abs(getHoodPos() - robotData.calcHoodPos) <= 2)**/ ){
             shooterData.readyShoot = true;
         }else{
             shooterData.readyShoot = false;
         }
         hoodZero = false;
+    }else if(robotData.controlData.launchPadShot){
+        shooterWheelLead_pidController.SetReference(2000, rev::ControlType::kVelocity);
+        shooterHood_pidController.SetReference(4, rev::ControlType::kPosition);
+
+        //once the shooter has high enough velocity (and is aimed correctly tell robot to begin shooting)
+        if ((getWheelVel() > robotData.shooterData.targetVel) && (std::abs(getHoodPos()-4) <= .5)){
+            shooterData.readyShoot = true;
+        }else{
+            shooterData.readyShoot = false;
+        }
+        hoodZero = false;
+
+    }else if(robotData.controlData.hubShot){
+        shooterWheelLead_pidController.SetReference(1200, rev::ControlType::kVelocity);
+        shooterHood_pidController.SetReference(4, rev::ControlType::kPosition);
+
+        //once the shooter has high enough velocity (and is aimed correctly tell robot to begin shooting)
+        if ((getWheelVel() > robotData.shooterData.targetVel) && (std::abs(getHoodPos()-4) <= .5)){
+            shooterData.readyShoot = true;
+        }else{
+            shooterData.readyShoot = false;
+        }
+        hoodZero = false;
+    }else if(robotData.controlData.wrongBall){
+        shooterWheelLead_pidController.SetReference(1200, rev::ControlType::kVelocity);
+        shooterHood_pidController.SetReference(2, rev::ControlType::kPosition);
+
+        //once the shooter has high enough velocity (and is aimed correctly tell robot to begin shooting)
+        if ((getWheelVel() > robotData.shooterData.targetVel)){
+            shooterData.wrongBallReady = true;
+        }else{
+            shooterData.wrongBallReady = false;
+        }
+        hoodZero = false;
 
     }else{
 
         shooterData.readyShoot = false;
+        shooterData.wrongBallReady = false;
         if(!hoodZero){
             if(getHoodPos() > 4){
                 shooterHood_pidController.SetReference(4, rev::ControlType::kPosition);
@@ -76,15 +111,6 @@ void Shooter::manual(const RobotData &robotData, ShooterData &shooterData){
     }
 }
 
-void Shooter::setShooterPID(rev::SparkMaxPIDController motor, int pidSlot, double p, double i, double d, double ff)
-{
-    motor.SetP(p, pidSlot);
-    motor.SetI(i, pidSlot);
-    motor.SetD(d, pidSlot);
-    motor.SetFF(ff, pidSlot);
-}
-
-
 void Shooter::DisabledInit()
 {
     shooterHood.Set(0);
@@ -97,6 +123,34 @@ void Shooter::updateData(const RobotData &robotData, ShooterData &shooterData)
 {
     frc::SmartDashboard::PutNumber("shooter wheel vel", shooterWheelLeadEncoder.GetVelocity());
 
+}
+
+void Shooter::setHoodPos(double pos){
+    shooterHoodEncoder.SetPosition(pos);
+}
+
+double Shooter::getHoodPos(){
+    return shooterHoodEncoder.GetPosition();
+}
+
+double Shooter::getWheelPos(){
+    return shooterWheelLeadEncoder.GetPosition();
+} 
+
+bool Shooter::getHoodLimitSwitch(){
+    return hoodReverseLimit.Get();
+}
+
+void Shooter::setHood(double power){
+    shooterHood.Set(power);
+}
+
+void Shooter::setWheel(double power){
+    shooterWheelLead.Set(power);
+}
+
+double Shooter::getWheelVel(){
+    return shooterWheelLeadEncoder.GetVelocity();
 }
 
 void Shooter::shooterWheelLeadInit(){
