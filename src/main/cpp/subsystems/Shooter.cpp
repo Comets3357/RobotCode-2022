@@ -200,33 +200,7 @@ void Shooter::shooterHoodInit(){
     shooterHood.SetSmartCurrentLimit(45);
 }
 
-void Shooter::setHoodPos(double pos){
-    shooterHoodEncoder.SetPosition(pos);
-}
 
-double Shooter::getHoodPos(){
-    return shooterHoodEncoder.GetPosition();
-}
-
-double Shooter::getWheelPos(){
-    return shooterWheelLeadEncoder.GetPosition();
-} 
-
-bool Shooter::getHoodLimitSwitch(){
-    return hoodReverseLimit.Get();
-}
-
-void Shooter::setHood(double power){
-    shooterHood.Set(power);
-}
-
-void Shooter::setWheel(double power){
-    shooterWheelLead.Set(power);
-}
-
-double Shooter::getWheelVel(){
-    return shooterWheelLeadEncoder.GetVelocity();
-}
 
 
 
