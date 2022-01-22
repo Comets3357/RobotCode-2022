@@ -15,6 +15,7 @@
 #include "subsystems/Climb.h"
 #include "subsystems/Intake.h"
 #include "common/Limelight.h"
+#include "common/VisionLookup.h"
 #include "common/OtherComponents.h"
 
 //Robot class inherits from TimedRobot
@@ -40,6 +41,7 @@ private:
     Controller controller{};
     Gyro gyro{};
     Limelight limelight{};
+    VisionLookup visionLookup{};
     OtherComponents otherComponents{};
     Timer timer{};
 

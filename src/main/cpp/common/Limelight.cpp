@@ -69,7 +69,7 @@ int Limelight::getPipeline(double verticalOffset)
     return pipeline;
 }
 
-void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelightData)
+void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelightData, VisionLookup &visionLookup)
 {
 
     std::shared_ptr<nt::NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("limelight"); //opens up the networktable
@@ -81,5 +81,54 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     limelightData.validTarget = table->GetNumber("tv", 0.0);
 
     table->PutNumber("pipeline", getPipeline(robotData.limelightData.yOffset)); //set the pipeline based on y offset
+
+    limelightData.desiredHoodPos = getHoodPOS(visionLookup, limelightData);
+
+    frc::SmartDashboard::PutNumber("limelight y offset", robotData.limelightData.yOffset);
+    frc::SmartDashboard::PutNumber("limelight x offset", robotData.limelightData.xOffset);
+
 }
+
+/**
+ * @return the desired hood position using lookup table
+ */
+double Limelight::getHoodPOS(VisionLookup &visionLookup, LimelightData &limelightData){
+    double distance = distanceToTarget();
+    double orignalDistance = distance;
+    limelightData.lowerVal = std::floor(distance/12); //lower value in ft
+    limelightData.upperVal = limelightData.lowerVal +1; //upper value in ft
+
+    //use lookup table to get the desired hood positions
+    limelightData.lowerValPos = visionLookup.getValue(limelightData.lowerVal);
+    limelightData.upperValPos = visionLookup.getValue(limelightData.upperVal);
+
+    //if either of the int values are higher than the highest lookup table value,
+    //set the values to the highest lookup table value
+    if(limelightData.lowerVal > visionLookup.highestVal()){
+        limelightData.lowerVal = visionLookup.highestVal();
+    }
+
+    if(limelightData.upperVal > visionLookup.highestVal()){
+        limelightData.upperVal = visionLookup.highestVal();
+    }
+
+    //get the slope of the line between the upper and lower values
+    double desiredSlope = (limelightData.upperValPos - limelightData.lowerValPos)/12; 
+
+    //multiply the difference in the distance and floored value by the slope to get desired position of hood for that small distance 
+    //then add that to the desired position of the lower floored value
+    return desiredSlope*(orignalDistance - limelightData.lowerVal*12)+limelightData.lowerValPos;
+
+}
+
+/**
+ * @return distance from limelight to target in inches
+ */
+double Limelight::distanceToTarget(){ 
+    double radianAngle = (getVerticalOffset()+limelightAngle)*(3.141592653589793238463/180);
+    return((hubHeight-limelightMount)/std::tan(radianAngle));
+}
+
+
+
 

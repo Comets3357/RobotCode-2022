@@ -34,6 +34,13 @@ static const double
 static const int
     climbLiftID = 41;
 
+//limelight:
+static const double
+    hubHeight = 104,
+    limelightMount = 37,
+    limelightAngle = 37.75;
+
+
 
 
 

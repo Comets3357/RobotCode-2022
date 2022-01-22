@@ -37,9 +37,11 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
 
         //shooterWheelLead_pidController.SetReference(3400, rev::ControlType::kVelocity);
         setWheel(0.6);
+        shooterHood_pidController.SetReference(robotData.limelightData.desiredHoodPos, rev::ControlType::kPosition);
+
 
         //once the shooter has high enough velocity (and is aimed correctly tell robot to begin shooting)
-        if ((getWheelVel() > robotData.shooterData.targetVel) /**&& (std::abs(getTurretPos() - (turretSnapshot + robotData.calcTurretPos)) <= 1) && (std::abs(getHoodPos() - robotData.calcHoodPos) <= 2)**/ ){
+        if ((getWheelVel() > robotData.shooterData.targetVel) && (std::abs(getHoodPos() - robotData.limelightData.desiredHoodPos) <= 2) ){
             shooterData.readyShoot = true;
         }else{
             shooterData.readyShoot = false;

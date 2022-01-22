@@ -5,6 +5,7 @@
 #include "common/OtherComponents.h"
 #include "common/Gyro.h"
 #include "common/Limelight.h"
+#include "common/VisionLookup.h"
 #include "common/Timer.h"
 
 #include "auton/Auton.h"
@@ -24,6 +25,7 @@ struct RobotData
     OtherComponentsData otherComponentsData;
     GyroData gyroData;
     LimelightData limelightData;
+    VisionLookup visionLookupData;
     TimerData timerData;
 
     AutonData autonData;
