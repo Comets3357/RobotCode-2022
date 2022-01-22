@@ -26,6 +26,7 @@ struct AutonData
 {
     AutonSelect autonSelect = autonSelect_barrelRace;
     frc::Trajectory trajectory;
+    int autonStep = -1; // starts at -1 because getTrajectoryFile() increments
     std::vector<std::string> pathGroup;
 };
 

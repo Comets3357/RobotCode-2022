@@ -6,17 +6,19 @@ void Auton::AutonomousInit(AutonData &autonData)
     // get selected auton from smartdashboard
     // import pathweaver json
     fs::path deployDirectory = frc::filesystem::GetDeployDirectory();
-    fs::path pathDirectory = deployDirectory / "paths" / "turnToShoot2.wpilib.json";
-    frc::Trajectory trajectory = frc::TrajectoryUtil::FromPathweaverJson(pathDirectory.string());
+    // fs::path pathDirectory = deployDirectory / "paths" / "barrelRace3.wpilib.json";
+    // frc::Trajectory trajectory = frc::TrajectoryUtil::FromPathweaverJson(pathDirectory.string());
 
-    frc::SmartDashboard::PutString("deployDirectory.string()", deployDirectory.string());
-    wpi::outs() << "done in auton.cpp";
+    // frc::SmartDashboard::PutString("deployDirectory.string()", deployDirectory.string());
+    // wpi::outs() << "done in auton.cpp";
 
+    // because getTrajectoryFile() steps autonStep
+    autonData.autonStep = -1;
 
-    fs::path autonDirectory = deployDirectory / "Autos" / "barrelRace";
+    fs::path autonDirectory = deployDirectory / "Autos" / "sequence";
     frc::SmartDashboard::PutString("autonDiredctory", autonDirectory.string());
 
-    std::vector<std::string> pathGroup;
+    // std::vector<std::string> pathGroup;
 
     std::ifstream inFile/* ("file.txt") */;
     inFile.open(autonDirectory.string());
@@ -27,16 +29,23 @@ void Auton::AutonomousInit(AutonData &autonData)
         std::string str;
         while (getline(inFile, str)) {
             frc::SmartDashboard::PutString("str", str);
-            pathGroup.push_back(str);
+            str = str.substr(0, str.length() - 1);  // get rid of hidden newline from file line read
+            autonData.pathGroup.push_back(str);
         }
     }
 
-    /* for (int i = 0; i < pathGroup.size(); i++) {
-        frc::SmartDashboard::PutString(std::to_string(i), pathGroup[i]);
-    } */
+    for (int i = 0; i < autonData.pathGroup.size(); i++) {
+        frc::SmartDashboard::PutString(std::to_string(i), autonData.pathGroup[i]);
+    }
 
-    autonData.trajectory = trajectory;
+    frc::SmartDashboard::PutString("Auton Auto Init", "done");
+    frc::SmartDashboard::PutString("autonData.pathGroup[autonData.pathGroup[0]", autonData.pathGroup[0]);
+    // frc::SmartDashboard::PutString("autonData.pathGroup[autonData.autonStep]", autonData.pathGroup[autonData.autonStep]);
+
+    // autonData.trajectory = trajectory;
     // autonData.pathGroup = &pathGroup;
+
+    // autonData.pathGroup = pathGroup;
 }
 
 void Auton::AutonomousPeriodic(const RobotData &robotData, AutonData &autonData, ControllerData &controllerData)

@@ -15,7 +15,7 @@ class Timer
 public:
     void RobotInit(TimerData &timerData);
     void RobotPeriodic(TimerData &timerData);
-    void DisabledInit();
+    void DisabledInit(TimerData &timerData);
 
 private:
     frc::Timer timer{};

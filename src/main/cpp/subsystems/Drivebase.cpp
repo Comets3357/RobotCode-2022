@@ -38,22 +38,22 @@ void Drivebase::RobotInit()
     dbRF.ConfigStatorCurrentLimit(StatorCurrentLimitConfiguration(true, 45, 50, 1.0));
 
     // PIDs for blue db
-    /* dbL.Config_kF(0, 0.032514);
+    dbL.Config_kF(0, 0.032514);
     dbL.Config_kP(0, 0.038723);
     dbL.Config_kD(0, 0);
 
     dbR.Config_kF(0, 0.032514);
     dbR.Config_kP(0, 0.038723);
-    dbR.Config_kD(0, 0); */
+    dbR.Config_kD(0, 0);
 
     // PIDs for 2022
-    dbL.Config_kF(0, 0.073067);
+    /* dbL.Config_kF(0, 0.073067);
     dbL.Config_kP(0, 0.19673);
     dbL.Config_kD(0, 0);
 
     dbR.Config_kF(0, 0.073067);
     dbR.Config_kP(0, 0.19673);
-    dbR.Config_kD(0, 0);
+    dbR.Config_kD(0, 0); */
 
 
     dbL.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
@@ -77,22 +77,23 @@ void Drivebase::AutonomousInit(const RobotData &robotData, AutonData &autonData)
     frc::SmartDashboard::PutString("db auton init", "done");
 
     // get trajectory from auton's pointer
-    trajectory = (autonData.trajectory);
-    frc::SmartDashboard::PutNumber("traj test", autonData.trajectory.TotalTime().to<double>());
+    getTrajectoryFile(robotData, autonData);
+
+    // frc::SmartDashboard::PutNumber("traj test", robotData.autonData.trajectory.TotalTime().to<double>());
 
     // resetOdometry(3.167, 7.492, robotData);
     // resetOdometry(9.25, 3.71, 1.821, -0.668, robotData);
     // resetOdometry(0, 0, 1, 0, robotData);
     // resetOdometry(0, 6.658, 1, 0, robotData);
     resetOdometry(3, 1, 0, 1, robotData);
-    // resetOdometry(0, 3.658, 1, 0, robotData); 
+    // resetOdometry(0, 3.658, 1, 0, robotData);
     // resetOdometry(8.261, 1, 0, 0.5, robotData);
 
     frc::SmartDashboard::PutNumber("trajX", 0);
     frc::SmartDashboard::PutNumber("trajY", 0);
 }
 
-void Drivebase::RobotPeriodic(const RobotData &robotData, DrivebaseData &drivebaseData)
+void Drivebase::RobotPeriodic(const RobotData &robotData, DrivebaseData &drivebaseData, AutonData &autonData)
 {
     updateData(robotData, drivebaseData);
 
@@ -109,7 +110,7 @@ void Drivebase::RobotPeriodic(const RobotData &robotData, DrivebaseData &driveba
     }
     else if (frc::DriverStation::IsAutonomous())
     {
-        autonControl(robotData);
+        autonControl(robotData, autonData);
     }
 
 }
@@ -192,7 +193,7 @@ void Drivebase::teleopControl(const RobotData &robotData)
     dbR.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, tempRDrive);
 }
 
-void Drivebase::autonControl(const RobotData &robotData) {
+void Drivebase::autonControl(const RobotData &robotData, AutonData &autonData) {
     // sample the desired pos based on time from trajectory object
     // get chassis speeds from ramsete controller, comparing current pos w/ desired pos
     // translate chassis speeds to wheel speeds w/ toWheelSPeeds from kinematics using rate of turn and linear speed
@@ -203,14 +204,21 @@ void Drivebase::autonControl(const RobotData &robotData) {
 
     
     
-    units::second_t secSinceEnabled{robotData.timerData.secSinceEnabled};
+    units::second_t sampleSec{robotData.timerData.secSinceEnabled - trajectorySecOffset};
+
+    frc::SmartDashboard::PutNumber("sampleSec", sampleSec.to<double>());
 
     double totalTime = trajectory.TotalTime().to<double>();
     frc::SmartDashboard::PutNumber("trajTotalTime", totalTime);
 
     double lowest;
-    if (secSinceEnabled.to<double>() < totalTime) { lowest = secSinceEnabled.to<double>(); }
-    else { lowest = totalTime; }
+    if (sampleSec.to<double>() < totalTime) {
+        lowest = sampleSec.to<double>();
+    } else {
+        // lowest = totalTime;
+        lowest = sampleSec.to<double>();
+        getTrajectoryFile(robotData, autonData);
+    }
     
     units::second_t lowestSec{lowest};
 
@@ -230,7 +238,7 @@ void Drivebase::autonControl(const RobotData &robotData) {
     double rightWheelSpeed = wheelSpeeds.right.to<double>();
     frc::SmartDashboard::PutNumber("leftWheelSpeed", leftWheelSpeed);        frc::SmartDashboard::PutNumber("rightWheelSpeed", rightWheelSpeed);
 
-    setVelocity(leftWheelSpeed, rightWheelSpeed);
+    // setVelocity(leftWheelSpeed, rightWheelSpeed);
 }
 
 void Drivebase::setSpeeds(const frc::DifferentialDriveWheelSpeeds& speeds) {
@@ -440,4 +448,27 @@ frc::Pose2d Drivebase::getPose(double x, double y, double deg) {
     const frc::Rotation2d rotation{radianYaw};
     frc::Pose2d pose{meterX, meterY, rotation};
     return pose;
+}
+
+void Drivebase::getTrajectoryFile(const RobotData &robotData, AutonData &autonData) {
+
+    autonData.autonStep++;
+
+    frc::SmartDashboard::PutString("getTrajectoryFile()", "b");
+    frc::SmartDashboard::PutNumber("autonStep", autonData.autonStep);
+    frc::SmartDashboard::PutString("robotData.autonData.pathGroup[robotData.autonData.autonStep", autonData.pathGroup[autonData.autonStep]);
+
+    std::string trajectoryName = autonData.pathGroup.at(autonData.autonStep);
+
+    // frc::SmartDashboard::PutString("trajectoryName", trajectoryName);
+
+    fs::path deployDirectory = frc::filesystem::GetDeployDirectory();
+
+    fs::path pathDirectory = deployDirectory / "paths" / (trajectoryName + ".wpilib.json");
+
+    frc::SmartDashboard::PutString("pathDirectory", pathDirectory.string());
+
+    trajectory = frc::TrajectoryUtil::FromPathweaverJson(pathDirectory.string());
+    frc::SmartDashboard::PutNumber("ogSecSE", robotData.timerData.secSinceEnabled);
+    trajectorySecOffset = robotData.timerData.secSinceEnabled;
 }

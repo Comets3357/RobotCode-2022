@@ -17,13 +17,12 @@ void Robot::RobotPeriodic()
     {
         otherComponents.RobotPeriodic(robotData.otherComponentsData);
 
-        drivebase.RobotPeriodic(robotData, robotData.drivebaseData);
+        drivebase.RobotPeriodic(robotData, robotData.drivebaseData, robotData.autonData);
     }
 }
 
 void Robot::AutonomousInit()
 {
-    frc::SmartDashboard::PutString("hello", "world");
     gyro.AutonomousInit(robotData.gyroData);
     auton.AutonomousInit(robotData.autonData);
     drivebase.AutonomousInit(robotData, robotData.autonData);
@@ -49,7 +48,7 @@ void Robot::TeleopPeriodic()
 
 void Robot::DisabledInit()
 {
-    timer.DisabledInit();
+    timer.DisabledInit(robotData.timerData);
 
     drivebase.DisabledInit();
 }

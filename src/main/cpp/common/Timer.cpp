@@ -21,7 +21,8 @@ void Timer::RobotPeriodic(TimerData &timerData)
     timerData.secSinceEnabled = timer.Get().to<double>() - enabledStartPoint;
 }
 
-void Timer::DisabledInit()
+void Timer::DisabledInit(TimerData &timerData)
 {
     enabledSPointSet = false;
+    timerData.secSinceEnabled = 0;
 }
