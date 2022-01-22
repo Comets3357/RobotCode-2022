@@ -27,7 +27,6 @@ void ColorSensor::RobotPeriodic(RobotData &RobotData)
      * sensor.
      */
     frc::SmartDashboard::PutNumber("Red", detectedColor.red);
-    frc::SmartDashboard::PutNumber("Green", detectedColor.green);
     frc::SmartDashboard::PutNumber("Blue", detectedColor.blue);
     frc::SmartDashboard::PutNumber("IR", IR);
     /**
@@ -47,7 +46,16 @@ void ColorSensor::RobotPeriodic(RobotData &RobotData)
 
 
 }
+
 void ColorSensor::Disabled()
 {
 
+}
+
+void semiAutoMode(RobotData &robotData){
+    
+}
+
+frc::Color ColorSensor::detectColor(RobotData &robotData){
+    return m_colorSensor.GetColor();
 }
