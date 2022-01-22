@@ -15,7 +15,6 @@ struct RobotData;
 struct IndexerData
 {
     int ballCount = 0;
-    
 };
 
 class Indexer

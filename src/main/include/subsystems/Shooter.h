@@ -47,7 +47,7 @@ class Shooter
         void setHoodPos(double pos);
         void setTurretPos(double pos);
 
-        bool hoodZero;
+        bool hoodZero = false;
 
         //CHANGE MOTOr ID STUFF
         rev::CANSparkMax shooterWheelLead = rev::CANSparkMax(shooterWheelLeadID, rev::CANSparkMax::MotorType::kBrushless);
@@ -62,6 +62,6 @@ class Shooter
         rev::SparkMaxRelativeEncoder shooterHoodEncoder = shooterHood.GetEncoder();
         rev::SparkMaxPIDController shooterHood_pidController = shooterHood.GetPIDController();
 
-        rev::SparkMaxLimitSwitch hoodReverseLimit = shooterHood.GetReverseLimitSwitch((rev::SparkMaxLimitSwitch::LimitSwitchPolarity::kNormallyClosed));
+        rev::SparkMaxLimitSwitch hoodReverseLimit = shooterHood.GetReverseLimitSwitch(rev::SparkMaxLimitSwitch::Type::kNormallyClosed);
 
 };

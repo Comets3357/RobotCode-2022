@@ -12,6 +12,8 @@
 #include <frc/Preferences.h>
 #include <frc/DutyCycleEncoder.h>
 
+#include <frc/shuffleboard/Shuffleboard.h>
+
 struct RobotData;
 
 struct IntakeData
@@ -43,6 +45,11 @@ private:
     double intakeRollersEjectSpeed = 0.5;
     double armDownPosition = 0.428;
     int tickCount = 0;
+
+    nt::NetworkTableEntry rollerSpeed = frc::Shuffleboard::GetTab("test")
+                     .Add("roller speed", 1)
+                     .GetEntry();
+
 
     //CHANGE MOTOr ID STUFF  (just outline )
     rev::CANSparkMax intakeRollers = rev::CANSparkMax(intakeRollerID, rev::CANSparkMax::MotorType::kBrushless);

@@ -27,26 +27,16 @@ void Indexer::semiAuto(const RobotData &robotData, IndexerData &indexerData){
     if(robotData.controlData.saEjectBalls){ //run belt and wheel backwards
         indexerBelt.Set(-IndexerBeltSpeed);
         indexerWheel.Set(-IndexerWheelSpeed);
-    }else if(robotData.shooterData.readyShoot){
+    }else if(robotData.shooterData.readyShoot && robotData.controlData.finalShoot){
         indexerData.ballCount = 0;
         indexerBelt.Set(IndexerBeltSpeed);
         indexerWheel.Set(IndexerWheelSpeed);
-    
-    }else if(robotData.controlData.saIntake){ //if intaking run belt and wheels forward
-        //once the first prox sensor senses first ball, run indexer (ball count@1)
-            //index the first ball until the first prox sensor runs false
-                //intake second ball, once the first prox sensor senses second ball run indexer until first ball hits second sensor (ball count@2)
-        if(proxIndexerBottom.Get()){
-            indexerBelt.Set(saIndexerBeltIntakeSpeed);
-            indexerWheel.Set(saIndexerWheelIntakeSpeed);
-        }
-        
-    }else{
-        indexerBelt.Set(0);
-        indexerWheel.Set(0);
-    }
 
-    if(robotData.controlData.saIntake){ // you are intaking
+    }else if(robotData.shooterData.wrongBallReady){
+        indexerBelt.Set(IndexerBeltSpeed);
+        indexerWheel.Set(IndexerWheelSpeed);
+
+    }else if(robotData.controlData.saIntake){ // you are intaking
         if(indexerData.ballCount == 0){
             if(!proxIndexerBottom.Get()) { // false if it senses somthing
                 if (proxIndexerMiddle.Get()){ // until mid sensor is tripped, run both belt and wheel
