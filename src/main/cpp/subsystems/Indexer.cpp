@@ -1,4 +1,3 @@
-// #include "subsystems/Indexer.h"
 #include "RobotData.h"
 
 void Indexer::RobotInit()
@@ -20,6 +19,7 @@ void Indexer::RobotPeriodic(const RobotData &robotData, IndexerData &indexerData
     else
     {
         semiAuto(robotData, indexerData);
+        // testControl(robotData);
     }
 }
 
@@ -58,9 +58,11 @@ void Indexer::DisabledInit()
     indexerWheel.Set(0);
 }
 
-// // updates encoder and gyro values
 void Indexer::updateData(const RobotData &robotData, IndexerData &indexerData)
 {
+}
+
+void Indexer::testControl(const RobotData &robotData){
     if(robotData.controlData.mIndexerBackwards){    // run belt and wheel backwards
                                                     // secondary B
         indexerBelt.Set(-IndexerBeltSpeed);
@@ -71,17 +73,12 @@ void Indexer::updateData(const RobotData &robotData, IndexerData &indexerData)
         indexerWheel.Set(IndexerWheelSpeed);    
     }else if (robotData.controllerData.sYBtn) {     // run belt and wheel on exact speed control, separately
                                                     // right is belt, left is wheel                          
-        indexerBelt.Set(robotData.controllerData.sRYStick);
-        indexerWheel.Set(robotData.controllerData.sLYStick);   
-
-    }  else {
+        indexerBelt.Set(robotData.controllerData.sRYStick*.3);
+        indexerWheel.Set(robotData.controllerData.sLYStick*.3);   
+    } else {
         indexerBelt.Set(0);
         indexerWheel.Set(0);   
     }
-}
-
-void Indexer::testControl(const RobotData &robotData){
-
 }
 
 void Indexer::intakeSequence(IndexerData &indexerData){
@@ -195,14 +192,14 @@ void Indexer::shootSequence(IndexerData &indexerData){
 
 void Indexer::indexerBeltInit(){
     indexerBelt.RestoreFactoryDefaults();
-    indexerBelt.SetInverted(false);
+    indexerBelt.SetInverted(true);
     indexerBelt.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
     indexerBelt.SetSmartCurrentLimit(45);
 }
 
 void Indexer::indexerWheelInit(){
     indexerWheel.RestoreFactoryDefaults();
-    indexerWheel.SetInverted(false);
+    indexerWheel.SetInverted(true);
     indexerWheel.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
     indexerWheel.SetSmartCurrentLimit(45);
 }
@@ -216,7 +213,6 @@ void Indexer::processColor(const RobotData &robotData, IndexerData &indexerData)
 
     }
 }
-
 
 // usually these sensors return false for when they're tripped, these functions return opposite to match intuitive logic
 bool Indexer::getBottomBeam(){

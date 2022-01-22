@@ -2,6 +2,8 @@
 
 void ColorSensor::RobotInit()
 {
+    m_colorMatcher.AddColorMatch(kBlueCargo);
+    m_colorMatcher.AddColorMatch(kRedCargo);
 
 }
 void ColorSensor::RobotPeriodic(RobotData &RobotData)
@@ -16,12 +18,26 @@ void ColorSensor::RobotPeriodic(RobotData &RobotData)
      * an object is the more light from the surroundings will bleed into the 
      * measurements and make it difficult to accurately determine its color.
      */
-    frc::Color detectedColor = m_colorSensor.GetColor();
+    detectedColor = m_colorSensor.GetColor();
     /**
      * The sensor returns a raw IR value of the infrared light detected.
      */
     double IR = m_colorSensor.GetIR();
     
+    /**
+     * Run the color match algorithm on our detected color
+     */
+    confidence = 0.0;
+    matchedColor = m_colorMatcher.MatchClosestColor(detectedColor, confidence);
+
+    if (matchedColor == kBlueCargo) {
+      colorString = "Blue";
+    } else if (matchedColor == kRedCargo) {
+      colorString = "Red";
+    }  else {
+      colorString = "Unknown";
+    }
+
     /**
      * Open Smart Dashboard or Shuffleboard to see the color detected by the 
      * sensor.
@@ -40,7 +56,7 @@ void ColorSensor::RobotPeriodic(RobotData &RobotData)
      * or provide a threshold for when an object is close enough to provide
      * accurate color values.
      */
-    uint32_t proximity = m_colorSensor.GetProximity();
+    proximity = m_colorSensor.GetProximity();
 
     frc::SmartDashboard::PutNumber("Proximity", proximity);
 
@@ -57,5 +73,5 @@ void semiAutoMode(RobotData &robotData){
 }
 
 frc::Color ColorSensor::detectColor(RobotData &robotData){
-    return m_colorSensor.GetColor();
+    return detectedColor;
 }

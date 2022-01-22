@@ -4,8 +4,6 @@
 #include "common/ColorSensor.h"
 
 #include <frc/DriverStation.h>
-// #include <frc/TimedRobot.h>
-#include <ctre/Phoenix.h>
 #include <rev/CANSparkMax.h>
 #include <rev/SparkMaxPIDController.h>
 #include <rev/CANEncoder.h>
@@ -69,9 +67,8 @@ private:
     const double saIndexerWheelIntakeSpeed = 0.2;
     const double saIndexerBeltIntakeSpeed = 0.2;
 
-    // ColorSensor colorSensor{}; //rev v3, for detecting ball color
+    ColorSensor colorSensor{}; //rev v3, for detecting ball color
 
-    //CHANGE MOTOr ID STUFF  (just outline lol don't take your life too seriously:))
     rev::CANSparkMax indexerBelt = rev::CANSparkMax(indexerBeltsID, rev::CANSparkMax::MotorType::kBrushless);
     rev::SparkMaxRelativeEncoder indexerBeltEncoder = indexerBelt.GetEncoder();
     rev::SparkMaxPIDController indexerBelt_pidController = indexerBelt.GetPIDController();

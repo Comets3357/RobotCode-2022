@@ -1,4 +1,3 @@
-#include "subsystems/Intake.h"
 #include "RobotData.h"
 #include <iostream>
 #include <cmath>
@@ -190,9 +189,7 @@ void Intake::pivotInit(){
 
 void Intake::mecanumInit(){
     intakeMecanum.RestoreFactoryDefaults();
-
     intakeMecanum.SetInverted(false);
-
     intakeMecanum.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
 
     // intakeMecanum_pidController.SetP(mkP);

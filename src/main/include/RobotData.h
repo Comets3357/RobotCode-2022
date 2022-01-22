@@ -6,6 +6,7 @@
 #include "common/Gyro.h"
 #include "common/Limelight.h"
 #include "common/Timer.h"
+#include "common/ColorSensor.h"
 
 #include "auton/Auton.h"
 
@@ -15,8 +16,6 @@
 #include "subsystems/Indexer.h"
 #include "subsystems/Shooter.h"
 
-//could be separated into all separate files for the data *from* each subsystem
-//commented out variables are not in use
 struct RobotData
 {
     ControllerData controllerData;
