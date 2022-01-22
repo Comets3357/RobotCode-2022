@@ -65,7 +65,8 @@ void Drivebase::RobotInit()
 }
 
 void Drivebase::TeleopInit(const RobotData &robotData) {
-    resetOdometry(0, 0, 1, 0, robotData);
+    // resetOdometry(0, 0, 1, 0, robotData);
+    resetOdometry(8.261, 1, 0, 0.5, robotData);
 }
 
 void Drivebase::AutonomousInit(const RobotData &robotData, AutonData &autonData) {
@@ -81,9 +82,11 @@ void Drivebase::AutonomousInit(const RobotData &robotData, AutonData &autonData)
 
     // resetOdometry(3.167, 7.492, robotData);
     // resetOdometry(9.25, 3.71, 1.821, -0.668, robotData);
-    resetOdometry(0, 0, 1, 0, robotData);
-    // resetOdometry()
-    // resetOdometry(0, 1, 1, 0, robotData);
+    // resetOdometry(0, 0, 1, 0, robotData);
+    // resetOdometry(0, 6.658, 1, 0, robotData);
+    resetOdometry(3, 1, 0, 1, robotData);
+    // resetOdometry(0, 3.658, 1, 0, robotData); 
+    // resetOdometry(8.261, 1, 0, 0.5, robotData);
 
     frc::SmartDashboard::PutNumber("trajX", 0);
     frc::SmartDashboard::PutNumber("trajY", 0);
@@ -116,10 +119,10 @@ void Drivebase::DisabledInit()
     
     dbL.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
     dbR.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
-    dbL.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
-    dbLF.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
-    dbR.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
-    dbRF.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
+    dbL.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
+    dbLF.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
+    dbR.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
+    dbRF.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
 }
 
 // updates encoder and gyro values
@@ -370,13 +373,15 @@ void Drivebase::resetOdometry(double x, double y, double tanX, double tanY, cons
     frc::SmartDashboard::PutNumber("std::tan (tanY / tanX)", std::tan(tanY / tanX));
     frc::SmartDashboard::PutString("what the", "heck");
 
-    units::radian_t radianYaw{M_PI};
+    units::radian_t radianYaw{M_PI /2 };
     if (tanX != 0) {
         units::radian_t blockScopeAngle{std::atan(tanY / tanX)};
         radianYaw = blockScopeAngle;
+        frc::SmartDashboard::PutString("calculation", "happened");
     } else if (tanY < 0) {
         units::radian_t blockScopeAngle{ 3 * M_PI / 2 };
         radianYaw = blockScopeAngle;
+        frc::SmartDashboard::PutString("neg tanY", "happened");
     }
     // frc::SmartDashboard::PutNumber("Pi", pi);
     // frc::SmartDashboard::PutNumber("radian yaw", robotData.gyroData.rawYaw / 180 * pi);
