@@ -25,16 +25,16 @@ void Indexer::RobotPeriodic(const RobotData &robotData, IndexerData &indexerData
 
 void Indexer::semiAuto(const RobotData &robotData, IndexerData &indexerData){
     if(robotData.controlData.saEjectBalls){ //run belt and wheel backwards
-        indexerBelt.Set(-IndexerBeltSpeed);
-        indexerWheel.Set(-IndexerWheelSpeed);
+        indexerBelt.Set(-mIndexerBeltSpeed);
+        indexerWheel.Set(-mIndexerWheelSpeed);
     }else if(robotData.shooterData.readyShoot && robotData.controlData.finalShoot){
         indexerData.ballCount = 0;
-        indexerBelt.Set(IndexerBeltSpeed);
-        indexerWheel.Set(IndexerWheelSpeed);
+        indexerBelt.Set(saIndexerBeltExitSpeed);
+        indexerWheel.Set(saIndexerWheelExitSpeed);
 
     }else if(robotData.shooterData.wrongBallReady){
-        indexerBelt.Set(IndexerBeltSpeed);
-        indexerWheel.Set(IndexerWheelSpeed);
+        indexerBelt.Set(saIndexerBeltExitSpeed);
+        indexerWheel.Set(saIndexerWheelExitSpeed);
 
     }else if(robotData.controlData.saIntake){ // you are intaking
         if(indexerData.ballCount == 0){

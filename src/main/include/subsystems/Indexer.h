@@ -14,7 +14,7 @@ struct RobotData;
 
 struct IndexerData
 {
-
+    int ballCount;
 };
 
 class Indexer
@@ -34,11 +34,14 @@ private:
     void indexerBeltInit();
     void indexerWheelInit();
 
-    frc::DigitalInput proxIndexerFront{2};
-    frc::DigitalInput proxIndexerBack{3};
+    frc::DigitalInput proxIndexerBottom{2};
+    frc::DigitalInput proxIndexerMiddle{3};
+
 
     const double mIndexerWheelSpeed = 0.2;
     const double mIndexerBeltSpeed = 0.2;
+    const double saIndexerWheelExitSpeed = 0.2;
+    const double saIndexerBeltExitSpeed = 0.2;
     const double saIndexerWheelIntakeSpeed = 0.2;
     const double saIndexerBeltIntakeSpeed = 0.2;
 
