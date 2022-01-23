@@ -74,9 +74,9 @@ private:
     
 
     // need to make constants for these indexes??
-    frc::DigitalInput bottomBeamBreak{1};
-    frc::DigitalInput midBeamBreak{2};
-    frc::DigitalInput topBeamBreak{3};
+    frc::DigitalInput bottomBeamBreak{bottomBeamBreakPort};
+    frc::DigitalInput midBeamBreak{midBeamBreakPort};
+    frc::DigitalInput topBeamBreak{topBeamBreakPort};
 
     bool prevBottomBeam = false;
     // bool prevMidBeam = false;

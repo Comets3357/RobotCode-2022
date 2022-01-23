@@ -35,6 +35,14 @@ static const int
     climbLiftID = 41;
 
 
+// DIO
+static const int
+    intakeAbsoluteEncoderPort = 0,
+    bottomBeamBreakPort = 3,
+    midBeamBreakPort = 4,
+    topBeamBreakPort = 5;
+
+
 
 
 

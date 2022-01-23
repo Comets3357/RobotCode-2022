@@ -64,6 +64,6 @@ private:
     rev::SparkMaxRelativeEncoder intakeMecanumEncoder = intakeMecanum.GetEncoder();
     rev::SparkMaxPIDController intakeMecanum_pidController = intakeMecanum.GetPIDController();
 
-    frc::DutyCycleEncoder intakePivotEncoder2 = frc::DutyCycleEncoder{0};
+    frc::DutyCycleEncoder intakePivotEncoder2 = frc::DutyCycleEncoder{intakeAbsoluteEncoderPort};
 
 };
