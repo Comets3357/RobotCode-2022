@@ -81,10 +81,11 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     limelightData.validTarget = table->GetNumber("tv", 0.0);
     limelightData.distanceToTarget = distanceToTarget();
 
+    //moves the limelight data over to the actual position of the shooter
     shooterOffset(robotData, limelightData);
 
     //x offset will need to change to adjusted value for shooter
-    limelightData.correctDistance = correctDistance(limelightData.angleOffset, limelightData.distanceToTarget);
+    limelightData.correctDistance = correctDistance(limelightData.angleOffset, limelightData.distanceOffset);
 
     table->PutNumber("pipeline", getPipeline(robotData.limelightData.yOffset)); //set the pipeline based on y offset
 
@@ -94,6 +95,8 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
 
     frc::SmartDashboard::PutNumber("limelight y offset", robotData.limelightData.yOffset);
     frc::SmartDashboard::PutNumber("limelight x offset", robotData.limelightData.xOffset);
+    frc::SmartDashboard::PutNumber("limelight x offset", robotData.limelightData.distanceOffset);
+    frc::SmartDashboard::PutNumber("limelight x offset", robotData.limelightData.desiredHoodPos);
 
 }
 
@@ -105,11 +108,7 @@ double Limelight::getHoodPOS(VisionLookup &visionLookup, LimelightData &limeligh
     double orignalDistance = distance;
     limelightData.lowerVal = std::floor(distance/12); //lower value in ft
     limelightData.upperVal = limelightData.lowerVal +1; //upper value in ft
-
-    //use lookup table to get the desired hood positions
-    limelightData.lowerValPos = visionLookup.getValue(limelightData.lowerVal);
-    limelightData.upperValPos = visionLookup.getValue(limelightData.upperVal);
-
+    
     //if either of the int values are higher than the highest lookup table value,
     //set the values to the highest lookup table value
     if(limelightData.lowerVal > visionLookup.highestVal()){
@@ -119,6 +118,10 @@ double Limelight::getHoodPOS(VisionLookup &visionLookup, LimelightData &limeligh
     if(limelightData.upperVal > visionLookup.highestVal()){
         limelightData.upperVal = visionLookup.highestVal();
     }
+
+    //use lookup table to get the desired hood positions
+    limelightData.lowerValPos = visionLookup.getValue(limelightData.lowerVal);
+    limelightData.upperValPos = visionLookup.getValue(limelightData.upperVal);
 
     //get the slope of the line between the upper and lower values
     double desiredSlope = (limelightData.upperValPos - limelightData.lowerValPos)/12; 
