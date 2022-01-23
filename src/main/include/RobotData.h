@@ -6,6 +6,7 @@
 #include "common/Gyro.h"
 #include "common/Limelight.h"
 #include "common/Timer.h"
+#include "common/LEDs.h"
 
 #include "auton/Auton.h"
 
