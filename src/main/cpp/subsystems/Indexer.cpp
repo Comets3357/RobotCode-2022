@@ -18,24 +18,25 @@ void Indexer::RobotPeriodic(const RobotData &robotData, IndexerData &indexerData
     }
     else
     {
-    //     semiAuto(robotData, indexerData);
-        testControl(robotData);
+        semiAuto(robotData, indexerData);
+        // testControl(robotData);
     }
+}
+
+void Indexer::DisabledInit()
+{
+    indexerBelt.Set(0);
+    indexerWheel.Set(0);
+    // indexerBelt.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
+    // indexerWheel.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
+
 }
 
 void Indexer::semiAuto(const RobotData &robotData, IndexerData &indexerData){
 
-    if(robotData.controlData.saEjectBalls){ //run belt and wheel backwards, ejecting through intake
-        indexerBelt.Set(-IndexerBeltSpeed);
-        indexerWheel.Set(-IndexerWheelSpeed);
-    }else if(robotData.shooterData.readyShoot){ // you are shooting
-        shootSequence(indexerData);
-    }else if(robotData.controlData.saIntake){ // you are intaking
-        intakeSequence(indexerData);
-    }else{
-        indexerBelt.Set(0);
-        indexerWheel.Set(0);
-    }
+    count(robotData, indexerData);
+    saBeltControl(robotData, indexerData);
+    saWheelControl(robotData, indexerData);
 
 }
 
@@ -51,11 +52,7 @@ void Indexer::manual(const RobotData &robotData, IndexerData &indexerData){
     }
 }
 
-void Indexer::DisabledInit()
-{
-    indexerBelt.Set(0);
-    indexerWheel.Set(0);
-}
+
 
 void Indexer::updateData(const RobotData &robotData, IndexerData &indexerData)
 {
@@ -86,187 +83,120 @@ void Indexer::testControl(const RobotData &robotData){
     }
 }
 
-void Indexer::intakeSequence(IndexerData &indexerData){
-    if(indexerData.ballCount == 0){
+// sense if balls enter indexer and assigns color to additional balls
+void Indexer::incrementCount(const RobotData &robotData, IndexerData &indexerData)
+{
+    if (indexerData.indexerContents.back() == Cargo::cargo_Unassigned){ // if the color sensor did not pick up on a color the first time
 
-        
-        /** 
-         * 
-         * i still NEED TO ADD COLOR LOGIC but
-         * this is the ideal logic
-         * when the first sensor senses a ball, then it checks the color sensor and adds a ball of correct/wrong alliance to indexer
-         * at this point the driver should be able to reject the ball or just let it go through
-         * when the ball passes the second sensor (sensor doesn't sense anything but previously did)
-         * then stop the belt
-         * ideally, if I made some sort of toggle function that would make this easier and less messy
-         * when you stop the belt, you reset all the flags as it is right now
-         * but with a toggle function you wouldn't need flags
-         * actually, maybe you probably would. we want to know whether or not a sensor has been tripped
-         * within a circle cycle, not just if it toggled back to not seeing anything
-         * current concern: if intake gets balls fast enough this code might not work
-         * but I haven't truly thought that far yet. 
-         * 
-         **/
+        if(frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed){
 
-        if(getBottomBeam()){ // check if first sensor sensed cargo
-            firstSensorTripped = true;
-            // need color logic here still
+            if (robotData.colorSensorData.currentColor == frc::Color::kRed){ //not sure if I'm checking this correctly, using kRed and all
+                indexerData.indexerContents.pop_back();
+                indexerData.indexerContents.push_back(Cargo::cargo_Alliance);
+            } else if (robotData.colorSensorData.currentColor == frc::Color::kBlue){
+                indexerData.indexerContents.pop_back();
+                indexerData.indexerContents.push_back(Cargo::cargo_Opponent);
+            } 
+        } else {
+
+            if (robotData.colorSensorData.currentColor == frc::Color::kBlue){ //not sure if I'm checking this correctly, using kRed and all
+                indexerData.indexerContents.pop_back();
+                indexerData.indexerContents.push_back(Cargo::cargo_Alliance);
+            } else if (robotData.colorSensorData.currentColor == frc::Color::kRed){
+                indexerData.indexerContents.pop_back();
+                indexerData.indexerContents.push_back(Cargo::cargo_Opponent);
+            } 
+
         }
+    } else {
 
-        if (getMidBeam()){
-            secondSensorTripped = true;
-        }
+        if(frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed){
 
-        if(firstSensorTripped) { // if cargo has been senses
-            if(!getMidBeam() && !secondSensorTripped) { // if mid sensor has not been tripped AND was not previously tripped
-                indexerBelt.Set(saIndexerBeltIntakeSpeed);
-                indexerWheel.Set(saIndexerWheelIntakeSpeed);
-            } else if (!getMidBeam() && secondSensorTripped){ // mid sensor is not tripped but it was tripped before
-                indexerBelt.Set(0);
-                indexerWheel.Set(saIndexerWheelIntakeSpeed); // wheel keeps running
-                firstSensorTripped = false; // reset these flags
-                secondSensorTripped = false;
-                indexerData.ballCount = 1;
+            if (robotData.colorSensorData.currentColor == frc::Color::kRed){ //not sure if I'm checking this correctly, using kRed and all
+                indexerData.indexerContents.push_back(Cargo::cargo_Alliance);
+            } else if (robotData.colorSensorData.currentColor == frc::Color::kBlue){
+                indexerData.indexerContents.push_back(Cargo::cargo_Opponent);
+            } else {
+                indexerData.indexerContents.push_back(Cargo::cargo_Unassigned);
             }
-        } else { // run both wheel and belt until first sensor senses something
-            indexerBelt.Set(saIndexerBeltIntakeSpeed);
-            indexerWheel.Set(saIndexerWheelIntakeSpeed);
-        }
-        
-    } else if (indexerData.ballCount == 1){
 
-        /**
-         * this is logic for when there is already one ball in the indexer
-         * it would be resting above the second sensor, free of the wheel and any sensors
-         * so the wheel can easily keep running
-         * once the bottom sensor senses a ball logic for adding it to indexer count runs
-         * the belt starts running when the second sensor is tripped by the second ball
-         * and both the wheel and belt stop as soon as the third sensor is tripped
-         * also, the function that senses the ball at the bottom and decides whether or not to reject it
-         * will be separate. need to figure out how to integrate that. 
-         * there are also definitely extraneous else ifs that i wrote in to better understand the logic. 
-         * 
-         * 
-         **/
-        if(getBottomBeam()){ // if bottom sensor sees ball
-            firstSensorTripped = true; // check if first sensor sensed cargo
-            // insert logic for adding to indexer? color stuff, etc. 
+        } else if (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue){
+
+            if(robotData.colorSensorData.currentColor == frc::Color::kBlue){ //not sure if I'm checking this correctly, using kRed and all
+                indexerData.indexerContents.push_back(Cargo::cargo_Alliance);
+            } else if (robotData.colorSensorData.currentColor == frc::Color::kRed){
+                indexerData.indexerContents.push_back(Cargo::cargo_Opponent);
+            } else {
+                indexerData.indexerContents.push_back(Cargo::cargo_Unassigned);
+            }
+
         } 
-        
-        if (secondSensorTripped){ // if the second sensor has been tripped by the second ball
-            if(getTopBeam()){ // top beam is BROKEN, sequence is complete
-                indexerBelt.Set(0);
-                indexerWheel.Set(0);
-                indexerData.ballCount = 2;
-            } else {    // mid has been broken but the top beam has not been broken yet
-                        // running both belt and wheel
-                indexerBelt.Set(saIndexerBeltIntakeSpeed);
-                indexerWheel.Set(saIndexerWheelIntakeSpeed);
-            }
+    }
 
-        } else if(!getMidBeam()){ // until mid beam sees something (second ball) belt does not run
-            indexerBelt.Set(0);
-            indexerWheel.Set(saIndexerWheelIntakeSpeed);
-        } else if (getMidBeam()){ // when mid beam senses something then run both belt and wheel
-            indexerBelt.Set(saIndexerBeltIntakeSpeed);
-            indexerWheel.Set(saIndexerWheelIntakeSpeed);
-            secondSensorTripped = true;
-        }
-            
         
-    } else if (indexerData.ballCount == 2){
-        /**
-         * shooting code is separate
-         * but at this point the indexer will not run anything if given "intake" command
-         * 
-         * 
-         **/
+}
+
+// senses if balls leave indexer and removes them from the deque
+void Indexer::decrementCount(const RobotData &robotData, IndexerData &indexerData, bool reverse){
+    
+    if (indexerData.indexerContents.size() > 0){ // making sure we don't pop when there's nothing in there
+        if (reverse && getBottomBeamToggled(false)){ // if you're reversing and bb1 toggles off (ball passed completely through)
+            indexerData.indexerContents.pop_back();
+            // indexerData.ballCount--;
+        }else if (!reverse && getTopBeamToggled(false)){
+            indexerData.indexerContents.pop_front();
+            // indexerData.ballCount--;
+        }
+    }
+}
+
+// runs both count functions in appropriate cases
+void Indexer::count(const RobotData &robotData, IndexerData &indexerData){
+
+    if(robotData.controlData.saEjectBalls || robotData.controlData.mIndexerBackwards){ // if BACKWARDS
+        decrementCount(robotData, indexerData, true); //true means you're reversing
+    } else {
+        decrementCount(robotData, indexerData, false);
+        incrementCount(robotData, indexerData);
+    }
+
+    /**
+     * if FORWARDS
+     * run increment
+     * run decrement
+     * 
+     * if BACKWARDS
+     * run only decrement     * 
+     **/
+
+}
+
+void Indexer::saBeltControl(const RobotData &robotData, IndexerData &indexerData){
+
+    if(robotData.controlData.saEjectBalls || robotData.controlData.mIndexerBackwards){ // if indexer is REVERSING (saEject or manual indexer backwards)
+        indexerBelt.Set(-IndexerBeltSpeed);
+    } else if (robotData.shooterData.readyShoot || !getTopBeam()){ // if you're shooting or BB3 is not tripped
+        indexerBelt.Set(IndexerBeltSpeed);
+    } else if (indexerData.indexerContents.size() > 0 && getTopBeam()){
         indexerBelt.Set(0);
+    }
+
+}
+
+void Indexer::saWheelControl(const RobotData &robotData, IndexerData &indexerData){
+    if(robotData.controlData.saEjectBalls || robotData.controlData.mIndexerBackwards){ // if indexer is REVERSING (saEject or manual indexer backwards)
+        indexerWheel.Set(-IndexerWheelSpeed);
+    } else if (indexerData.indexerContents.size() < 2 || !getMidBeam()){ // if indexer is not yet full or if indexer DOES have 2 balls but the 2nd sensor has not yet been tripped
+        indexerWheel.Set(IndexerWheelSpeed);
+    } else if (indexerData.indexerContents.size() == 2 && getMidBeam()){
         indexerWheel.Set(0);
     }
+
 }
 
-void Indexer::shootSequence(IndexerData &indexerData){   
-    indexerData.ballCount = 0;
 
-    indexerBelt.Set(IndexerBeltSpeed);
-    indexerWheel.Set(IndexerWheelSpeed); // wheel speed doesn't really matter
+// basic getter, init functions below
 
-    // need case to account for opponent color balls 
-}
-
-void Indexer::indexerBeltInit(){
-    indexerBelt.RestoreFactoryDefaults();
-    indexerBelt.SetInverted(true);
-    indexerBelt.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-    indexerBelt.SetSmartCurrentLimit(45);
-}
-
-void Indexer::indexerWheelInit(){
-    indexerWheel.RestoreFactoryDefaults();
-    indexerWheel.SetInverted(true);
-    indexerWheel.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-    indexerWheel.SetSmartCurrentLimit(45);
-}
-
-void Indexer::processColor(const RobotData &robotData, IndexerData &indexerData){
-    if (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed){
-        
-        
-    } else if (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue){
-
-
-    }
-}
-
-void Indexer::intakeSensing(const RobotData &robotData, IndexerData &indexerData)
-{
-    if (getBottomBeamToggled(true)){
-        if(frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed){
-            if (robotData.colorSensorData.currentColor == frc::Color::kRed){ //not sure if I'm checking this correctly, using kRed and all
-                indexerData.indexerContents.push_back(Cargo::cargo_Alliance);
-            } else if (robotData.colorSensorData.currentColor == frc::Color::kBlue){
-                indexerData.indexerContents.push_back(Cargo::cargo_Opponent);
-            } else {
-                indexerData.indexerContents.push_back(Cargo::cargo_Unassigned);
-            }
-        } else {
-            if (robotData.colorSensorData.currentColor == frc::Color::kBlue){ //not sure if I'm checking this correctly, using kRed and all
-                indexerData.indexerContents.push_back(Cargo::cargo_Alliance);
-            } else if (robotData.colorSensorData.currentColor == frc::Color::kRed){
-                indexerData.indexerContents.push_back(Cargo::cargo_Opponent);
-            } else {
-                indexerData.indexerContents.push_back(Cargo::cargo_Unassigned);
-            }
-        }
-    } else if (indexerData.indexerContents.back() == Cargo::cargo_Unassigned){
-        if(frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed){
-            if (robotData.colorSensorData.currentColor == frc::Color::kRed){ //not sure if I'm checking this correctly, using kRed and all
-                indexerData.indexerContents.pop_back();
-                indexerData.indexerContents.push_back(Cargo::cargo_Alliance);
-            } else if (robotData.colorSensorData.currentColor == frc::Color::kBlue){
-                indexerData.indexerContents.pop_back();
-                indexerData.indexerContents.push_back(Cargo::cargo_Opponent);
-            } 
-            // else {
-            //     indexerData.indexerContents.pop_back();
-            //     indexerData.indexerContents.push_back(Cargo::cargo_Unassigned);
-            // }
-        } else {
-            if (robotData.colorSensorData.currentColor == frc::Color::kBlue){ //not sure if I'm checking this correctly, using kRed and all
-                indexerData.indexerContents.pop_back();
-                indexerData.indexerContents.push_back(Cargo::cargo_Alliance);
-            } else if (robotData.colorSensorData.currentColor == frc::Color::kRed){
-                indexerData.indexerContents.pop_back();
-                indexerData.indexerContents.push_back(Cargo::cargo_Opponent);
-            } 
-            // else {
-            //     indexerData.indexerContents.push_back(Cargo::cargo_Unassigned);
-            // }
-        }
-
-    }
-}
 // usually these sensors return false for when they're tripped, these functions return opposite to match intuitive logic
 bool Indexer::getBottomBeam(){
     return !bottomBeamBreak.Get();
@@ -291,16 +221,17 @@ bool Indexer::getBottomBeamToggled(bool broken){
     }
 }
 
-bool Indexer::getMidBeamToggled(bool broken){
-    if (getMidBeam() == broken && prevMidBeam != broken){
-        // set prev to current and return true
-        prevMidBeam = getMidBeam();
-        return true;
-    } else {
-        prevMidBeam = getMidBeam();
-        return false;
-    }
-}
+// bool Indexer::getMidBeamToggled(bool broken){
+//     if (getMidBeam() == broken && prevMidBeam != broken){
+//         // set prev to current and return true
+//         prevMidBeam = getMidBeam();
+//         return true;
+//     } else {
+//         prevMidBeam = getMidBeam();
+//         return false;
+//     }
+// }
+
 
 /**
  * @param bool broken -- true is if it toggled to sensing a ball
@@ -322,4 +253,18 @@ bool Indexer::getTopBeamToggled(bool broken){
         prevTopBeam = getTopBeam();
         return false;
     }
+}
+
+void Indexer::indexerBeltInit(){
+    indexerBelt.RestoreFactoryDefaults();
+    indexerBelt.SetInverted(true);
+    indexerBelt.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+    indexerBelt.SetSmartCurrentLimit(45);
+}
+
+void Indexer::indexerWheelInit(){
+    indexerWheel.RestoreFactoryDefaults();
+    indexerWheel.SetInverted(true);
+    indexerWheel.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+    indexerWheel.SetSmartCurrentLimit(45);
 }

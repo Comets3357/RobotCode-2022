@@ -1,7 +1,8 @@
 #include "controller/Controller.h"
+#include "RobotData.h"
 
 // for updating states of control variables (to be accessed by other subsystems)
-void Controller::updateControlData(const ControllerData &controllerData, ControlData &controlData)
+void Controller::updateControlData(const RobotData &robotData, const ControllerData &controllerData, ControlData &controlData)
 {
     // states:
     controlData.shift = controllerData.sLBumper;
@@ -66,7 +67,15 @@ void Controller::updateControlData(const ControllerData &controllerData, Control
     controlData.saEjectBalls = controllerData.sBBtn;
     //controlData.launchPadShot = controllerData.sRCenterBtn;
     //controlData.hubShot = controllerData.sLCenterBtn;
-    //controlData.wrongBall = controllerData.sYBtn;
+    
+    if(robotData.indexerData.indexerContents.front() == Cargo::cargo_Opponent){
+        controlData.wrongBall = true;
+    } else if(robotData.indexerData.indexerContents.front() == Cargo::cargo_Alliance){
+        controlData.wrongBall = false;
+    } else if (robotData.indexerData.indexerContents.front() == Cargo::cargo_Unassigned){
+        controlData.wrongBall = true; 
+        // change to button for driver control?
+    }
     //controlData.finalShoot;
 
   

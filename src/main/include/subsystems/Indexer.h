@@ -31,6 +31,8 @@ struct IndexerData
     bool topSensor = false;
     
     bool bottomSensorToggledOn = false;
+
+    bool reverseIndexer = false;
     
 };
 
@@ -48,16 +50,19 @@ private:
     void manual(const RobotData &robotData, IndexerData &indexerData);
     void semiAuto(const RobotData &robotData, IndexerData &indexerData);
 
-    void processColor(const RobotData &robotData, IndexerData &indexerData);
-
     void indexerBeltInit();
     void indexerWheelInit();
     void intakeSequence(IndexerData &indexerData);
-    void shootSequence(IndexerData &indexerData);
+    void shootSequence(const RobotData &robotData, IndexerData &indexerData);
 
-    void intakeSensing(const RobotData &robotData, IndexerData &indexerData);
+    void incrementCount(const RobotData &robotData, IndexerData &indexerData);
+    void decrementCount(const RobotData &robotData, IndexerData &indexerData, bool reverse);
+    void saBeltControl(const RobotData &robotData, IndexerData &indexerData);
+    void saWheelControl(const RobotData &robotData, IndexerData &indexerData);
 
     void testControl(const RobotData &robotData);
+
+    void count(const RobotData &robotData, IndexerData &indexerData);
 
     bool getBottomBeam();
     bool getMidBeam();
@@ -65,7 +70,7 @@ private:
 
     // get if it was toggled to state specified in bool broken
     bool getBottomBeamToggled(bool broken);
-    bool getMidBeamToggled(bool broken);
+    // bool getMidBeamToggled(bool broken); // not in use
     bool getTopBeamToggled(bool broken);
 
     // need to make constants for these indexes??
