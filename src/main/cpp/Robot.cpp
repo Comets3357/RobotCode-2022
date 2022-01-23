@@ -47,7 +47,6 @@ void Robot::TeleopPeriodic()
 void Robot::DisabledInit()
 {
     timer.DisabledInit();
-
     drivebase.DisabledInit();
     intake.DisabledInit();
     indexer.DisabledInit();

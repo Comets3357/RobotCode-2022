@@ -21,6 +21,20 @@ void Indexer::RobotPeriodic(const RobotData &robotData, IndexerData &indexerData
         semiAuto(robotData, indexerData);
         // testControl(robotData);
     }
+
+    // TESTING STUFF
+    frc::SmartDashboard::PutNumber("cargo count", indexerData.indexerContents.size());
+    frc::SmartDashboard::PutNumber("wrong ball?", robotData.controlData.wrongBall);
+    if(robotData.colorSensorData.currentColor == frc::Color::kRed){
+        frc::SmartDashboard::PutBoolean("currently red?", true);
+    } else {
+        frc::SmartDashboard::PutBoolean("currently red?", false);
+    }
+    if(robotData.colorSensorData.currentColor == frc::Color::kBlue){
+        frc::SmartDashboard::PutBoolean("currently blue?", true);
+    } else {
+        frc::SmartDashboard::PutBoolean("currently blue?", false);
+    }
 }
 
 void Indexer::DisabledInit()
@@ -41,8 +55,12 @@ void Indexer::semiAuto(const RobotData &robotData, IndexerData &indexerData){
 }
 
 void Indexer::manual(const RobotData &robotData, IndexerData &indexerData){
+
+    count(robotData, indexerData);
+
     if(robotData.controlData.mIndexerBackwards){ //run belt and wheel backwards  (B)
         indexerWheel.Set(-IndexerWheelSpeed);
+        indexerBelt.Set(-IndexerBeltSpeed);
     }else if(robotData.controlData.mIndexer){ //run belt and wheel forwards (X)
         indexerBelt.Set(IndexerBeltSpeed);
         indexerWheel.Set(IndexerWheelSpeed);    
@@ -54,11 +72,10 @@ void Indexer::manual(const RobotData &robotData, IndexerData &indexerData){
 
 void Indexer::updateData(const RobotData &robotData, IndexerData &indexerData)
 {
-    indexerData.bottomSensor = !getBottomBeam();
-    indexerData.midSensor = !getMidBeam();
-    indexerData.topSensor = !getTopBeam();
-    indexerData.bottomSensorToggledOn = getBottomBeamToggled(true);
-
+    // indexerData.bottomSensor = !getBottomBeam();
+    // indexerData.midSensor = !getMidBeam();
+    // indexerData.topSensor = !getTopBeam();
+    // indexerData.bottomSensorToggledOn = getBottomBeamToggled(true);
 
 }
 
@@ -95,7 +112,7 @@ void Indexer::incrementCount(const RobotData &robotData, IndexerData &indexerDat
                 indexerData.indexerContents.pop_back();
                 indexerData.indexerContents.push_back(Cargo::cargo_Opponent);
             } 
-        } else {                                                                                        
+        } else {   //blue alliance                                                                                      
 
             if (robotData.colorSensorData.currentColor == frc::Color::kBlue){ //not sure if I'm checking this correctly, using kRed and all
                 indexerData.indexerContents.pop_back();
@@ -106,6 +123,7 @@ void Indexer::incrementCount(const RobotData &robotData, IndexerData &indexerDat
             } 
 
         }
+
     } else if(getBottomBeamToggled(true)){  // if the last element is not unassigned, and bb1 was just toggled to sense a ball
 
         if(frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed){
@@ -151,6 +169,12 @@ void Indexer::decrementCount(const RobotData &robotData, IndexerData &indexerDat
 // runs both count functions in appropriate cases
 void Indexer::count(const RobotData &robotData, IndexerData &indexerData){
 
+    if(bottomDebounceCount > 0){
+        bottomDebounceCount--;
+    }
+    if(topDebounceCount > 0){
+        topDebounceCount--;
+    }
     if(robotData.controlData.saEjectBalls || robotData.controlData.mIndexerBackwards){ // if BACKWARDS
         decrementCount(robotData, indexerData, true); //true means you're reversing
     } else {
@@ -208,9 +232,18 @@ bool Indexer::getTopBeam(){
 }
 
 bool Indexer::getBottomBeamToggled(bool broken){
+
+    //debounce
+    if(bottomDebounceCount > 0){
+        prevBottomBeam = getBottomBeam();
+        return false;
+    }
+
     if (getBottomBeam() == broken && prevBottomBeam != broken){
         // set prev to current and return true
         prevBottomBeam = getBottomBeam();
+        // debounce
+        bottomDebounceCount = 2;
         return true;
     } else {
         prevBottomBeam = getBottomBeam();
@@ -229,11 +262,9 @@ bool Indexer::getBottomBeamToggled(bool broken){
 //     }
 // }
 
-
 /**
- * @param bool broken -- true is if it toggled to sensing a ball
- *                    -- false if it is toggled to NOT sensing a ball
- * 
+ * @param broken -- true is if it toggled to sensing a ball
+ *               -- false if it is toggled to NOT sensing a ball
  * @return whether it was toggled to the desired state
  * 
  * concern: when robot first starts up?
@@ -241,10 +272,18 @@ bool Indexer::getBottomBeamToggled(bool broken){
  * 
  **/
 bool Indexer::getTopBeamToggled(bool broken){
+
+    //debounce
+    if(topDebounceCount > 0){
+        prevTopBeam = getTopBeam();
+        return false;
+    }
     // if top sensor is currently in desired broken state and it previously wasn't
     if (getTopBeam() == broken && prevTopBeam != broken){
         // set prev to current and return true
         prevTopBeam = getTopBeam();
+        //debounce
+        topDebounceCount = 2;
         return true;
     } else {
         prevTopBeam = getTopBeam();

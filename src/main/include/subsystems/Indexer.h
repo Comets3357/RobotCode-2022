@@ -22,17 +22,19 @@ enum Cargo
 
 struct IndexerData
 {
-    int ballCount = 0;
+    // int ballCount = 0;
     std::deque<Cargo> indexerContents;
 
     // not a toggle, just what's actually 
-    bool bottomSensor = false;
-    bool midSensor = false;
-    bool topSensor = false;
+    // bool bottomSensor = false;
+    // bool midSensor = false;
+    // bool topSensor = false;
     
-    bool bottomSensorToggledOn = false;
+    // bool bottomSensorToggledOn = false;
 
-    bool reverseIndexer = false;
+    // bool reverseIndexer = false;
+
+
     
 };
 
@@ -49,20 +51,16 @@ private:
     void updateData(const RobotData &robotData, IndexerData &indexerData);
     void manual(const RobotData &robotData, IndexerData &indexerData);
     void semiAuto(const RobotData &robotData, IndexerData &indexerData);
+    void testControl(const RobotData &robotData);
 
     void indexerBeltInit();
     void indexerWheelInit();
-    void intakeSequence(IndexerData &indexerData);
-    void shootSequence(const RobotData &robotData, IndexerData &indexerData);
 
     void incrementCount(const RobotData &robotData, IndexerData &indexerData);
     void decrementCount(const RobotData &robotData, IndexerData &indexerData, bool reverse);
+    void count(const RobotData &robotData, IndexerData &indexerData);
     void saBeltControl(const RobotData &robotData, IndexerData &indexerData);
     void saWheelControl(const RobotData &robotData, IndexerData &indexerData);
-
-    void testControl(const RobotData &robotData);
-
-    void count(const RobotData &robotData, IndexerData &indexerData);
 
     bool getBottomBeam();
     bool getMidBeam();
@@ -73,18 +71,19 @@ private:
     // bool getMidBeamToggled(bool broken); // not in use
     bool getTopBeamToggled(bool broken);
 
+    
+
     // need to make constants for these indexes??
     frc::DigitalInput bottomBeamBreak{1};
     frc::DigitalInput midBeamBreak{2};
     frc::DigitalInput topBeamBreak{3};
 
-    bool firstSensorTripped = false;
-    bool secondSensorTripped = false;
-
     bool prevBottomBeam = false;
-    bool prevMidBeam = false;
+    // bool prevMidBeam = false;
     bool prevTopBeam = false;
 
+    int bottomDebounceCount = 0;
+    int topDebounceCount = 0;
 
     const double IndexerWheelSpeed = 0.2;
     const double IndexerBeltSpeed = 0.2;

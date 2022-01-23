@@ -62,6 +62,7 @@ void ColorSensor::RobotPeriodic(RobotData &RobotData)
     proximity = m_colorSensor.GetProximity();
 
     frc::SmartDashboard::PutNumber("Proximity", proximity);
+    frc::SmartDashboard::PutString("colorString", colorString);
 
 
 }
