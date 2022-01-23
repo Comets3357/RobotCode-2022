@@ -18,8 +18,8 @@ void Indexer::RobotPeriodic(const RobotData &robotData, IndexerData &indexerData
     }
     else
     {
-        semiAuto(robotData, indexerData);
-        // testControl(robotData);
+    //     semiAuto(robotData, indexerData);
+        testControl(robotData);
     }
 }
 
@@ -40,10 +40,9 @@ void Indexer::semiAuto(const RobotData &robotData, IndexerData &indexerData){
 }
 
 void Indexer::manual(const RobotData &robotData, IndexerData &indexerData){
-    if(robotData.controlData.mIndexerBackwards){ //run belt and wheel backwards
-        indexerBelt.Set(-IndexerBeltSpeed);
+    if(robotData.controlData.mIndexerBackwards){ //run belt and wheel backwards  (B)
         indexerWheel.Set(-IndexerWheelSpeed);
-    }else if(robotData.controlData.mIndexer){ //run belt and wheel forwards
+    }else if(robotData.controlData.mIndexer){ //run belt and wheel forwards (X)
         indexerBelt.Set(IndexerBeltSpeed);
         indexerWheel.Set(IndexerWheelSpeed);    
     }else{
@@ -60,6 +59,12 @@ void Indexer::DisabledInit()
 
 void Indexer::updateData(const RobotData &robotData, IndexerData &indexerData)
 {
+    indexerData.bottomSensor = !getBottomBeam();
+    indexerData.midSensor = !getMidBeam();
+    indexerData.topSensor = !getTopBeam();
+    indexerData.bottomSensorToggledOn = getBottomBeamToggled(true);
+
+
 }
 
 void Indexer::testControl(const RobotData &robotData){
@@ -214,6 +219,54 @@ void Indexer::processColor(const RobotData &robotData, IndexerData &indexerData)
     }
 }
 
+void Indexer::intakeSensing(const RobotData &robotData, IndexerData &indexerData)
+{
+    if (getBottomBeamToggled(true)){
+        if(frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed){
+            if (robotData.colorSensorData.currentColor == frc::Color::kRed){ //not sure if I'm checking this correctly, using kRed and all
+                indexerData.indexerContents.push_back(Cargo::cargo_Alliance);
+            } else if (robotData.colorSensorData.currentColor == frc::Color::kBlue){
+                indexerData.indexerContents.push_back(Cargo::cargo_Opponent);
+            } else {
+                indexerData.indexerContents.push_back(Cargo::cargo_Unassigned);
+            }
+        } else {
+            if (robotData.colorSensorData.currentColor == frc::Color::kBlue){ //not sure if I'm checking this correctly, using kRed and all
+                indexerData.indexerContents.push_back(Cargo::cargo_Alliance);
+            } else if (robotData.colorSensorData.currentColor == frc::Color::kRed){
+                indexerData.indexerContents.push_back(Cargo::cargo_Opponent);
+            } else {
+                indexerData.indexerContents.push_back(Cargo::cargo_Unassigned);
+            }
+        }
+    } else if (indexerData.indexerContents.back() == Cargo::cargo_Unassigned){
+        if(frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed){
+            if (robotData.colorSensorData.currentColor == frc::Color::kRed){ //not sure if I'm checking this correctly, using kRed and all
+                indexerData.indexerContents.pop_back();
+                indexerData.indexerContents.push_back(Cargo::cargo_Alliance);
+            } else if (robotData.colorSensorData.currentColor == frc::Color::kBlue){
+                indexerData.indexerContents.pop_back();
+                indexerData.indexerContents.push_back(Cargo::cargo_Opponent);
+            } 
+            // else {
+            //     indexerData.indexerContents.pop_back();
+            //     indexerData.indexerContents.push_back(Cargo::cargo_Unassigned);
+            // }
+        } else {
+            if (robotData.colorSensorData.currentColor == frc::Color::kBlue){ //not sure if I'm checking this correctly, using kRed and all
+                indexerData.indexerContents.pop_back();
+                indexerData.indexerContents.push_back(Cargo::cargo_Alliance);
+            } else if (robotData.colorSensorData.currentColor == frc::Color::kRed){
+                indexerData.indexerContents.pop_back();
+                indexerData.indexerContents.push_back(Cargo::cargo_Opponent);
+            } 
+            // else {
+            //     indexerData.indexerContents.push_back(Cargo::cargo_Unassigned);
+            // }
+        }
+
+    }
+}
 // usually these sensors return false for when they're tripped, these functions return opposite to match intuitive logic
 bool Indexer::getBottomBeam(){
     return !bottomBeamBreak.Get();
@@ -225,4 +278,48 @@ bool Indexer::getMidBeam(){
 
 bool Indexer::getTopBeam(){
     return !topBeamBreak.Get();
+}
+
+bool Indexer::getBottomBeamToggled(bool broken){
+    if (getBottomBeam() == broken && prevBottomBeam != broken){
+        // set prev to current and return true
+        prevBottomBeam = getBottomBeam();
+        return true;
+    } else {
+        prevBottomBeam = getBottomBeam();
+        return false;
+    }
+}
+
+bool Indexer::getMidBeamToggled(bool broken){
+    if (getMidBeam() == broken && prevMidBeam != broken){
+        // set prev to current and return true
+        prevMidBeam = getMidBeam();
+        return true;
+    } else {
+        prevMidBeam = getMidBeam();
+        return false;
+    }
+}
+
+/**
+ * @param bool broken -- true is if it toggled to sensing a ball
+ *                    -- false if it is toggled to NOT sensing a ball
+ * 
+ * @return whether it was toggled to the desired state
+ * 
+ * concern: when robot first starts up?
+ *          when it's run more than one time in same 20 ms???
+ * 
+ **/
+bool Indexer::getTopBeamToggled(bool broken){
+    // if top sensor is currently in desired broken state and it previously wasn't
+    if (getTopBeam() == broken && prevTopBeam != broken){
+        // set prev to current and return true
+        prevTopBeam = getTopBeam();
+        return true;
+    } else {
+        prevTopBeam = getTopBeam();
+        return false;
+    }
 }

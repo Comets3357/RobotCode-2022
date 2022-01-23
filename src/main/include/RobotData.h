@@ -24,6 +24,7 @@ struct RobotData
     GyroData gyroData;
     LimelightData limelightData;
     TimerData timerData;
+    ColorSensorData colorSensorData;
 
     AutonData autonData;
 

@@ -8,19 +8,27 @@
 
 struct RobotData;
 
-class ColorSensor {
+struct ColorSensorData
+{
+    frc::Color currentColor;
+};
+
+class ColorSensor 
+{
     
     public: 
         void RobotInit();
         void RobotPeriodic(RobotData &RobotData);
         void Disabled();
 
-        frc::Color detectColor(RobotData &robotData);
-        void semiAutoMode(RobotData &robotData);
-        void manualMode(RobotData &robotData);
 
 
     private:
+
+        frc::Color detectColor();
+        void semiAutoMode(RobotData &robotData);
+        void manualMode(RobotData &robotData);
+        void updateData(RobotData &robotData, ColorSensorData &colorSensorData);
 
         static constexpr auto i2cPort = frc::I2C::Port::kOnboard;
         rev::ColorSensorV3 m_colorSensor{i2cPort};

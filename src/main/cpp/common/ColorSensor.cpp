@@ -1,4 +1,5 @@
 #include "common/ColorSensor.h"
+#include "RobotData.h"
 
 void ColorSensor::RobotInit()
 {
@@ -6,6 +7,8 @@ void ColorSensor::RobotInit()
     m_colorMatcher.AddColorMatch(kRedCargo);
 
 }
+
+// right now it's just the default example code... 
 void ColorSensor::RobotPeriodic(RobotData &RobotData)
 {
     /**
@@ -68,10 +71,22 @@ void ColorSensor::Disabled()
 
 }
 
-void semiAutoMode(RobotData &robotData){
-    
+void ColorSensor::semiAutoMode(RobotData &robotData)
+{
+  
 }
 
-frc::Color ColorSensor::detectColor(RobotData &robotData){
+void ColorSensor::manualMode(RobotData &robotData)
+{
+
+}
+
+void ColorSensor::updateData(RobotData &robotData, ColorSensorData &colorSensorData)
+{
+    colorSensorData.currentColor = detectColor();
+}
+
+frc::Color ColorSensor::detectColor()
+{
     return detectedColor;
 }

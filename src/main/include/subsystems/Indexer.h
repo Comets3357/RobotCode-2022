@@ -16,13 +16,21 @@ struct RobotData;
 enum Cargo
 {
     cargo_Alliance,
-    cargo_Opponent
+    cargo_Opponent,
+    cargo_Unassigned 
 };
 
 struct IndexerData
 {
     int ballCount = 0;
     std::deque<Cargo> indexerContents;
+
+    // not a toggle, just what's actually 
+    bool bottomSensor = false;
+    bool midSensor = false;
+    bool topSensor = false;
+    
+    bool bottomSensorToggledOn = false;
     
 };
 
@@ -47,11 +55,18 @@ private:
     void intakeSequence(IndexerData &indexerData);
     void shootSequence(IndexerData &indexerData);
 
+    void intakeSensing(const RobotData &robotData, IndexerData &indexerData);
+
     void testControl(const RobotData &robotData);
 
     bool getBottomBeam();
     bool getMidBeam();
     bool getTopBeam();
+
+    // get if it was toggled to state specified in bool broken
+    bool getBottomBeamToggled(bool broken);
+    bool getMidBeamToggled(bool broken);
+    bool getTopBeamToggled(bool broken);
 
     // need to make constants for these indexes??
     frc::DigitalInput bottomBeamBreak{1};
@@ -60,6 +75,10 @@ private:
 
     bool firstSensorTripped = false;
     bool secondSensorTripped = false;
+
+    bool prevBottomBeam = false;
+    bool prevMidBeam = false;
+    bool prevTopBeam = false;
 
 
     const double IndexerWheelSpeed = 0.2;
