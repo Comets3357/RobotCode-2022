@@ -189,8 +189,11 @@ void Drivebase::teleopControl(const RobotData &robotData)
     }
 
     //set as percent vbus
-    dbL.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, tempLDrive);
-    dbR.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, tempRDrive);
+    // dbL.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, tempLDrive);
+    // dbR.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, tempRDrive);
+
+
+    turnInPlace(180 - robotData.gyroData.rawYaw);
 }
 
 void Drivebase::autonControl(const RobotData &robotData, AutonData &autonData) {
@@ -238,7 +241,7 @@ void Drivebase::autonControl(const RobotData &robotData, AutonData &autonData) {
     double rightWheelSpeed = wheelSpeeds.right.to<double>();
     frc::SmartDashboard::PutNumber("leftWheelSpeed", leftWheelSpeed);        frc::SmartDashboard::PutNumber("rightWheelSpeed", rightWheelSpeed);
 
-    // setVelocity(leftWheelSpeed, rightWheelSpeed);
+    setVelocity(leftWheelSpeed, rightWheelSpeed);
 }
 
 void Drivebase::setSpeeds(const frc::DifferentialDriveWheelSpeeds& speeds) {
@@ -354,12 +357,12 @@ void Drivebase::resetOdometry(double x, double y, const RobotData &robotData) {
 }
 
 // reset odometry to any double x, y, deg
-void Drivebase::resetOdometry(double x, double y, double deg, const RobotData &robotData) {
+void Drivebase::resetOdometry(double x, double y, double degrees, const RobotData &robotData) {
     const units::meter_t meterX{x};
     const units::meter_t meterY{y};
 
     const double pi = 2 * std::acos(0.0);
-    const units::radian_t radianYaw{deg / 180 * pi};
+    const units::radian_t radianYaw{degrees / 180 * pi};
     // frc::SmartDashboard::PutNumber("Pi", pi);
     // frc::SmartDashboard::PutNumber("radian yaw", robotData.gyroData.rawYaw / 180 * pi);
 
@@ -454,21 +457,62 @@ void Drivebase::getTrajectoryFile(const RobotData &robotData, AutonData &autonDa
 
     autonData.autonStep++;
 
-    frc::SmartDashboard::PutString("getTrajectoryFile()", "b");
-    frc::SmartDashboard::PutNumber("autonStep", autonData.autonStep);
-    frc::SmartDashboard::PutString("robotData.autonData.pathGroup[robotData.autonData.autonStep", autonData.pathGroup[autonData.autonStep]);
+    if (autonData.autonStep < autonData.pathGroup.size()) {
+        frc::SmartDashboard::PutString("getTrajectoryFile()", "b");
+        frc::SmartDashboard::PutNumber("autonStep", autonData.autonStep);
+        frc::SmartDashboard::PutString("robotData.autonData.pathGroup[robotData.autonData.autonStep", autonData.pathGroup[autonData.autonStep]);
 
-    std::string trajectoryName = autonData.pathGroup.at(autonData.autonStep);
+        std::string trajectoryName = autonData.pathGroup.at(autonData.autonStep);
 
-    // frc::SmartDashboard::PutString("trajectoryName", trajectoryName);
+        // frc::SmartDashboard::PutString("trajectoryName", trajectoryName);
 
-    fs::path deployDirectory = frc::filesystem::GetDeployDirectory();
+        if (trajectoryName.substr(0, 11) == "turnInPlace") {
 
-    fs::path pathDirectory = deployDirectory / "paths" / (trajectoryName + ".wpilib.json");
+            return;
+        } else {
+            
+        }
 
-    frc::SmartDashboard::PutString("pathDirectory", pathDirectory.string());
+        fs::path deployDirectory = frc::filesystem::GetDeployDirectory();
 
-    trajectory = frc::TrajectoryUtil::FromPathweaverJson(pathDirectory.string());
-    frc::SmartDashboard::PutNumber("ogSecSE", robotData.timerData.secSinceEnabled);
-    trajectorySecOffset = robotData.timerData.secSinceEnabled;
+        fs::path pathDirectory = deployDirectory / "paths" / (trajectoryName + ".wpilib.json");
+
+        frc::SmartDashboard::PutString("pathDirectory", pathDirectory.string());
+
+        trajectory = frc::TrajectoryUtil::FromPathweaverJson(pathDirectory.string());
+        frc::SmartDashboard::PutNumber("ogSecSE", robotData.timerData.secSinceEnabled);
+        trajectorySecOffset = robotData.timerData.secSinceEnabled;
+
+    }
+}
+
+void Drivebase::turnInPlace(double degrees) {
+
+    frc::SmartDashboard::PutNumber("degree diff", degrees);
+
+    double leftOutput = 0;
+    double rightOutput = 0;
+
+    int directionFactor = 1;
+    if (degrees <= 0) {
+        directionFactor = -1;
+    }
+
+    if (std::abs(degrees) < 1) {
+        leftOutput = 0;
+        rightOutput = 0;
+    } else {
+
+        leftOutput = std::pow(std::abs(degrees / 361), 1) + 0.07;
+        rightOutput = std::pow(std::abs(degrees / 361), 1) + 0.07;
+
+    }
+    
+
+    frc::SmartDashboard::PutNumber("leftOutput", leftOutput);
+    frc::SmartDashboard::PutNumber("rightOutput", rightOutput);
+    
+
+    dbL.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, leftOutput * (-directionFactor));
+    dbR.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, rightOutput * (directionFactor));
 }

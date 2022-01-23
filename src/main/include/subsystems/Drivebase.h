@@ -66,12 +66,13 @@ private:
     void resetOdometry(double resetAngle);
     void resetOdometry();
     void resetOdometry(double x, double y, const RobotData &robotData);
-    void resetOdometry(double x, double y, double deg, const RobotData &robotData);
+    void resetOdometry(double x, double y, double degrees, const RobotData &robotData);
     void resetOdometry(double x, double y, double tanX, double tanY, const RobotData &robotData);
     void zeroEncoders();
     void setVelocity(double leftVel, double rightVel);
     frc::Pose2d getPose(double x, double y, double deg);
     void getTrajectoryFile(const RobotData &robotData, AutonData &autonData);
+    void turnInPlace(double degrees);
 
     // odometry
     const units::radian_t kZeroAngle{0.0};

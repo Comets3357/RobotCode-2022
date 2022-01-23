@@ -14,12 +14,11 @@ class Timer
 
 public:
     void RobotInit(TimerData &timerData);
-    void RobotPeriodic(TimerData &timerData);
+    void EnabledPeriodic(TimerData &timerData);
+    void EnabledInit(TimerData &timerData);
     void DisabledInit(TimerData &timerData);
 
 private:
     frc::Timer timer{};
-    bool enabledSPointSet = false;
-    double enabledStartPoint = 0;
-    double teleopStartPoint = 0;
+    
 };
