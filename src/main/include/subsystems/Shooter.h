@@ -47,6 +47,8 @@ class Shooter
         void setHoodPos(double pos);
         void setTurretPos(double pos);
 
+        double absEncodertoRev(double val);
+
         bool hoodZero;
 
         //CHANGE MOTOr ID STUFF
@@ -62,6 +64,6 @@ class Shooter
         rev::SparkMaxRelativeEncoder shooterHoodEncoder = shooterHood.GetEncoder();
         rev::SparkMaxPIDController shooterHood_pidController = shooterHood.GetPIDController();
 
-        rev::SparkMaxLimitSwitch hoodReverseLimit = shooterHood.GetReverseLimitSwitch((rev::SparkMaxLimitSwitch::LimitSwitchPolarity::kNormallyClosed));
+        frc::DutyCycleEncoder shooterHoodEncoder2 = frc::DutyCycleEncoder{1};
 
 };

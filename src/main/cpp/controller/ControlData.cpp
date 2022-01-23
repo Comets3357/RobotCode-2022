@@ -44,29 +44,28 @@ void Controller::updateControlData(const ControllerData &controllerData, Control
     }
 
 
-    //INTAKE::
-    controlData.mIntakeDown = controllerData.sLYStick;
-    //controlData.mIntakeUp = controllerData.sYBtn;
-    controlData.mIntakeRollers = controllerData.sBBtn;
-    controlData.mzeroing = controllerData.sYBtn;
+
+
+    //controlData.mIntakeDown = controllerData.sLYStick;
+    controlData.mIntakeRollers = controllerData.sLBumper;
+    controlData.mzeroing = controllerData.sYBtn; // Hood ZEROING
+
+    controlData.mHood = controllerData.sRYStick;
+    controlData.mFlyWheel = controllerData.sLYStick;
+
+    controlData.mIndexerBackwards = controllerData.sBBtn;
+    controlData.mIndexer = controllerData.sXBtn;
+
+
+
     controlData.saIntake = controllerData.sRBumper;
     controlData.saIntakeBackward = controllerData.sABtn;
 
-
-    //SHOOTER:
-    controlData.mHood = controllerData.sRYStick;
-    controlData.mFlyWheel = controllerData.sABtn;
     controlData.saShooting = controllerData.sXBtn;
-    //controlData.finalShoot;
-    // controlData.launchPadShot = controllerData.sRCenterBtn;
-    // controlData.hubShot = controllerData.sLCenterBtn;
-    // controlData.wrongBall = controllerData.sYBtn;
-
-  
-    //INDEXER:
-    //controlData.mIndexerBackwards = controllerData.sBBtn;
-    controlData.mIndexer = controllerData.sXBtn;
     controlData.saEjectBalls = controllerData.sBBtn;
+    //controlData.launchPadShot = controllerData.sRCenterBtn;
+    //controlData.hubShot = controllerData.sLCenterBtn;
+    //controlData.wrongBall = controllerData.sYBtn;
 
   
 }

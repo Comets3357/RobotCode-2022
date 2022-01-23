@@ -13,6 +13,10 @@ static const int
     intakePivotID = 11,
     intakeMecanumID = 13;
 
+static const double
+    absExtended = 0.4255,
+    absRetracted = 0.577;
+
 //indexer
 static const int
     indexerBeltsID = 21,
@@ -38,7 +42,9 @@ static const int
 static const double
     hubHeight = 104,
     limelightMount = 37,
-    limelightAngle = 37.75;
+    limelightAngle = 37.75,
+    xcameraDistanceFromBot = 5,
+    ycameraDistanceFromBot = 1;
 
 
 

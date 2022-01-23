@@ -79,10 +79,18 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     limelightData.yOffset = getVerticalOffset();
     limelightData.targetValue = getTarget();
     limelightData.validTarget = table->GetNumber("tv", 0.0);
+    limelightData.distanceToTarget = distanceToTarget();
+
+    shooterOffset(robotData, limelightData);
+
+    //x offset will need to change to adjusted value for shooter
+    limelightData.correctDistance = correctDistance(limelightData.angleOffset, limelightData.distanceToTarget);
 
     table->PutNumber("pipeline", getPipeline(robotData.limelightData.yOffset)); //set the pipeline based on y offset
 
     limelightData.desiredHoodPos = getHoodPOS(visionLookup, limelightData);
+    
+    //returns offset distance and offset angle to robotdata
 
     frc::SmartDashboard::PutNumber("limelight y offset", robotData.limelightData.yOffset);
     frc::SmartDashboard::PutNumber("limelight x offset", robotData.limelightData.xOffset);
@@ -93,7 +101,7 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
  * @return the desired hood position using lookup table
  */
 double Limelight::getHoodPOS(VisionLookup &visionLookup, LimelightData &limelightData){
-    double distance = distanceToTarget();
+    double distance = limelightData.correctDistance;
     double orignalDistance = distance;
     limelightData.lowerVal = std::floor(distance/12); //lower value in ft
     limelightData.upperVal = limelightData.lowerVal +1; //upper value in ft
@@ -127,6 +135,46 @@ double Limelight::getHoodPOS(VisionLookup &visionLookup, LimelightData &limeligh
 double Limelight::distanceToTarget(){ 
     double radianAngle = (getVerticalOffset()+limelightAngle)*(3.141592653589793238463/180);
     return((hubHeight-limelightMount)/std::tan(radianAngle));
+}
+
+/**
+ * @returns correct the distance for when idk man
+ */
+double Limelight::correctDistance(double angleOffset, double originalDistance){
+    double radianAngle = angleOffset*(3.141592653589793238463/180);
+
+    return(originalDistance - (xcameraDistanceFromBot -(std::cos(radianAngle)))*xcameraDistanceFromBot);
+}
+
+/**
+ * stores the distance and angle to the target of the shooter rather than the limelight (adds the offset)
+ */
+void Limelight::shooterOffset(const RobotData &robotData, LimelightData &limelightData){
+    //get to radians
+    double radianAngle = robotData.limelightData.xOffset*(3.141592653589793238463/180);
+
+    //find the values of the two sides of the right triangle
+    double xValue = robotData.limelightData.distanceToTarget*std::sin(radianAngle);
+    double yValue = robotData.limelightData.distanceToTarget*std::cos(radianAngle);
+    
+    double xValueOffset = 0;
+
+    //depending on which side of the target we are on, either add the distance between the camera and limelight or subtract them
+    if(robotData.limelightData.xOffset >= 0){
+        xValueOffset = xValue+xcameraDistanceFromBot;
+    }else{
+        xValueOffset = xValue-xcameraDistanceFromBot;
+    }
+
+    //account for the fact that the limelight is further forward than the shooter itself
+    double yValueOffset = yValue + ycameraDistanceFromBot;
+
+    //calculate the distance from the shooter to target using pythagerian theorem (how do i spell it???) with the new x and y values
+    limelightData.distanceOffset = std::sqrt(std::pow(yValueOffset,2)+std::pow(xValueOffset,2));
+
+    //calculate the angle between the shooter since it is different from that given by the limelight
+    limelightData.angleOffset = (1/std::sin(xValueOffset/limelightData.distanceOffset));
+
 }
 
 

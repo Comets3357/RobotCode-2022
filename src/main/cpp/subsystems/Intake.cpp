@@ -215,7 +215,10 @@ void Intake::mecanumInit(){
 }
 
 double Intake::absoluteToREV(double value){
-    return (value*-66 + 38.1);
+    //return (value*-66 + 38.1);
+    double slope = ((10-0)/(absExtended-absRetracted));
+    double b = 0 - (slope*absRetracted);
+    return (value*slope + b);
 }
 
 

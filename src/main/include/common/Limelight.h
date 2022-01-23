@@ -20,6 +20,12 @@ struct LimelightData
     double lowerValPos;
 
     double desiredHoodPos;
+    double distanceToTarget;
+    double correctDistance;
+
+    //shooter corrections:
+    double distanceOffset;
+    double angleOffset;
 };
 
 class Limelight
@@ -36,8 +42,9 @@ public:
 
 private:
     double distanceToTarget();
-    double angleOffset();
+    double correctDistance(double angleOffset, double originalDistance);
     double getHoodPOS(VisionLookup &visionLookup, LimelightData &limelightData);
+    void shooterOffset(const RobotData &robotData, LimelightData &limelightData);
 
 
 
