@@ -1,21 +1,39 @@
 #pragma once
 
 #include "Constants.h"
+#include "common/ColorSensor.h"
 
 #include <frc/DriverStation.h>
-#include <frc/TimedRobot.h>
-#include <ctre/Phoenix.h>
 #include <rev/CANSparkMax.h>
 #include <rev/SparkMaxPIDController.h>
 #include <rev/CANEncoder.h>
 #include <frc/DigitalInput.h>
 
+#include <deque>
+
 struct RobotData;
+
+enum Cargo
+{
+    cargo_Alliance,
+    cargo_Opponent,
+    cargo_Unassigned 
+};
 
 struct IndexerData
 {
-    int ballCount;
+    int ballCount = 0;
+    std::deque<Cargo> indexerContents;
+
+    // not a toggle, just what's actually 
+    bool bottomSensor = false;
+    bool midSensor = false;
+    bool topSensor = false;
+    
+    bool bottomSensorToggledOn = false;
+    
 };
+
 
 class Indexer
 {
@@ -23,7 +41,6 @@ class Indexer
 public:
     void RobotInit();
     void RobotPeriodic(const RobotData &robotData, IndexerData &indexerData);
-    
     void DisabledInit();
 
 private:
@@ -31,22 +48,46 @@ private:
     void manual(const RobotData &robotData, IndexerData &indexerData);
     void semiAuto(const RobotData &robotData, IndexerData &indexerData);
 
+    void processColor(const RobotData &robotData, IndexerData &indexerData);
+
     void indexerBeltInit();
     void indexerWheelInit();
+    void intakeSequence(IndexerData &indexerData);
+    void shootSequence(IndexerData &indexerData);
 
-    frc::DigitalInput proxIndexerBottom{2};
-    frc::DigitalInput proxIndexerMiddle{3};
+    void intakeSensing(const RobotData &robotData, IndexerData &indexerData);
+
+    void testControl(const RobotData &robotData);
+
+    bool getBottomBeam();
+    bool getMidBeam();
+    bool getTopBeam();
+
+    // get if it was toggled to state specified in bool broken
+    bool getBottomBeamToggled(bool broken);
+    bool getMidBeamToggled(bool broken);
+    bool getTopBeamToggled(bool broken);
+
+    // need to make constants for these indexes??
+    frc::DigitalInput bottomBeamBreak{1};
+    frc::DigitalInput midBeamBreak{2};
+    frc::DigitalInput topBeamBreak{3};
+
+    bool firstSensorTripped = false;
+    bool secondSensorTripped = false;
+
+    bool prevBottomBeam = false;
+    bool prevMidBeam = false;
+    bool prevTopBeam = false;
 
 
-    const double mIndexerWheelSpeed = 0.2;
-    const double mIndexerBeltSpeed = 0.2;
-    const double saIndexerWheelExitSpeed = 0.2;
-    const double saIndexerBeltExitSpeed = 0.2;
+    const double IndexerWheelSpeed = 0.2;
+    const double IndexerBeltSpeed = 0.2;
     const double saIndexerWheelIntakeSpeed = 0.2;
     const double saIndexerBeltIntakeSpeed = 0.2;
 
+    ColorSensor colorSensor{}; //rev v3, for detecting ball color
 
-    //CHANGE MOTOr ID STUFF  (just outline lol don't take your life too seriously:))
     rev::CANSparkMax indexerBelt = rev::CANSparkMax(indexerBeltsID, rev::CANSparkMax::MotorType::kBrushless);
     rev::SparkMaxRelativeEncoder indexerBeltEncoder = indexerBelt.GetEncoder();
     rev::SparkMaxPIDController indexerBelt_pidController = indexerBelt.GetPIDController();

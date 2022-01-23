@@ -17,6 +17,7 @@ void Robot::RobotPeriodic()
     timer.RobotPeriodic(robotData.timerData);
     gyro.RobotPeriodic(robotData.gyroData);
     limelight.RobotPeriodic(robotData, robotData.limelightData);
+    colorSensor.RobotPeriodic(robotData);
 
     if (IsEnabled())
     {
@@ -27,6 +28,8 @@ void Robot::RobotPeriodic()
         shooter.RobotPeriodic(robotData, robotData.shooterData);
         climb.RobotPeriodic(robotData, robotData.climbData);
     }
+
+    frc::SmartDashboard::PutBoolean("manual mode", robotData.controlData.manualMode);
 }
 
 void Robot::AutonomousInit() {}
