@@ -67,6 +67,7 @@ void Controller::updateControlData(const ControllerData &controllerData, Control
     //controlData.launchPadShot = controllerData.sRCenterBtn;
     //controlData.hubShot = controllerData.sLCenterBtn;
     //controlData.wrongBall = controllerData.sYBtn;
+    //controlData.finalShoot;
 
   
 }

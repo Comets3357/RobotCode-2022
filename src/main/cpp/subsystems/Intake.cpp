@@ -39,16 +39,17 @@ void Intake::RobotPeriodic(const RobotData &robotData, IntakeData &intakeData)
         tickCount = (tickCount+1)%50;
     }
 
-    // if(intakeRollers.GetFault(rev::CANSparkMax::FaultID::kHasReset)||intakeRollers.GetFault(rev::CANSparkMax::FaultID::kMotorFault)|intakeRollers.GetFault(rev::CANSparkMax::FaultID::kBrownout)){
-    //     Intake::rollersInit();
-    // }
-    // if(intakeMecanum.GetFault(rev::CANSparkMax::FaultID::kHasReset)||intakeMecanum.GetFault(rev::CANSparkMax::FaultID::kMotorFault)|intakeMecanum.GetFault(rev::CANSparkMax::FaultID::kBrownout)){
-    //     Intake::mecanumInit();
-    // }
-    // if(intakePivot.GetFault(rev::CANSparkMax::FaultID::kHasReset)||intakePivot.GetFault(rev::CANSparkMax::FaultID::kMotorFault)|intakePivot.GetFault(rev::CANSparkMax::FaultID::kBrownout)){
-    //     Intake::pivotInit();
-    // }
+    if(intakeRollers.GetFault(rev::CANSparkMax::FaultID::kHasReset)||intakeRollers.GetFault(rev::CANSparkMax::FaultID::kMotorFault)|intakeRollers.GetFault(rev::CANSparkMax::FaultID::kBrownout)){
+        Intake::rollersInit();
+    }
+    if(intakeMecanum.GetFault(rev::CANSparkMax::FaultID::kHasReset)||intakeMecanum.GetFault(rev::CANSparkMax::FaultID::kMotorFault)|intakeMecanum.GetFault(rev::CANSparkMax::FaultID::kBrownout)){
+        Intake::mecanumInit();
+    }
+    if(intakePivot.GetFault(rev::CANSparkMax::FaultID::kHasReset)||intakePivot.GetFault(rev::CANSparkMax::FaultID::kMotorFault)|intakePivot.GetFault(rev::CANSparkMax::FaultID::kBrownout)){
+        Intake::pivotInit();
+    }
 
+    
 }
 
 void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
@@ -59,6 +60,7 @@ void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
 
         intakeRollers.Set(intakeRollerSpeed);
         intakeMecanum.Set(intakeMecanumSpeed);
+        
     }
     else if (robotData.controlData.saIntakeBackward)
     {
@@ -92,7 +94,6 @@ void Intake::manual(const RobotData &robotData, IntakeData &intakeData){
     // }
 
     //intakeRollers.Set(robotData.controlData.mIntakeRollersBackward*.55);
-
     if(robotData.controlData.mIntakeRollers){
         intakeRollers.Set(intakeRollerSpeed);
         //intakeRollers.Set(rollerSpeed.GetDouble(0.05));
