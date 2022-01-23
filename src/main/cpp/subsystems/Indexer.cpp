@@ -52,8 +52,6 @@ void Indexer::manual(const RobotData &robotData, IndexerData &indexerData){
     }
 }
 
-
-
 void Indexer::updateData(const RobotData &robotData, IndexerData &indexerData)
 {
     indexerData.bottomSensor = !getBottomBeam();
@@ -86,8 +84,8 @@ void Indexer::testControl(const RobotData &robotData){
 // sense if balls enter indexer and assigns color to additional balls
 void Indexer::incrementCount(const RobotData &robotData, IndexerData &indexerData)
 {
-    if (indexerData.indexerContents.back() == Cargo::cargo_Unassigned){ // if the color sensor did not pick up on a color the first time
-
+    if (indexerData.indexerContents.back() == Cargo::cargo_Unassigned && !getBottomBeamToggled(true)){  // if the color sensor did not pick up on a color the first time assign a color
+                                                                                                        // if BB1 was NOT jus toggled true AND the last element of the deque is unassigned
         if(frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed){
 
             if (robotData.colorSensorData.currentColor == frc::Color::kRed){ //not sure if I'm checking this correctly, using kRed and all
@@ -97,7 +95,7 @@ void Indexer::incrementCount(const RobotData &robotData, IndexerData &indexerDat
                 indexerData.indexerContents.pop_back();
                 indexerData.indexerContents.push_back(Cargo::cargo_Opponent);
             } 
-        } else {
+        } else {                                                                                        
 
             if (robotData.colorSensorData.currentColor == frc::Color::kBlue){ //not sure if I'm checking this correctly, using kRed and all
                 indexerData.indexerContents.pop_back();
@@ -108,7 +106,7 @@ void Indexer::incrementCount(const RobotData &robotData, IndexerData &indexerDat
             } 
 
         }
-    } else {
+    } else if(getBottomBeamToggled(true)){  // if the last element is not unassigned, and bb1 was just toggled to sense a ball
 
         if(frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed){
 
@@ -193,7 +191,6 @@ void Indexer::saWheelControl(const RobotData &robotData, IndexerData &indexerDat
     }
 
 }
-
 
 // basic getter, init functions below
 
