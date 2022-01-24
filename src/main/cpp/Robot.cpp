@@ -23,7 +23,7 @@ void Robot::AutonomousInit()
     timer.EnabledInit(robotData.timerData);
     gyro.AutonomousInit(robotData.gyroData);
     auton.AutonomousInit(robotData.autonData);
-    drivebase.AutonomousInit(robotData, robotData.autonData);
+    drivebase.AutonomousInit(robotData, robotData.drivebaseData, robotData.autonData);
     
 }
 

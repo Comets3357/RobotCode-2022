@@ -24,8 +24,17 @@
 
 struct RobotData;
 
+enum DriveMode {
+    driveMode_joystick,
+    driveMode_turnInPlace,
+    driveMode_brake,
+    driveMode_trajectory
+};
+
 struct DrivebaseData
 {
+    DriveMode driveMode = driveMode_brake;
+
      // in meters eventually
     double currentLDBPos = 0.0;
     double currentRDBPos = 0.0;
@@ -49,7 +58,7 @@ class Drivebase
 public:
     void RobotInit();
     void TeleopInit(const RobotData &robotData);
-    void AutonomousInit(const RobotData &robotData, AutonData &autonData);
+    void AutonomousInit(const RobotData &robotData, DrivebaseData &drivebaseData, AutonData &autonData);
     void RobotPeriodic(const RobotData &robotData, DrivebaseData &drivebaseData, AutonData &autonData);
     void DisabledInit();
 
@@ -57,7 +66,7 @@ private:
 
     void updateData(const RobotData &robotData, DrivebaseData &drivebaseData);
     void teleopControl(const RobotData &robotData);
-    void autonControl(const RobotData &robotData, AutonData &autonData);
+    void autonControl(const RobotData &robotData, DrivebaseData &drivebaseData, AutonData &autonData);
 
     void setSpeeds(const frc::DifferentialDriveWheelSpeeds& speeds);
     void drive(units::meters_per_second_t xSpeed, units::radians_per_second_t rot);
@@ -71,7 +80,7 @@ private:
     void zeroEncoders();
     void setVelocity(double leftVel, double rightVel);
     frc::Pose2d getPose(double x, double y, double deg);
-    void getTrajectoryFile(const RobotData &robotData, AutonData &autonData);
+    void getTrajectoryFile(const RobotData &robotData, DrivebaseData &drivebaseData, AutonData &autonData);
     void turnInPlace(double degrees);
 
     // odometry
@@ -94,6 +103,9 @@ private:
     frc::Field2d field;
 
     double trajectorySecOffset = 0;
+    
+    double turnInPlaceDegrees = 0;
+    double brakeDuration = 0;
 
     // for 6 in wheels
     const double mpsToTpds = (6.0 / 0.1524) * (1 / (6.0 * M_PI)) * (64.0 / 8.0) * (2048.0) * (0.1);
