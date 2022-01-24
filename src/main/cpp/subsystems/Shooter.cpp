@@ -13,14 +13,24 @@ void Shooter::RobotInit()
 void Shooter::RobotPeriodic(const RobotData &robotData, ShooterData &shooterData)
 {
     updateData(robotData, shooterData);
+
+    // if(robotData.controlData.mFlyWheel){
+    //     setWheel(0.6);
+    //     shooterData.readyShoot = true;
+    //     //shooterWheelLead_pidController.SetReference(2000, rev::ControlType::kVelocity);
+    // }else{
+    //     setWheel(0);
+    //     shooterData.readyShoot = false;
+    // }
+    // setHood(robotData.controlData.mHood*.1);
+    
     if (robotData.controlData.manualMode)
     {
-        semiAuto(robotData, shooterData);
-
-    }
-    else
-    {
         manual(robotData, shooterData);
+
+
+    } else {
+        semiAuto(robotData, shooterData);
     }
     
 
@@ -35,16 +45,17 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
             shooterData.targetVel = 2000;
         }
 
-        shooterWheelLead_pidController.SetReference(3400, rev::CANSparkMaxLowLevel::ControlType::kVelocity,0);
+        //shooterWheelLead_pidController.SetReference(3400, rev::CANSparkMaxLowLevel::ControlType::kVelocity,0);
         setWheel(0.6);
 
         //once the shooter has high enough velocity (and is aimed correctly tell robot to begin shooting)
-        if ((getWheelVel() > robotData.shooterData.targetVel) /**&& (std::abs(getTurretPos() - (turretSnapshot + robotData.calcTurretPos)) <= 1) && (std::abs(getHoodPos() - robotData.calcHoodPos) <= 2)**/ ){
+        if ((getWheelVel() > 2000) /**&& (std::abs(getTurretPos() - (turretSnapshot + robotData.calcTurretPos)) <= 1) && (std::abs(getHoodPos() - robotData.calcHoodPos) <= 2)**/ ){
             shooterData.readyShoot = true;
         }else{
             shooterData.readyShoot = false;
         }
-        hoodZero = false;
+
+        // hoodZero = false;
 
     }else if(robotData.controlData.launchPadShot){ //FROM THE LAUNCH PAD
         shooterWheelLead_pidController.SetReference(2000, rev::ControlType::kVelocity);
@@ -103,19 +114,19 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
         // }
 
 
-
-        if(!hoodZero){
-            if(getHoodPos() > 4){
-                shooterHood_pidController.SetReference(4, rev::CANSparkMaxLowLevel::ControlType::kPosition);
-            }else{
-                setHood(-0.2);
-                if(getHoodLimitSwitch()){
-                    setHoodPos(0);
-                    setHood(0);
-                    hoodZero = true;
-                }
-            } 
-        }
+        setWheel(0);
+        // if(!hoodZero){
+        //     if(getHoodPos() > 4){
+        //         shooterHood_pidController.SetReference(4, rev::CANSparkMaxLowLevel::ControlType::kPosition);
+        //     }else{
+        //         setHood(-0.2);
+        //         if(getHoodLimitSwitch()){
+        //             setHoodPos(0);
+        //             setHood(0);
+        //             hoodZero = true;
+        //         }
+        //     } 
+        // }
 
 
     }
@@ -145,6 +156,7 @@ void Shooter::updateData(const RobotData &robotData, ShooterData &shooterData)
 {
     frc::SmartDashboard::PutNumber("shooter wheel vel", shooterWheelLeadEncoder.GetVelocity());
     frc::SmartDashboard::PutNumber("shooter hood", shooterHoodEncoder.GetPosition());
+    
 
 }
 
@@ -178,9 +190,7 @@ double Shooter::getWheelVel(){
 
 void Shooter::shooterWheelLeadInit(){
     shooterWheelLead.RestoreFactoryDefaults();
-
     shooterWheelLead.SetInverted(false);
-
     shooterWheelLead.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
 
     // //Slow
@@ -199,28 +209,22 @@ void Shooter::shooterWheelLeadInit(){
     // shooterWheelLead_pidController.SetFF(0,1);
     // shooterWheelLead_pidController.SetOutputRange(-.2, 0.15,1);
 
-
-
     shooterWheelLead.SetSmartCurrentLimit(45);
 }
 
 void Shooter::shooterWheelFollowInit(){
     shooterWheelFollow.RestoreFactoryDefaults();
+    //shooterWheelFollow.Follow(shooterWheelLead);
 
     shooterWheelFollow.SetInverted(false);
-
     shooterWheelFollow.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
-
     shooterWheelFollow.SetSmartCurrentLimit(45);
-
-    shooterWheelFollow.Follow(shooterWheelLead);
-
 }
 
 void Shooter::shooterHoodInit(){
     shooterHood.RestoreFactoryDefaults();
 
-    shooterHood.SetInverted(false);
+    shooterHood.SetInverted(true);
 
     shooterHood.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
 

@@ -35,7 +35,7 @@ private:
     Limelight limelight{};
     OtherComponents otherComponents{};
     Timer timer{};
-    ColorSensor colorSensor{};
+    // ColorSensor colorSensor{};
 
     // subsystems
     Drivebase drivebase{};

@@ -90,7 +90,7 @@ private:
     const double saIndexerWheelIntakeSpeed = 0.2;
     const double saIndexerBeltIntakeSpeed = 0.2;
 
-    ColorSensor colorSensor{}; //rev v3, for detecting ball color
+    // ColorSensor colorSensor{}; //rev v3, for detecting ball color
 
     rev::CANSparkMax indexerBelt = rev::CANSparkMax(indexerBeltsID, rev::CANSparkMax::MotorType::kBrushless);
     rev::SparkMaxRelativeEncoder indexerBeltEncoder = indexerBelt.GetEncoder();

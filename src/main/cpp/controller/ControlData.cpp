@@ -60,23 +60,28 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
 
 
 
+
     controlData.saIntake = controllerData.sRBumper;
-    controlData.saIntakeBackward = controllerData.sABtn;
+    // controlData.saIntakeBackward = controllerData.sABtn;
 
     controlData.saShooting = controllerData.sXBtn;
     controlData.saEjectBalls = controllerData.sBBtn;
+
+    // secondary y to set readyshoot to true in testing
+
     //controlData.launchPadShot = controllerData.sRCenterBtn;
     //controlData.hubShot = controllerData.sLCenterBtn;
     
-    if(robotData.indexerData.indexerContents.front() == Cargo::cargo_Opponent){
-        controlData.wrongBall = true;
-    } else if(robotData.indexerData.indexerContents.front() == Cargo::cargo_Alliance){
-        controlData.wrongBall = false;
-    } else if (robotData.indexerData.indexerContents.front() == Cargo::cargo_Unassigned){
-        controlData.wrongBall = true; 
+    // if(robotData.indexerData.indexerContents.front() == Cargo::cargo_Opponent){
+    //     controlData.wrongBall = true;
+    // } else if(robotData.indexerData.indexerContents.front() == Cargo::cargo_Alliance){
+    //     controlData.wrongBall = false;
+    // } else if (robotData.indexerData.indexerContents.front() == Cargo::cargo_Unassigned){
+    //     controlData.wrongBall = true; 
         // change to button for driver control?
-    }
+    // }
     //controlData.finalShoot;
+    
 
   
 }
