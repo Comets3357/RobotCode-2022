@@ -22,16 +22,7 @@ enum Cargo
 
 struct IndexerData
 {
-    int ballCount = 0;
     std::deque<Cargo> indexerContents;
-
-    // not a toggle, just what's actually 
-    bool bottomSensor = false;
-    bool midSensor = false;
-    bool topSensor = false;
-    
-    bool bottomSensorToggledOn = false;
-    
 };
 
 
@@ -47,17 +38,20 @@ private:
     void updateData(const RobotData &robotData, IndexerData &indexerData);
     void manual(const RobotData &robotData, IndexerData &indexerData);
     void semiAuto(const RobotData &robotData, IndexerData &indexerData);
-
-    void processColor(const RobotData &robotData, IndexerData &indexerData);
+    void testControl(const RobotData &robotData);
 
     void indexerBeltInit();
     void indexerWheelInit();
-    void intakeSequence(IndexerData &indexerData);
-    void shootSequence(IndexerData &indexerData);
 
-    void intakeSensing(const RobotData &robotData, IndexerData &indexerData);
+    void incrementCount(const RobotData &robotData, IndexerData &indexerData);
+    void newCargo(const RobotData &robotData, IndexerData &indexerData);
+    void assignCargoColor(const RobotData &robotData, IndexerData &indexerData);
+    void decrementCount(const RobotData &robotData, IndexerData &indexerData, bool reverse);
+    void mDecrement(const RobotData &robotData, IndexerData &indexerData);
+    void count(const RobotData &robotData, IndexerData &indexerData);
 
-    void testControl(const RobotData &robotData);
+    void saBeltControl(const RobotData &robotData, IndexerData &indexerData);
+    void saWheelControl(const RobotData &robotData, IndexerData &indexerData);
 
     bool getBottomBeam();
     bool getMidBeam();
@@ -65,28 +59,29 @@ private:
 
     // get if it was toggled to state specified in bool broken
     bool getBottomBeamToggled(bool broken);
-    bool getMidBeamToggled(bool broken);
+    // bool getMidBeamToggled(bool broken); // not in use
     bool getTopBeamToggled(bool broken);
 
-    // need to make constants for these indexes??
-    frc::DigitalInput bottomBeamBreak{1};
-    frc::DigitalInput midBeamBreak{2};
-    frc::DigitalInput topBeamBreak{3};
-
-    bool firstSensorTripped = false;
-    bool secondSensorTripped = false;
+    
+    
+    frc::DigitalInput bottomBeamBreak{bottomBeamBreakPort};
+    frc::DigitalInput midBeamBreak{midBeamBreakPort};
+    frc::DigitalInput topBeamBreak{topBeamBreakPort};
 
     bool prevBottomBeam = false;
-    bool prevMidBeam = false;
+    // bool prevMidBeam = false;
     bool prevTopBeam = false;
 
+    // debounce counters to time debounce
+    int bottomDebounceCount = 0;
+    int topDebounceCount = 0;
 
-    const double IndexerWheelSpeed = 0.2;
-    const double IndexerBeltSpeed = 0.2;
+    const double indexerWheelSpeed = 0.5;
+    const double indexerBeltSpeed = 0.2;
     const double saIndexerWheelIntakeSpeed = 0.2;
     const double saIndexerBeltIntakeSpeed = 0.2;
 
-    ColorSensor colorSensor{}; //rev v3, for detecting ball color
+    // ColorSensor colorSensor{}; //rev v3, for detecting ball color
 
     rev::CANSparkMax indexerBelt = rev::CANSparkMax(indexerBeltsID, rev::CANSparkMax::MotorType::kBrushless);
     rev::SparkMaxRelativeEncoder indexerBeltEncoder = indexerBelt.GetEncoder();

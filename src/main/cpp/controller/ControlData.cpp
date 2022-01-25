@@ -1,7 +1,8 @@
 #include "controller/Controller.h"
+#include "RobotData.h"
 
 // for updating states of control variables (to be accessed by other subsystems)
-void Controller::updateControlData(const ControllerData &controllerData, ControlData &controlData)
+void Controller::updateControlData(const RobotData &robotData, const ControllerData &controllerData, ControlData &controlData)
 {
     // states:
     controlData.shift = controllerData.sLBumper;
@@ -47,27 +48,40 @@ void Controller::updateControlData(const ControllerData &controllerData, Control
 
 
     controlData.mIntakeDown = controllerData.sLYStick;
-    controlData.mIntakeUp = controllerData.sYBtn;
-    controlData.mIntakeRollers = controllerData.sRYStick;
-    controlData.mzeroing = controllerData.sYBtn; // INTAKE ZEROING
-
+    controlData.mIntakeRollers = controllerData.sRBumper;
+    
+    controlData.mzeroing = controllerData.sYBtn; // hood ZEROING
     controlData.mHood = controllerData.sRYStick;
     controlData.mFlyWheel = controllerData.sABtn;
 
     controlData.mIndexerBackwards = controllerData.sBBtn;
     controlData.mIndexer = controllerData.sXBtn;
+    controlData.mDecrementCargo = controllerData.sLCenterBtnToggled;
+
 
 
 
     controlData.saIntake = controllerData.sRBumper;
-    controlData.saIntakeBackward = controllerData.sABtn;
+    // controlData.saIntakeBackward = controllerData.sABtn;
 
     controlData.saShooting = controllerData.sXBtn;
     controlData.saEjectBalls = controllerData.sBBtn;
+
+    // secondary y to set readyshoot to true in testing
+
     //controlData.launchPadShot = controllerData.sRCenterBtn;
     //controlData.hubShot = controllerData.sLCenterBtn;
-    //controlData.wrongBall = controllerData.sYBtn;
+    
+    // if(robotData.indexerData.indexerContents.front() == Cargo::cargo_Opponent){
+    //     controlData.wrongBall = true;
+    // } else if(robotData.indexerData.indexerContents.front() == Cargo::cargo_Alliance){
+    //     controlData.wrongBall = false;
+    // } else if (robotData.indexerData.indexerContents.front() == Cargo::cargo_Unassigned){
+    //     controlData.wrongBall = true; 
+        // change to button for driver control?
+    // }
     //controlData.finalShoot;
+    
 
   
 }

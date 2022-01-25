@@ -23,7 +23,6 @@ struct ControlData
 
     //intake:
     double mIntakeDown; 
-    bool mIntakeUp; //brings the intake down (default is up) MANUAL
     //brings the intake down (default is up) MANUAL
     double mIntakeRollers; //runs intake forwards MANUAL
     double mzeroing; //runs intake rollers backwards MANUAL
@@ -34,6 +33,7 @@ struct ControlData
     bool mIndexerBackwards; //runs indexer backwards MANUAL
     bool mIndexer; //runs indexer foward MANUAL
     bool saEjectBalls; //runs intake and indexer backwards to eject balls SEMIAUTO
+    bool mDecrementCargo; // manually decrements the amount of cargo in the indexer from the front of the deque
 
     //shooter:
     bool saShooting; //gets hood at right angle, shooter wheel up to speed SEMIAUTO
@@ -109,7 +109,7 @@ class Controller
          * */
 
         void updateBtnData(ControllerData &controllerData);
-        void updateControlData(const ControllerData &controllerData, ControlData &controlData);
+        void updateControlData(const RobotData &robotData, const ControllerData &controllerData, ControlData &controlData);
 
         // basic btn getters:
         bool getBtn(int js, int index);

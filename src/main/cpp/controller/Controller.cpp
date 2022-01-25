@@ -11,7 +11,7 @@
 void Controller::TeleopPeriodic(const RobotData &robotData, ControllerData &controllerData, ControlData &controlData)
 {
     updateBtnData(controllerData);
-    updateControlData(controllerData, controlData);
+    updateControlData(robotData, controllerData, controlData);
 }
 
 bool Controller::getBtn(int js, int index)

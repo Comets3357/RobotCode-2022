@@ -22,6 +22,7 @@ void Intake::RobotInit()
 void Intake::RobotPeriodic(const RobotData &robotData, IntakeData &intakeData)
 {
     updateData(robotData, intakeData);
+
     if (robotData.controlData.manualMode)
     {
         manual(robotData, intakeData);
@@ -75,7 +76,7 @@ void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
     }
     else //default case, everything up and not running
     {
-        intakeRollers.Set(intakeRollerSpeed);
+        intakeRollers.Set(0);
         intakeMecanum.Set(0);
 
         intakePivot_pidController.SetReference(0.1, rev::CANSparkMaxLowLevel::ControlType::kPosition, 1);
@@ -148,6 +149,25 @@ void Intake::updateData(const RobotData &robotData, IntakeData &intakeData)
 
     frc::SmartDashboard::PutNumber("tick count", tickCount);
 
+    intakeData.intakeIdle = intakeIdle(robotData, intakeData);
+    frc::SmartDashboard::PutBoolean("idle?", intakeData.intakeIdle);
+    frc::SmartDashboard::PutNumber("idle count", idleCount);
+
+
+}
+
+bool Intake::intakeIdle(const RobotData &robotData, IntakeData &intakeData){
+
+    if (robotData.controlData.saIntake || robotData.controlData.saIntakeBackward){
+        // if nothing is commanding the intake then idle counnt is 25
+        idleCount = 25;
+        return false; // hasn't 
+    } else if(idleCount > 0){ // the intake is idling
+        idleCount--;
+        return false;
+    } else {
+        return true;
+    }
 
 }
 
@@ -212,7 +232,7 @@ void Intake::mecanumInit(){
 }
 
 double Intake::absoluteToREV(double value){
-    return (value*-66 + 38.1);
+    return (value*-71.1 -4.83);
 }
 
 

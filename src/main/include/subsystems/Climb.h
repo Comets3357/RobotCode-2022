@@ -32,9 +32,9 @@ private:
 
 
     //CHANGE MOTOr ID STUFF  (just outline lol don't take your life too seriously:))
-    rev::CANSparkMax climb1 = rev::CANSparkMax(61, rev::CANSparkMax::MotorType::kBrushless);
-    rev::SparkMaxRelativeEncoder climb1Encoder = climb1.GetEncoder();
-    rev::SparkMaxPIDController climb1_pidController = climb1.GetPIDController();
+    // rev::CANSparkMax climb1 = rev::CANSparkMax(61, rev::CANSparkMax::MotorType::kBrushless);
+    // rev::SparkMaxRelativeEncoder climb1Encoder = climb1.GetEncoder();
+    // rev::SparkMaxPIDController climb1_pidController = climb1.GetPIDController();
 
 
 
