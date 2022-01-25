@@ -26,17 +26,23 @@ void Indexer::RobotPeriodic(const RobotData &robotData, IndexerData &indexerData
 
     // TESTING STUFF
     frc::SmartDashboard::PutNumber("cargo count", indexerData.indexerContents.size());
-    // frc::SmartDashboard::PutNumber("wrong ball?", robotData.controlData.wrongBall);
-    // if(robotData.colorSensorData.currentColor == frc::Color::kRed){
-    //     frc::SmartDashboard::PutBoolean("currently red?", true);
-    // } else {
-    //     frc::SmartDashboard::PutBoolean("currently red?", false);
+    frc::SmartDashboard::PutNumber("wrong ball?", robotData.controlData.wrongBall);
+    
+
+    // if(getBottomBeam()){
+    //     if(robotData.colorSensorData.currentColor == frc::Color::kRed){
+    //         frc::SmartDashboard::PutBoolean("currently red?", true);
+    //         frc::SmartDashboard::PutBoolean("currently blue?", false);
+    //     } else if(robotData.colorSensorData.currentColor == frc::Color::kBlue){
+    //         frc::SmartDashboard::PutBoolean("currently red?", false);
+    //         frc::SmartDashboard::PutBoolean("currently blue?", true);
+    //     } else {
+    //         frc::SmartDashboard::PutBoolean("currently red?", false);
+    //         frc::SmartDashboard::PutBoolean("currently blue?", false);
+    //     }
     // }
-    // if(robotData.colorSensorData.currentColor == frc::Color::kBlue){
-    //     frc::SmartDashboard::PutBoolean("currently blue?", true);
-    // } else {
-    //     frc::SmartDashboard::PutBoolean("currently blue?", false);
-    // }
+
+
 }
 
 void Indexer::DisabledInit()
@@ -99,56 +105,73 @@ void Indexer::testControl(const RobotData &robotData){
 // sense if balls enter indexer and assigns color to additional balls
 void Indexer::incrementCount(const RobotData &robotData, IndexerData &indexerData)
 {
-    // if (indexerData.indexerContents.back() == Cargo::cargo_Unassigned && !getBottomBeamToggled(true)){  // if the color sensor did not pick up on a color the first time assign a color
-    //                                                                                                     // if BB1 was NOT jus toggled true AND the last element of the deque is unassigned
-    //     if(frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed){
 
-    //         if (robotData.colorSensorData.currentColor == frc::Color::kRed){ //not sure if I'm checking this correctly, using kRed and all
-    //             indexerData.indexerContents.pop_back();
-    //             indexerData.indexerContents.push_back(Cargo::cargo_Alliance);
-    //         } else if (robotData.colorSensorData.currentColor == frc::Color::kBlue){
-    //             indexerData.indexerContents.pop_back();
-    //             indexerData.indexerContents.push_back(Cargo::cargo_Opponent);
-    //         } 
-    //     } else {   //blue alliance                                                                                      
+    if (indexerData.indexerContents.size() == 0) { // if indexer is empty  
+        if(getBottomBeamToggled(true)){  // if bb1 was just toggled add new ball
+            newCargo(robotData, indexerData);
+        }
+    } else { // indexer is not empty
+        if (getBottomBeamToggled(true)){ // bottom sensor was triggered
+            newCargo(robotData, indexerData);
+        } else if (indexerData.indexerContents.back() == Cargo::cargo_Unassigned){ // if last piece is unassigned
+            // if the last cargo is an unassigned cargo and the bottom beam was not just triggered
+            assignCargoColor(robotData, indexerData);
+            // still not sure about this logic
+        }
 
-    //         if (robotData.colorSensorData.currentColor == frc::Color::kBlue){ //not sure if I'm checking this correctly, using kRed and all
-    //             indexerData.indexerContents.pop_back();
-    //             indexerData.indexerContents.push_back(Cargo::cargo_Alliance);
-    //         } else if (robotData.colorSensorData.currentColor == frc::Color::kRed){
-    //             indexerData.indexerContents.pop_back();
-    //             indexerData.indexerContents.push_back(Cargo::cargo_Opponent);
-    //         } 
+    }
 
-    //     }
-
-    // } else 
-    if(getBottomBeamToggled(true)){  // if the last element is not unassigned, and bb1 was just toggled to sense a ball
-
-    //     if(frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed){
-
-    //         if (robotData.colorSensorData.currentColor == frc::Color::kRed){ //not sure if I'm checking this correctly, using kRed and all
-    //             indexerData.indexerContents.push_back(Cargo::cargo_Alliance);
-    //         } else if (robotData.colorSensorData.currentColor == frc::Color::kBlue){
-    //             indexerData.indexerContents.push_back(Cargo::cargo_Opponent);
-    //         } else {
-    //             indexerData.indexerContents.push_back(Cargo::cargo_Unassigned);
-    //         }
-
-    //     } else if (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue){
-
-    //         if(robotData.colorSensorData.currentColor == frc::Color::kBlue){ //not sure if I'm checking this correctly, using kRed and all
-    //             indexerData.indexerContents.push_back(Cargo::cargo_Alliance);
-    //         } else if (robotData.colorSensorData.currentColor == frc::Color::kRed){
-    //             indexerData.indexerContents.push_back(Cargo::cargo_Opponent);
-    //         } else {
-                indexerData.indexerContents.push_back(Cargo::cargo_Unassigned);
-            }
-
-    //     } 
-    // }
 
         
+}
+
+void Indexer::newCargo(const RobotData &robotData, IndexerData &indexerData){
+    if(frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed){
+
+        if (robotData.colorSensorData.currentColor == frc::Color::kRed){ //not sure if I'm checking this correctly, using kRed and all
+            indexerData.indexerContents.push_back(Cargo::cargo_Alliance);
+        } else if (robotData.colorSensorData.currentColor == frc::Color::kBlue){
+            indexerData.indexerContents.push_back(Cargo::cargo_Opponent);
+        } else {
+            indexerData.indexerContents.push_back(Cargo::cargo_Unassigned);
+        }
+
+    } else if (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue){
+
+        if(robotData.colorSensorData.currentColor == frc::Color::kBlue){ //not sure if I'm checking this correctly, using kRed and all
+            indexerData.indexerContents.push_back(Cargo::cargo_Alliance);
+        } else if (robotData.colorSensorData.currentColor == frc::Color::kRed){
+            indexerData.indexerContents.push_back(Cargo::cargo_Opponent);
+        } else {
+            indexerData.indexerContents.push_back(Cargo::cargo_Unassigned);
+        }
+
+    } 
+}
+
+void Indexer::assignCargoColor(const RobotData &robotData, IndexerData &indexerData)
+{
+
+    if(frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed){
+
+        if (robotData.colorSensorData.currentColor == frc::Color::kRed){ //not sure if I'm checking this correctly, using kRed and all
+            indexerData.indexerContents.pop_back();
+            indexerData.indexerContents.push_back(Cargo::cargo_Alliance);
+        } else if (robotData.colorSensorData.currentColor == frc::Color::kBlue){
+            indexerData.indexerContents.pop_back();
+            indexerData.indexerContents.push_back(Cargo::cargo_Opponent);
+        } 
+    } else {   //blue alliance                                                                                      
+
+        if (robotData.colorSensorData.currentColor == frc::Color::kBlue){ //not sure if I'm checking this correctly, using kRed and all
+            indexerData.indexerContents.pop_back();
+            indexerData.indexerContents.push_back(Cargo::cargo_Alliance);
+        } else if (robotData.colorSensorData.currentColor == frc::Color::kRed){
+            indexerData.indexerContents.pop_back();
+            indexerData.indexerContents.push_back(Cargo::cargo_Opponent);
+        } 
+
+    }
 }
 
 // senses if balls leave indexer and removes them from the deque

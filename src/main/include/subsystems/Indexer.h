@@ -44,6 +44,8 @@ private:
     void indexerWheelInit();
 
     void incrementCount(const RobotData &robotData, IndexerData &indexerData);
+    void newCargo(const RobotData &robotData, IndexerData &indexerData);
+    void assignCargoColor(const RobotData &robotData, IndexerData &indexerData);
     void decrementCount(const RobotData &robotData, IndexerData &indexerData, bool reverse);
     void mDecrement(const RobotData &robotData, IndexerData &indexerData);
     void count(const RobotData &robotData, IndexerData &indexerData);
@@ -74,7 +76,7 @@ private:
     int bottomDebounceCount = 0;
     int topDebounceCount = 0;
 
-    const double indexerWheelSpeed = 0.2;
+    const double indexerWheelSpeed = 0.5;
     const double indexerBeltSpeed = 0.2;
     const double saIndexerWheelIntakeSpeed = 0.2;
     const double saIndexerBeltIntakeSpeed = 0.2;

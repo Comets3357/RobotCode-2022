@@ -17,7 +17,7 @@ void Robot::RobotPeriodic()
     timer.RobotPeriodic(robotData.timerData);
     gyro.RobotPeriodic(robotData.gyroData);
     limelight.RobotPeriodic(robotData, robotData.limelightData);
-    // colorSensor.RobotPeriodic(robotData);
+    colorSensor.RobotPeriodic(robotData);
 
     if (IsEnabled())
     {
