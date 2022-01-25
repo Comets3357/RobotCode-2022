@@ -15,6 +15,7 @@ void Auton::AutonomousInit(AutonData &autonData)
     // because getTrajectoryFile() steps autonStep
     autonData.autonStep = -1;
 
+    // CHANGE THIS STRING AT THE END OF THE PATH TO CHANGE ROUTINE SELECTION
     fs::path autonDirectory = deployDirectory / "Autos" / "sequence";
     frc::SmartDashboard::PutString("autonDiredctory", autonDirectory.string());
 

@@ -2,15 +2,23 @@ sequence1
 sequence2
 sequence3
 sequence4
+break 2
+turnInPlace 90
 sequence1
 sequence2
 sequence3
 sequence4
+break 2
+turnInPlace 90
 sequence1
 sequence2
 sequence3
 sequence4
+break 2
+turnInPlace 90
 sequence1
 sequence2
 sequence3
 sequence4
+break 2
+turnInPlace 90
