@@ -43,8 +43,9 @@ static const double
     hubHeight = 104,
     limelightMount = 37,
     limelightAngle = 37.75,
-    xcameraDistanceFromBot = 5,
-    ycameraDistanceFromBot = 1;
+    xcameraDistanceFromBot = 3.0625,
+    ycameraDistanceFromBot = 9.5,
+    shooterDistanceFromCenterOfBot = 2;
 
 
 

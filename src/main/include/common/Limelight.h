@@ -2,6 +2,12 @@
 #include "Constants.h"
 #include "common/VisionLookup.h"
 
+#include <networktables/NetworkTable.h>
+#include <networktables/NetworkTableInstance.h>
+#include <cmath>
+#include <frc/DriverStation.h>
+#include <frc/smartdashboard/SmartDashboard.h>
+
 
 struct RobotData;
 
@@ -45,6 +51,9 @@ private:
     double correctDistance(double angleOffset, double originalDistance);
     double getHoodPOS(VisionLookup &visionLookup, LimelightData &limelightData);
     void shooterOffset(const RobotData &robotData, LimelightData &limelightData);
+
+    std::shared_ptr<nt::NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("limelight"); //opens up the table
+
 
 
 
