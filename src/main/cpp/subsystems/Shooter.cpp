@@ -28,7 +28,6 @@ void Shooter::RobotPeriodic(const RobotData &robotData, ShooterData &shooterData
     {
         manual(robotData, shooterData);
 
-
     } else {
         semiAuto(robotData, shooterData);
     }
@@ -157,7 +156,6 @@ void Shooter::updateData(const RobotData &robotData, ShooterData &shooterData)
     frc::SmartDashboard::PutNumber("shooter wheel vel", shooterWheelLeadEncoder.GetVelocity());
     frc::SmartDashboard::PutNumber("shooter hood", shooterHoodEncoder.GetPosition());
     
-
 }
 
 void Shooter::setHoodPos(double pos){
@@ -214,26 +212,21 @@ void Shooter::shooterWheelLeadInit(){
 
 void Shooter::shooterWheelFollowInit(){
     shooterWheelFollow.RestoreFactoryDefaults();
-    //shooterWheelFollow.Follow(shooterWheelLead);
-
-    shooterWheelFollow.SetInverted(false);
+    shooterWheelFollow.Follow(shooterWheelLead, true);
     shooterWheelFollow.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
     shooterWheelFollow.SetSmartCurrentLimit(45);
 }
 
-void Shooter::shooterHoodInit(){
+void Shooter::shooterHoodInit()
+{
     shooterHood.RestoreFactoryDefaults();
-
     shooterHood.SetInverted(true);
-
     shooterHood.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-
     // shooterWheelLead_pidController.SetP(mkP);
     // shooterWheelLead_pidController.SetI(mkI);
     // shooterWheelLead_pidController.SetD(mkD);
     // shooterWheelLead_pidController.SetIZone(mkIz);
     // shooterWheelLead_pidController.SetFF(mkFF);
     // shooterWheelLead_pidController.SetOutputRange(mkMinOutput, mkMaxOutput);
-
     shooterHood.SetSmartCurrentLimit(45);
 }

@@ -12,6 +12,8 @@ void Indexer::RobotInit()
 void Indexer::RobotPeriodic(const RobotData &robotData, IndexerData &indexerData)
 {
     updateData(robotData, indexerData);
+    count(robotData, indexerData);  // accounts for automatic counting as well as manual decrementing
+                                    // pressing slcntrbtn will remove the first element of the deque
     if (robotData.controlData.manualMode)
     {
         manual(robotData, indexerData);
@@ -46,48 +48,44 @@ void Indexer::DisabledInit()
 
 }
 
-void Indexer::semiAuto(const RobotData &robotData, IndexerData &indexerData){
+void Indexer::semiAuto(const RobotData &robotData, IndexerData &indexerData)
+{
 
-    count(robotData, indexerData);
     saBeltControl(robotData, indexerData);
     saWheelControl(robotData, indexerData);
 
 }
 
-void Indexer::manual(const RobotData &robotData, IndexerData &indexerData){
-
-    count(robotData, indexerData);
+void Indexer::manual(const RobotData &robotData, IndexerData &indexerData)
+{
 
     if(robotData.controlData.mIndexerBackwards){ //run belt and wheel backwards  (B)
-        indexerWheel.Set(-IndexerWheelSpeed);
-        indexerBelt.Set(-IndexerBeltSpeed);
+        indexerWheel.Set(-indexerWheelSpeed);
+        indexerBelt.Set(-indexerBeltSpeed);
     }else if(robotData.controlData.mIndexer){ //run belt and wheel forwards (X)
-        indexerBelt.Set(IndexerBeltSpeed);
-        indexerWheel.Set(IndexerWheelSpeed);    
+        indexerBelt.Set(indexerBeltSpeed);
+        indexerWheel.Set(indexerWheelSpeed);    
     }else{
         indexerBelt.Set(0);
         indexerWheel.Set(0);   
     }
+
 }
 
 void Indexer::updateData(const RobotData &robotData, IndexerData &indexerData)
 {
-    // indexerData.bottomSensor = !getBottomBeam();
-    // indexerData.midSensor = !getMidBeam();
-    // indexerData.topSensor = !getTopBeam();
-    // indexerData.bottomSensorToggledOn = getBottomBeamToggled(true);
 
 }
 
 void Indexer::testControl(const RobotData &robotData){
     if(robotData.controlData.mIndexerBackwards){    // run belt and wheel backwards
                                                     // secondary B
-        indexerBelt.Set(-IndexerBeltSpeed);
-        indexerWheel.Set(-IndexerWheelSpeed);
+        indexerBelt.Set(-indexerBeltSpeed);
+        indexerWheel.Set(-indexerWheelSpeed);
     }else if(robotData.controlData.mIndexer){       // run belt and wheel forwards
                                                     // secondary X
-        indexerBelt.Set(IndexerBeltSpeed);
-        indexerWheel.Set(IndexerWheelSpeed);    
+        indexerBelt.Set(indexerBeltSpeed);
+        indexerWheel.Set(indexerWheelSpeed);    
     }else if (robotData.controllerData.sYBtn) {     // run belt and wheel on exact speed control, separately
                                                     // right is belt, left is wheel                          
         indexerBelt.Set(robotData.controllerData.sRYStick*.3);
@@ -167,6 +165,13 @@ void Indexer::decrementCount(const RobotData &robotData, IndexerData &indexerDat
     }
 }
 
+void Indexer::mDecrement(const RobotData &robotData, IndexerData &indexerData)
+{
+    if(indexerData.indexerContents.size() > 0){
+        indexerData.indexerContents.pop_front();
+    }
+}
+
 // runs both count functions in appropriate cases
 void Indexer::count(const RobotData &robotData, IndexerData &indexerData){
 
@@ -192,26 +197,31 @@ void Indexer::count(const RobotData &robotData, IndexerData &indexerData){
      * run only decrement     * 
      **/
 
+    if(robotData.controlData.manualMode && robotData.controlData.mDecrementCargo){
+        mDecrement(robotData, indexerData);
+    }
+
 }
 
 void Indexer::saBeltControl(const RobotData &robotData, IndexerData &indexerData){
 
     if(robotData.controlData.saEjectBalls || robotData.controlData.mIndexerBackwards){ // if indexer is REVERSING (saEject or manual indexer backwards)
-        indexerBelt.Set(-IndexerBeltSpeed);
-    } else if (robotData.shooterData.readyShoot || !getTopBeam()){ // if you're shooting or BB3 is not tripped
-        indexerBelt.Set(IndexerBeltSpeed);
-    } else if (indexerData.indexerContents.size() > 0 && getTopBeam()){
+        indexerBelt.Set(-indexerBeltSpeed);
+    } else if ((!getTopBeam() || robotData.shooterData.readyShoot) && !robotData.intakeData.intakeIdle){ // if you're shooting or BB3 is not tripped
+        indexerBelt.Set(indexerBeltSpeed);
+    }  else {
         indexerBelt.Set(0);
     }
+    
 
 }
 
 void Indexer::saWheelControl(const RobotData &robotData, IndexerData &indexerData){
     if(robotData.controlData.saEjectBalls || robotData.controlData.mIndexerBackwards){ // if indexer is REVERSING (saEject or manual indexer backwards)
-        indexerWheel.Set(-IndexerWheelSpeed);
-    } else if (indexerData.indexerContents.size() < 2 || !getMidBeam()){ // if indexer is not yet full or if indexer DOES have 2 balls but the 2nd sensor has not yet been tripped
-        indexerWheel.Set(IndexerWheelSpeed);
-    } else if (indexerData.indexerContents.size() == 2 && getMidBeam()){
+        indexerWheel.Set(-indexerWheelSpeed);
+    } else if ((robotData.shooterData.readyShoot || !(getTopBeam() && getMidBeam())) && !robotData.intakeData.intakeIdle){ // if indexer is not yet full or if indexer DOES have 2 balls but the 2nd sensor has not yet been tripped
+        indexerWheel.Set(indexerWheelSpeed);
+    } else {
         indexerWheel.Set(0);
     }
 

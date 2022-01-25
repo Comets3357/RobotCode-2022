@@ -18,6 +18,7 @@ struct RobotData;
 
 struct IntakeData
 {
+    bool intakeIdle;
 };
 
 class Intake
@@ -37,6 +38,7 @@ private:
     void pivotInit();
     void mecanumInit();
     double absoluteToREV(double value);
+    bool intakeIdle(const RobotData &robotData, IntakeData &intakeData);
 
 
     double intakePivotSpeed = 0.1;
@@ -45,6 +47,8 @@ private:
     double intakeRollersEjectSpeed = 0.5;
     double armDownPosition = 0.428;
     int tickCount = 0;
+
+    int idleCount = 0;
 
     nt::NetworkTableEntry rollerSpeed = frc::Shuffleboard::GetTab("test")
                      .Add("roller speed", 1)

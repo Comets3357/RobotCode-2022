@@ -48,15 +48,15 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
 
 
     controlData.mIntakeDown = controllerData.sLYStick;
-    controlData.mIntakeUp = controllerData.sYBtn;
-    controlData.mIntakeRollers = controllerData.sRYStick;
-    controlData.mzeroing = controllerData.sYBtn; // INTAKE ZEROING
-
+    controlData.mIntakeRollers = controllerData.sRBumper;
+    
+    controlData.mzeroing = controllerData.sYBtn; // hood ZEROING
     controlData.mHood = controllerData.sRYStick;
     controlData.mFlyWheel = controllerData.sABtn;
 
     controlData.mIndexerBackwards = controllerData.sBBtn;
     controlData.mIndexer = controllerData.sXBtn;
+    controlData.mDecrementCargo = controllerData.sLCenterBtnToggled;
 
 
 

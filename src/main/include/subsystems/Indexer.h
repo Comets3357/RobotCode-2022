@@ -22,20 +22,7 @@ enum Cargo
 
 struct IndexerData
 {
-    // int ballCount = 0;
     std::deque<Cargo> indexerContents;
-
-    // not a toggle, just what's actually 
-    // bool bottomSensor = false;
-    // bool midSensor = false;
-    // bool topSensor = false;
-    
-    // bool bottomSensorToggledOn = false;
-
-    // bool reverseIndexer = false;
-
-
-    
 };
 
 
@@ -58,7 +45,9 @@ private:
 
     void incrementCount(const RobotData &robotData, IndexerData &indexerData);
     void decrementCount(const RobotData &robotData, IndexerData &indexerData, bool reverse);
+    void mDecrement(const RobotData &robotData, IndexerData &indexerData);
     void count(const RobotData &robotData, IndexerData &indexerData);
+
     void saBeltControl(const RobotData &robotData, IndexerData &indexerData);
     void saWheelControl(const RobotData &robotData, IndexerData &indexerData);
 
@@ -72,8 +61,7 @@ private:
     bool getTopBeamToggled(bool broken);
 
     
-
-    // need to make constants for these indexes??
+    
     frc::DigitalInput bottomBeamBreak{bottomBeamBreakPort};
     frc::DigitalInput midBeamBreak{midBeamBreakPort};
     frc::DigitalInput topBeamBreak{topBeamBreakPort};
@@ -82,11 +70,12 @@ private:
     // bool prevMidBeam = false;
     bool prevTopBeam = false;
 
+    // debounce counters to time debounce
     int bottomDebounceCount = 0;
     int topDebounceCount = 0;
 
-    const double IndexerWheelSpeed = 0.2;
-    const double IndexerBeltSpeed = 0.2;
+    const double indexerWheelSpeed = 0.2;
+    const double indexerBeltSpeed = 0.2;
     const double saIndexerWheelIntakeSpeed = 0.2;
     const double saIndexerBeltIntakeSpeed = 0.2;
 
