@@ -10,7 +10,7 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
     {
         controlData.manualMode = !controlData.manualMode;
     }
-    if (controllerData.sRCenterBtnToggled)
+    if (controllerData.sLCenterBtnToggled)
     {
         controlData.climbMode = !controlData.climbMode;
     }
@@ -83,5 +83,12 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
     //controlData.finalShoot;
     
 
+  
+    //CLIMB
+    if (controlData.climbMode)
+    {
+        controlData.saclimbInit = controllerData.sABtn;
+        controlData.saclimb = controllerData.sBBtn;
+    }
   
 }
