@@ -22,10 +22,7 @@ void Shooter::RobotPeriodic(const RobotData &robotData, ShooterData &shooterData
         semiAuto(robotData, shooterData);
 
     }
-    else
-    {
-        manual(robotData, shooterData);
-    }
+    
     currentHoodPos = shooterHoodEncoder2.GetDistance();
 
 }

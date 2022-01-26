@@ -38,7 +38,7 @@ class Limelight
 {
 
 public:
-    void RobotInit();
+    void RobotInit(const RobotData &robotData);
     void RobotPeriodic(const RobotData &robotData, LimelightData &limelightData, VisionLookup &visionLookup);
     double getHorizontalOffset();
     double getVerticalOffset();

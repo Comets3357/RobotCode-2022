@@ -18,7 +18,7 @@ class ColorSensor
     
     public: 
         void RobotInit();
-        void RobotPeriodic(RobotData &RobotData);
+        void RobotPeriodic(RobotData &robotData);
         void Disabled();
 
 

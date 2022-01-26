@@ -1,13 +1,12 @@
-#include "subsystems/Indexer.h"
 #include "RobotData.h"
 
 void Indexer::RobotInit()
 {
     indexerBeltInit();
     indexerWheelInit();
-
     indexerBelt.Set(0);
     indexerWheel.Set(0);
+
 }
 
 void Indexer::RobotPeriodic(const RobotData &robotData, IndexerData &indexerData)
@@ -22,6 +21,7 @@ void Indexer::RobotPeriodic(const RobotData &robotData, IndexerData &indexerData
     else
     {
         semiAuto(robotData, indexerData);
+        // testControl(robotData);
     }
 
     // TESTING STUFF
@@ -45,18 +45,14 @@ void Indexer::RobotPeriodic(const RobotData &robotData, IndexerData &indexerData
 
 }
 
-void Indexer::semiAuto(const RobotData &robotData, IndexerData &indexerData){
-    if(robotData.controlData.saEjectBalls){ //run belt and wheel backwards
-        indexerBelt.Set(-mIndexerBeltSpeed);
-        indexerWheel.Set(-mIndexerWheelSpeed);
-    }else if(robotData.shooterData.readyShoot && robotData.controlData.finalShoot){
-        indexerData.ballCount = 0;
-        indexerBelt.Set(saIndexerBeltExitSpeed);
-        indexerWheel.Set(saIndexerWheelExitSpeed);
+void Indexer::DisabledInit()
+{
+    indexerBelt.Set(0);
+    indexerWheel.Set(0);
+    // indexerBelt.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
+    // indexerWheel.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
 
-    }else if(robotData.shooterData.wrongBallReady){
-        indexerBelt.Set(saIndexerBeltExitSpeed);
-        indexerWheel.Set(saIndexerWheelExitSpeed);
+}
 
 void Indexer::semiAuto(const RobotData &robotData, IndexerData &indexerData)
 {
@@ -64,8 +60,6 @@ void Indexer::semiAuto(const RobotData &robotData, IndexerData &indexerData)
     saBeltControl(robotData, indexerData);
     saWheelControl(robotData, indexerData);
 
-        }
-    }
 }
 
 void Indexer::manual(const RobotData &robotData, IndexerData &indexerData)
@@ -84,7 +78,7 @@ void Indexer::manual(const RobotData &robotData, IndexerData &indexerData)
 
 }
 
-void Indexer::DisabledInit()
+void Indexer::updateData(const RobotData &robotData, IndexerData &indexerData)
 {
 
 }
@@ -183,6 +177,15 @@ void Indexer::assignCargoColor(const RobotData &robotData, IndexerData &indexerD
 // senses if balls leave indexer and removes them from the deque
 void Indexer::decrementCount(const RobotData &robotData, IndexerData &indexerData, bool reverse){
     
+    if (indexerData.indexerContents.size() > 0){ // making sure we don't pop when there's nothing in there
+        if (reverse && getBottomBeamToggled(false)){ // if you're reversing and bb1 toggles off (ball passed completely through)
+            indexerData.indexerContents.pop_back();
+            // indexerData.ballCount--;
+        }else if (!reverse && getTopBeamToggled(false)){
+            indexerData.indexerContents.pop_front();
+            // indexerData.ballCount--;
+        }
+    }
 }
 
 void Indexer::mDecrement(const RobotData &robotData, IndexerData &indexerData)
@@ -324,21 +327,14 @@ bool Indexer::getTopBeamToggled(bool broken){
 
 void Indexer::indexerBeltInit(){
     indexerBelt.RestoreFactoryDefaults();
-
-    indexerBelt.SetInverted(false);
-
+    indexerBelt.SetInverted(true);
     indexerBelt.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-
     indexerBelt.SetSmartCurrentLimit(45);
 }
 
 void Indexer::indexerWheelInit(){
     indexerWheel.RestoreFactoryDefaults();
-
-    indexerWheel.SetInverted(false);
-
+    indexerWheel.SetInverted(true);
     indexerWheel.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-
     indexerWheel.SetSmartCurrentLimit(45);
-
 }

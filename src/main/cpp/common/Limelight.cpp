@@ -3,7 +3,7 @@
 
 void Limelight::RobotInit(const RobotData &robotData) 
 {
-    frc::SmartDashboard::PutNumber{"target hood", RobotData.limelightData.desiredHoodPos};
+    frc::SmartDashboard::PutNumber("target hood", robotData.limelightData.desiredHoodPos);
 }
 
 /**

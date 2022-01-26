@@ -17,6 +17,7 @@
 #include "common/Limelight.h"
 #include "common/VisionLookup.h"
 #include "common/OtherComponents.h"
+#include "common/ColorSensor.h"
 
 //Robot class inherits from TimedRobot
 class Robot : public frc::TimedRobot

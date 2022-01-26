@@ -7,6 +7,7 @@
 #include "common/Limelight.h"
 #include "common/VisionLookup.h"
 #include "common/Timer.h"
+#include "common/ColorSensor.h"
 
 #include "auton/Auton.h"
 
@@ -25,8 +26,9 @@ struct RobotData
     OtherComponentsData otherComponentsData;
     GyroData gyroData;
     LimelightData limelightData;
-    VisionLookup visionLookupData;
+    VisionLookupData visionLookupData;
     TimerData timerData;
+    ColorSensorData colorSensorData;
 
     AutonData autonData;
 

@@ -51,6 +51,12 @@ static const double
     ycameraDistanceFromBot = 9.5,
     shooterDistanceFromCenterOfBot = 2;
 
+// DIO
+static const int
+    intakeAbsoluteEncoderPort = 0,
+    bottomBeamBreakPort = 3,
+    midBeamBreakPort = 4,
+    topBeamBreakPort = 5;
 
 
 
