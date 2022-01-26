@@ -42,6 +42,70 @@ void Indexer::RobotPeriodic(const RobotData &robotData, IndexerData &indexerData
     //     }
     // }
 
+    if (indexerData.indexerContents.size() == 0){
+
+        frc::SmartDashboard::PutString("top", "empty");
+        frc::SmartDashboard::PutString("bottom", "empty");
+
+    } else if (indexerData.indexerContents.size() == 1){
+
+        if(indexerData.indexerContents.front() == Cargo::cargo_Alliance){
+            frc::SmartDashboard::PutString("top", "alliance");
+            frc::SmartDashboard::PutString("bottom", "empty");
+        } else if (indexerData.indexerContents.front() == Cargo::cargo_Opponent){
+            frc::SmartDashboard::PutString("top", "opponent");
+            frc::SmartDashboard::PutString("bottom", "empty");
+        } else {
+            frc::SmartDashboard::PutString("top", "unassigned");
+            frc::SmartDashboard::PutString("bottom", "empty");
+        }
+
+    } else if (indexerData.indexerContents.size() == 2){
+
+        if(indexerData.indexerContents.front() == Cargo::cargo_Alliance){
+
+            if(indexerData.indexerContents.back() == Cargo::cargo_Alliance){
+                frc::SmartDashboard::PutString("top", "alliance");
+                frc::SmartDashboard::PutString("bottom", "alliance");
+            } else if(indexerData.indexerContents.back() == Cargo::cargo_Opponent){
+                frc::SmartDashboard::PutString("top", "alliance");
+                frc::SmartDashboard::PutString("bottom", "opponent");
+            } else {
+                frc::SmartDashboard::PutString("top", "alliance");
+                frc::SmartDashboard::PutString("bottom", "unassigned");
+            }
+
+        } else if (indexerData.indexerContents.front() == Cargo::cargo_Opponent){
+
+            if(indexerData.indexerContents.back() == Cargo::cargo_Alliance){
+                frc::SmartDashboard::PutString("top", "opponent");
+                frc::SmartDashboard::PutString("bottom", "alliance");
+            } else if(indexerData.indexerContents.back() == Cargo::cargo_Opponent){
+                frc::SmartDashboard::PutString("top", "opponent");
+                frc::SmartDashboard::PutString("bottom", "opponent");
+            } else {
+                frc::SmartDashboard::PutString("top", "opponent");
+                frc::SmartDashboard::PutString("bottom", "unassigned");
+            }
+
+        } else {
+            if(indexerData.indexerContents.back() == Cargo::cargo_Alliance){
+                frc::SmartDashboard::PutString("top", "unassigned");
+                frc::SmartDashboard::PutString("bottom", "alliance");
+            } else if(indexerData.indexerContents.back() == Cargo::cargo_Opponent){
+                frc::SmartDashboard::PutString("top", "unassigned");
+                frc::SmartDashboard::PutString("bottom", "opponent");
+            } else {
+                frc::SmartDashboard::PutString("top", "unassigned");
+                frc::SmartDashboard::PutString("bottom", "unassigned");
+            }
+            
+        }
+    } else {
+        frc::SmartDashboard::PutString("top", "overload");
+        frc::SmartDashboard::PutString("bottom", "overload");
+    }
+
 
 }
 
@@ -180,10 +244,8 @@ void Indexer::decrementCount(const RobotData &robotData, IndexerData &indexerDat
     if (indexerData.indexerContents.size() > 0){ // making sure we don't pop when there's nothing in there
         if (reverse && getBottomBeamToggled(false)){ // if you're reversing and bb1 toggles off (ball passed completely through)
             indexerData.indexerContents.pop_back();
-            // indexerData.ballCount--;
-        }else if (!reverse && getTopBeamToggled(false)){
+        }else if (!reverse && getTopBeamToggled(false) && robotData.shooterData.readyShoot){
             indexerData.indexerContents.pop_front();
-            // indexerData.ballCount--;
         }
     }
 }
@@ -230,7 +292,7 @@ void Indexer::saBeltControl(const RobotData &robotData, IndexerData &indexerData
 
     if(robotData.controlData.saEjectBalls || robotData.controlData.mIndexerBackwards){ // if indexer is REVERSING (saEject or manual indexer backwards)
         indexerBelt.Set(-indexerBeltSpeed);
-    } else if ((!getTopBeam() || robotData.shooterData.readyShoot) && !robotData.intakeData.intakeIdle){ // if you're shooting or BB3 is not tripped
+    } else if (robotData.shooterData.readyShoot || (!getTopBeam() && !robotData.intakeData.intakeIdle)){ // if you're shooting or (BB3 is not  and the intake isn't idle)
         indexerBelt.Set(indexerBeltSpeed);
     }  else {
         indexerBelt.Set(0);
