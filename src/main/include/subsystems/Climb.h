@@ -30,6 +30,9 @@ private:
     int stage = 0;
     int bar = 2;
 
+    bool executeSemiAuto = false;
+    int targetBar = 0;
+
     bool elevatorDirection; //True is positive, False is negative
     bool elevatorRunning = false;
 
