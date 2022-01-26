@@ -63,8 +63,10 @@ void Controller::updateControlData(const ControllerData &controllerData, Control
 
     controlData.saShooting = controllerData.sXBtn;
     controlData.saEjectBalls = controllerData.sBBtn;
+    controlData.finalShoot = controllerData.sLBumper;
     //controlData.launchPadShot = controllerData.sRCenterBtn;
     //controlData.hubShot = controllerData.sLCenterBtn;
+
     //controlData.wrongBall = controllerData.sYBtn;
 
   

@@ -29,6 +29,10 @@ static const int
     shooterHoodID = 33,
     shooterTurretID = 34;
 
+static const double
+    minHoodExtend = 0,
+    maxHoodExtend = 0;
+
 //shooter PID constants:
 static const double
     swkP = 0.02, swkI = 0, swkD = 0, swkIz = 0, swkFF = 0, swkMaxOutput = 1, swkMinOutput = -1,

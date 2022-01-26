@@ -1,9 +1,9 @@
 
 #include "RobotData.h"
 
-void Limelight::RobotInit() 
+void Limelight::RobotInit(const RobotData &robotData) 
 {
-
+    frc::SmartDashboard::PutNumber{"target hood", RobotData.limelightData.desiredHoodPos};
 }
 
 /**
@@ -29,17 +29,19 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     //x offset will need to change to adjusted value for shooter
     limelightData.correctDistance = correctDistance(limelightData.angleOffset, limelightData.distanceOffset);
 
-    table->PutNumber("pipeline", getPipeline(robotData.limelightData.yOffset)); //set the pipeline based on y offset
-
     limelightData.desiredHoodPos = getHoodPOS(visionLookup, limelightData);
     
     //returns offset distance and offset angle to robotdata
 
     frc::SmartDashboard::PutNumber("limelight y offset", robotData.limelightData.yOffset);
     frc::SmartDashboard::PutNumber("limelight x offset", robotData.limelightData.xOffset);
-    frc::SmartDashboard::PutNumber("limelight x offset", robotData.limelightData.distanceOffset);
-    frc::SmartDashboard::PutNumber("limelight x offset", robotData.limelightData.desiredHoodPos);
+    frc::SmartDashboard::PutNumber("distance offset", robotData.limelightData.distanceOffset);
+    frc::SmartDashboard::PutNumber("desired hood", robotData.limelightData.desiredHoodPos);
 
+    frc::SmartDashboard::GetNumber("target hood", 0);
+
+
+    
 }
 
 /**
