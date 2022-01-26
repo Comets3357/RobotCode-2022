@@ -166,3 +166,4 @@ void Climb::RunArmsToPos(int position, float power)
         //sets the stage to the next stage so it can move to the next step
         stage++;
     }
+}
