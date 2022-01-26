@@ -23,6 +23,7 @@ void Intake::RobotInit()
 void Intake::RobotPeriodic(const RobotData &robotData, IntakeData &intakeData)
 {
     updateData(robotData, intakeData);
+
     if (robotData.controlData.manualMode)
     {
         manual(robotData, intakeData);
@@ -149,6 +150,25 @@ void Intake::updateData(const RobotData &robotData, IntakeData &intakeData)
 
     frc::SmartDashboard::PutNumber("tick count", tickCount);
 
+    intakeData.intakeIdle = intakeIdle(robotData, intakeData);
+    frc::SmartDashboard::PutBoolean("idle?", intakeData.intakeIdle);
+    frc::SmartDashboard::PutNumber("idle count", idleCount);
+
+
+}
+
+bool Intake::intakeIdle(const RobotData &robotData, IntakeData &intakeData){
+
+    if (robotData.controlData.saIntake || robotData.controlData.saIntakeBackward){
+        // if nothing is commanding the intake then idle counnt is 25
+        idleCount = 25;
+        return false; // hasn't 
+    } else if(idleCount > 0){ // the intake is idling
+        idleCount--;
+        return false;
+    } else {
+        return true;
+    }
 
 }
 

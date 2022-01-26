@@ -46,15 +46,16 @@ void Controller::updateControlData(const ControllerData &controllerData, Control
 
 
 
-    //controlData.mIntakeDown = controllerData.sLYStick;
-    controlData.mIntakeRollers = controllerData.sLBumper;
-    controlData.mzeroing = controllerData.sYBtn; // Hood ZEROING
-
+    controlData.mIntakeDown = controllerData.sLYStick;
+    controlData.mIntakeRollers = controllerData.sRBumper;
+    
+    controlData.mzeroing = controllerData.sYBtn; // hood ZEROING
     controlData.mHood = controllerData.sRYStick;
     controlData.mFlyWheel = controllerData.sLYStick;
 
     controlData.mIndexerBackwards = controllerData.sBBtn;
     controlData.mIndexer = controllerData.sXBtn;
+    controlData.mDecrementCargo = controllerData.sLCenterBtnToggled;
 
 
 

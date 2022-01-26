@@ -14,7 +14,7 @@ struct RobotData;
 
 struct IndexerData
 {
-    int ballCount;
+    std::deque<Cargo> indexerContents;
 };
 
 class Indexer
@@ -34,14 +34,38 @@ private:
     void indexerBeltInit();
     void indexerWheelInit();
 
-    frc::DigitalInput proxIndexerBottom{2};
-    frc::DigitalInput proxIndexerMiddle{3};
+    void incrementCount(const RobotData &robotData, IndexerData &indexerData);
+    void newCargo(const RobotData &robotData, IndexerData &indexerData);
+    void assignCargoColor(const RobotData &robotData, IndexerData &indexerData);
+    void decrementCount(const RobotData &robotData, IndexerData &indexerData, bool reverse);
+    void mDecrement(const RobotData &robotData, IndexerData &indexerData);
+    void count(const RobotData &robotData, IndexerData &indexerData);
+
+    void saBeltControl(const RobotData &robotData, IndexerData &indexerData);
+    void saWheelControl(const RobotData &robotData, IndexerData &indexerData);
 
 
-    const double mIndexerWheelSpeed = 0.2;
-    const double mIndexerBeltSpeed = 0.2;
-    const double saIndexerWheelExitSpeed = 0.2;
-    const double saIndexerBeltExitSpeed = 0.2;
+    // get if it was toggled to state specified in bool broken
+    bool getBottomBeamToggled(bool broken);
+    // bool getMidBeamToggled(bool broken); // not in use
+    bool getTopBeamToggled(bool broken);
+
+    
+    
+    frc::DigitalInput bottomBeamBreak{bottomBeamBreakPort};
+    frc::DigitalInput midBeamBreak{midBeamBreakPort};
+    frc::DigitalInput topBeamBreak{topBeamBreakPort};
+
+    bool prevBottomBeam = false;
+    // bool prevMidBeam = false;
+    bool prevTopBeam = false;
+
+    // debounce counters to time debounce
+    int bottomDebounceCount = 0;
+    int topDebounceCount = 0;
+
+    const double indexerWheelSpeed = 0.5;
+    const double indexerBeltSpeed = 0.2;
     const double saIndexerWheelIntakeSpeed = 0.2;
     const double saIndexerBeltIntakeSpeed = 0.2;
 

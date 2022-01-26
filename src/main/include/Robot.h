@@ -44,6 +44,7 @@ private:
     VisionLookup visionLookup{};
     OtherComponents otherComponents{};
     Timer timer{};
+    ColorSensor colorSensor{};
 
     // subsystems
     Drivebase drivebase{};
