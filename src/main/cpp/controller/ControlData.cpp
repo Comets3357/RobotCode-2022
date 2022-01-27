@@ -72,14 +72,6 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
     //controlData.launchPadShot = controllerData.sRCenterBtn;
     //controlData.hubShot = controllerData.sLCenterBtn;
     
-    // if(robotData.indexerData.indexerContents.front() == Cargo::cargo_Opponent){
-    //     controlData.wrongBall = true;
-    // } else if(robotData.indexerData.indexerContents.front() == Cargo::cargo_Alliance){
-    //     controlData.wrongBall = false;
-    // } else if (robotData.indexerData.indexerContents.front() == Cargo::cargo_Unassigned){
-    //     controlData.wrongBall = true; 
-        // change to button for driver control?
-    // }
     //controlData.finalShoot;
     
 

@@ -144,7 +144,14 @@ void Indexer::manual(const RobotData &robotData, IndexerData &indexerData)
 
 void Indexer::updateData(const RobotData &robotData, IndexerData &indexerData)
 {
-
+    if(robotData.indexerData.indexerContents.front() == Cargo::cargo_Opponent){
+        indexerData.wrongBall = true;
+    } else if(robotData.indexerData.indexerContents.front() == Cargo::cargo_Alliance){
+        indexerData.wrongBall = false;
+    } else if (robotData.indexerData.indexerContents.front() == Cargo::cargo_Unassigned){
+        indexerData.wrongBall = true; 
+        // change to button for driver control?
+    }
 }
 
 void Indexer::testControl(const RobotData &robotData){

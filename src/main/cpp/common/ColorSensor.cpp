@@ -5,7 +5,9 @@ void ColorSensor::RobotInit()
 {
     m_colorMatcher.AddColorMatch(kBlueCargo);
     m_colorMatcher.AddColorMatch(kRedCargo);
-
+    
+    // uint8_t pulses = 5;
+    // m_colorSensor.ConfigureProximitySensorLED(rev::ColorSensorV3::LEDPulseFrequency::k60kHz, rev::ColorSensorV3::LEDCurrent::kPulse125mA, pulses);
 }
 
 // right now it's just the default example code... 
@@ -35,11 +37,21 @@ void ColorSensor::RobotPeriodic(RobotData &RobotData)
 
     if (matchedColor == kBlueCargo) {
       colorString = "Blue";
+      frc::SmartDashboard::PutBoolean("sensed Blue?", true);
+      frc::SmartDashboard::PutBoolean("sensed Red?", false);
     } else if (matchedColor == kRedCargo) {
       colorString = "Red";
+      
+      frc::SmartDashboard::PutBoolean("sensed Blue?", false);
+      frc::SmartDashboard::PutBoolean("sensed Red?", true);
     }  else {
       colorString = "Unknown";
+      
+      frc::SmartDashboard::PutBoolean("sensed Blue?", false);
+      frc::SmartDashboard::PutBoolean("sensed Red?", false);
     }
+
+    
 
     /**
      * Open Smart Dashboard or Shuffleboard to see the color detected by the 
