@@ -1,4 +1,3 @@
-#include "subsystems/Intake.h"
 #include "RobotData.h"
 #include <iostream>
 #include <cmath>
@@ -58,7 +57,7 @@ void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
     if (robotData.controlData.saIntake) //you are intaking
     {
         // pivot down
-        intakePivot_pidController.SetReference(10, rev::CANSparkMax::ControlType::kPosition,1);
+        intakePivot_pidController.SetReference(10, rev::CANSparkMaxLowLevel::ControlType::kPosition,0);
 
         intakeRollers.Set(intakeRollerSpeed);
         intakeMecanum.Set(intakeMecanumSpeed);
@@ -72,7 +71,7 @@ void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
     else if (robotData.controlData.saEjectBalls) //rollers backwards, pivot down
     {
         intakeRollers.Set(-intakeRollersEjectSpeed);
-        intakePivot_pidController.SetReference(10,  rev::CANSparkMax::ControlType::kPosition,0);
+        intakePivot_pidController.SetReference(10, rev::CANSparkMaxLowLevel::ControlType::kPosition,0);
 
     }
     else //default case, everything up and not running
@@ -80,7 +79,7 @@ void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
         intakeRollers.Set(0);
         intakeMecanum.Set(0);
 
-        intakePivot_pidController.SetReference(0.1, rev::CANSparkMax::ControlType::kPosition, 1);
+        intakePivot_pidController.SetReference(0.1, rev::CANSparkMaxLowLevel::ControlType::kPosition, 1);
         //intakePivotEncoder.SetPosition(0);
 
     }
@@ -105,9 +104,9 @@ void Intake::manual(const RobotData &robotData, IntakeData &intakeData){
 
     intakePivot.Set(robotData.controlData.mIntakeDown*0.2);
     
-    if(robotData.controlData.mzeroing){
-        intakePivotEncoder.SetPosition(0);
-    }
+    // if(robotData.controlData.mzeroing){
+    //     intakePivotEncoder.SetPosition(0);
+    // }
 
     // if (robotData.controlData.mIntakeRollers)
     // {
@@ -218,9 +217,7 @@ void Intake::pivotInit(){
 
 void Intake::mecanumInit(){
     intakeMecanum.RestoreFactoryDefaults();
-
     intakeMecanum.SetInverted(false);
-
     intakeMecanum.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
 
     // intakeMecanum_pidController.SetP(mkP);
@@ -235,10 +232,7 @@ void Intake::mecanumInit(){
 }
 
 double Intake::absoluteToREV(double value){
-    //return (value*-66 + 38.1);
-    double slope = ((10-0)/(absExtended-absRetracted));
-    double b = 0 - (slope*absRetracted);
-    return (value*slope + b);
+    return (value*-71.1 -4.83);
 }
 
 

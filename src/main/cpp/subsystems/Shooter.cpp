@@ -8,6 +8,8 @@ void Shooter::RobotInit()
 
     shooterWheelLead.Set(0);
     shooterHood.Set(0);
+    
+    frc::SmartDashboard::PutNumber("target hood", 0);
 }
 
 void Shooter::RobotPeriodic(const RobotData &robotData, ShooterData &shooterData)
@@ -25,6 +27,10 @@ void Shooter::RobotPeriodic(const RobotData &robotData, ShooterData &shooterData
     
     currentHoodPos = shooterHoodEncoder2.GetDistance();
 
+    desiredPos = frc::SmartDashboard::GetNumber("target hood", 0);
+
+    rescaledHood(desiredPos);
+
 }
 
 void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
@@ -38,58 +44,16 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
         }
 
         //shooterWheelLead_pidController.SetReference(3400, rev::CANSparkMaxLowLevel::ControlType::kVelocity,0);
-        double calculatedPower = shooterHoodPID.Calculate(currentHoodPos, robotData.limelightData.desiredHoodPos);
+        double calculatedPower = shooterHoodPID.Calculate(currentHoodPos, targetHoodPos);
 
         shooterHood.Set(calculatedPower);
-        setWheel(0.6);
+        setWheel(0.4);
 
         //once the shooter has high enough velocity (and is aimed correctly tell robot to begin shooting)
-        if ((getWheelVel() > robotData.shooterData.targetVel) && (std::abs(getHoodPos() - robotData.limelightData.desiredHoodPos) <= 2) ){
+        if ((getWheelVel() > 1200) /**&& (std::abs(getHoodPos() - robotData.limelightData.desiredHoodPos) <= 2)**/ ){
             shooterData.readyShoot = true;
         }else{
             shooterData.readyShoot = false;
-        }
-        hoodZero = false;
-
-    }else if(robotData.controlData.launchPadShot){ //FROM THE LAUNCH PAD
-        shooterWheelLead_pidController.SetReference(2000, rev::CANSparkMaxLowLevel::ControlType::kVelocity,0);
-        
-        double calculatedPower = shooterHoodPID.Calculate(currentHoodPos, 5);
-        shooterHood.Set(calculatedPower);
-
-        //once the shooter has high enough velocity (and is aimed correctly tell robot to begin shooting)
-        if ((getWheelVel() > robotData.shooterData.targetVel) && (std::abs(getHoodPos()-4) <= .5)){
-            shooterData.readyShoot = true;
-        }else{
-            shooterData.readyShoot = false;
-        }
-        hoodZero = false;
-
-    }else if(robotData.controlData.hubShot){ //FROM THE HUB
-        shooterWheelLead_pidController.SetReference(1200, rev::CANSparkMaxLowLevel::ControlType::kVelocity,0);
-        
-        double calculatedPower = shooterHoodPID.Calculate(currentHoodPos, 5);
-        shooterHood.Set(calculatedPower);
-
-        //once the shooter has high enough velocity (and is aimed correctly tell robot to begin shooting)
-        if ((getWheelVel() > robotData.shooterData.targetVel) && (std::abs(getHoodPos()-4) <= .5)){
-            shooterData.readyShoot = true;
-        }else{
-            shooterData.readyShoot = false;
-        }
-        hoodZero = false;
-
-    }else if(robotData.controlData.wrongBall){ //IF THERES A WRONG BALL
-        shooterWheelLead_pidController.SetReference(1200, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
-        
-        double calculatedPower = shooterHoodPID.Calculate(currentHoodPos, 5);
-        shooterHood.Set(calculatedPower);
-
-        //once the shooter has high enough velocity (and is aimed correctly tell robot to begin shooting)
-        if ((getWheelVel() > 1000)){
-            shooterData.wrongBallReady = true;
-        }else{
-            shooterData.wrongBallReady = false;
         }
         hoodZero = false;
 
@@ -123,7 +87,7 @@ void Shooter::manual(const RobotData &robotData, ShooterData &shooterData){
     //     setWheel(0);
     // }
 
-    setWheel(robotData.controlData.mFlyWheel);
+    //setWheel(robotData.controlData.mFlyWheel);
     setHood(robotData.controlData.mHood*.1);
 
     if(robotData.controlData.mzeroing){
@@ -144,8 +108,11 @@ void Shooter::updateData(const RobotData &robotData, ShooterData &shooterData)
 {
     frc::SmartDashboard::PutNumber("shooter wheel vel", shooterWheelLeadEncoder.GetVelocity());
     frc::SmartDashboard::PutNumber("shooter wheel speed", shooterWheelLead.Get());
-    frc::SmartDashboard::PutNumber("shooter Hood ABS", shooterHoodEncoder2.GetDistance());
 
+    
+    
+    frc::SmartDashboard::PutNumber("shooter Hood ABS", shooterHoodEncoder2.GetDistance());
+    frc::SmartDashboard::PutBoolean("shooter ready shoot", shooterData.readyShoot);
 }
 
 void Shooter::setHoodPos(double pos){
@@ -207,8 +174,6 @@ void Shooter::shooterWheelFollowInit(){
 
     shooterWheelFollow.SetSmartCurrentLimit(45);
 
-    shooterWheelFollow.Follow(shooterWheelLead);
-
 }
 
 void Shooter::shooterHoodInit()
@@ -228,7 +193,7 @@ void Shooter::shooterHoodInit()
 }
 
 void Shooter::rescaledHood(double hoodPos){
-    targetHoodPos = minHoodExtend + ((maxHoodExtend-minHoodExtend)*hoodPos);
+    targetHoodPos = -(minHoodExtend + ((maxHoodExtend-minHoodExtend)*hoodPos));
 }
 
 

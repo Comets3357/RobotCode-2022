@@ -53,6 +53,8 @@ private:
     double targetHoodPos;
     double currentHoodPos;
 
+    double desiredPos;
+
     //CHANGE MOTOr ID STUFF
     rev::CANSparkMax shooterWheelLead = rev::CANSparkMax(shooterWheelLeadID, rev::CANSparkMax::MotorType::kBrushless);
     rev::SparkMaxRelativeEncoder shooterWheelLeadEncoder = shooterWheelLead.GetEncoder();

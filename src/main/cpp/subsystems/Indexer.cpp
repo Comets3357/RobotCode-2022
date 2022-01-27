@@ -230,7 +230,7 @@ void Indexer::saBeltControl(const RobotData &robotData, IndexerData &indexerData
 
     if(robotData.controlData.saEjectBalls || robotData.controlData.mIndexerBackwards){ // if indexer is REVERSING (saEject or manual indexer backwards)
         indexerBelt.Set(-indexerBeltSpeed);
-    } else if ((!getTopBeam() || robotData.shooterData.readyShoot) && !robotData.intakeData.intakeIdle){ // if you're shooting or BB3 is not tripped
+    } else if ((!getTopBeam() || robotData.shooterData.readyShoot) /**&& !robotData.intakeData.intakeIdle**/){ // if you're shooting or BB3 is not tripped
         indexerBelt.Set(indexerBeltSpeed);
     }  else {
         indexerBelt.Set(0);

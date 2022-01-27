@@ -3,7 +3,7 @@
 
 void Limelight::RobotInit(const RobotData &robotData) 
 {
-    frc::SmartDashboard::PutNumber("target hood", robotData.limelightData.desiredHoodPos);
+    
 }
 
 /**
@@ -37,11 +37,6 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     frc::SmartDashboard::PutNumber("limelight x offset", robotData.limelightData.xOffset);
     frc::SmartDashboard::PutNumber("distance offset", robotData.limelightData.distanceOffset);
     frc::SmartDashboard::PutNumber("desired hood", robotData.limelightData.desiredHoodPos);
-
-    frc::SmartDashboard::GetNumber("target hood", 0);
-
-
-    
 }
 
 /**
