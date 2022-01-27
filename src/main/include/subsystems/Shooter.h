@@ -9,7 +9,8 @@
 #include <rev/CANEncoder.h>
 #include <rev/SparkMaxLimitSwitch.h>
 #include <frc/smartdashboard/SmartDashboard.h>
-#include <frc2/command/PIDSubsystem.h>
+#include <frc/controller/PIDController.h>
+#include <frc/DutyCycleEncoder.h>
 
 struct RobotData;
 
@@ -32,8 +33,7 @@ private:
     void manual(const RobotData &robotData, ShooterData &shooterData);
     void semiAuto(const RobotData &robotData, ShooterData &shooterData);
 
-    void shooterWheelLeadInit();
-    void shooterWheelFollowInit();
+    void flyWheelInit();
     void shooterHoodInit();
 
     double getHoodPos();
@@ -46,29 +46,37 @@ private:
     void setWheel(double power);
     void setHoodPos(double pos);
     void setTurretPos(double pos);
-    void rescaledHood(double hoodPos);
+
+    double convertFromABSToZeroToOne(double abs);
+
+    void setHighHub(bool isHighHub);
+    void outerLaunch();
+    void innerLaunch();
+    void wall();
+    void fender();
 
 
     bool hoodZero;
     double targetHoodPos;
     double currentHoodPos;
-
     double desiredPos;
+    double calculatedPower;
+
+    bool isHigh;
 
     //CHANGE MOTOr ID STUFF
-    rev::CANSparkMax shooterWheelLead = rev::CANSparkMax(shooterWheelLeadID, rev::CANSparkMax::MotorType::kBrushless);
-    rev::SparkMaxRelativeEncoder shooterWheelLeadEncoder = shooterWheelLead.GetEncoder();
-    rev::SparkMaxPIDController shooterWheelLead_pidController = shooterWheelLead.GetPIDController();
+    rev::CANSparkMax flyWheelLead = rev::CANSparkMax(shooterWheelLeadID, rev::CANSparkMax::MotorType::kBrushless);
+    rev::SparkMaxRelativeEncoder flyWheelLeadEncoder = flyWheelLead.GetEncoder();
+    rev::SparkMaxPIDController flyWheelLead_pidController = flyWheelLead.GetPIDController();
 
-    rev::CANSparkMax shooterWheelFollow = rev::CANSparkMax(shooterWheelFollowID, rev::CANSparkMax::MotorType::kBrushless);
-    rev::SparkMaxRelativeEncoder shooterWheelFollowEncoder = shooterWheelFollow.GetEncoder();
-    rev::SparkMaxPIDController shooterWheelFollow_pidController = shooterWheelFollow.GetPIDController();
+    rev::CANSparkMax flyWheelFollow = rev::CANSparkMax(shooterWheelFollowID, rev::CANSparkMax::MotorType::kBrushless);
+    rev::SparkMaxRelativeEncoder shooterWheelFollowEncoder = flyWheelFollow.GetEncoder(); // what are the points of these if they aren't used?
+    rev::SparkMaxPIDController shooterWheelFollow_pidController = flyWheelFollow.GetPIDController(); // what are the points of these if they aren't used?
 
     rev::CANSparkMax shooterHood = rev::CANSparkMax(shooterHoodID, rev::CANSparkMax::MotorType::kBrushless);
-    rev::SparkMaxRelativeEncoder shooterHoodEncoder = shooterHood.GetEncoder();
+    frc::DutyCycleEncoder shooterHoodEncoder = frc::DutyCycleEncoder{1};
+    frc2::PIDController hoodPID = frc2::PIDController{50,0,0};
+    // rev::SparkMaxRelativeEncoder shooterHoodEncoder = shooterHood.GetEncoder();
     //rev::SparkMaxPIDController shooterHood_pidController = shooterHood.GetPIDController();
-
-    frc::DutyCycleEncoder shooterHoodEncoder2 = frc::DutyCycleEncoder{1};
-    frc2::PIDController shooterHoodPID{0,0,0};
 
 };
