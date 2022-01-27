@@ -5,44 +5,42 @@ void Climb::RobotInit(){
     climbArms.SetInverted(false);
     climbElevator.SetInverted(false);
 
+    //do other init stuff (probably more)
+    climbArms.RestoreFactoryDefaults();
+    climbElevator.RestoreFactoryDefaults();
+
     climbElevatorEncoder.SetPosition(0);
     climbArmsEncoder.SetPosition(0);
-
 }
 
 void Climb::RobotPeriodic(const RobotData &robotData, ClimbData &climbData){
+
     updateData(robotData, climbData);
-    if (robotData.controlData.manualMode)
-    {
+
+    if (robotData.controlData.manualMode){ //updates whether or not the robot is in manual or semiAuto mode
         manual(robotData, climbData);
-    }
-    else
-    {
+    } else {
         semiAuto(robotData, climbData);
     }
-
 }
 
 void Climb::manual(const RobotData &robotData, ClimbData &climbData){
-
     //manualy sets the elevator with limit
     if (climbElevatorEncoder.GetPosition() > -1000 && climbElevatorEncoder.GetPosition() < 2000){
-        climbElevator.Set(robotData.controllerData.sLYStick);
+        climbElevator.Set(robotData.controllerData.sLYStick); //control elevator with left stick
     } else {
-        climbElevator.Set(0);
+        climbElevator.Set(0); //sets the power to 0 so the elevator stops moving
     }
 
     //manualy sets the arms with limit
     if (climbArmsEncoder.GetPosition() > -1000 && climbArmsEncoder.GetPosition() < 2000){
-        climbArms.Set(robotData.controllerData.sRYStick);
+        climbArms.Set(robotData.controllerData.sRYStick); //control arms with right stick
     } else {
-        climbArms.Set(0);
+        climbArms.Set(0); //sets the power to 0 so the arms stop moving
     }
-
 }
 
 void Climb::semiAuto(const RobotData &robotData, ClimbData &climbData){
-
     //elevator up = negative
     //elevator down = positive
     //arms away is positive
@@ -52,27 +50,27 @@ void Climb::semiAuto(const RobotData &robotData, ClimbData &climbData){
     //arms position 0 is straight up
 
     //press a, arms pivot away, press b, arms pivot in
-    if (robotData.controllerData.sABtn && !executeSemiAuto) climbArms.Set(-0.5);
-    else if (robotData.controllerData.sBBtn && !executeSemiAuto) climbArms.Set(0.5);
+    if (robotData.controlData.sapivotArmsIn && !executeSemiAuto) climbArms.Set(-0.5);
+    else if (robotData.controlData.sapivotArmsOut && !executeSemiAuto) climbArms.Set(0.5);
     else if (!executeSemiAuto) climbArms.Set(0); //sets the power to zero to make it stop moving
 
     //press x, elevator goes down, press y, elevator goes up
-    if (robotData.controllerData.sXBtn && !executeSemiAuto) climbElevator.Set(0.5);
-    else if (robotData.controllerData.sYBtn && !executeSemiAuto) climbElevator.Set(-0.5);
+    if (robotData.controlData.saretractElevator && !executeSemiAuto) climbElevator.Set(0.5);
+    else if (robotData.controlData.saextendElevator && !executeSemiAuto) climbElevator.Set(-0.5);
     else if (!executeSemiAuto) climbElevator.Set(0); //sets the power to zero to make it stop moving
 
-    if (robotData.controllerData.sLStickBtn){
+    if (robotData.controlData.sacancelSequence){
         executeSemiAuto = false; //press a button, semiAuto code stops
         climbElevator.Set(0); //sets the power to zero to make it stop moving
         climbArms.Set(0); //sets the power to zero to make it stop moving
     }
 
-    if (robotData.controllerData.sRCenterBtn){
+    if (robotData.controlData.saclimbHeightSequence){
         executeSemiAuto = true; //press right center button, semiAuto code runs
         targetBar = 3; //reaches to bar 3
         climbElevator.Set(0); //sets the power to zero to make it stop moving
         climbArms.Set(0); //sets the power to zero to make it stop moving
-    } else if (robotData.controllerData.sLCenterBtn){
+    } else if (robotData.controlData.saclimbTraversalSequence){
         executeSemiAuto = true; //press left center button, semiAuto code runs
         targetBar = 4; //reaches to bar 4
         climbElevator.Set(0); //sets the power to zero to make it stop moving
@@ -113,6 +111,7 @@ void Climb::updateData(const RobotData &robotData, ClimbData &climbData){
     
 }
 
+//Runs the elevator to a specific location, specified in semiAuto
 void Climb::RunClimbToPos(int position, float power){
     //Checks which direction the motor will be spinning. This uses the variable running to only set the direction 1 time.
     if (!elevatorRunning && climbElevatorEncoder.GetPosition() > position){
@@ -149,6 +148,7 @@ void Climb::RunClimbToPos(int position, float power){
     }
 }
 
+//runs the arms to a specific location, specified in semiAuto
 void Climb::RunArmsToPos(int position, float power){
     //Checks which direction the motor will be spinning. This uses the variable running to only set the direction 1 time.
     if (!armsRunning && climbArmsEncoder.GetPosition() > position){

@@ -44,9 +44,14 @@ struct ControlData
     bool mFlyWheel; //get flywheel running MANUAL
     double mHood; //moves hood up or down MANUAL
 
-    bool saclimbInit;
-    bool saclimb;
-
+    //climb:
+    bool saclimbTraversalSequence;
+    bool saclimbHeightSequence;
+    bool sacancelSequence;
+    bool sapivotArmsIn;
+    bool sapivotArmsOut;
+    bool saretractElevator;
+    bool saextendElevator;
 };
 
 struct ControllerData

@@ -12,13 +12,11 @@
 
 struct RobotData;
 
-struct ClimbData
-{
+struct ClimbData {
 
 };
 
-class Climb
-{
+class Climb {
 
 public:
     void RobotInit();

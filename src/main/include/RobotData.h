@@ -16,8 +16,7 @@
 #include "subsystems/Indexer.h"
 #include "subsystems/Shooter.h"
 
-struct RobotData
-{
+struct RobotData {
     ControllerData controllerData;
     ControlData controlData;
     OtherComponentsData otherComponentsData;
