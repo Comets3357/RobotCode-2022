@@ -14,7 +14,7 @@ void Shooter::RobotPeriodic(const RobotData &robotData, ShooterData &shooterData
 {
     updateData(robotData, shooterData);
 
-    // if(robotData.controlData.mFlyWheel){
+    // if(robotData.controlData.mShooterWheelForward){
     //     setWheel(0.6);
     //     shooterData.readyShoot = true;
     //     //shooterWheelLead_pidController.SetReference(2000, rev::ControlType::kVelocity);
@@ -24,11 +24,11 @@ void Shooter::RobotPeriodic(const RobotData &robotData, ShooterData &shooterData
     // }
     // setHood(robotData.controlData.mHood*.1);
     
-    if (robotData.controlData.manualMode)
+    if (robotData.controlData.mode == mode_teleop_manual)
     {
         manual(robotData, shooterData);
 
-    } else {
+    } else if (robotData.controlData.mode == mode_teleop_sa) {
         semiAuto(robotData, shooterData);
     }
     
@@ -56,11 +56,11 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
 
         // hoodZero = false;
 
-    }else if(robotData.controlData.launchPadShot){ //FROM THE LAUNCH PAD
+    }else if(robotData.controlData.cornerLaunchPadShot){ //FROM THE LAUNCH PAD
         shooterWheelLead_pidController.SetReference(2000, rev::ControlType::kVelocity);
         shooterHood_pidController.SetReference(4, rev::ControlType::kPosition);
 
-    }else if(robotData.controlData.launchPadShot){ //FROM THE LAUNCH PAD
+    }else if(robotData.controlData.cornerLaunchPadShot){ //FROM THE LAUNCH PAD
         shooterWheelLead_pidController.SetReference(2000, rev::CANSparkMaxLowLevel::ControlType::kVelocity,0);
         shooterHood_pidController.SetReference(4, rev::CANSparkMaxLowLevel::ControlType::kPosition);
 
@@ -132,7 +132,7 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
 }
 
 void Shooter::manual(const RobotData &robotData, ShooterData &shooterData){
-    if(robotData.controlData.mFlyWheel){
+    if(robotData.controlData.mShooterWheelForward){
         //spins the flywheel up beforehand
         setWheel(0.6);
         //shooterWheelLead_pidController.SetReference(2000, rev::ControlType::kVelocity);
