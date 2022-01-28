@@ -12,8 +12,6 @@ void Intake::RobotInit()
     intakeRollersEncoder.SetPosition(0);
     intakeMecanumEncoder.SetPosition(0);
 
-    //intakePivotEncoder2.Reset();
-
     intakePivot.Set(0);
     intakeRollers.Set(0);
     intakeMecanum.Set(0);
@@ -25,7 +23,14 @@ void Intake::RobotPeriodic(const RobotData &robotData, IntakeData &intakeData)
 
     if (robotData.controlData.mode == mode_teleop_manual)
     {
-        manual(robotData, intakeData);
+        if(!zeroedIntake){
+            intakePivot_pidController.SetReference(0.1, rev::CANSparkMaxLowLevel::ControlType::kPosition, 1);
+            if(intakePivotEncoder.GetPosition() < 0.5){
+                zeroedIntake = true;
+            }
+        }else{
+            manual(robotData, intakeData);
+        }
 
     }
     else if (robotData.controlData.mode == mode_teleop_sa)
@@ -54,6 +59,10 @@ void Intake::RobotPeriodic(const RobotData &robotData, IntakeData &intakeData)
 }
 
 void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
+    if(intakePivotEncoder.GetPosition() > 0.5){
+        zeroedIntake = false;
+    }
+
     if (robotData.controlData.saIntake) //you are intaking
     {
         // pivot down

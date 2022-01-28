@@ -47,12 +47,9 @@ private:
     double intakeRollersEjectSpeed = 0.5;
     double armDownPosition = 0.428;
     int tickCount = 0;
+    bool zeroedIntake = true;
 
     int idleCount = 0;
-
-    nt::NetworkTableEntry rollerSpeed = frc::Shuffleboard::GetTab("test")
-                     .Add("roller speed", 1)
-                     .GetEntry();
 
 
     //CHANGE MOTOr ID STUFF  (just outline )
