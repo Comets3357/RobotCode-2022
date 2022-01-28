@@ -1,8 +1,7 @@
 #include "common/ColorSensor.h"
 #include "RobotData.h"
 
-void ColorSensor::RobotInit()
-{
+void ColorSensor::RobotInit(){
     m_colorMatcher.AddColorMatch(kBlueCargo);
     m_colorMatcher.AddColorMatch(kRedCargo);
     
@@ -11,8 +10,7 @@ void ColorSensor::RobotInit()
 }
 
 // right now it's just the default example code... 
-void ColorSensor::RobotPeriodic(RobotData &RobotData)
-{
+void ColorSensor::RobotPeriodic(RobotData &robotData){
     /**
      * The method GetColor() returns a normalized color value from the sensor and can be
      * useful if outputting the color to an RGB LED or similar. To
@@ -35,29 +33,29 @@ void ColorSensor::RobotPeriodic(RobotData &RobotData)
     confidence = 0.0;
     matchedColor = m_colorMatcher.MatchClosestColor(detectedColor, confidence);
 
-    if (matchedColor == kBlueCargo) {
+    if (detectedColor.blue >= detectedColor.red + .15) {
       colorString = "Blue";
+      robotData.colorSensorData.currentColor = frc::Color::kBlue;
       frc::SmartDashboard::PutBoolean("sensed Blue?", true);
       frc::SmartDashboard::PutBoolean("sensed Red?", false);
-    } else if (matchedColor == kRedCargo) {
+    } else if (detectedColor.red >= detectedColor.blue + .15) {
       colorString = "Red";
-      
+      robotData.colorSensorData.currentColor = frc::Color::kRed;
       frc::SmartDashboard::PutBoolean("sensed Blue?", false);
       frc::SmartDashboard::PutBoolean("sensed Red?", true);
-    }  else {
+    } else {
       colorString = "Unknown";
-      
+      robotData.colorSensorData.currentColor = frc::Color{0, 0, 0};
       frc::SmartDashboard::PutBoolean("sensed Blue?", false);
       frc::SmartDashboard::PutBoolean("sensed Red?", false);
     }
-
-    
 
     /**
      * Open Smart Dashboard or Shuffleboard to see the color detected by the 
      * sensor.
      */
     frc::SmartDashboard::PutNumber("Red", detectedColor.red);
+    frc::SmartDashboard::PutNumber("Green", detectedColor.green);
     frc::SmartDashboard::PutNumber("Blue", detectedColor.blue);
     frc::SmartDashboard::PutNumber("IR", IR);
     /**
@@ -75,31 +73,24 @@ void ColorSensor::RobotPeriodic(RobotData &RobotData)
 
     frc::SmartDashboard::PutNumber("Proximity", proximity);
     frc::SmartDashboard::PutString("colorString", colorString);
+}
 
+void ColorSensor::Disabled(){
 
 }
 
-void ColorSensor::Disabled()
-{
-
-}
-
-void ColorSensor::semiAutoMode(RobotData &robotData)
-{
+void ColorSensor::semiAutoMode(RobotData &robotData){
   
 }
 
-void ColorSensor::manualMode(RobotData &robotData)
-{
+void ColorSensor::manualMode(RobotData &robotData){
 
 }
 
-void ColorSensor::updateData(RobotData &robotData, ColorSensorData &colorSensorData)
-{
+void ColorSensor::updateData(RobotData &robotData, ColorSensorData &colorSensorData){
     colorSensorData.currentColor = detectColor();
 }
 
-frc::Color ColorSensor::detectColor()
-{
+frc::Color ColorSensor::detectColor(){
     return detectedColor;
 }
