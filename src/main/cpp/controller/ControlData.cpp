@@ -6,13 +6,25 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
 {
     // states:
     controlData.shift = controllerData.sLBumper;
-    if (controllerData.sRCenterBtnToggled)
-    {
-        controlData.manualMode = !controlData.manualMode;
-    }
-    if (controllerData.sRCenterBtnToggled)
-    {
-        controlData.climbMode = !controlData.climbMode;
+    
+    switch (controllerData.sDPad) {
+        case -1:
+            break;
+        case 0: // up
+            controlData.mode = mode_teleop_manual;
+            break;
+        case 90:    // right
+            controlData.mode = mode_teleop_sa;
+            break;
+        case 180:   // down
+            controlData.mode = mode_climb_sa;
+            break;
+        case 270:   // left
+            controlData.mode = mode_climb_manual;
+            break;
+        default:
+            break;
+            
     }
 
     // controls:
@@ -46,32 +58,58 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
 
 
 
+    // manual:
 
-    controlData.mIntakeDown = controllerData.sLYStick;
-    controlData.mIntakeRollers = controllerData.sRBumper;
+    controlData.mIntakeDown = controllerData.sRBumper;
+    controlData.mIntakeUp = controllerData.sRBumper && controlData.shift;
+    controlData.mIntakeRollersIn = controllerData.sRTrigger > 0.5;
+    controlData.mIntakeRollersOut = controllerData.sRTrigger > 0.5 && controlData.shift;
     
-    controlData.mzeroing = controllerData.sYBtn; // hood ZEROING
-    controlData.mHood = controllerData.sRYStick;
-    controlData.mFlyWheel = controllerData.sABtn;
+    controlData.mZeroHood = controllerData.sLStickBtn;
+    controlData.mZeroTurret = controllerData.sRStickBtn;
+    controlData.mHood = controllerData.sLYStick;
+    controlData.mTurret = controllerData.sRXStick;
+    controlData.mShooterWheelForward = controllerData.sXBtn;
+    controlData.mShooterWheelBackward = controllerData.sXBtn && controlData.shift;
 
-    controlData.mIndexerBackwards = controllerData.sBBtn;
-    controlData.mIndexer = controllerData.sXBtn;
+    controlData.mSideWheelForward = controllerData.sBBtn;
+    controlData.mSideWheelBackward = controllerData.sBBtn && controlData.shift;
+    controlData.mCenterWheelForward = controllerData.sABtn;
+    controlData.mCenterWheelBackward = controllerData.sABtn && controlData.shift;
+    controlData.mIndexerUp = controllerData.sYBtn;
+    controlData.mIndexerDown = controllerData.sYBtn && controlData.shift;
     controlData.mDecrementCargo = controllerData.sLCenterBtnToggled;
+    controlData.mIncrementCargo = controllerData.sRCenterBtnToggled;
 
+    
 
+    // semi-auto:
+    controlData.saIntake = controllerData.sRTrigger > 0.5;
+    controlData.saIntakeBackward = controllerData.sLTrigger > 0.5;
 
-
-    controlData.saIntake = controllerData.sRBumper;
-    // controlData.saIntakeBackward = controllerData.sABtn;
+    controlData.saEjectBalls = controllerData.sABtn;
 
     controlData.saShooting = controllerData.sXBtn;
-    controlData.saEjectBalls = controllerData.sBBtn;
+    controlData.saFinalShoot = controllerData.sYBtn;
 
     // secondary y to set readyshoot to true in testing
 
-    //controlData.launchPadShot = controllerData.sRCenterBtn;
-    //controlData.hubShot = controllerData.sLCenterBtn;
+    controlData.upperHubShot = controllerData.sRBumperToggled;
+    controlData.fenderShot = controllerData.sABtn && controlData.shift;
+    controlData.sideWallShot = controllerData.sBBtn && controlData.shift;
+    controlData.wallLaunchPadShot = controllerData.sXBtn && controlData.shift;
+    controlData.cornerLaunchPadShot = controllerData.sYBtn && controlData.shift;
+    //controlData.hubShot = controllerData.sLCenterBtn; // DEPRECATED -brian
+
     
+    // if(robotData.indexerData.indexerContents.front() == Cargo::cargo_Opponent){
+    //     controlData.wrongBall = true;
+    // } else if(robotData.indexerData.indexerContents.front() == Cargo::cargo_Alliance){
+    //     controlData.wrongBall = false;
+    // } else if (robotData.indexerData.indexerContents.front() == Cargo::cargo_Unassigned){
+    //     controlData.wrongBall = true; 
+        // change to button for driver control?
+    // }
     //controlData.finalShoot;
     
 
