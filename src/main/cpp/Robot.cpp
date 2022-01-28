@@ -28,8 +28,6 @@ void Robot::RobotPeriodic()
         shooter.RobotPeriodic(robotData, robotData.shooterData);
         climb.RobotPeriodic(robotData, robotData.climbData);
     }
-
-    frc::SmartDashboard::PutBoolean("manual mode", robotData.controlData.manualMode);
 }
 
 void Robot::AutonomousInit() {}
