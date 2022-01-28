@@ -35,42 +35,31 @@ void ColorSensor::RobotPeriodic(RobotData &robotData){
 
     if (detectedColor.blue >= detectedColor.red + .15) {
       colorString = "Blue";
-      robotData.colorSensorData.currentColor = frc::Color::kBlue;
+      robotData.colorSensorData.color = "blue";
       frc::SmartDashboard::PutBoolean("sensed Blue?", true);
       frc::SmartDashboard::PutBoolean("sensed Red?", false);
     } else if (detectedColor.red >= detectedColor.blue + .15) {
       colorString = "Red";
-      robotData.colorSensorData.currentColor = frc::Color::kRed;
+      robotData.colorSensorData.color = "red";
       frc::SmartDashboard::PutBoolean("sensed Blue?", false);
       frc::SmartDashboard::PutBoolean("sensed Red?", true);
     } else {
       colorString = "Unknown";
-      robotData.colorSensorData.currentColor = frc::Color{0, 0, 0};
+      robotData.colorSensorData.color = "unassigned";
       frc::SmartDashboard::PutBoolean("sensed Blue?", false);
       frc::SmartDashboard::PutBoolean("sensed Red?", false);
     }
 
-    /**
-     * Open Smart Dashboard or Shuffleboard to see the color detected by the 
-     * sensor.
-     */
+    //Open Smart Dashboard or Shuffleboard to see the color detected by the sensor.
     frc::SmartDashboard::PutNumber("Red", detectedColor.red);
     frc::SmartDashboard::PutNumber("Green", detectedColor.green);
     frc::SmartDashboard::PutNumber("Blue", detectedColor.blue);
     frc::SmartDashboard::PutNumber("IR", IR);
-    /**
-     * In addition to RGB IR values, the color sensor can also return an 
-     * infrared proximity value. The chip contains an IR led which will emit
-     * IR pulses and measure the intensity of the return. When an object is 
-     * close the value of the proximity will be large (max 2047 with default
-     * settings) and will approach zero when the object is far away.
-     * 
-     * Proximity can be used to roughly approximate the distance of an object
-     * or provide a threshold for when an object is close enough to provide
-     * accurate color values.
-     */
+    
+    //gets distance from object
     proximity = m_colorSensor.GetProximity();
 
+    //displays proximity and color values to the smart dashboard
     frc::SmartDashboard::PutNumber("Proximity", proximity);
     frc::SmartDashboard::PutString("colorString", colorString);
 }

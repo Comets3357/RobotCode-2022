@@ -10,6 +10,7 @@ struct RobotData;
 
 struct ColorSensorData {
     frc::Color currentColor;
+    std::string color = "";
 };
 
 class ColorSensor {
