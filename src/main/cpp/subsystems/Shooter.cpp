@@ -46,21 +46,16 @@ void Shooter::flyWheelInit()
     flyWheelFollow.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
     flyWheelFollow.SetSmartCurrentLimit(45);
 
-    // //Slow
-    // shooterWheelLead_pidController.SetP(0.74,0);
-    // shooterWheelLead_pidController.SetI(0,0);
-    // shooterWheelLead_pidController.SetD(0.2,0);
-    // shooterWheelLead_pidController.SetIZone(0,0);
-    // shooterWheelLead_pidController.SetFF(0,0);
-    // shooterWheelLead_pidController.SetOutputRange(-0.205, 0.16,0);
+    readyShootLimit = 1200;
 
-    // //Fast
-    // shooterWheelLead_pidController.SetP(0.99,1);
-    // shooterWheelLead_pidController.SetI(0,1);
-    // shooterWheelLead_pidController.SetD(0.3,1);
-    // shooterWheelLead_pidController.SetIZone(0,1);
-    // shooterWheelLead_pidController.SetFF(0,1);
-    // shooterWheelLead_pidController.SetOutputRange(-.2, 0.15,1);
+    flyWheelLead_pidController.SetP(0.0004,0);
+    flyWheelLead_pidController.SetI(0,0);
+    flyWheelLead_pidController.SetD(0,0);
+    flyWheelLead_pidController.SetIZone(0,0);
+    flyWheelLead_pidController.SetFF(0.00025,0);
+    flyWheelLead_pidController.SetOutputRange(0,1,0);
+    flyWheelLead.BurnFlash();
+    flyWheelFollow.BurnFlash();
 }
 
 void Shooter::DisabledInit()
@@ -119,7 +114,7 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
         setWheel(0.4);
 
         //once the shooter has high enough velocity (and is aimed correctly tell robot to begin shooting)
-        if ((getWheelVel() > 1200) /**&& (std::abs(getHoodPos() - robotData.limelightData.desiredHoodPos) <= 2)**/ )
+        if ((getWheelVel() > readyShootLimit) /**&& (std::abs(getHoodPos() - robotData.limelightData.desiredHoodPos) <= 2)**/ )
         {
             shooterData.readyShoot = true;
         }
@@ -167,7 +162,7 @@ void Shooter::manual(const RobotData &robotData, ShooterData &shooterData)
 
     //setWheel(robotData.controlData.mFlyWheel);
 
-    if (shooterHoodEncoder.GetDistance() >= maxHoodExtend || shooterHoodEncoder.GetDistance() <= minHoodExtend)
+    if (shooterHoodEncoder.GetDistance() <= maxHoodExtend || shooterHoodEncoder.GetDistance() >= minHoodExtend)
     {
         setHood(0);
     }
@@ -204,13 +199,13 @@ void Shooter::updateData(const RobotData &robotData, ShooterData &shooterData)
 void Shooter::setHoodPos(double pos) 
 {
     // takes a 0 - 1 value to update a member to move hood to set point
-    targetHoodPos = minHoodExtend + ((maxHoodExtend-minHoodExtend)*pos);
+    targetHoodPos = maxHoodExtend + ((minHoodExtend-maxHoodExtend)*pos);
 }
 
 double Shooter::getHoodPos()
 {
     // takes the absolute encoder position and converts it back to 0 to 1 scale for ease of reading
-    return (currentHoodPos - minHoodExtend) / (maxHoodExtend - minHoodExtend);
+    return (currentHoodPos - maxHoodExtend) / (minHoodExtend - maxHoodExtend);
 }
 
 double Shooter::getWheelPos()
@@ -239,19 +234,18 @@ double Shooter::getWheelVel()
 
 double Shooter::convertFromABSToZeroToOne(double abs)
 {
-    return (abs - minHoodExtend) / (maxHoodExtend - minHoodExtend);
+    return (abs - maxHoodExtend) / (minHoodExtend - maxHoodExtend);
 }
 /**
  * ---------------------------------------------------------------------------------------------------------------------------------------------------
  * FIXED SHOTS FOR BOTH HIGHER AND LOWER
  * ---------------------------------------------------------------------------------------------------------------------------------------------------
  * */
-
 void Shooter::outerLaunch()
 {
     if (isHigh)
     {
-        setHoodPos(0);;
+        setHoodPos(0);
     }
     else if (!isHigh)
     {
@@ -263,11 +257,15 @@ void Shooter::innerLaunch()
 {
     if (isHigh)
     {
-        setHoodPos(0);;
+        setHoodPos(convertFromABSToZeroToOne(0.38)); // 3.2 inches out
+        flyWheelLead_pidController.SetReference(1800, rev::CANSparkMaxLowLevel::ControlType::kVelocity,0);
+        readyShootLimit = 1700;
     }
     else if (!isHigh)
     {
-        setHoodPos(0);
+        setHoodPos(convertFromABSToZeroToOne(0.34));
+        flyWheelLead_pidController.SetReference(1500, rev::CANSparkMaxLowLevel::ControlType::kVelocity,0);
+        realShootLimit = 1450;
     }
 }
 
@@ -275,11 +273,15 @@ void Shooter::wall()
 {
     if (isHigh)
     {
-        setHoodPos(0);;
+        setHoodPos(convertFromABSToZeroToOne(0.716)); // 2 inches out
+        flyWheelLead_pidController.SetReference(1800, rev::CANSparkMaxLowLevel::ControlType::kVelocity,0);
+        readyShootLimit = 1700;
     }
     else if (!isHigh)
     {
-        setHoodPos(0);
+        setHoodPos(0.9);
+        flyWheelLead_pidController.SetReference(1400, rev::CANSparkMaxLowLevel::ControlType::kVelocity,0);
+        readyShootLimit = 1300;
     }
 }
 
@@ -287,11 +289,31 @@ void Shooter::fender()
 {
     if (isHigh)
     {
-        setHoodPos(0);;
+        setHoodPos(0);
+        flyWheelLead_pidController.SetReference(1300, rev::CANSparkMaxLowLevel::ControlType::kVelocity,0);
+        readyShootLimit = 1250;
     }
     else if (!isHigh)
     {
-        setHoodPos(0);
+        setHoodPos(1);
+        flyWheelLead_pidController.SetReference(500, rev::CANSparkMaxLowLevel::ControlType::kVelocity,0);
+        readyShootLimit = 450;
+    }
+}
+
+void Shooter::byHumanPlayer()
+{
+    if (isHigh)
+    {
+        setHoodPos(1);
+        flyWheelLead_pidController.SetReference(2700, rev::CANSparkMaxLowLevel::ControlType::kVelocity,0);
+        readyShootLimit = 2600;
+    }
+    else if (!isHigh)
+    {
+        setHoodPos(1);
+        flyWheelLead_pidController.SetReference(2200, rev::CANSparkMaxLowLevel::ControlType::kVelocity,0);
+        readyShootLimit = 2100;
     }
 }
 
@@ -299,4 +321,3 @@ void Shooter::setHighHub(bool isHighHub)
 {
     isHigh = isHighHub;
 }
-

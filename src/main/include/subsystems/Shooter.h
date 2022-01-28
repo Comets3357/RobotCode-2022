@@ -54,6 +54,7 @@ private:
     void innerLaunch();
     void wall();
     void fender();
+    void byHumanPlayer();
 
 
     bool hoodZero;
@@ -63,6 +64,8 @@ private:
     double calculatedPower;
 
     bool isHigh;
+
+    int readyShootLimit;
 
     //CHANGE MOTOr ID STUFF
     rev::CANSparkMax flyWheelLead = rev::CANSparkMax(shooterWheelLeadID, rev::CANSparkMax::MotorType::kBrushless);

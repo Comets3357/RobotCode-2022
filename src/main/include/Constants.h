@@ -30,8 +30,8 @@ static const int
     shooterTurretID = 34;
 
 static const double
-    minHoodExtend = 0.002,
-    maxHoodExtend = 0.838;
+    minHoodExtend = 0.99,
+    maxHoodExtend = 0.3;
 
 //shooter PID constants:
 static const double
