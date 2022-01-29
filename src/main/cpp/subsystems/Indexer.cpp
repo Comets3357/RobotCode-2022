@@ -220,9 +220,9 @@ void Indexer::newCargo(const RobotData &robotData, IndexerData &indexerData){
     // } 
     if(frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed){
 
-        if (robotData.colorSensorData.color == "red"){ //not sure if I'm checking this correctly, using kRed and all
+        if (robotData.colorSensorData.colorValue == CargoColor::cargo_Red){ //not sure if I'm checking this correctly, using kRed and all
             indexerData.indexerContents.push_back(Cargo::cargo_Alliance);
-        } else if (robotData.colorSensorData.color == "blue"){
+        } else if (robotData.colorSensorData.colorValue == CargoColor::cargo_Blue){
             indexerData.indexerContents.push_back(Cargo::cargo_Opponent);
         } else {
             indexerData.indexerContents.push_back(Cargo::cargo_Unassigned);
@@ -230,9 +230,9 @@ void Indexer::newCargo(const RobotData &robotData, IndexerData &indexerData){
 
     } else if (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue){
 
-        if(robotData.colorSensorData.color == "blue"){ //not sure if I'm checking this correctly, using kRed and all
+        if(robotData.colorSensorData.colorValue == CargoColor::cargo_Blue){ //not sure if I'm checking this correctly, using kRed and all
             indexerData.indexerContents.push_back(Cargo::cargo_Alliance);
-        } else if (robotData.colorSensorData.color == "red"){
+        } else if (robotData.colorSensorData.colorValue == CargoColor::cargo_Red){
             indexerData.indexerContents.push_back(Cargo::cargo_Opponent);
         } else {
             indexerData.indexerContents.push_back(Cargo::cargo_Unassigned);
@@ -246,19 +246,19 @@ void Indexer::assignCargoColor(const RobotData &robotData, IndexerData &indexerD
 
     if(frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed){
 
-        if (robotData.colorSensorData.color == "red"){ //not sure if I'm checking this correctly, using kRed and all
+        if (robotData.colorSensorData.colorValue == CargoColor::cargo_Red){ //not sure if I'm checking this correctly, using kRed and all
             indexerData.indexerContents.pop_back();
             indexerData.indexerContents.push_back(Cargo::cargo_Alliance);
-        } else if (robotData.colorSensorData.color == "blue"){
+        } else if (robotData.colorSensorData.colorValue == CargoColor::cargo_Blue){
             indexerData.indexerContents.pop_back();
             indexerData.indexerContents.push_back(Cargo::cargo_Opponent);
         } 
     } else {   //blue alliance                                                                                      
 
-        if (robotData.colorSensorData.color == "blue"){ //not sure if I'm checking this correctly, using kRed and all
+        if (robotData.colorSensorData.colorValue == CargoColor::cargo_Blue){ //not sure if I'm checking this correctly, using kRed and all
             indexerData.indexerContents.pop_back();
             indexerData.indexerContents.push_back(Cargo::cargo_Alliance);
-        } else if (robotData.colorSensorData.color == "red"){
+        } else if (robotData.colorSensorData.colorValue == CargoColor::cargo_Red){
             indexerData.indexerContents.pop_back();
             indexerData.indexerContents.push_back(Cargo::cargo_Opponent);
         } 

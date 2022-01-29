@@ -35,17 +35,17 @@ void ColorSensor::RobotPeriodic(RobotData &robotData){
 
     if (detectedColor.blue >= detectedColor.red + .15) {
       colorString = "Blue";
-      robotData.colorSensorData.color = "blue";
+      robotData.colorSensorData.colorValue = CargoColor::cargo_Blue;
       frc::SmartDashboard::PutBoolean("sensed Blue?", true);
       frc::SmartDashboard::PutBoolean("sensed Red?", false);
     } else if (detectedColor.red >= detectedColor.blue + .15) {
       colorString = "Red";
-      robotData.colorSensorData.color = "red";
+      robotData.colorSensorData.colorValue = CargoColor::cargo_Red;
       frc::SmartDashboard::PutBoolean("sensed Blue?", false);
       frc::SmartDashboard::PutBoolean("sensed Red?", true);
     } else {
       colorString = "Unknown";
-      robotData.colorSensorData.color = "unassigned";
+      robotData.colorSensorData.colorValue = CargoColor::cargo_Unknown;
       frc::SmartDashboard::PutBoolean("sensed Blue?", false);
       frc::SmartDashboard::PutBoolean("sensed Red?", false);
     }

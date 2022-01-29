@@ -8,9 +8,15 @@
 
 struct RobotData;
 
+enum CargoColor {
+    cargo_Blue,
+    cargo_Red,
+    cargo_Unknown
+};
+
 struct ColorSensorData {
     frc::Color currentColor;
-    std::string color = "";
+    int colorValue = CargoColor::cargo_Unknown;
 };
 
 class ColorSensor {
