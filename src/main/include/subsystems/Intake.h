@@ -10,7 +10,8 @@
 #include <rev/CANEncoder.h>
 #include <frc/DigitalInput.h>
 #include <frc/Preferences.h>
-#include <frc/DutyCycleEncoder.h>
+#include <frc/DutyCycle.h>
+#include <frc/DigitalSource.h>
 
 #include <frc/shuffleboard/Shuffleboard.h>
 
@@ -45,7 +46,7 @@ private:
     double intakePivotSpeed = 0.1;
     double intakeRollerSpeed = 0.67;
     double intakeMecanumSpeed = 0.2;
-    double singulatorSpeed = 0.2;
+    double singulatorSpeed = 0.6;
     double intakeRollersEjectSpeed = 0.5;
     double armDownPosition = 0.428;
     int tickCount = 0;
@@ -62,13 +63,10 @@ private:
     rev::SparkMaxRelativeEncoder intakePivotEncoder = intakePivot.GetEncoder();
     rev::SparkMaxPIDController intakePivot_pidController = intakePivot.GetPIDController();
 
-
-    rev::CANSparkMax intakeMecanum = rev::CANSparkMax(intakeMecanumID, rev::CANSparkMax::MotorType::kBrushless);
-    rev::SparkMaxRelativeEncoder intakeMecanumEncoder = intakeMecanum.GetEncoder();
-
     rev::CANSparkMax intakeSingulator = rev::CANSparkMax(intakeSingulatorID, rev::CANSparkMax::MotorType::kBrushless);
     rev::SparkMaxRelativeEncoder intakeSingulatorEncoder = intakeSingulator.GetEncoder();
 
-    frc::DutyCycleEncoder intakePivotEncoder2 = frc::DutyCycleEncoder{intakeAbsoluteEncoderPort};
+    frc::DigitalInput m_input{intakeAbsoluteEncoderPort};         // Input channel
+    frc::DutyCycle intakePivotEncoder2 = frc::DutyCycle{m_input};
 
 };
