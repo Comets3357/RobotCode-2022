@@ -36,6 +36,7 @@ private:
 
     void rollersInit();
     void pivotInit();
+    void singulatorInit();
     void mecanumInit();
     double absoluteToREV(double value);
     bool intakeIdle(const RobotData &robotData, IntakeData &intakeData);
@@ -44,6 +45,7 @@ private:
     double intakePivotSpeed = 0.1;
     double intakeRollerSpeed = 0.67;
     double intakeMecanumSpeed = 0.2;
+    double singulatorSpeed = 0.2;
     double intakeRollersEjectSpeed = 0.5;
     double armDownPosition = 0.428;
     int tickCount = 0;
@@ -55,15 +57,17 @@ private:
     //CHANGE MOTOr ID STUFF  (just outline )
     rev::CANSparkMax intakeRollers = rev::CANSparkMax(intakeRollerID, rev::CANSparkMax::MotorType::kBrushless);
     rev::SparkMaxRelativeEncoder intakeRollersEncoder = intakeRollers.GetEncoder();
-    rev::SparkMaxPIDController intakeRollers_pidController = intakeRollers.GetPIDController();
 
     rev::CANSparkMax intakePivot = rev::CANSparkMax(intakePivotID, rev::CANSparkMax::MotorType::kBrushless);
     rev::SparkMaxRelativeEncoder intakePivotEncoder = intakePivot.GetEncoder();
     rev::SparkMaxPIDController intakePivot_pidController = intakePivot.GetPIDController();
 
+
     rev::CANSparkMax intakeMecanum = rev::CANSparkMax(intakeMecanumID, rev::CANSparkMax::MotorType::kBrushless);
     rev::SparkMaxRelativeEncoder intakeMecanumEncoder = intakeMecanum.GetEncoder();
-    rev::SparkMaxPIDController intakeMecanum_pidController = intakeMecanum.GetPIDController();
+
+    rev::CANSparkMax intakeSingulator = rev::CANSparkMax(intakeSingulatorID, rev::CANSparkMax::MotorType::kBrushless);
+    rev::SparkMaxRelativeEncoder intakeSingulatorEncoder = intakeSingulator.GetEncoder();
 
     frc::DutyCycleEncoder intakePivotEncoder2 = frc::DutyCycleEncoder{intakeAbsoluteEncoderPort};
 

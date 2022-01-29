@@ -17,6 +17,69 @@ void Intake::RobotInit()
     intakeMecanum.Set(0);
 }
 
+void Intake::rollersInit(){
+    intakeRollers.RestoreFactoryDefaults();
+
+    intakeRollers.SetInverted(true);
+
+    intakeRollers.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+
+    // intakeRollers_pidController.SetP(pkP);
+    // intakeRollers_pidController.SetI(pkI);
+    // intakeRollers_pidController.SetD(pkD);
+    // intakeRollers_pidController.SetIZone(pkIz);
+    // intakeRollers_pidController.SetFF(pkFF);
+    // intakeRollers_pidController.SetOutputRange(pkMinOutput, pkMaxOutput);
+
+    intakeRollers.SetSmartCurrentLimit(45);
+
+}
+
+void Intake::pivotInit(){
+    intakePivot.RestoreFactoryDefaults();
+
+    intakePivot.SetInverted(false);
+
+    intakePivot.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+
+    //down
+    intakePivot_pidController.SetP(0.74,0);
+    intakePivot_pidController.SetI(0,0);
+    intakePivot_pidController.SetD(0.2,0);
+    intakePivot_pidController.SetIZone(0,0);
+    intakePivot_pidController.SetFF(0,0);
+    intakePivot_pidController.SetOutputRange(-0.205, 0.16,0);
+
+    //up
+    intakePivot_pidController.SetP(0.99,1);
+    intakePivot_pidController.SetI(0,1);
+    intakePivot_pidController.SetD(0.3,1);
+    intakePivot_pidController.SetIZone(0,1);
+    intakePivot_pidController.SetFF(0,1);
+    intakePivot_pidController.SetOutputRange(-.2, 0.15,1);
+
+    intakePivot.SetSmartCurrentLimit(45);
+}
+
+void Intake::mecanumInit(){
+    intakeMecanum.RestoreFactoryDefaults();
+    intakeMecanum.SetInverted(false);
+    intakeMecanum.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+
+    intakeMecanum.SetSmartCurrentLimit(45);
+
+}
+
+void Intake::singulatorInit(){
+    intakeSingulator.RestoreFactoryDefaults();
+
+    intakeSingulator.SetInverted(true);
+
+    intakeSingulator.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+
+    intakeRollers.SetSmartCurrentLimit(45);
+}
+
 void Intake::RobotPeriodic(const RobotData &robotData, IntakeData &intakeData)
 {
     updateData(robotData, intakeData);
@@ -69,7 +132,8 @@ void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
         intakePivot_pidController.SetReference(10, rev::CANSparkMaxLowLevel::ControlType::kPosition,1);
 
         intakeRollers.Set(intakeRollerSpeed);
-        intakeMecanum.Set(intakeMecanumSpeed);
+        //intakeMecanum.Set(intakeMecanumSpeed);
+        intakeSingulator.Set(singulatorSpeed);
         
     }
     else if (robotData.controlData.saIntakeBackward)
@@ -80,6 +144,7 @@ void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
     else if (robotData.controlData.saEjectBalls) //rollers backwards, pivot down
     {
         intakeRollers.Set(-intakeRollersEjectSpeed);
+        intakeSingulator.Set(-singulatorSpeed);
         intakePivot_pidController.SetReference(10, rev::CANSparkMaxLowLevel::ControlType::kPosition,0);
 
     }
@@ -87,6 +152,7 @@ void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
     {
         intakeRollers.Set(0);
         intakeMecanum.Set(0);
+        intakeSingulator.Set(0);
 
         intakePivot_pidController.SetReference(0.1, rev::CANSparkMaxLowLevel::ControlType::kPosition, 1);
         //intakePivotEncoder.SetPosition(0);
@@ -177,66 +243,6 @@ bool Intake::intakeIdle(const RobotData &robotData, IntakeData &intakeData){
     } else {
         return true;
     }
-
-}
-
-void Intake::rollersInit(){
-    intakeRollers.RestoreFactoryDefaults();
-
-    intakeRollers.SetInverted(true);
-
-    intakeRollers.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-
-    // intakeRollers_pidController.SetP(pkP);
-    // intakeRollers_pidController.SetI(pkI);
-    // intakeRollers_pidController.SetD(pkD);
-    // intakeRollers_pidController.SetIZone(pkIz);
-    // intakeRollers_pidController.SetFF(pkFF);
-    // intakeRollers_pidController.SetOutputRange(pkMinOutput, pkMaxOutput);
-
-    intakeRollers.SetSmartCurrentLimit(45);
-
-}
-
-void Intake::pivotInit(){
-    intakePivot.RestoreFactoryDefaults();
-
-    intakePivot.SetInverted(false);
-
-    intakePivot.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-
-    //down
-    intakePivot_pidController.SetP(0.74,0);
-    intakePivot_pidController.SetI(0,0);
-    intakePivot_pidController.SetD(0.2,0);
-    intakePivot_pidController.SetIZone(0,0);
-    intakePivot_pidController.SetFF(0,0);
-    intakePivot_pidController.SetOutputRange(-0.205, 0.16,0);
-
-    //up
-    intakePivot_pidController.SetP(0.99,1);
-    intakePivot_pidController.SetI(0,1);
-    intakePivot_pidController.SetD(0.3,1);
-    intakePivot_pidController.SetIZone(0,1);
-    intakePivot_pidController.SetFF(0,1);
-    intakePivot_pidController.SetOutputRange(-.2, 0.15,1);
-
-    intakePivot.SetSmartCurrentLimit(45);
-}
-
-void Intake::mecanumInit(){
-    intakeMecanum.RestoreFactoryDefaults();
-    intakeMecanum.SetInverted(false);
-    intakeMecanum.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-
-    // intakeMecanum_pidController.SetP(mkP);
-    // intakeMecanum_pidController.SetI(mkI);
-    // intakeMecanum_pidController.SetD(mkD);
-    // intakeMecanum_pidController.SetIZone(mkIz);
-    // intakeMecanum_pidController.SetFF(mkFF);
-    // intakeMecanum_pidController.SetOutputRange(mkMinOutput, mkMaxOutput);
-
-    intakeMecanum.SetSmartCurrentLimit(45);
 
 }
 

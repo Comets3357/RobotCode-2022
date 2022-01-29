@@ -11,7 +11,8 @@ static const int
 static const int
     intakeRollerID = 12,
     intakePivotID = 11,
-    intakeMecanumID = 13;
+    intakeMecanumID = 13,
+    intakeSingulatorID = 14;
 
 //indexer
 static const int
