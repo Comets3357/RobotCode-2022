@@ -8,9 +8,15 @@
 
 struct RobotData;
 
+enum CargoColor {
+    cargo_Blue,
+    cargo_Red,
+    cargo_Unknown
+};
+
 struct ColorSensorData {
     frc::Color currentColor;
-    std::string color;
+    int colorValue = CargoColor::cargo_Unknown;
 };
 
 class ColorSensor {
@@ -39,4 +45,4 @@ class ColorSensor {
         //tune these
         static constexpr frc::Color kBlueCargo = frc::Color(0.1763, 0.4508, 0.3728);
         static constexpr frc::Color kRedCargo = frc::Color(0.3546, 0.4361, 0.2093);
-}; 
+};

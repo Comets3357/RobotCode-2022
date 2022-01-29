@@ -33,11 +33,11 @@ void LEDs::RobotPeriodic(const RobotData &robotData){
     }
 
     // indexer arduino LED color sensor stuff (1st slot (closest to intake))
-    if (robotData.colorSensorData.color == "blue"){
+    if (robotData.colorSensorData.colorValue == CargoColor::cargo_Blue){
         indexerColorCodeB = indexerColorCodeA;
         indexerColorCodeA = 2;
         success = !indexerArduinoA.Write(2, indexerColorCodeA); //blue
-    } else if (robotData.colorSensorData.color == "red"){
+    } else if (robotData.colorSensorData.colorValue == CargoColor::cargo_Red){
         indexerColorCodeB = indexerColorCodeA;
         indexerColorCodeA = 1;
         success = !indexerArduinoA.Write(2, indexerColorCodeA); //red
