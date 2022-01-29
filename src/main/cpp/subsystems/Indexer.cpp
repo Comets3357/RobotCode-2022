@@ -42,69 +42,69 @@ void Indexer::RobotPeriodic(const RobotData &robotData, IndexerData &indexerData
     //     }
     // }
 
-    if (indexerData.indexerContents.size() == 0){
+    // if (indexerData.indexerContents.size() == 0){
 
-        frc::SmartDashboard::PutString("top", "empty");
-        frc::SmartDashboard::PutString("bottom", "empty");
+    //     frc::SmartDashboard::PutString("top", "empty");
+    //     frc::SmartDashboard::PutString("bottom", "empty");
 
-    } else if (indexerData.indexerContents.size() == 1){
+    // } else if (indexerData.indexerContents.size() == 1){
 
-        if(indexerData.indexerContents.front() == Cargo::cargo_Alliance){
-            frc::SmartDashboard::PutString("top", "alliance");
-            frc::SmartDashboard::PutString("bottom", "empty");
-        } else if (indexerData.indexerContents.front() == Cargo::cargo_Opponent){
-            frc::SmartDashboard::PutString("top", "opponent");
-            frc::SmartDashboard::PutString("bottom", "empty");
-        } else {
-            frc::SmartDashboard::PutString("top", "unassigned");
-            frc::SmartDashboard::PutString("bottom", "empty");
-        }
+    //     if(indexerData.indexerContents.front() == Cargo::cargo_Alliance){
+    //         frc::SmartDashboard::PutString("top", "alliance");
+    //         frc::SmartDashboard::PutString("bottom", "empty");
+    //     } else if (indexerData.indexerContents.front() == Cargo::cargo_Opponent){
+    //         frc::SmartDashboard::PutString("top", "opponent");
+    //         frc::SmartDashboard::PutString("bottom", "empty");
+    //     } else {
+    //         frc::SmartDashboard::PutString("top", "unassigned");
+    //         frc::SmartDashboard::PutString("bottom", "empty");
+    //     }
 
-    } else if (indexerData.indexerContents.size() == 2){
+    // } else if (indexerData.indexerContents.size() == 2){
 
-        if(indexerData.indexerContents.front() == Cargo::cargo_Alliance){
+    //     if(indexerData.indexerContents.front() == Cargo::cargo_Alliance){
 
-            if(indexerData.indexerContents.back() == Cargo::cargo_Alliance){
-                frc::SmartDashboard::PutString("top", "alliance");
-                frc::SmartDashboard::PutString("bottom", "alliance");
-            } else if(indexerData.indexerContents.back() == Cargo::cargo_Opponent){
-                frc::SmartDashboard::PutString("top", "alliance");
-                frc::SmartDashboard::PutString("bottom", "opponent");
-            } else {
-                frc::SmartDashboard::PutString("top", "alliance");
-                frc::SmartDashboard::PutString("bottom", "unassigned");
-            }
+    //         if(indexerData.indexerContents.back() == Cargo::cargo_Alliance){
+    //             frc::SmartDashboard::PutString("top", "alliance");
+    //             frc::SmartDashboard::PutString("bottom", "alliance");
+    //         } else if(indexerData.indexerContents.back() == Cargo::cargo_Opponent){
+    //             frc::SmartDashboard::PutString("top", "alliance");
+    //             frc::SmartDashboard::PutString("bottom", "opponent");
+    //         } else {
+    //             frc::SmartDashboard::PutString("top", "alliance");
+    //             frc::SmartDashboard::PutString("bottom", "unassigned");
+    //         }
 
-        } else if (indexerData.indexerContents.front() == Cargo::cargo_Opponent){
+    //     } else if (indexerData.indexerContents.front() == Cargo::cargo_Opponent){
 
-            if(indexerData.indexerContents.back() == Cargo::cargo_Alliance){
-                frc::SmartDashboard::PutString("top", "opponent");
-                frc::SmartDashboard::PutString("bottom", "alliance");
-            } else if(indexerData.indexerContents.back() == Cargo::cargo_Opponent){
-                frc::SmartDashboard::PutString("top", "opponent");
-                frc::SmartDashboard::PutString("bottom", "opponent");
-            } else {
-                frc::SmartDashboard::PutString("top", "opponent");
-                frc::SmartDashboard::PutString("bottom", "unassigned");
-            }
+    //         if(indexerData.indexerContents.back() == Cargo::cargo_Alliance){
+    //             frc::SmartDashboard::PutString("top", "opponent");
+    //             frc::SmartDashboard::PutString("bottom", "alliance");
+    //         } else if(indexerData.indexerContents.back() == Cargo::cargo_Opponent){
+    //             frc::SmartDashboard::PutString("top", "opponent");
+    //             frc::SmartDashboard::PutString("bottom", "opponent");
+    //         } else {
+    //             frc::SmartDashboard::PutString("top", "opponent");
+    //             frc::SmartDashboard::PutString("bottom", "unassigned");
+    //         }
 
-        } else {
-            if(indexerData.indexerContents.back() == Cargo::cargo_Alliance){
-                frc::SmartDashboard::PutString("top", "unassigned");
-                frc::SmartDashboard::PutString("bottom", "alliance");
-            } else if(indexerData.indexerContents.back() == Cargo::cargo_Opponent){
-                frc::SmartDashboard::PutString("top", "unassigned");
-                frc::SmartDashboard::PutString("bottom", "opponent");
-            } else {
-                frc::SmartDashboard::PutString("top", "unassigned");
-                frc::SmartDashboard::PutString("bottom", "unassigned");
-            }
+    //     } else {
+    //         if(indexerData.indexerContents.back() == Cargo::cargo_Alliance){
+    //             frc::SmartDashboard::PutString("top", "unassigned");
+    //             frc::SmartDashboard::PutString("bottom", "alliance");
+    //         } else if(indexerData.indexerContents.back() == Cargo::cargo_Opponent){
+    //             frc::SmartDashboard::PutString("top", "unassigned");
+    //             frc::SmartDashboard::PutString("bottom", "opponent");
+    //         } else {
+    //             frc::SmartDashboard::PutString("top", "unassigned");
+    //             frc::SmartDashboard::PutString("bottom", "unassigned");
+    //         }
             
-        }
-    } else {
-        frc::SmartDashboard::PutString("top", "overload");
-        frc::SmartDashboard::PutString("bottom", "overload");
-    }
+    //     }
+    // } else {
+    //     frc::SmartDashboard::PutString("top", "overload");
+    //     frc::SmartDashboard::PutString("bottom", "overload");
+    // }
 
 
 }
@@ -197,11 +197,32 @@ void Indexer::incrementCount(const RobotData &robotData, IndexerData &indexerDat
 }
 
 void Indexer::newCargo(const RobotData &robotData, IndexerData &indexerData){
+    // if(frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed){
+
+    //     if (robotData.colorSensorData.currentColor == frc::Color::kRed){ //not sure if I'm checking this correctly, using kRed and all
+    //         indexerData.indexerContents.push_back(Cargo::cargo_Alliance);
+    //     } else if (robotData.colorSensorData.currentColor == frc::Color::kBlue){
+    //         indexerData.indexerContents.push_back(Cargo::cargo_Opponent);
+    //     } else {
+    //         indexerData.indexerContents.push_back(Cargo::cargo_Unassigned);
+    //     }
+
+    // } else if (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue){
+
+    //     if(robotData.colorSensorData.currentColor == frc::Color::kBlue){ //not sure if I'm checking this correctly, using kRed and all
+    //         indexerData.indexerContents.push_back(Cargo::cargo_Alliance);
+    //     } else if (robotData.colorSensorData.currentColor == frc::Color::kRed){
+    //         indexerData.indexerContents.push_back(Cargo::cargo_Opponent);
+    //     } else {
+    //         indexerData.indexerContents.push_back(Cargo::cargo_Unassigned);
+    //     }
+
+    // } 
     if(frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed){
 
-        if (robotData.colorSensorData.currentColor == frc::Color::kRed){ //not sure if I'm checking this correctly, using kRed and all
+        if (robotData.colorSensorData.color == "red"){ //not sure if I'm checking this correctly, using kRed and all
             indexerData.indexerContents.push_back(Cargo::cargo_Alliance);
-        } else if (robotData.colorSensorData.currentColor == frc::Color::kBlue){
+        } else if (robotData.colorSensorData.color == "blue"){
             indexerData.indexerContents.push_back(Cargo::cargo_Opponent);
         } else {
             indexerData.indexerContents.push_back(Cargo::cargo_Unassigned);
@@ -209,9 +230,9 @@ void Indexer::newCargo(const RobotData &robotData, IndexerData &indexerData){
 
     } else if (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue){
 
-        if(robotData.colorSensorData.currentColor == frc::Color::kBlue){ //not sure if I'm checking this correctly, using kRed and all
+        if(robotData.colorSensorData.color == "blue"){ //not sure if I'm checking this correctly, using kRed and all
             indexerData.indexerContents.push_back(Cargo::cargo_Alliance);
-        } else if (robotData.colorSensorData.currentColor == frc::Color::kRed){
+        } else if (robotData.colorSensorData.color == "red"){
             indexerData.indexerContents.push_back(Cargo::cargo_Opponent);
         } else {
             indexerData.indexerContents.push_back(Cargo::cargo_Unassigned);
@@ -225,19 +246,19 @@ void Indexer::assignCargoColor(const RobotData &robotData, IndexerData &indexerD
 
     if(frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed){
 
-        if (robotData.colorSensorData.currentColor == frc::Color::kRed){ //not sure if I'm checking this correctly, using kRed and all
+        if (robotData.colorSensorData.color == "red"){ //not sure if I'm checking this correctly, using kRed and all
             indexerData.indexerContents.pop_back();
             indexerData.indexerContents.push_back(Cargo::cargo_Alliance);
-        } else if (robotData.colorSensorData.currentColor == frc::Color::kBlue){
+        } else if (robotData.colorSensorData.color == "blue"){
             indexerData.indexerContents.pop_back();
             indexerData.indexerContents.push_back(Cargo::cargo_Opponent);
         } 
     } else {   //blue alliance                                                                                      
 
-        if (robotData.colorSensorData.currentColor == frc::Color::kBlue){ //not sure if I'm checking this correctly, using kRed and all
+        if (robotData.colorSensorData.color == "blue"){ //not sure if I'm checking this correctly, using kRed and all
             indexerData.indexerContents.pop_back();
             indexerData.indexerContents.push_back(Cargo::cargo_Alliance);
-        } else if (robotData.colorSensorData.currentColor == frc::Color::kRed){
+        } else if (robotData.colorSensorData.color == "red"){
             indexerData.indexerContents.pop_back();
             indexerData.indexerContents.push_back(Cargo::cargo_Opponent);
         } 
