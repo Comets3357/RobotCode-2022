@@ -311,7 +311,7 @@ void Indexer::saBeltControl(const RobotData &robotData, IndexerData &indexerData
 void Indexer::saWheelControl(const RobotData &robotData, IndexerData &indexerData){
     if(robotData.controlData.saEjectBalls || robotData.controlData.mIndexerDown){ // if indexer is REVERSING (saEject or manual indexer backwards)
         indexerWheel.Set(-indexerWheelSpeed);
-    } else if ((robotData.shooterData.readyShoot || !(getTopBeam() && getMidBeam())) && !robotData.intakeData.intakeIdle){ // if indexer is not yet full or if indexer DOES have 2 balls but the 2nd sensor has not yet been tripped
+    } else if (robotData.shooterData.readyShoot || (!(getTopBeam() && getMidBeam()) &&!robotData.intakeData.intakeIdle)){ // if indexer is not yet full or if indexer DOES have 2 balls but the 2nd sensor has not yet been tripped
         indexerWheel.Set(indexerWheelSpeed);
     } else {
         indexerWheel.Set(0);
