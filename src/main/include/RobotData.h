@@ -7,6 +7,7 @@
 #include "common/Limelight.h"
 #include "common/Timer.h"
 #include "common/LEDs.h"
+#include "common/ColorSensor.h"
 
 #include "auton/Auton.h"
 
