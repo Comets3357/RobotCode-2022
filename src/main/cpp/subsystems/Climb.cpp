@@ -5,9 +5,11 @@ void Climb::RobotInit(){
     climbArms.SetInverted(false);
     climbElevator.SetInverted(false);
 
-    //do other init stuff (probably more)
     climbArms.RestoreFactoryDefaults();
     climbElevator.RestoreFactoryDefaults();
+
+    climbElevator.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+    climbArms.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
 
     climbElevatorEncoder.SetPosition(0);
     climbArmsEncoder.SetPosition(0);
@@ -128,9 +130,12 @@ void Climb::semiAuto(const RobotData &robotData, ClimbData &climbData){
 }
 
 void Climb::DisabledInit(){
-    //sets motors to 0 for cuz disabled
+    //sets motors to have no power (meaning they don't move)
     climbElevator.Set(0);
     climbArms.Set(0);
+
+    climbElevator.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+    climbArms.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
 }
 
 // updates encoder and gyro values
