@@ -23,12 +23,12 @@ void Intake::RobotPeriodic(const RobotData &robotData, IntakeData &intakeData)
 {
     updateData(robotData, intakeData);
 
-    if (robotData.controlData.manualMode)
+    if (robotData.controlData.mode == mode_teleop_manual)
     {
         manual(robotData, intakeData);
 
     }
-    else
+    else if (robotData.controlData.mode == mode_teleop_sa)
     {
         semiAuto(robotData, intakeData);
     }
@@ -95,7 +95,7 @@ void Intake::manual(const RobotData &robotData, IntakeData &intakeData){
     // }
 
     //intakeRollers.Set(robotData.controlData.mIntakeRollersBackward*.55);
-    if(robotData.controlData.mIntakeRollers){
+    if(robotData.controlData.mIntakeRollersIn){
         intakeRollers.Set(intakeRollerSpeed);
         //intakeRollers.Set(rollerSpeed.GetDouble(0.05));
     }else{
@@ -145,7 +145,7 @@ void Intake::updateData(const RobotData &robotData, IntakeData &intakeData)
     frc::SmartDashboard::PutNumber("pivot speed", intakePivot.Get());
 
     frc::SmartDashboard::PutNumber("roller speed", intakeRollers.Get());
-    frc::SmartDashboard::PutBoolean("manual", robotData.controlData.manualMode);
+    frc::SmartDashboard::PutBoolean("manual", robotData.controlData.mode);  // this will get you an integer, reference the Mode enum in Controller.h to see which mode it corresponds to now
 
     frc::SmartDashboard::PutNumber("tick count", tickCount);
 

@@ -23,6 +23,7 @@ enum Cargo
 struct IndexerData
 {
     std::deque<Cargo> indexerContents;
+    bool wrongBall = false;
 };
 
 

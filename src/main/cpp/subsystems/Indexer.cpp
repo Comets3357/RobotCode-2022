@@ -14,11 +14,11 @@ void Indexer::RobotPeriodic(const RobotData &robotData, IndexerData &indexerData
     updateData(robotData, indexerData);
     count(robotData, indexerData);  // accounts for automatic counting as well as manual decrementing
                                     // pressing slcntrbtn will remove the first element of the deque
-    if (robotData.controlData.manualMode)
+    if (robotData.controlData.mode == mode_teleop_manual)
     {
         manual(robotData, indexerData);
     }
-    else
+    else if (robotData.controlData.mode == mode_teleop_sa)
     {
         semiAuto(robotData, indexerData);
         // testControl(robotData);
@@ -40,6 +40,70 @@ void Indexer::RobotPeriodic(const RobotData &robotData, IndexerData &indexerData
     //         frc::SmartDashboard::PutBoolean("currently red?", false);
     //         frc::SmartDashboard::PutBoolean("currently blue?", false);
     //     }
+    // }
+
+    // if (indexerData.indexerContents.size() == 0){
+
+    //     frc::SmartDashboard::PutString("top", "empty");
+    //     frc::SmartDashboard::PutString("bottom", "empty");
+
+    // } else if (indexerData.indexerContents.size() == 1){
+
+    //     if(indexerData.indexerContents.front() == Cargo::cargo_Alliance){
+    //         frc::SmartDashboard::PutString("top", "alliance");
+    //         frc::SmartDashboard::PutString("bottom", "empty");
+    //     } else if (indexerData.indexerContents.front() == Cargo::cargo_Opponent){
+    //         frc::SmartDashboard::PutString("top", "opponent");
+    //         frc::SmartDashboard::PutString("bottom", "empty");
+    //     } else {
+    //         frc::SmartDashboard::PutString("top", "unassigned");
+    //         frc::SmartDashboard::PutString("bottom", "empty");
+    //     }
+
+    // } else if (indexerData.indexerContents.size() == 2){
+
+    //     if(indexerData.indexerContents.front() == Cargo::cargo_Alliance){
+
+    //         if(indexerData.indexerContents.back() == Cargo::cargo_Alliance){
+    //             frc::SmartDashboard::PutString("top", "alliance");
+    //             frc::SmartDashboard::PutString("bottom", "alliance");
+    //         } else if(indexerData.indexerContents.back() == Cargo::cargo_Opponent){
+    //             frc::SmartDashboard::PutString("top", "alliance");
+    //             frc::SmartDashboard::PutString("bottom", "opponent");
+    //         } else {
+    //             frc::SmartDashboard::PutString("top", "alliance");
+    //             frc::SmartDashboard::PutString("bottom", "unassigned");
+    //         }
+
+    //     } else if (indexerData.indexerContents.front() == Cargo::cargo_Opponent){
+
+    //         if(indexerData.indexerContents.back() == Cargo::cargo_Alliance){
+    //             frc::SmartDashboard::PutString("top", "opponent");
+    //             frc::SmartDashboard::PutString("bottom", "alliance");
+    //         } else if(indexerData.indexerContents.back() == Cargo::cargo_Opponent){
+    //             frc::SmartDashboard::PutString("top", "opponent");
+    //             frc::SmartDashboard::PutString("bottom", "opponent");
+    //         } else {
+    //             frc::SmartDashboard::PutString("top", "opponent");
+    //             frc::SmartDashboard::PutString("bottom", "unassigned");
+    //         }
+
+    //     } else {
+    //         if(indexerData.indexerContents.back() == Cargo::cargo_Alliance){
+    //             frc::SmartDashboard::PutString("top", "unassigned");
+    //             frc::SmartDashboard::PutString("bottom", "alliance");
+    //         } else if(indexerData.indexerContents.back() == Cargo::cargo_Opponent){
+    //             frc::SmartDashboard::PutString("top", "unassigned");
+    //             frc::SmartDashboard::PutString("bottom", "opponent");
+    //         } else {
+    //             frc::SmartDashboard::PutString("top", "unassigned");
+    //             frc::SmartDashboard::PutString("bottom", "unassigned");
+    //         }
+            
+    //     }
+    // } else {
+    //     frc::SmartDashboard::PutString("top", "overload");
+    //     frc::SmartDashboard::PutString("bottom", "overload");
     // }
 
 
@@ -65,10 +129,10 @@ void Indexer::semiAuto(const RobotData &robotData, IndexerData &indexerData)
 void Indexer::manual(const RobotData &robotData, IndexerData &indexerData)
 {
 
-    if(robotData.controlData.mIndexerBackwards){ //run belt and wheel backwards  (B)
+    if(robotData.controlData.mIndexerDown){ //run belt and wheel backwards  (B)
         indexerWheel.Set(-indexerWheelSpeed);
         indexerBelt.Set(-indexerBeltSpeed);
-    }else if(robotData.controlData.mIndexer){ //run belt and wheel forwards (X)
+    }else if(robotData.controlData.mIndexerUp){ //run belt and wheel forwards (X)
         indexerBelt.Set(indexerBeltSpeed);
         indexerWheel.Set(indexerWheelSpeed);    
     }else{
@@ -80,15 +144,22 @@ void Indexer::manual(const RobotData &robotData, IndexerData &indexerData)
 
 void Indexer::updateData(const RobotData &robotData, IndexerData &indexerData)
 {
-
+    if(robotData.indexerData.indexerContents.front() == Cargo::cargo_Opponent){
+        indexerData.wrongBall = true;
+    } else if(robotData.indexerData.indexerContents.front() == Cargo::cargo_Alliance){
+        indexerData.wrongBall = false;
+    } else if (robotData.indexerData.indexerContents.front() == Cargo::cargo_Unassigned){
+        indexerData.wrongBall = true; 
+        // change to button for driver control?
+    }
 }
 
 void Indexer::testControl(const RobotData &robotData){
-    if(robotData.controlData.mIndexerBackwards){    // run belt and wheel backwards
+    if(robotData.controlData.mIndexerDown){    // run belt and wheel backwards
                                                     // secondary B
         indexerBelt.Set(-indexerBeltSpeed);
         indexerWheel.Set(-indexerWheelSpeed);
-    }else if(robotData.controlData.mIndexer){       // run belt and wheel forwards
+    }else if(robotData.controlData.mIndexerUp){       // run belt and wheel forwards
                                                     // secondary X
         indexerBelt.Set(indexerBeltSpeed);
         indexerWheel.Set(indexerWheelSpeed);    
@@ -126,11 +197,32 @@ void Indexer::incrementCount(const RobotData &robotData, IndexerData &indexerDat
 }
 
 void Indexer::newCargo(const RobotData &robotData, IndexerData &indexerData){
+    // if(frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed){
+
+    //     if (robotData.colorSensorData.currentColor == frc::Color::kRed){ //not sure if I'm checking this correctly, using kRed and all
+    //         indexerData.indexerContents.push_back(Cargo::cargo_Alliance);
+    //     } else if (robotData.colorSensorData.currentColor == frc::Color::kBlue){
+    //         indexerData.indexerContents.push_back(Cargo::cargo_Opponent);
+    //     } else {
+    //         indexerData.indexerContents.push_back(Cargo::cargo_Unassigned);
+    //     }
+
+    // } else if (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue){
+
+    //     if(robotData.colorSensorData.currentColor == frc::Color::kBlue){ //not sure if I'm checking this correctly, using kRed and all
+    //         indexerData.indexerContents.push_back(Cargo::cargo_Alliance);
+    //     } else if (robotData.colorSensorData.currentColor == frc::Color::kRed){
+    //         indexerData.indexerContents.push_back(Cargo::cargo_Opponent);
+    //     } else {
+    //         indexerData.indexerContents.push_back(Cargo::cargo_Unassigned);
+    //     }
+
+    // } 
     if(frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed){
 
-        if (robotData.colorSensorData.currentColor == frc::Color::kRed){ //not sure if I'm checking this correctly, using kRed and all
+        if (robotData.colorSensorData.colorValue == CargoColor::cargo_Red){ //not sure if I'm checking this correctly, using kRed and all
             indexerData.indexerContents.push_back(Cargo::cargo_Alliance);
-        } else if (robotData.colorSensorData.currentColor == frc::Color::kBlue){
+        } else if (robotData.colorSensorData.colorValue == CargoColor::cargo_Blue){
             indexerData.indexerContents.push_back(Cargo::cargo_Opponent);
         } else {
             indexerData.indexerContents.push_back(Cargo::cargo_Unassigned);
@@ -138,9 +230,9 @@ void Indexer::newCargo(const RobotData &robotData, IndexerData &indexerData){
 
     } else if (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue){
 
-        if(robotData.colorSensorData.currentColor == frc::Color::kBlue){ //not sure if I'm checking this correctly, using kRed and all
+        if(robotData.colorSensorData.colorValue == CargoColor::cargo_Blue){ //not sure if I'm checking this correctly, using kRed and all
             indexerData.indexerContents.push_back(Cargo::cargo_Alliance);
-        } else if (robotData.colorSensorData.currentColor == frc::Color::kRed){
+        } else if (robotData.colorSensorData.colorValue == CargoColor::cargo_Red){
             indexerData.indexerContents.push_back(Cargo::cargo_Opponent);
         } else {
             indexerData.indexerContents.push_back(Cargo::cargo_Unassigned);
@@ -154,19 +246,19 @@ void Indexer::assignCargoColor(const RobotData &robotData, IndexerData &indexerD
 
     if(frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed){
 
-        if (robotData.colorSensorData.currentColor == frc::Color::kRed){ //not sure if I'm checking this correctly, using kRed and all
+        if (robotData.colorSensorData.colorValue == CargoColor::cargo_Red){ //not sure if I'm checking this correctly, using kRed and all
             indexerData.indexerContents.pop_back();
             indexerData.indexerContents.push_back(Cargo::cargo_Alliance);
-        } else if (robotData.colorSensorData.currentColor == frc::Color::kBlue){
+        } else if (robotData.colorSensorData.colorValue == CargoColor::cargo_Blue){
             indexerData.indexerContents.pop_back();
             indexerData.indexerContents.push_back(Cargo::cargo_Opponent);
         } 
     } else {   //blue alliance                                                                                      
 
-        if (robotData.colorSensorData.currentColor == frc::Color::kBlue){ //not sure if I'm checking this correctly, using kRed and all
+        if (robotData.colorSensorData.colorValue == CargoColor::cargo_Blue){ //not sure if I'm checking this correctly, using kRed and all
             indexerData.indexerContents.pop_back();
             indexerData.indexerContents.push_back(Cargo::cargo_Alliance);
-        } else if (robotData.colorSensorData.currentColor == frc::Color::kRed){
+        } else if (robotData.colorSensorData.colorValue == CargoColor::cargo_Red){
             indexerData.indexerContents.pop_back();
             indexerData.indexerContents.push_back(Cargo::cargo_Opponent);
         } 
@@ -180,10 +272,8 @@ void Indexer::decrementCount(const RobotData &robotData, IndexerData &indexerDat
     if (indexerData.indexerContents.size() > 0){ // making sure we don't pop when there's nothing in there
         if (reverse && getBottomBeamToggled(false)){ // if you're reversing and bb1 toggles off (ball passed completely through)
             indexerData.indexerContents.pop_back();
-            // indexerData.ballCount--;
-        }else if (!reverse && getTopBeamToggled(false)){
+        }else if (!reverse && getTopBeamToggled(false) && robotData.shooterData.readyShoot){
             indexerData.indexerContents.pop_front();
-            // indexerData.ballCount--;
         }
     }
 }
@@ -204,7 +294,7 @@ void Indexer::count(const RobotData &robotData, IndexerData &indexerData){
     if(topDebounceCount > 0){
         topDebounceCount--;
     }
-    if(robotData.controlData.saEjectBalls || robotData.controlData.mIndexerBackwards){ // if BACKWARDS
+    if(robotData.controlData.saEjectBalls || robotData.controlData.mIndexerDown){ // if BACKWARDS
         decrementCount(robotData, indexerData, true); //true means you're reversing
     } else {
         decrementCount(robotData, indexerData, false);
@@ -220,7 +310,7 @@ void Indexer::count(const RobotData &robotData, IndexerData &indexerData){
      * run only decrement     * 
      **/
 
-    if(robotData.controlData.manualMode && robotData.controlData.mDecrementCargo){
+    if(robotData.controlData.mode == mode_teleop_manual && robotData.controlData.mDecrementCargo){
         mDecrement(robotData, indexerData);
     }
 
@@ -228,9 +318,9 @@ void Indexer::count(const RobotData &robotData, IndexerData &indexerData){
 
 void Indexer::saBeltControl(const RobotData &robotData, IndexerData &indexerData){
 
-    if(robotData.controlData.saEjectBalls || robotData.controlData.mIndexerBackwards){ // if indexer is REVERSING (saEject or manual indexer backwards)
+    if(robotData.controlData.saEjectBalls || robotData.controlData.mIndexerDown){ // if indexer is REVERSING (saEject or manual indexer backwards)
         indexerBelt.Set(-indexerBeltSpeed);
-    } else if ((!getTopBeam() || robotData.shooterData.readyShoot) /**&& !robotData.intakeData.intakeIdle**/){ // if you're shooting or BB3 is not tripped
+    } else if (robotData.shooterData.readyShoot || (!getTopBeam() && !robotData.intakeData.intakeIdle)){ // if you're shooting or (BB3 is not  and the intake isn't idle)
         indexerBelt.Set(indexerBeltSpeed);
     }  else {
         indexerBelt.Set(0);
@@ -240,7 +330,7 @@ void Indexer::saBeltControl(const RobotData &robotData, IndexerData &indexerData
 }
 
 void Indexer::saWheelControl(const RobotData &robotData, IndexerData &indexerData){
-    if(robotData.controlData.saEjectBalls || robotData.controlData.mIndexerBackwards){ // if indexer is REVERSING (saEject or manual indexer backwards)
+    if(robotData.controlData.saEjectBalls || robotData.controlData.mIndexerDown){ // if indexer is REVERSING (saEject or manual indexer backwards)
         indexerWheel.Set(-indexerWheelSpeed);
     } else if ((robotData.shooterData.readyShoot || !(getTopBeam() && getMidBeam())) && !robotData.intakeData.intakeIdle){ // if indexer is not yet full or if indexer DOES have 2 balls but the 2nd sensor has not yet been tripped
         indexerWheel.Set(indexerWheelSpeed);
