@@ -37,14 +37,10 @@ void LEDs::RobotPeriodic(const RobotData &robotData){
         indexerColorCodeB = indexerColorCodeA;
         indexerColorCodeA = 2;
         success = !indexerArduinoA.Write(2, indexerColorCodeA); //blue
-    } else if (robotData.colorSensorData.color = "red"){
+    } else if (robotData.colorSensorData.color == "red"){
         indexerColorCodeB = indexerColorCodeA;
         indexerColorCodeA = 1;
         success = !indexerArduinoA.Write(2, indexerColorCodeA); //red
-    } else {
-        indexerColorCodeB = indexerColorCodeA;
-        indexerColorCodeA = 4;
-        success = !indexerArduinoA.Write(2, indexerColorCodeA); //black (aka off)
     }
 
     // indexer arduino LED color sensor stuff (2nd slot (closest to shooter))
@@ -52,18 +48,16 @@ void LEDs::RobotPeriodic(const RobotData &robotData){
         success = !indexerArduinoB.Write(3, indexerColorCodeB); //blue
     } else  if (indexerColorCodeB == 1){
         success = !indexerArduinoB.Write(3, indexerColorCodeB); //red
-    } else {
-        success = !indexerArduinoB.Write(3, indexerColorCodeB); //black (aka off)
     }
 
-    // if the shooter is ready to shoot, then the LEDs for it turn white; if not, the LEDs turn black (off)
-    if (robotData.shooterData.readyShoot){ //should work once branches are merged
-        shooterColorCode = 3;
-        success = !shooterArduino.Write(4, shooterColorCode); //white
-    } else {
-        shooterColorCode = 4;
-        success = !shooterArduino.Write(4, shooterColorCode); //black (aka off)
-    }
+    // // if the shooter is ready to shoot, then the LEDs for it turn white; if not, the LEDs turn black (off)
+    // if (robotData.shooterData.readyShoot){ //should work once branches are merged
+    //     shooterColorCode = 3;
+    //     success = !shooterArduino.Write(4, shooterColorCode); //white
+    // } else {
+    //     shooterColorCode = 4;
+    //     success = !shooterArduino.Write(4, shooterColorCode); //black (aka off)
+    // }
 
     //prints true if the write was successful, and false if it aborted
     frc::SmartDashboard::PutBoolean("success", success);
