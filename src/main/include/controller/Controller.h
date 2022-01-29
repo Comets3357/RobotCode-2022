@@ -52,6 +52,7 @@ struct ControlData
     bool sapivotArmsOut;
     bool saretractElevator;
     bool saextendElevator;
+    bool saclimbInit;
 };
 
 struct ControllerData
@@ -99,6 +100,9 @@ struct ControllerData
 
     bool sLCenterBtnToggled = false;
     bool sRCenterBtnToggled = false;
+
+    bool sLTriggerToggled = false;
+    bool sRTriggerToggled = false;
 
     int sDPad = -1;
 };

@@ -8,12 +8,14 @@
 #include <rev/CANSparkMax.h>
 #include <rev/SparkMaxPIDController.h>
 #include <rev/CANEncoder.h>
+#include <rev/CANDigitalInput.h>
 
 
 struct RobotData;
 
 struct ClimbData {
-
+    int bar;
+    bool climbing;
 };
 
 class Climb {
@@ -26,8 +28,9 @@ public:
 private:
 
     int stage = 0;
-    int bar = 2;
 
+    bool climbInitiating = false;
+    bool climbUp = false;
     bool executeSemiAuto = false;
     int targetBar = 0;
 
@@ -41,8 +44,8 @@ private:
     void semiAuto(const RobotData &robotData, ClimbData &climbData);
     void manual(const RobotData &robotData, ClimbData &climbData);
 
-    void RunClimbToPos(int position, float power);
-    void RunArmsToPos(int position, float power);
+    void RunClimbToPos(int position, float power, int stageAdd);
+    void RunArmsToPos(int position, float power, int stageAdd);
 
 
     //CHANGE MOTOr ID STUFF  (just outline lol don't take your life too seriously:))
@@ -56,6 +59,8 @@ private:
     rev::SparkMaxRelativeEncoder climbArmsEncoder = climbArms.GetEncoder();
     rev::SparkMaxPIDController climbArms_pidController = climbArms.GetPIDController();
 
+    //zeroing sensor
+    rev::SparkMaxLimitSwitch climbLimit = climbElevator.GetForwardLimitSwitch(rev::CANDigitalInput::LimitSwitchPolarity::kNormallyOpen);
 
 
 };

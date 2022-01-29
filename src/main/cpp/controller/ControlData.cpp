@@ -91,6 +91,7 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
         controlData.sacancelSequence = controllerData.sLStickBtn;
         controlData.saclimbTraversalSequence = controllerData.sRCenterBtn;
         controlData.saclimbHeightSequence = controllerData.sLCenterBtn;
+        controlData.saclimbInit = controllerData.sRTrigger;
     }
   
 }
