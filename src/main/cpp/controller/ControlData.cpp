@@ -56,6 +56,7 @@ void Controller::updateControlData(const ControllerData &controllerData, Control
     controlData.mIndexerBackwards = controllerData.sBBtn;
     controlData.mIndexer = controllerData.sXBtn;
     controlData.mDecrementCargo = controllerData.sLCenterBtnToggled;
+    
 
 
 

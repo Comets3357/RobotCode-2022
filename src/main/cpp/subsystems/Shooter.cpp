@@ -73,6 +73,7 @@ void Shooter::RobotPeriodic(const RobotData &robotData, ShooterData &shooterData
 {
 
     updateData(robotData, shooterData);
+    currentHoodPos = shooterHoodEncoder.GetDistance();
     if (robotData.controlData.manualMode)
     {
         manual(robotData, shooterData);
@@ -83,12 +84,11 @@ void Shooter::RobotPeriodic(const RobotData &robotData, ShooterData &shooterData
         semiAuto(robotData, shooterData);
     }
     
-    currentHoodPos = shooterHoodEncoder.GetDistance();
+    
 
     // desiredPos = frc::SmartDashboard::GetNumber("target hood", 0);
 
     calculatedPower = hoodPID.Calculate(currentHoodPos, targetHoodPos);
-
     shooterHood.Set(calculatedPower);
 
 }
@@ -108,9 +108,9 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
         }
 
         //shooterWheelLead_pidController.SetReference(3400, rev::CANSparkMaxLowLevel::ControlType::kVelocity,0);
-        calculatedPower = hoodPID.Calculate(currentHoodPos, targetHoodPos);
+        // calculatedPower = hoodPID.Calculate(currentHoodPos, targetHoodPos);
 
-        shooterHood.Set(calculatedPower);
+        // shooterHood.Set(calculatedPower); // repetetive
         setWheel(0.4);
 
         //once the shooter has high enough velocity (and is aimed correctly tell robot to begin shooting)
@@ -162,18 +162,27 @@ void Shooter::manual(const RobotData &robotData, ShooterData &shooterData)
 
     //setWheel(robotData.controlData.mFlyWheel);
 
-    if (shooterHoodEncoder.GetDistance() <= maxHoodExtend || shooterHoodEncoder.GetDistance() >= minHoodExtend)
+    // min is greater than max w/ absolute encoder 
+    if (shooterHoodEncoder.GetDistance() <= maxHoodExtend)
     {
-        setHood(0);
+        setHoodPos(maxHoodExtend);
+    } 
+    else if (shooterHoodEncoder.GetDistance() >= minHoodExtend) 
+    {
+        setHoodPos(minHoodExtend);
     }
     else 
     {
-        setHood(robotData.controlData.mHood*.1);
+        if (robotData.controlData.mHood > .08){
+            setHoodPos(targetHoodPos + .025);
+        } else if (robotData.controlData.mHood < -.08){
+            setHoodPos(targetHoodPos - .025);
+        }
     }
 
     if(robotData.controlData.mzeroing)
     {
-        setHoodPos(0);
+        setHoodPos(0); /// not interfering with absolute/rev shit?
     }
 
 }
@@ -265,7 +274,7 @@ void Shooter::innerLaunch()
     {
         setHoodPos(convertFromABSToZeroToOne(0.34));
         flyWheelLead_pidController.SetReference(1500, rev::CANSparkMaxLowLevel::ControlType::kVelocity,0);
-        realShootLimit = 1450;
+        readyShootLimit = 1450;
     }
 }
 
