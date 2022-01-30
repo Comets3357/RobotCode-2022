@@ -11,7 +11,7 @@ static const int
 static const int
     intakeRollerID = 12,
     intakePivotID = 11,
-    intakeMecanumID = 13;
+    intakeSingulatorID = 13;
 
 static const double
     absExtended = 0.4255,
@@ -53,9 +53,10 @@ static const double
 
 // DIO
 static const int
-    intakeAbsoluteEncoderPort = 0,
+    intakeAbsoluteEncoderPort = 8,
+    HoodAbsoluteEncoderPort = 1,
     bottomBeamBreakPort = 3,
-    midBeamBreakPort = 4,
+    midBeamBreakPort = 9,
     topBeamBreakPort = 5;
 
 

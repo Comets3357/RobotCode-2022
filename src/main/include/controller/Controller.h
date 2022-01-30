@@ -133,7 +133,7 @@ class Controller
          * */
 
         void updateBtnData(ControllerData &controllerData);
-        void updateControlData(const ControllerData &controllerData, ControlData &controlData);
+        void updateControlData(const RobotData &robotData, const ControllerData &controllerData, ControlData &controlData);
 
         // basic btn getters:
         bool getBtn(int js, int index);

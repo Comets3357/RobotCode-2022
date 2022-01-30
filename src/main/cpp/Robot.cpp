@@ -55,7 +55,10 @@ void Robot::DisabledInit()
     climb.DisabledInit();
 }
 
-void Robot::DisabledPeriodic() {}
+void Robot::DisabledPeriodic() 
+{
+    shooter.updateData(robotData, robotData.shooterData);
+}
 void Robot::TestInit() {}
 void Robot::TestPeriodic() {}
 

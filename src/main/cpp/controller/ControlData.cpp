@@ -1,7 +1,8 @@
 #include "controller/Controller.h"
+#include "RobotData.h"
 
 // for updating states of control variables (to be accessed by other subsystems)
-void Controller::updateControlData(const ControllerData &controllerData, ControlData &controlData)
+void Controller::updateControlData(const RobotData &robotData, const ControllerData &controllerData, ControlData &controlData)
 {
     // states:
     controlData.shift = controllerData.sLBumper;
@@ -22,6 +23,7 @@ void Controller::updateControlData(const ControllerData &controllerData, Control
             controlData.mode = mode_climb_manual;
             break;
         default:
+            controlData.mode = mode_teleop_sa;
             break;
             
     }
@@ -59,6 +61,7 @@ void Controller::updateControlData(const ControllerData &controllerData, Control
 
     // manual:
 
+    
     controlData.mIntakeDown = controllerData.sRBumper;
     controlData.mIntakeUp = controllerData.sRBumper && controlData.shift;
     controlData.mIntakeRollersIn = controllerData.sRTrigger > 0.5;
@@ -83,6 +86,8 @@ void Controller::updateControlData(const ControllerData &controllerData, Control
     
 
     // semi-auto:
+
+    
     controlData.saIntake = controllerData.sRTrigger > 0.5;
     controlData.saIntakeBackward = controllerData.sLTrigger > 0.5;
 
@@ -111,8 +116,6 @@ void Controller::updateControlData(const ControllerData &controllerData, Control
     // }
     //controlData.finalShoot;
     
-
-    //controlData.wrongBall = controllerData.sYBtn;
 
   
 }
