@@ -39,7 +39,6 @@ private:
     void updateData(const RobotData &robotData, IndexerData &indexerData);
     void manual(const RobotData &robotData, IndexerData &indexerData);
     void semiAuto(const RobotData &robotData, IndexerData &indexerData);
-    void testControl(const RobotData &robotData);
 
     void indexerBeltInit();
     void indexerWheelInit();
@@ -62,6 +61,8 @@ private:
     bool getBottomBeamToggled(bool broken);
     // bool getMidBeamToggled(bool broken); // not in use
     bool getTopBeamToggled(bool broken);
+
+    void debuggingStuff(const RobotData &robotData, IndexerData &indexerData);
 
     
     

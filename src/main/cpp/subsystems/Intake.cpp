@@ -4,33 +4,30 @@
 
 void Intake::RobotInit()
 {
-    Intake::pivotInit();
-    Intake::rollersInit();
-
+    pivotInit();
+    rollersInit();
+    singulatorInit();
+                
     intakePivotEncoder.SetPosition(0);
     intakeRollersEncoder.SetPosition(0);
+    intakeSingulatorEncoder.SetPosition(0);
 
     intakePivot.Set(0);
     intakeRollers.Set(0);
+    intakeSingulator.Set(0);
 }
 
 void Intake::rollersInit(){
     intakeRollers.RestoreFactoryDefaults();
-
     intakeRollers.SetInverted(true);
-
     intakeRollers.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-
     intakeRollers.SetSmartCurrentLimit(45);
 }
 
 void Intake::pivotInit(){
     intakePivot.RestoreFactoryDefaults();
-
     intakePivot.SetInverted(false);
-
     intakePivot.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-
     //down
     intakePivot_pidController.SetP(0.2,0);
     intakePivot_pidController.SetI(0,0);
@@ -39,18 +36,14 @@ void Intake::pivotInit(){
     intakePivot_pidController.SetFF(0,0);
     intakePivot_pidController.SetOutputRange(-0.5, 0.5,0);
 
-
     intakePivot.SetSmartCurrentLimit(45);
 }
 
 void Intake::singulatorInit(){
     intakeSingulator.RestoreFactoryDefaults();
-
     intakeSingulator.SetInverted(true);
-
     intakeSingulator.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-
-    intakeRollers.SetSmartCurrentLimit(45);
+    intakeSingulator.SetSmartCurrentLimit(15);
 }
 
 void Intake::RobotPeriodic(const RobotData &robotData, IntakeData &intakeData)
@@ -83,11 +76,13 @@ void Intake::RobotPeriodic(const RobotData &robotData, IntakeData &intakeData)
     }
 
     if(intakeRollers.GetFault(rev::CANSparkMax::FaultID::kHasReset)||intakeRollers.GetFault(rev::CANSparkMax::FaultID::kMotorFault)|intakeRollers.GetFault(rev::CANSparkMax::FaultID::kBrownout)){
-        Intake::rollersInit();
+        rollersInit();
     }
     if(intakePivot.GetFault(rev::CANSparkMax::FaultID::kHasReset)||intakePivot.GetFault(rev::CANSparkMax::FaultID::kMotorFault)|intakePivot.GetFault(rev::CANSparkMax::FaultID::kBrownout)){
-        Intake::pivotInit();
+        pivotInit();
     }
+
+    // add fault case for singulator?
 
 }
 
@@ -101,7 +96,7 @@ void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
         // pivot down
         intakePivot_pidController.SetReference(14, rev::CANSparkMaxLowLevel::ControlType::kPosition,0);
 
-        //run rollers
+        //run rollers, singulator
         intakeRollers.Set(intakeRollerSpeed);
         intakeSingulator.Set(singulatorSpeed);
         
@@ -122,13 +117,12 @@ void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
     }
     else //default case, everything up and not running
     {
-        if(!intakeIdle(robotData, intakeData)){
+        if(!intakeData.intakeIdle){ // run the singulator while the intake is not idle
             intakeSingulator.Set(singulatorSpeed);
         }else{
             intakeSingulator.Set(0);
         }
         intakeRollers.Set(0);
-
         intakePivot_pidController.SetReference(0.1, rev::CANSparkMaxLowLevel::ControlType::kPosition, 0);
     }
 }
@@ -169,21 +163,21 @@ void Intake::manual(const RobotData &robotData, IntakeData &intakeData){
 void Intake::DisabledInit()
 {
     intakePivot.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-
     intakeRollers.Set(0);
-                     
     intakePivot.Set(0);
+    intakeSingulator.Set(0);
 }
 
 // updates encoder and gyro values
 void Intake::updateData(const RobotData &robotData, IntakeData &intakeData)
 {
+    intakeData.intakeIdle = intakeIdle(robotData, intakeData);
     frc::SmartDashboard::PutNumber("Pivot built in Pos", intakePivotEncoder.GetPosition());
     frc::SmartDashboard::PutNumber("Pivot absolute Pos", intakePivotEncoder2.GetOutput());
     frc::SmartDashboard::PutNumber("Changed pos", absoluteToREV(intakePivotEncoder2.GetOutput()));
 
 
-    intakeData.intakeIdle = intakeIdle(robotData, intakeData);
+    
     frc::SmartDashboard::PutBoolean("idle?", intakeData.intakeIdle);
     frc::SmartDashboard::PutNumber("idle count", idleCount);
     frc::SmartDashboard::PutBoolean("shift", robotData.controlData.shift);
@@ -192,14 +186,15 @@ void Intake::updateData(const RobotData &robotData, IntakeData &intakeData)
 
 bool Intake::intakeIdle(const RobotData &robotData, IntakeData &intakeData){
 
+
     if (robotData.controlData.saIntake || robotData.controlData.saIntakeBackward){
-        // if nothing is commanding the intake then idle counnt is 25
+        // if something is commanding the intake then idle count is 25
         idleCount = 25;
         return false; // hasn't 
-    } else if(idleCount > 0){ // the intake is idling
+    } else if(idleCount > 0){ // nothing is commanding the intake, and the idle count is counting down
         idleCount--;
         return false;
-    } else {
+    } else { // noothing has been commanding the intake for 25 ticks, intake is considered idle
         return true;
     }
 

@@ -2,9 +2,9 @@
 
 void Shooter::RobotInit()
 {
-    Shooter::shooterWheelLeadInit();
-    Shooter::shooterWheelFollowInit();
-    Shooter::shooterHoodInit();
+    shooterWheelLeadInit();
+    shooterWheelFollowInit();
+    shooterHoodInit();
 
     shooterWheelLead.Set(0);
     shooterHood.Set(0);
@@ -44,11 +44,11 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
             shooterData.targetVel = 2000;
         }
 
-        //shooterWheelLead_pidController.SetReference(3400, rev::CANSparkMaxLowLevel::ControlType::kVelocity,0);
-        setWheel(0.6);
+        shooterWheelLead_pidController.SetReference(1650, rev::CANSparkMaxLowLevel::ControlType::kVelocity,0);
+        //setWheel(0.6);
 
         //once the shooter has high enough velocity (and is aimed correctly tell robot to begin shooting)
-        if ((getWheelVel() > 2000) /**&& (std::abs(getTurretPos() - (turretSnapshot + robotData.calcTurretPos)) <= 1) && (std::abs(getHoodPos() - robotData.calcHoodPos) <= 2)**/ ){
+        if ((getWheelVel() > 1600) /**&& (std::abs(getTurretPos() - (turretSnapshot + robotData.calcTurretPos)) <= 1) && (std::abs(getHoodPos() - robotData.calcHoodPos) <= 2)**/ ){
             shooterData.readyShoot = true;
         }else{
             shooterData.readyShoot = false;
@@ -147,7 +147,6 @@ void Shooter::DisabledInit()
 {
     shooterHood.Set(0);
     shooterWheelLead.Set(0);
-    shooterWheelFollow.Set(0);
 }
 
 // updates encoder and gyro values
@@ -155,7 +154,6 @@ void Shooter::updateData(const RobotData &robotData, ShooterData &shooterData)
 {
     frc::SmartDashboard::PutNumber("shooter wheel vel", shooterWheelLeadEncoder.GetVelocity());
     frc::SmartDashboard::PutNumber("shooter hood", shooterHoodEncoder.GetPosition());
-    
 }
 
 void Shooter::setHoodPos(double pos){
@@ -206,6 +204,13 @@ void Shooter::shooterWheelLeadInit(){
     // shooterWheelLead_pidController.SetIZone(0,1);
     // shooterWheelLead_pidController.SetFF(0,1);
     // shooterWheelLead_pidController.SetOutputRange(-.2, 0.15,1);
+
+    shooterWheelLead_pidController.SetP(0.0004,0);
+    shooterWheelLead_pidController.SetI(0,0);
+    shooterWheelLead_pidController.SetD(0,0);
+    shooterWheelLead_pidController.SetIZone(0,0);
+    shooterWheelLead_pidController.SetFF(0.00025,0);
+    shooterWheelLead_pidController.SetOutputRange(0,1,0);
 
     shooterWheelLead.SetSmartCurrentLimit(45);
 }
