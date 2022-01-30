@@ -398,12 +398,12 @@ void Indexer::indexerBeltInit(){
     indexerBelt.RestoreFactoryDefaults();
     indexerBelt.SetInverted(true);
     indexerBelt.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-    indexerBelt.SetSmartCurrentLimit(45);
+    indexerBelt.SetSmartCurrentLimit(15);
 }
 
 void Indexer::indexerWheelInit(){
     indexerWheel.RestoreFactoryDefaults();
     indexerWheel.SetInverted(true);
     indexerWheel.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-    indexerWheel.SetSmartCurrentLimit(45);
+    indexerWheel.SetSmartCurrentLimit(15);
 }

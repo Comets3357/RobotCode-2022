@@ -4,33 +4,30 @@
 
 void Intake::RobotInit()
 {
-    Intake::pivotInit();
-    Intake::rollersInit();
-
+    pivotInit();
+    rollersInit();
+    singulatorInit();
+                
     intakePivotEncoder.SetPosition(0);
     intakeRollersEncoder.SetPosition(0);
+    intakeSingulatorEncoder.SetPosition(0);
 
     intakePivot.Set(0);
     intakeRollers.Set(0);
+    intakeSingulator.Set(0);
 }
 
 void Intake::rollersInit(){
     intakeRollers.RestoreFactoryDefaults();
-
     intakeRollers.SetInverted(true);
-
     intakeRollers.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-
     intakeRollers.SetSmartCurrentLimit(45);
 }
 
 void Intake::pivotInit(){
     intakePivot.RestoreFactoryDefaults();
-
     intakePivot.SetInverted(false);
-
     intakePivot.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-
     //down
     intakePivot_pidController.SetP(0.2,0);
     intakePivot_pidController.SetI(0,0);
@@ -39,18 +36,14 @@ void Intake::pivotInit(){
     intakePivot_pidController.SetFF(0,0);
     intakePivot_pidController.SetOutputRange(-0.5, 0.5,0);
 
-
     intakePivot.SetSmartCurrentLimit(45);
 }
 
 void Intake::singulatorInit(){
     intakeSingulator.RestoreFactoryDefaults();
-
     intakeSingulator.SetInverted(true);
-
     intakeSingulator.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-
-    intakeRollers.SetSmartCurrentLimit(45);
+    intakeSingulator.SetSmartCurrentLimit(15);
 }
 
 void Intake::RobotPeriodic(const RobotData &robotData, IntakeData &intakeData)
@@ -83,10 +76,10 @@ void Intake::RobotPeriodic(const RobotData &robotData, IntakeData &intakeData)
     }
 
     if(intakeRollers.GetFault(rev::CANSparkMax::FaultID::kHasReset)||intakeRollers.GetFault(rev::CANSparkMax::FaultID::kMotorFault)|intakeRollers.GetFault(rev::CANSparkMax::FaultID::kBrownout)){
-        Intake::rollersInit();
+        rollersInit();
     }
     if(intakePivot.GetFault(rev::CANSparkMax::FaultID::kHasReset)||intakePivot.GetFault(rev::CANSparkMax::FaultID::kMotorFault)|intakePivot.GetFault(rev::CANSparkMax::FaultID::kBrownout)){
-        Intake::pivotInit();
+        pivotInit();
     }
 
 }
@@ -169,10 +162,9 @@ void Intake::manual(const RobotData &robotData, IntakeData &intakeData){
 void Intake::DisabledInit()
 {
     intakePivot.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-
     intakeRollers.Set(0);
-                     
     intakePivot.Set(0);
+    intakeSingulator.Set(0);
 }
 
 // updates encoder and gyro values

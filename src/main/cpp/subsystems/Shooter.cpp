@@ -2,9 +2,9 @@
 
 void Shooter::RobotInit()
 {
-    Shooter::shooterWheelLeadInit();
-    Shooter::shooterWheelFollowInit();
-    Shooter::shooterHoodInit();
+    shooterWheelLeadInit();
+    shooterWheelFollowInit();
+    shooterHoodInit();
 
     shooterWheelLead.Set(0);
     shooterHood.Set(0);
@@ -147,7 +147,6 @@ void Shooter::DisabledInit()
 {
     shooterHood.Set(0);
     shooterWheelLead.Set(0);
-    shooterWheelFollow.Set(0);
 }
 
 // updates encoder and gyro values
@@ -235,5 +234,5 @@ void Shooter::shooterHoodInit()
     // shooterWheelLead_pidController.SetIZone(mkIz);
     // shooterWheelLead_pidController.SetFF(mkFF);
     // shooterWheelLead_pidController.SetOutputRange(mkMinOutput, mkMaxOutput);
-    shooterHood.SetSmartCurrentLimit(45);
+    shooterHood.SetSmartCurrentLimit(15);
 }
