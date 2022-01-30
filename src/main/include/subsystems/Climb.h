@@ -29,9 +29,9 @@ private:
 
     int stage = 0;
 
-    bool climbInitiating = false;
+    bool climbInitiating = false; //
     bool climbUp = false;
-    bool executeSemiAuto = false;
+    bool executeSequence = false;
     int targetBar = 0;
 
     bool elevatorDirection; //True is positive, False is negative
@@ -44,7 +44,7 @@ private:
     void semiAuto(const RobotData &robotData, ClimbData &climbData);
     void manual(const RobotData &robotData, ClimbData &climbData);
 
-    void RunClimbToPos(int position, float power, int stageAdd);
+    void RunElevatorToPos(int position, float power, int stageAdd);
     void RunArmsToPos(int position, float power, int stageAdd);
 
 

@@ -9,9 +9,11 @@ void Climb::RobotInit(){
     climbArms.RestoreFactoryDefaults();
     climbElevator.RestoreFactoryDefaults();
 
+    //motor idlemode
     climbElevator.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
     climbArms.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
 
+    //resets encoders
     climbElevatorEncoder.SetPosition(0);
     climbArmsEncoder.SetPosition(0);
 }
@@ -29,7 +31,7 @@ void Climb::RobotPeriodic(const RobotData &robotData, ClimbData &climbData){
     }
 
     //if the limit switch is read, then the power is set to 0 and the encoder is set to 0
-    if (climbLimit.Get() && climbElevator.Get() < 0){
+    if (climbLimit.Get() && climbElevator.Get() <= 0){
         climbElevator.Set(0);
         climbElevatorEncoder.SetPosition(0);
     }
@@ -70,61 +72,60 @@ void Climb::semiAuto(const RobotData &robotData, ClimbData &climbData){
 
     //runs climb up
     if (climbInitiating && climbUp){
-        RunClimbToPos(1000,1,0);
+        RunElevatorToPos(1000,1,0);
     //runs climb down
     } else if (climbInitiating && !climbUp){
-        RunClimbToPos(0,1,0);
+        RunElevatorToPos(0,1,0);
     }
 
-    //press a, arms pivot away, press b, arms pivot in
-    if (robotData.controlData.sapivotArmsIn && !executeSemiAuto) climbArms.Set(-0.5);
-    else if (robotData.controlData.sapivotArmsOut && !executeSemiAuto) climbArms.Set(0.5);
-    else if (!executeSemiAuto) climbArms.Set(0); //sets the power to zero to make it stop moving
-
-    //press x, elevator goes down, press y, elevator goes up
-    if (robotData.controlData.saretractElevator && !executeSemiAuto) climbElevator.Set(0.5);
-    else if (robotData.controlData.saextendElevator && !executeSemiAuto) climbElevator.Set(-0.5);
-    else if (!executeSemiAuto) climbElevator.Set(0); //sets the power to zero to make it stop moving
+    
 
     if (robotData.controlData.sacancelSequence){
-        executeSemiAuto = false; //press a button, semiAuto code stops
+        executeSequence = false; //press a button, semiAuto code stops
         climbElevator.Set(0); //sets the power to zero to make it stop moving
         climbArms.Set(0); //sets the power to zero to make it stop moving
     }
 
-    if (robotData.controlData.saclimbHeightSequence){
-        executeSemiAuto = true; //press right center button, semiAuto code runs
+    if (robotData.controlData.saclimbHeightSequence){//3rd bar
+        stage = 0;
+        executeSequence = true; //press right center button, semiAuto code runs
         climbData.climbing = true;
         targetBar = 3; //reaches to bar 3
         climbElevator.Set(0); //sets the power to zero to make it stop moving
         climbArms.Set(0); //sets the power to zero to make it stop moving
-    } else if (robotData.controlData.saclimbTraversalSequence){
-        executeSemiAuto = true; //press left center button, semiAuto code runs
+    } else if (robotData.controlData.saclimbTraversalSequence){//4th bar
+        stage = 0;
+        executeSequence = true; //press left center button, semiAuto code runs
         climbData.climbing = true;
         targetBar = 4; //reaches to bar 4
         climbElevator.Set(0); //sets the power to zero to make it stop moving
         climbArms.Set(0); //sets the power to zero to make it stop moving
     }
 
-    if (executeSemiAuto && climbData.bar < 4){ //checks if you want to run the sequence, and also if you're already at bar 4, then you can't run it
+    if (executeSequence && climbData.bar < 4){ //checks if you want to run the sequence, and also if you're already at bar 4, then you can't run it
         if (stage == 0) RunArmsToPos(0,1,1); //resets the arms position to perpendicular in case they aren't
-        else if (stage == 1) RunClimbToPos(800,1,1); //Elevator goes down to latch on 2nd bar
-        else if (stage == 2) RunClimbToPos(1200,1,1); //Elevator goes up to latch the arms onto the bar with the elevator a little above
-        else if (stage == 3) RunArmsToPos(-500,1,1); //Outer Arms pivot the robot so the elevator is facing the 3rd bar
-        else if (stage == 4) RunClimbToPos(1750,1,1); //Elevator goes up to reach the 3rd bar
+        else if (stage == 1) RunElevatorToPos(800,1,1); //Elevator goes down to latch on 2nd/3rd bar
+        else if (stage == 2) RunElevatorToPos(1200,1,1); //Elevator goes up to latch the arms onto the bar with the elevator a little above
+        else if (stage == 3) RunArmsToPos(-500,1,1); //Outer Arms pivot the robot so the elevator is facing the next bar
+        else if (stage == 4) RunElevatorToPos(1750,1,1); //Elevator goes up to reach the next bar
         else if (stage == 5) RunArmsToPos(-400,1,1); //Outer arms pivot back to latch the elevator onto the 3rd bar
-        else if (stage == 6) RunClimbToPos(1000,1,1); //Elevator moves down to lift robot to the 3rd bar. Outer arms move a little bit
-        else if (stage == 7) RunArmsToPos(-100,1,1); //Outer arms release from 2nd bar
-        else if (stage == 8) RunClimbToPos(800,1,1); //Elevators goes up a little to let the outer arms pivot to the other side of the bar
-        else if (stage == 9) RunArmsToPos(100,1,1); //Outer arms pivot the the other side of the elevator
-        else if (stage == 10) RunClimbToPos(1100,1,1); //Elevator goes down a little so the hooks are above the bar
-        else if (stage == 11) RunArmsToPos(0,1,1); //Outer arms go forward a little to align them with the bar
-        else if (stage == 12 && climbData.bar < targetBar){ //do it again if the bot isnt on the top bar
+        else if (stage == 6) {
+            RunElevatorToPos(1000,1,1);
+            RunArmsToPos(-200,1,1);
+        } //Elevator moves down to lift robot to the next bar. Outer arms move a little bit
+        //arms need help
+        else if (stage == 8) RunArmsToPos(-100,1,1); //Outer arms release from 2nd bar
+        else if (stage == 9) RunElevatorToPos(800,1,1); //Elevators goes up a little to let the outer arms pivot to the other side of the bar
+        else if (stage == 10) RunArmsToPos(100,1,1); //Outer arms pivot the the other side of the bar
+        //else if (stage == 10) RunElevatorToPos(1100,1,1); //Elevator goes down a little so the hooks are above the bar
+        //else if (stage == 11) RunArmsToPos(0,1,1); //Outer arms go forward a little to align them with the bar
+        else if (stage == 11 && climbData.bar < targetBar){ //do it again if the bot isnt on the top bar
             stage = 0; //sets the stage to 0 to go to the next bar
             climbData.bar++;
         } else {
+            climbData.bar++;
             stage = 0;
-            executeSemiAuto = false;
+            executeSequence = false;
             climbData.climbing = false;
         }
     }
@@ -142,7 +143,7 @@ void Climb::updateData(const RobotData &robotData, ClimbData &climbData){
 }
 
 //Runs the elevator to a specific location, specified in semiAuto
-void Climb::RunClimbToPos(int position, float power, int stageAdd){
+void Climb::RunElevatorToPos(int position, float power, int stageAdd){
     //Checks which direction the motor will be spinning. This uses the variable running to only set the direction 1 time.
     if (!elevatorRunning && climbElevatorEncoder.GetPosition() > position){
         //sets the direction that the motor will be spinning based on where the ideal position is from the current position
@@ -167,6 +168,7 @@ void Climb::RunClimbToPos(int position, float power, int stageAdd){
         stage+=stageAdd;
         //sets the climbInitiating to false incase this function is used for climb initiation
         climbInitiating = false;
+        elevatorRunning = false;
     }
 
     if (climbElevatorEncoder.GetPosition() < position && elevatorDirection){
@@ -179,6 +181,7 @@ void Climb::RunClimbToPos(int position, float power, int stageAdd){
         stage+=stageAdd;
         //sets the climbInitiating to false incase this function is used for climb initiation
         climbInitiating = false;
+        elevatorRunning = false;
     }
 }
 
@@ -195,6 +198,7 @@ void Climb::RunArmsToPos(int position, float power, int stageAdd){
         armsDirection = false;
         //sets running to true so direction is not set after this moment
         armsRunning = true;
+        armsRunning = false;
     }
 
     //this sets the power of the motor based on the direction chosen
@@ -208,6 +212,7 @@ void Climb::RunArmsToPos(int position, float power, int stageAdd){
         stage+=stageAdd;
         //sets the climbInitiating to false incase this function is used for climb initiation
         climbInitiating = false;
+        armsRunning = false;
     }
 
     if (climbArmsEncoder.GetPosition() < position && armsDirection){
@@ -220,5 +225,6 @@ void Climb::RunArmsToPos(int position, float power, int stageAdd){
         stage+=stageAdd;
         //sets the climbInitiating to false incase this function is used for climb initiation
         climbInitiating = false;
+        armsRunning = false;
     }
 }
