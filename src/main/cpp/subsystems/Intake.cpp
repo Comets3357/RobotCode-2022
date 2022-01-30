@@ -122,6 +122,7 @@ void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
         }else{
         intakeRollers.Set(0);
         intakePivot_pidController.SetReference(0.1, rev::CANSparkMaxLowLevel::ControlType::kPosition, 0);
+        }
     }
 }
 
