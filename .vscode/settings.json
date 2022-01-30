@@ -16,7 +16,7 @@
   },
   "C_Cpp.default.configurationProvider": "vscode-wpilib",
   "files.associations": {
-    "deque": "cpp",
+    "ostream": "cpp",
     "array": "cpp",
     "atomic": "cpp",
     "hash_map": "cpp",
@@ -38,6 +38,7 @@
     "ctime": "cpp",
     "cwchar": "cpp",
     "cwctype": "cpp",
+    "deque": "cpp",
     "list": "cpp",
     "unordered_map": "cpp",
     "unordered_set": "cpp",
@@ -71,12 +72,12 @@
     "limits": "cpp",
     "mutex": "cpp",
     "new": "cpp",
-    "ostream": "cpp",
     "sstream": "cpp",
     "stdexcept": "cpp",
     "streambuf": "cpp",
     "thread": "cpp",
     "cinttypes": "cpp",
     "typeinfo": "cpp"
-  }
+  },
+  "C_Cpp.errorSquiggles": "Disabled"
 }

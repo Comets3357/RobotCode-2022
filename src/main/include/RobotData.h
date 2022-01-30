@@ -5,6 +5,7 @@
 #include "common/OtherComponents.h"
 #include "common/Gyro.h"
 #include "common/Limelight.h"
+#include "common/VisionLookup.h"
 #include "common/Timer.h"
 #include "common/ColorSensor.h"
 
@@ -12,10 +13,12 @@
 
 #include "subsystems/Drivebase.h"
 #include "subsystems/Climb.h"
-#include "subsystems/Intake.h"
 #include "subsystems/Indexer.h"
+#include "subsystems/Intake.h"
 #include "subsystems/Shooter.h"
 
+//could be separated into all separate files for the data *from* each subsystem
+//commented out variables are not in use
 struct RobotData
 {
     ControllerData controllerData;
@@ -23,6 +26,7 @@ struct RobotData
     OtherComponentsData otherComponentsData;
     GyroData gyroData;
     LimelightData limelightData;
+    VisionLookupData visionLookupData;
     TimerData timerData;
     ColorSensorData colorSensorData;
 

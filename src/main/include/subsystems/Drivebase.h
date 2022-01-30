@@ -35,9 +35,11 @@ private:
     void teleopControl(const RobotData &robotData);
 
 
+
     // dbL and dbR are lead motors, LFs and RFs are following motors
     ctre::phoenix::motorcontrol::can::TalonFX dbL{leftLeadDeviceID};
     ctre::phoenix::motorcontrol::can::TalonFX dbLF{leftFollowDeviceID};
+
     ctre::phoenix::motorcontrol::can::TalonFX dbR{rightLeadDeviceID};
     ctre::phoenix::motorcontrol::can::TalonFX dbRF{rightFollowDeviceID};
 

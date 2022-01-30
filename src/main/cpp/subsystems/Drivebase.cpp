@@ -1,3 +1,4 @@
+#include "subsystems/Drivebase.h"
 #include "RobotData.h"
 
 void Drivebase::RobotInit()
@@ -53,13 +54,10 @@ void Drivebase::RobotPeriodic(const RobotData &robotData, DrivebaseData &driveba
     }
 
     teleopControl(robotData);
-    
-
 }
 
 void Drivebase::DisabledInit()
 {
-    
     dbL.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
     dbR.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
 

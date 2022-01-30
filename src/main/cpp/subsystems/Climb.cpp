@@ -1,3 +1,4 @@
+#include "subsystems/Climb.h"
 #include "RobotData.h"
 
 void Climb::RobotInit()

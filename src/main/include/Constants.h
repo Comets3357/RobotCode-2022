@@ -14,10 +14,8 @@ static const int
     intakeSingulatorID = 13;
 
 static const double
-    absIn = 0.936,
-    absOut = 0.797, 
-    revIn = 0,
-    revOut = 14.3;
+    absExtended = 0.4255,
+    absRetracted = 0.577;
 
 //indexer
 static const int
@@ -31,6 +29,10 @@ static const int
     shooterHoodID = 33,
     shooterTurretID = 34;
 
+static const double
+    minHoodExtend = 0.99,
+    maxHoodExtend = 0.3;
+
 //shooter PID constants:
 static const double
     swkP = 0.02, swkI = 0, swkD = 0, swkIz = 0, swkFF = 0, swkMaxOutput = 1, swkMinOutput = -1,
@@ -40,12 +42,21 @@ static const double
 static const int
     climbLiftID = 41;
 
+//limelight:
+static const double
+    hubHeight = 104,
+    limelightMount = 37,
+    limelightAngle = 37.75,
+    xcameraDistanceFromBot = 3.0625,
+    ycameraDistanceFromBot = 9.5,
+    shooterDistanceFromCenterOfBot = 2;
 
 // DIO
 static const int
-    intakeAbsoluteEncoderPort = 0,
+    intakeAbsoluteEncoderPort = 8,
+    HoodAbsoluteEncoderPort = 1,
     bottomBeamBreakPort = 3,
-    midBeamBreakPort = 4,
+    midBeamBreakPort = 9,
     topBeamBreakPort = 5;
 
 
