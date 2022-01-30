@@ -228,5 +228,5 @@ void Shooter::shooterHoodInit()
     // shooterWheelLead_pidController.SetIZone(mkIz);
     // shooterWheelLead_pidController.SetFF(mkFF);
     // shooterWheelLead_pidController.SetOutputRange(mkMinOutput, mkMaxOutput);
-    shooterHood.SetSmartCurrentLimit(45);
+    shooterHood.SetSmartCurrentLimit(15);
 }

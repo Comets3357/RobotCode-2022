@@ -29,82 +29,69 @@ void Indexer::RobotPeriodic(const RobotData &robotData, IndexerData &indexerData
     frc::SmartDashboard::PutNumber("wrong ball?", robotData.controlData.wrongBall);
     
 
-    // if(getBottomBeam()){
-    //     if(robotData.colorSensorData.currentColor == frc::Color::kRed){
-    //         frc::SmartDashboard::PutBoolean("currently red?", true);
-    //         frc::SmartDashboard::PutBoolean("currently blue?", false);
-    //     } else if(robotData.colorSensorData.currentColor == frc::Color::kBlue){
-    //         frc::SmartDashboard::PutBoolean("currently red?", false);
-    //         frc::SmartDashboard::PutBoolean("currently blue?", true);
-    //     } else {
-    //         frc::SmartDashboard::PutBoolean("currently red?", false);
-    //         frc::SmartDashboard::PutBoolean("currently blue?", false);
-    //     }
-    // }
+    if (indexerData.indexerContents.size() == 0){
 
-    // if (indexerData.indexerContents.size() == 0){
+        frc::SmartDashboard::PutString("top", "empty");
+        frc::SmartDashboard::PutString("bottom", "empty");
 
-    //     frc::SmartDashboard::PutString("top", "empty");
-    //     frc::SmartDashboard::PutString("bottom", "empty");
+    } else if (indexerData.indexerContents.size() == 1){
 
-    // } else if (indexerData.indexerContents.size() == 1){
+        if(indexerData.indexerContents.front() == Cargo::cargo_Alliance){
+            frc::SmartDashboard::PutString("top", "alliance");
+            frc::SmartDashboard::PutString("bottom", "empty");
+        } else if (indexerData.indexerContents.front() == Cargo::cargo_Opponent){
+            frc::SmartDashboard::PutString("top", "opponent");
+            frc::SmartDashboard::PutString("bottom", "empty");
+        } else {
+            frc::SmartDashboard::PutString("top", "unassigned");
+            frc::SmartDashboard::PutString("bottom", "empty");
+        }
 
-    //     if(indexerData.indexerContents.front() == Cargo::cargo_Alliance){
-    //         frc::SmartDashboard::PutString("top", "alliance");
-    //         frc::SmartDashboard::PutString("bottom", "empty");
-    //     } else if (indexerData.indexerContents.front() == Cargo::cargo_Opponent){
-    //         frc::SmartDashboard::PutString("top", "opponent");
-    //         frc::SmartDashboard::PutString("bottom", "empty");
-    //     } else {
-    //         frc::SmartDashboard::PutString("top", "unassigned");
-    //         frc::SmartDashboard::PutString("bottom", "empty");
-    //     }
+    } else if (indexerData.indexerContents.size() == 2){
 
-    // } else if (indexerData.indexerContents.size() == 2){
+        if(indexerData.indexerContents.front() == Cargo::cargo_Alliance){
 
-    //     if(indexerData.indexerContents.front() == Cargo::cargo_Alliance){
+            if(indexerData.indexerContents.back() == Cargo::cargo_Alliance){
+                frc::SmartDashboard::PutString("top", "alliance");
+                frc::SmartDashboard::PutString("bottom", "alliance");
+            } else if(indexerData.indexerContents.back() == Cargo::cargo_Opponent){
+                frc::SmartDashboard::PutString("top", "alliance");
+                frc::SmartDashboard::PutString("bottom", "opponent");
+            } else {
+                frc::SmartDashboard::PutString("top", "alliance");
+                frc::SmartDashboard::PutString("bottom", "unassigned");
+            }
 
-    //         if(indexerData.indexerContents.back() == Cargo::cargo_Alliance){
-    //             frc::SmartDashboard::PutString("top", "alliance");
-    //             frc::SmartDashboard::PutString("bottom", "alliance");
-    //         } else if(indexerData.indexerContents.back() == Cargo::cargo_Opponent){
-    //             frc::SmartDashboard::PutString("top", "alliance");
-    //             frc::SmartDashboard::PutString("bottom", "opponent");
-    //         } else {
-    //             frc::SmartDashboard::PutString("top", "alliance");
-    //             frc::SmartDashboard::PutString("bottom", "unassigned");
-    //         }
+        } else if (indexerData.indexerContents.front() == Cargo::cargo_Opponent){
 
-    //     } else if (indexerData.indexerContents.front() == Cargo::cargo_Opponent){
+            if(indexerData.indexerContents.back() == Cargo::cargo_Alliance){
+                frc::SmartDashboard::PutString("top", "opponent");
+                frc::SmartDashboard::PutString("bottom", "alliance");
+            } else if(indexerData.indexerContents.back() == Cargo::cargo_Opponent){
+                frc::SmartDashboard::PutString("top", "opponent");
+                frc::SmartDashboard::PutString("bottom", "opponent");
+            } else {
+                frc::SmartDashboard::PutString("top", "opponent");
+                frc::SmartDashboard::PutString("bottom", "unassigned");
+            }
 
-    //         if(indexerData.indexerContents.back() == Cargo::cargo_Alliance){
-    //             frc::SmartDashboard::PutString("top", "opponent");
-    //             frc::SmartDashboard::PutString("bottom", "alliance");
-    //         } else if(indexerData.indexerContents.back() == Cargo::cargo_Opponent){
-    //             frc::SmartDashboard::PutString("top", "opponent");
-    //             frc::SmartDashboard::PutString("bottom", "opponent");
-    //         } else {
-    //             frc::SmartDashboard::PutString("top", "opponent");
-    //             frc::SmartDashboard::PutString("bottom", "unassigned");
-    //         }
-
-    //     } else {
-    //         if(indexerData.indexerContents.back() == Cargo::cargo_Alliance){
-    //             frc::SmartDashboard::PutString("top", "unassigned");
-    //             frc::SmartDashboard::PutString("bottom", "alliance");
-    //         } else if(indexerData.indexerContents.back() == Cargo::cargo_Opponent){
-    //             frc::SmartDashboard::PutString("top", "unassigned");
-    //             frc::SmartDashboard::PutString("bottom", "opponent");
-    //         } else {
-    //             frc::SmartDashboard::PutString("top", "unassigned");
-    //             frc::SmartDashboard::PutString("bottom", "unassigned");
-    //         }
+        } else {
+            if(indexerData.indexerContents.back() == Cargo::cargo_Alliance){
+                frc::SmartDashboard::PutString("top", "unassigned");
+                frc::SmartDashboard::PutString("bottom", "alliance");
+            } else if(indexerData.indexerContents.back() == Cargo::cargo_Opponent){
+                frc::SmartDashboard::PutString("top", "unassigned");
+                frc::SmartDashboard::PutString("bottom", "opponent");
+            } else {
+                frc::SmartDashboard::PutString("top", "unassigned");
+                frc::SmartDashboard::PutString("bottom", "unassigned");
+            }
             
-    //     }
-    // } else {
-    //     frc::SmartDashboard::PutString("top", "overload");
-    //     frc::SmartDashboard::PutString("bottom", "overload");
-    // }
+        }
+    } else {
+        frc::SmartDashboard::PutString("top", "overload");
+        frc::SmartDashboard::PutString("bottom", "overload");
+    }
 
 
 }
@@ -332,7 +319,7 @@ void Indexer::saBeltControl(const RobotData &robotData, IndexerData &indexerData
 void Indexer::saWheelControl(const RobotData &robotData, IndexerData &indexerData){
     if(robotData.controlData.saEjectBalls || robotData.controlData.mIndexerDown){ // if indexer is REVERSING (saEject or manual indexer backwards)
         indexerWheel.Set(-indexerWheelSpeed);
-    } else if ((robotData.shooterData.readyShoot || !(getTopBeam() && getMidBeam())) && !robotData.intakeData.intakeIdle){ // if indexer is not yet full or if indexer DOES have 2 balls but the 2nd sensor has not yet been tripped
+    } else if (robotData.shooterData.readyShoot || (!(getTopBeam() && getMidBeam()) && !robotData.intakeData.intakeIdle)){ // if indexer is not yet full or if indexer DOES have 2 balls but the 2nd sensor has not yet been tripped
         indexerWheel.Set(indexerWheelSpeed);
     } else {
         indexerWheel.Set(0);
@@ -419,12 +406,12 @@ void Indexer::indexerBeltInit(){
     indexerBelt.RestoreFactoryDefaults();
     indexerBelt.SetInverted(true);
     indexerBelt.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-    indexerBelt.SetSmartCurrentLimit(45);
+    indexerBelt.SetSmartCurrentLimit(15);
 }
 
 void Indexer::indexerWheelInit(){
     indexerWheel.RestoreFactoryDefaults();
     indexerWheel.SetInverted(true);
     indexerWheel.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-    indexerWheel.SetSmartCurrentLimit(45);
+    indexerWheel.SetSmartCurrentLimit(15);
 }
