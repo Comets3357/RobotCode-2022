@@ -27,9 +27,13 @@ public:
 
 private:
 
+    void climbInit(const RobotData &robotData, ClimbData &climbData);
+    void cancelSequence(const RobotData &robotData, ClimbData &climbData);
+    void runSequence(const RobotData &robotData, ClimbData &climbData);
+
     int stage = 0;
 
-    bool climbInitiating = false; //
+    bool climbInitiating = false;
     bool climbUp = false;
     bool executeSequence = false;
     int targetBar = 0;

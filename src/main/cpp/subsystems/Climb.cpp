@@ -62,6 +62,12 @@ void Climb::semiAuto(const RobotData &robotData, ClimbData &climbData){
     //elevator position 1000 is extended to bar height
     //arms position 0 is straight up
 
+    climbInit(robotData, climbData);
+    cancelSequence(robotData, climbData);
+    runSequence(robotData, climbData);
+    
+}
+void Climb::climbInit(const RobotData &robotData, ClimbData &climbData){
     //if the climbInit button is pressed then the climb will go up if the climb is down and go down if it is already up. (toggle)
     if (robotData.controlData.saclimbInit && !climbInitiating){
         //sets the climbUp to the opposite direction
@@ -78,14 +84,15 @@ void Climb::semiAuto(const RobotData &robotData, ClimbData &climbData){
         RunElevatorToPos(0,1,0);
     }
 
-    
-
+}
+void Climb::cancelSequence(const RobotData &robotData, ClimbData &climbData){
     if (robotData.controlData.sacancelSequence){
         executeSequence = false; //press a button, semiAuto code stops
         climbElevator.Set(0); //sets the power to zero to make it stop moving
         climbArms.Set(0); //sets the power to zero to make it stop moving
     }
-
+}
+void Climb::runSequence(const RobotData &robotData, ClimbData &climbData){
     if (robotData.controlData.saclimbHeightSequence){//3rd bar
         stage = 0;
         executeSequence = true; //press right center button, semiAuto code runs
@@ -113,12 +120,9 @@ void Climb::semiAuto(const RobotData &robotData, ClimbData &climbData){
             RunElevatorToPos(1000,1,1);
             RunArmsToPos(-200,1,1);
         } //Elevator moves down to lift robot to the next bar. Outer arms move a little bit
-        //arms need help
         else if (stage == 8) RunArmsToPos(-100,1,1); //Outer arms release from 2nd bar
         else if (stage == 9) RunElevatorToPos(800,1,1); //Elevators goes up a little to let the outer arms pivot to the other side of the bar
         else if (stage == 10) RunArmsToPos(100,1,1); //Outer arms pivot the the other side of the bar
-        //else if (stage == 10) RunElevatorToPos(1100,1,1); //Elevator goes down a little so the hooks are above the bar
-        //else if (stage == 11) RunArmsToPos(0,1,1); //Outer arms go forward a little to align them with the bar
         else if (stage == 11 && climbData.bar < targetBar){ //do it again if the bot isnt on the top bar
             stage = 0; //sets the stage to 0 to go to the next bar
             climbData.bar++;
