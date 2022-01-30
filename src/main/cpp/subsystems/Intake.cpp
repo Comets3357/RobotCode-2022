@@ -117,6 +117,8 @@ void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
     }
     else //default case, everything up and not running
     {
+        if(!intakeData.intakeIdle){ // run the singulator while the intake is not idle
+            intakeSingulator.Set(singulatorSpeed);
         }else{
         intakeRollers.Set(0);
         intakePivot_pidController.SetReference(0.1, rev::CANSparkMaxLowLevel::ControlType::kPosition, 0);
@@ -168,11 +170,12 @@ void Intake::DisabledInit()
 void Intake::updateData(const RobotData &robotData, IntakeData &intakeData)
 {
     intakeData.intakeIdle = intakeIdle(robotData, intakeData);
-
     frc::SmartDashboard::PutNumber("Pivot built in Pos", intakePivotEncoder.GetPosition());
     frc::SmartDashboard::PutNumber("Pivot absolute Pos", intakePivotEncoder2.GetOutput());
     frc::SmartDashboard::PutNumber("Changed pos", absoluteToREV(intakePivotEncoder2.GetOutput()));
 
+
+    
     frc::SmartDashboard::PutBoolean("idle?", intakeData.intakeIdle);
     frc::SmartDashboard::PutNumber("idle count", idleCount);
 
