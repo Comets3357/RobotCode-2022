@@ -1,7 +1,6 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 #include "common/LEDs.h"
 #include "Robot.h"
-#include <frc/util/Color.h>
 
 void LEDs::RobotInit(){
 
@@ -46,9 +45,17 @@ void LEDs::RobotPeriodic(const RobotData &robotData){
     // indexer arduino LED color sensor stuff (2nd slot (closest to shooter))
     if (indexerColorCodeB == 2){
         success = !indexerArduinoB.Write(3, indexerColorCodeB); //blue
-    } else  if (indexerColorCodeB == 1){
+    } else if (indexerColorCodeB == 1){
         success = !indexerArduinoB.Write(3, indexerColorCodeB); //red
     }
+
+    // // indexer LEDs turn off when the corresponding ball has been shot
+    // if (/* shooter shoots */){
+    //     indexerColorCodeB = indexerColorCodeA; //value from first set of LEDs goes to second set
+    //     success = !indexerArduinoB.Write(3, indexerColorCodeB);
+    //     indexerColorCodeA = 4; //first set of LEDs turns off, as the ball was shot out
+    //     success = !indexerArduinoB.Write(2, indexerColorCodeB);
+    // }
 
     // // if the shooter is ready to shoot, then the LEDs for it turn white; if not, the LEDs turn black (off)
     // if (robotData.shooterData.readyShoot){ //should work once branches are merged

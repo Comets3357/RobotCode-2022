@@ -21,7 +21,7 @@ private:
     frc::I2C shooterArduino = frc::I2C(frc::I2C::Port::kOnboard, 4);
     bool success = false;
     int colorCode = 5;
-    int indexerColorCodeA = 0;
-    int indexerColorCodeB = 0;
-    int shooterColorCode = 0;
+    int indexerColorCodeA = 4;
+    int indexerColorCodeB = 4;
+    int shooterColorCode = 4;
 };
