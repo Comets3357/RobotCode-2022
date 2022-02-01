@@ -21,8 +21,8 @@ static const double
 
 //indexer
 static const int
-    indexerBeltsID = 21,
-    indexerWheelID = 22;
+    indexerBeltsID = 22,
+    indexerWheelID = 21;
 
 // shooter
 static const int
