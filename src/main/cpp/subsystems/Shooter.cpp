@@ -36,7 +36,7 @@ void Shooter::flyWheelInit()
 {
     // fly wheel LEAD motor init
     flyWheelLead.RestoreFactoryDefaults();
-    flyWheelLead.SetInverted(false);
+    flyWheelLead.SetInverted(true);
     flyWheelLead.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
     flyWheelLead.SetSmartCurrentLimit(45);
 
@@ -48,11 +48,11 @@ void Shooter::flyWheelInit()
 
     readyShootLimit = 1200;
 
-    flyWheelLead_pidController.SetP(0.0004);
+    flyWheelLead_pidController.SetP(0.0008);
     flyWheelLead_pidController.SetI(0);
     flyWheelLead_pidController.SetD(0);
     flyWheelLead_pidController.SetIZone(0);
-    flyWheelLead_pidController.SetFF(0.00025);
+    flyWheelLead_pidController.SetFF(0.00050);
     flyWheelLead_pidController.SetOutputRange(0,1);
     flyWheelLead.BurnFlash();
     flyWheelFollow.BurnFlash();
@@ -250,6 +250,8 @@ void Shooter::updateData(const RobotData &robotData, ShooterData &shooterData)
     frc::SmartDashboard::PutNumber("shooter Hood REV", shooterHoodEncoderRev.GetPosition());
     frc::SmartDashboard::PutNumber("shooter changed", absoluteToREV(shooterHoodEncoderAbs.GetOutput()));
     frc::SmartDashboard::PutBoolean("shooter ready shoot", shooterData.readyShoot);
+    
+    frc::SmartDashboard::PutNumber("flyWheelVel", getWheelVel());
 
     //frc::SmartDashboard::PutNumber("shooter Hood zero to one scale", getHoodPos());
 
