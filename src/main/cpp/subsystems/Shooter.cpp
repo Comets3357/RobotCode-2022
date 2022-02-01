@@ -100,7 +100,9 @@ void Shooter::RobotPeriodic(const RobotData &robotData, ShooterData &shooterData
 void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
 
     //idk about this control data stuff to figure out
-    if(robotData.controlData.saShooting){ // Aiming SHOOTING with limelight
+
+    if(shooterHoodEncoderAbs.GetOutput() > 0.03){
+        if(robotData.controlData.saShooting){ // Aiming SHOOTING with limelight
 
         flyWheelLead_pidController.SetReference(1500, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
 
@@ -114,69 +116,75 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
             shooterData.readyShoot = false;
         }
 
-    }else if(robotData.controlData.cornerLaunchPadShot){ //FROM THE CLOSER LAUNCH PAD
-        innerLaunch();
-        if ((getWheelVel() > readyShootLimit) /**&& (std::abs(getHoodPos() + 38) <= 1)**/) //dont know why but it wasnt working so commented it out
-        {
-            shooterData.readyShoot = true;
-        }
-        else
-        {
-            shooterData.readyShoot = false;
-        }
+        }else if(robotData.controlData.cornerLaunchPadShot){ //FROM THE CLOSER LAUNCH PAD
+            innerLaunch();
+            if ((getWheelVel() > readyShootLimit) /**&& (std::abs(getHoodPos() + 38) <= 1)**/) //dont know why but it wasnt working so commented it out
+            {
+                shooterData.readyShoot = true;
+            }
+            else
+            {
+                shooterData.readyShoot = false;
+            }
 
-    }
-    else if (robotData.controlData.wallLaunchPadShot) //FROM THE FARTHER LAUNCH PAD
-    {
-        outerLaunch();
-        if ((getWheelVel() > readyShootLimit) /**&& (std::abs(getHoodPos() + 42) <= 1)**/)
-        {
-            shooterData.readyShoot = true;
         }
-        else
+        else if (robotData.controlData.wallLaunchPadShot) //FROM THE FARTHER LAUNCH PAD
+        {
+            outerLaunch();
+            if ((getWheelVel() > readyShootLimit) /**&& (std::abs(getHoodPos() + 42) <= 1)**/)
+            {
+                shooterData.readyShoot = true;
+            }
+            else
+            {
+                shooterData.readyShoot = false;
+            }
+        }
+        else if(robotData.controlData.fenderShot) //FROM THE FENDER FIXED SHOT
+        {
+            fender();
+            if ((getWheelVel() > readyShootLimit) /**&& (std::abs(getHoodPos() - 0) <= 1)**/)
+            {
+                shooterData.readyShoot = true;
+            }
+            else
+            {
+                shooterData.readyShoot = false;
+            }
+        } 
+        else if (robotData.controlData.sideWallShot) //FROM THE SIDE WALL FIXED SHOT
+        {
+            wall();
+            if ((getWheelVel() > readyShootLimit) /** && (std::abs(getHoodPos() +38) <= 1)**/)
+            {
+                shooterData.readyShoot = true;
+            }
+            else
+            {
+                shooterData.readyShoot = false;
+            }
+        }
+        else //IF NO SHOOTING DON'T DO ANYTHING
         {
             shooterData.readyShoot = false;
-        }
-    }
-    else if(robotData.controlData.fenderShot) //FROM THE FENDER FIXED SHOT
-    {
-        fender();
-        if ((getWheelVel() > readyShootLimit) /**&& (std::abs(getHoodPos() - 0) <= 1)**/)
-        {
-            shooterData.readyShoot = true;
-        }
-        else
-        {
-            shooterData.readyShoot = false;
-        }
-    } 
-    else if (robotData.controlData.sideWallShot) //FROM THE SIDE WALL FIXED SHOT
-    {
-        wall();
-        if ((getWheelVel() > readyShootLimit) /** && (std::abs(getHoodPos() +38) <= 1)**/)
-        {
-            shooterData.readyShoot = true;
-        }
-        else
-        {
-            shooterData.readyShoot = false;
-        }
-    }
-    else //IF NO SHOOTING DON'T DO ANYTHING
-    {
-        shooterData.readyShoot = false;
-        shooterData.wrongBallReady = false;
+            shooterData.wrongBallReady = false;
 
+            flyWheelLead.Set(0);
+
+            //if the hood is too far out bring it in then stop the hood from running
+            if(shooterHoodEncoderRev.GetPosition() < -3){
+                shooterHood_pidController.SetReference(-2,rev::CANSparkMaxLowLevel::ControlType::kPosition);
+            }else{
+                shooterHood.Set(0);
+            }
+
+        }
+    }else{
+        shooterHood.Set(0);
         flyWheelLead.Set(0);
 
-        //if the hood is too far out bring it in then stop the hood from running
-        if(shooterHoodEncoderRev.GetPosition() < -3){
-            shooterHood_pidController.SetReference(-2,rev::CANSparkMaxLowLevel::ControlType::kPosition);
-        }else{
-            shooterHood.Set(0);
-        }
-
     }
+    
 }
 
 void Shooter::manual(const RobotData &robotData, ShooterData &shooterData){
