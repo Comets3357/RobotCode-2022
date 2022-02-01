@@ -36,7 +36,7 @@ void Intake::pivotInit(){
     intakePivot_pidController.SetFF(0,0);
     intakePivot_pidController.SetOutputRange(-0.5, 0.5,0);
 
-    intakePivot.SetSmartCurrentLimit(45);
+    intakePivot.SetSmartCurrentLimit(10);
 }
 
 void Intake::singulatorInit(){
@@ -57,10 +57,11 @@ void Intake::RobotPeriodic(const RobotData &robotData, IntakeData &intakeData)
             if(intakePivotEncoder.GetPosition() < 0.5){
                 zeroedIntake = true;
             }
-        }else{
+        }else{ 
             manual(robotData, intakeData);
 
         }
+        
 
     }
     else if (robotData.controlData.mode == mode_teleop_sa)
@@ -87,14 +88,14 @@ void Intake::RobotPeriodic(const RobotData &robotData, IntakeData &intakeData)
 }
 
 void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
-    if(intakePivotEncoder.GetPosition() > 0.5){
-        zeroedIntake = false;
-    }
+    // if(intakePivotEncoder.GetPosition() > 0.5){
+    //     zeroedIntake = false;
+    // }
 
     if (robotData.controlData.saIntake) //you are intaking
     {
         // pivot down
-        intakePivot_pidController.SetReference(14, rev::CANSparkMaxLowLevel::ControlType::kPosition,0);
+        intakePivot_pidController.SetReference(15, rev::CANSparkMaxLowLevel::ControlType::kPosition,0);
 
         //run rollers, singulator
         intakeRollers.Set(intakeRollerSpeed);
@@ -105,14 +106,14 @@ void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
     else if (robotData.controlData.saIntakeBackward)
     {
         intakeRollers.Set(-intakeRollerSpeed);
-        intakePivot_pidController.SetReference(14, rev::CANSparkMaxLowLevel::ControlType::kPosition,0);
+        intakePivot_pidController.SetReference(15, rev::CANSparkMaxLowLevel::ControlType::kPosition,0);
 
     }
     else if (robotData.controlData.saEjectBalls) //rollers backwards, pivot down
     {
         intakeRollers.Set(-intakeRollersEjectSpeed);
         intakeSingulator.Set(-singulatorSpeed);
-        intakePivot_pidController.SetReference(14, rev::CANSparkMaxLowLevel::ControlType::kPosition,0);
+        intakePivot_pidController.SetReference(15, rev::CANSparkMaxLowLevel::ControlType::kPosition,0);
 
     }
     else //default case, everything up and not running
@@ -120,14 +121,16 @@ void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
         if(!intakeData.intakeIdle){ // run the singulator while the intake is not idle
             intakeSingulator.Set(singulatorSpeed);
         }else{
-        intakeRollers.Set(0);
-        intakePivot_pidController.SetReference(0.1, rev::CANSparkMaxLowLevel::ControlType::kPosition, 0);
+            intakeRollers.Set(0);
+            intakeSingulator.Set(0);
+            intakePivot_pidController.SetReference(0.1, rev::CANSparkMaxLowLevel::ControlType::kPosition, 0);
         }
     }
 }
 
 void Intake::manual(const RobotData &robotData, IntakeData &intakeData){
     //intake extended
+    // intakePivot.Set(robotData.controllerData.sLYStick);
     if(robotData.controlData.mIntakeUp){
         intakePivot.Set(-intakePivotSpeed);
 
@@ -175,8 +178,6 @@ void Intake::updateData(const RobotData &robotData, IntakeData &intakeData)
     frc::SmartDashboard::PutNumber("Pivot absolute Pos", intakePivotEncoder2.GetOutput());
     frc::SmartDashboard::PutNumber("Changed pos", absoluteToREV(intakePivotEncoder2.GetOutput()));
 
-
-    
     frc::SmartDashboard::PutBoolean("idle?", intakeData.intakeIdle);
     frc::SmartDashboard::PutNumber("idle count", idleCount);
 
@@ -204,8 +205,8 @@ bool Intake::intakeIdle(const RobotData &robotData, IntakeData &intakeData){
 }
 
 double Intake::absoluteToREV(double value){
-    // double slope = (revOut - revIn)/(absOut - absIn);
-    // double b = revIn - (slope*absIn);
-    // return ((value*slope) - b);
-    return (value*-103+96.3);
+    double slope = (revOut - revIn)/(absOut - absIn);
+    double b = revIn - (slope*absIn);
+    return ((value*slope) + b);
+    //return (value*-121+74.8);
 }

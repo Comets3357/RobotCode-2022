@@ -14,8 +14,10 @@ static const int
     intakeSingulatorID = 13;
 
 static const double
-    absExtended = 0.4255,
-    absRetracted = 0.577;
+    absOut = 0.485,
+    absIn = 0.618,
+    revOut = 16.1,
+    revIn = 0;
 
 //indexer
 static const int
@@ -30,8 +32,10 @@ static const int
     shooterTurretID = 34;
 
 static const double
-    minHoodExtend = 0.99,
-    maxHoodExtend = 0.3;
+    hoodabsOut = 0.043,
+    hoodabsIn = 0.742,
+    hoodrevOut = -39,
+    hoodrevIn = 0;
 
 //shooter PID constants:
 static const double

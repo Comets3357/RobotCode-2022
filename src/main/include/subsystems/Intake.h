@@ -29,9 +29,10 @@ public:
     void RobotInit();
     void RobotPeriodic(const RobotData &robotData, IntakeData &intakeData);
     void DisabledInit();
+    void updateData(const RobotData &robotData, IntakeData &intakeData);
+
 
 private:
-    void updateData(const RobotData &robotData, IntakeData &intakeData);
     void manual(const RobotData &robotData, IntakeData &intakeData);
     void semiAuto(const RobotData &robotData, IntakeData &intakeData);
 
@@ -46,7 +47,7 @@ private:
     double intakePivotSpeed = 0.1;
     double intakeRollerSpeed = 0.8;
     double intakeMecanumSpeed = 0.2;
-    double singulatorSpeed = 0.6;
+    double singulatorSpeed = -0.6;
     double intakeRollersEjectSpeed = 0.5;
     double armDownPosition = 0.428;
     int tickCount = 0;

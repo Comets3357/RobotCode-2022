@@ -58,6 +58,7 @@ void Robot::DisabledInit()
 void Robot::DisabledPeriodic() 
 {
     shooter.updateData(robotData, robotData.shooterData);
+    intake.updateData(robotData, robotData.intakeData);
 }
 void Robot::TestInit() {}
 void Robot::TestPeriodic() {}

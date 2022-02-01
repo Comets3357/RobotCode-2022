@@ -240,6 +240,7 @@ void Shooter::updateData(const RobotData &robotData, ShooterData &shooterData)
 {
     frc::SmartDashboard::PutNumber("shooter Hood ABS", shooterHoodEncoderAbs.GetOutput());
     frc::SmartDashboard::PutNumber("shooter Hood REV", shooterHoodEncoderRev.GetPosition());
+    frc::SmartDashboard::PutNumber("shooter changed", absoluteToREV(shooterHoodEncoderAbs.GetOutput()));
     frc::SmartDashboard::PutBoolean("shooter ready shoot", shooterData.readyShoot);
 
     //frc::SmartDashboard::PutNumber("shooter Hood zero to one scale", getHoodPos());
@@ -376,5 +377,9 @@ void Shooter::setHighHub()
  * constantly updates the rev position in periodic 
  **/
 double Shooter::absoluteToREV(double value){
-    return (value*54.4 + -42.1);
+    double slope = (hoodrevOut - hoodrevIn)/(hoodabsOut - hoodabsIn);
+    double b = hoodrevIn - (slope*hoodabsIn);
+    return ((value*slope) + b);
+    //return (value*55.8 + -41.4;
+    // can we do this based on constants? and then 
 }
