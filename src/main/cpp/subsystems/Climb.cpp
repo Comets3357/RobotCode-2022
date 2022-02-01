@@ -116,14 +116,11 @@ void Climb::runSequence(const RobotData &robotData, ClimbData &climbData){
         else if (stage == 3) RunArmsToPos(-500,1,1); //Outer Arms pivot the robot so the elevator is facing the next bar
         else if (stage == 4) RunElevatorToPos(1750,1,1); //Elevator goes up to reach the next bar
         else if (stage == 5) RunArmsToPos(-400,1,1); //Outer arms pivot back to latch the elevator onto the 3rd bar
-        else if (stage == 6) {
-            RunElevatorToPos(1000,1,1);
-            RunArmsToPos(-200,1,1);
-        } //Elevator moves down to lift robot to the next bar. Outer arms move a little bit
-        else if (stage == 8) RunArmsToPos(-100,1,1); //Outer arms release from 2nd bar
-        else if (stage == 9) RunElevatorToPos(800,1,1); //Elevators goes up a little to let the outer arms pivot to the other side of the bar
-        else if (stage == 10) RunArmsToPos(100,1,1); //Outer arms pivot the the other side of the bar
-        else if (stage == 11 && climbData.bar < targetBar){ //do it again if the bot isnt on the top bar
+        else if (stage == 6) RunArmsAndElevatorToPos(1000,1,-200,1,1); //Elevator moves down to lift robot to the next bar. Outer arms move a little bit
+        else if (stage == 7) RunArmsToPos(-100,1,1); //Outer arms release from 2nd bar
+        else if (stage == 8) RunElevatorToPos(800,1,1); //Elevators goes up a little to let the outer arms pivot to the other side of the bar
+        else if (stage == 9) RunArmsToPos(100,1,1); //Outer arms pivot the the other side of the bar
+        else if (stage == 10 && climbData.bar < targetBar){ //do it again if the bot isnt on the top bar
             stage = 0; //sets the stage to 0 to go to the next bar
             climbData.bar++;
         } else {
@@ -231,4 +228,15 @@ void Climb::RunArmsToPos(int position, float power, int stageAdd){
         climbInitiating = false;
         armsRunning = false;
     }
+}
+
+void Climb::RunArmsAndElevatorToPos(int elevatorPos, float elevatorPower, int armsPos, float armsPower, int stageAdd){
+    RunElevatorToPos(elevatorPos, elevatorPower, 0);
+    RunElevatorToPos(armsPos, armsPower, 0);
+    if (!elevatorRunning && !armsRunning){
+        climbArms.Set(0);
+        climbElevator.Set(0);
+        stage+=stageAdd;
+    }
+
 }

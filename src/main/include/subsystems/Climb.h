@@ -50,6 +50,7 @@ private:
 
     void RunElevatorToPos(int position, float power, int stageAdd);
     void RunArmsToPos(int position, float power, int stageAdd);
+    void RunArmsAndElevatorToPos(int elevatorPos, float elevatorPower, int armsPos, float armsPower, int stageAdd);
 
 
     //CHANGE MOTOr ID STUFF  (just outline lol don't take your life too seriously:))
