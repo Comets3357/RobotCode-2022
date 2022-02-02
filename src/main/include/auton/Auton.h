@@ -8,6 +8,7 @@
 #include <wpi/SmallString.h>
 #include <vector>
 #include <string>
+#include <frc/smartdashboard/SendableChooser.h>
 
 #include "controller/Controller.h"
 
@@ -19,12 +20,11 @@ enum AutonSelect
     autonSelect_potato,
     autonSelect_driveStraight,
     autonSelect_intakeAlternate,
-    autonSelect_barrelRace
 };
 
 struct AutonData
 {
-    AutonSelect autonSelect = autonSelect_barrelRace;
+    AutonSelect autonSelect = autonSelect_potato;
     frc::Trajectory trajectory;
     int autonStep = -1; // starts at -1 because getTrajectoryFile() increments
     std::vector<std::string> pathGroup;
@@ -33,14 +33,17 @@ struct AutonData
 class Auton
 {
 public:
+    void RobotInit(AutonData &autonData);
     void AutonomousInit(AutonData &autonData);
     void AutonomousPeriodic(const RobotData &robotData, AutonData &autonData, ControllerData &controllerData);
     void DisabledInit();
 private:
+    void sendAutonSelectionChooser();
+    void sendStartPointChooser();
     void potato(const RobotData &robotData, ControllerData &controllerData);
     void driveStraight(const RobotData &robotData, ControllerData &controllerData);
     void intakeAlternate(const RobotData &robotData, ControllerData &controllerData);
-    void barrelRace(const RobotData &robotData, ControllerData &controllerData);
 
-
+    frc::SendableChooser<AutonSelect> autonChooser;
+    // frc::SendableChooser<> startPointChooser;
 };

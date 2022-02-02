@@ -1,8 +1,15 @@
 #include "auton/Auton.h"
 #include "RobotData.h"
 
+void Auton::RobotInit(AutonData &autonData) {
+    sendAutonSelectionChooser();
+    // sendStartPointChooser();
+}
+
 void Auton::AutonomousInit(AutonData &autonData)
 {
+    autonData.autonStep = -1;
+
     // get selected auton from smartdashboard
     // import pathweaver json
     fs::path deployDirectory = frc::filesystem::GetDeployDirectory();
@@ -13,10 +20,9 @@ void Auton::AutonomousInit(AutonData &autonData)
     // wpi::outs() << "done in auton.cpp";
 
     // because getTrajectoryFile() steps autonStep
-    autonData.autonStep = -1;
 
     // CHANGE THIS STRING AT THE END OF THE PATH TO CHANGE ROUTINE SELECTION
-    fs::path autonDirectory = deployDirectory / "Autos" / "sequence";
+    fs::path autonDirectory = deployDirectory / "Autos" / "fourBallAuton";
     frc::SmartDashboard::PutString("autonDiredctory", autonDirectory.string());
 
     // std::vector<std::string> pathGroup;
@@ -24,18 +30,25 @@ void Auton::AutonomousInit(AutonData &autonData)
     std::ifstream inFile/* ("file.txt") */;
     inFile.open(autonDirectory.string());
 
+    autonData.pathGroup.clear();
+
     if (inFile.fail()) {
        frc::SmartDashboard::PutString("fail", "failed");
     } else {
         std::string str;
         while (getline(inFile, str)) {
             frc::SmartDashboard::PutString("str", str);
-            str = str.substr(0, str.length() - 1);  // get rid of hidden newline from file line read
             autonData.pathGroup.push_back(str);
         }
     }
 
-    for (int i = 0; i < autonData.pathGroup.size(); i++) {
+    // remove newline char from all but the final line
+    for (int i = 0; i < autonData.pathGroup.size() - 1; i++) {
+        std::string correctPathName = autonData.pathGroup[i];
+        if (i == 0) { frc::SmartDashboard::PutString("correctPathName", correctPathName); }
+        // wpi::outs() << "ASDFGHJKL" + correctPathName;
+        correctPathName = correctPathName.substr(0, correctPathName.length() - 1);  // get rid of hidden newline from file line read
+        autonData.pathGroup[i] = correctPathName;
         frc::SmartDashboard::PutString(std::to_string(i), autonData.pathGroup[i]);
     }
 
@@ -47,7 +60,24 @@ void Auton::AutonomousInit(AutonData &autonData)
     // autonData.pathGroup = &pathGroup;
 
     // autonData.pathGroup = pathGroup;
+
+    autonData.autonSelect = autonChooser.GetSelected();
+    frc::SmartDashboard::PutNumber("autonSelect", autonData.autonSelect);
 }
+
+void Auton::sendAutonSelectionChooser() {
+    autonChooser.AddOption("Potato", AutonSelect::autonSelect_potato);
+    autonChooser.AddOption("Exit Init Line Towards Driver Station", AutonSelect::autonSelect_driveStraight);
+    frc::SmartDashboard::PutData("Auto", &autonChooser);
+}
+
+// void Auton::sendStartPointChooser() {
+//     startPointChooser.AddOption("Potato", AutonSelect::autonSelect_potato);
+//     startPointChooser.AddOption("Exit Init Line Towards Driver Station", AutonSelect::autonSelect_driveStraight);
+//     frc::SmartDashboard::PutData("Auto", &autonChooser);
+
+//     return autonChooser.GetSelected();
+// }
 
 void Auton::AutonomousPeriodic(const RobotData &robotData, AutonData &autonData, ControllerData &controllerData)
 {
@@ -61,9 +91,6 @@ void Auton::AutonomousPeriodic(const RobotData &robotData, AutonData &autonData,
         break;
     case autonSelect_intakeAlternate:
         intakeAlternate(robotData, controllerData);
-        break;
-    case autonSelect_barrelRace:
-        barrelRace(robotData, controllerData);
         break;
     default:
         break;
@@ -90,8 +117,4 @@ void Auton::intakeAlternate(const RobotData &robotData, ControllerData &controll
     {
         controllerData.sRTrigger = false;
     }
-}
-
-void Auton::barrelRace(const RobotData &robotData, ControllerData &controllerData) {
-
 }

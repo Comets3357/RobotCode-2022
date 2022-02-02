@@ -75,14 +75,15 @@ private:
     void resetOdometry(double resetAngle);
     void resetOdometry();
     void resetOdometry(double x, double y, const RobotData &robotData);
-    void resetOdometry(double x, double y, double degrees, const RobotData &robotData);
+    void resetOdometry(double x, double y, double radians, const RobotData &robotData);
     void resetOdometry(double x, double y, double tanX, double tanY, const RobotData &robotData);
     void zeroEncoders();
     void setVelocity(double leftVel, double rightVel);
     void setPercentOutput(double leftVBus, double rightVBus);
     frc::Pose2d getPose(double x, double y, double deg);
     void getTrajectoryFile(const RobotData &robotData, DrivebaseData &drivebaseData, AutonData &autonData);
-    void turnInPlace(double degrees);
+    void turnInPlace(double degrees, const RobotData &robotData, DrivebaseData &drivebaseData, AutonData &autonData);
+    bool allValuesWithin(std::deque<double> deque, double tolerance);
 
     // odometry
     const units::radian_t kZeroAngle{0.0};
@@ -107,6 +108,9 @@ private:
     
     double turnInPlaceDegrees = 0;
     double breakEndSec = 0;
+    std::deque<double> lastDegrees;
+
+    bool odometryInitialized;
 
     // for 6 in wheels
     const double mpsToTpds = (6.0 / 0.1524) * (1 / (6.0 * M_PI)) * (64.0 / 8.0) * (2048.0) * (0.1);
