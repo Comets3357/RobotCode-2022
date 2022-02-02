@@ -78,10 +78,10 @@ private:
     int bottomDebounceCount = 0;
     int topDebounceCount = 0;
 
-    const double indexerWheelSpeed = 0.5;
-    const double indexerBeltSpeed = 0.4;
-    const double saIndexerWheelIntakeSpeed = 0.2;
-    const double saIndexerBeltIntakeSpeed = 0.4;
+    const double indexerWheelSpeed = 0.3;
+    const double indexerBeltSpeed = 0.8;
+    const double saIndexerWheelIntakeSpeed = 0.3;
+    const double saIndexerBeltIntakeSpeed = 0.8;
 
     // ColorSensor colorSensor{}; //rev v3, for detecting ball color
 

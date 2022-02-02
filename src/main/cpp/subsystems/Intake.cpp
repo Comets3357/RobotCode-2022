@@ -36,7 +36,7 @@ void Intake::pivotInit(){
     intakePivot_pidController.SetFF(0,0);
     intakePivot_pidController.SetOutputRange(-0.5, 0.5,0);
 
-    intakePivot.SetSmartCurrentLimit(10);
+    intakePivot.SetSmartCurrentLimit(20);
 }
 
 void Intake::singulatorInit(){
