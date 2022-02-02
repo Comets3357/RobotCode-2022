@@ -34,12 +34,13 @@ public:
     void RobotInit();
     void RobotPeriodic(const RobotData &robotData, IndexerData &indexerData);
     void DisabledInit();
+    void updateData(const RobotData &robotData, IndexerData &indexerData);
 
 private:
-    void updateData(const RobotData &robotData, IndexerData &indexerData);
     void manual(const RobotData &robotData, IndexerData &indexerData);
     void semiAuto(const RobotData &robotData, IndexerData &indexerData);
     void testControl(const RobotData &robotData);
+    void debuggingStuff(const RobotData &robotData, IndexerData &indexerData);
 
     void indexerBeltInit();
     void indexerWheelInit();

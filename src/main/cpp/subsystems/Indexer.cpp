@@ -22,7 +22,7 @@ void Indexer::RobotPeriodic(const RobotData &robotData, IndexerData &indexerData
     {
         semiAuto(robotData, indexerData);
     }
-    // debuggingStuff(robotData, indexerData);
+    
 
 }
 
@@ -64,6 +64,7 @@ void Indexer::updateData(const RobotData &robotData, IndexerData &indexerData)
     // } else if (robotData.indexerData.indexerContents.front() == Cargo::cargo_Unassigned){
     //     indexerData.wrongBall = true; 
     // }
+    debuggingStuff(robotData, indexerData);
 }
 
 
@@ -296,72 +297,72 @@ void Indexer::indexerWheelInit(){
     indexerWheel.SetSmartCurrentLimit(25);
 }
 
-// void Indexer::debuggingStuff(const RobotData &robotData, IndexerData &indexerData){
-//     // TESTING STUFF
-//     frc::SmartDashboard::PutNumber("cargo count", indexerData.indexerContents.size());
-//     frc::SmartDashboard::PutNumber("wrong ball?", robotData.controlData.wrongBall);
+void Indexer::debuggingStuff(const RobotData &robotData, IndexerData &indexerData){
+    // TESTING STUFF
+    frc::SmartDashboard::PutNumber("cargo count", indexerData.indexerContents.size());
+    frc::SmartDashboard::PutNumber("wrong ball?", robotData.controlData.wrongBall);
 
-//     if (indexerData.indexerContents.size() == 0){
+    if (indexerData.indexerContents.size() == 0){
 
-//         frc::SmartDashboard::PutString("top", "empty");
-//         frc::SmartDashboard::PutString("bottom", "empty");
+        frc::SmartDashboard::PutString("top", "empty");
+        frc::SmartDashboard::PutString("bottom", "empty");
 
-//     } else if (indexerData.indexerContents.size() == 1){
+    } else if (indexerData.indexerContents.size() == 1){
 
-//         if(indexerData.indexerContents.front() == Cargo::cargo_Alliance){
-//             frc::SmartDashboard::PutString("top", "alliance");
-//             frc::SmartDashboard::PutString("bottom", "empty");
-//         } else if (indexerData.indexerContents.front() == Cargo::cargo_Opponent){
-//             frc::SmartDashboard::PutString("top", "opponent");
-//             frc::SmartDashboard::PutString("bottom", "empty");
-//         } else {
-//             frc::SmartDashboard::PutString("top", "unassigned");
-//             frc::SmartDashboard::PutString("bottom", "empty");
-//         }
+        if(indexerData.indexerContents.front() == Cargo::cargo_Alliance){
+            frc::SmartDashboard::PutString("top", "alliance");
+            frc::SmartDashboard::PutString("bottom", "empty");
+        } else if (indexerData.indexerContents.front() == Cargo::cargo_Opponent){
+            frc::SmartDashboard::PutString("top", "opponent");
+            frc::SmartDashboard::PutString("bottom", "empty");
+        } else {
+            frc::SmartDashboard::PutString("top", "unassigned");
+            frc::SmartDashboard::PutString("bottom", "empty");
+        }
 
-//     } else if (indexerData.indexerContents.size() == 2){
+    } else if (indexerData.indexerContents.size() == 2){
 
-//         if(indexerData.indexerContents.front() == Cargo::cargo_Alliance){
+        if(indexerData.indexerContents.front() == Cargo::cargo_Alliance){
 
-//             if(indexerData.indexerContents.back() == Cargo::cargo_Alliance){
-//                 frc::SmartDashboard::PutString("top", "alliance");
-//                 frc::SmartDashboard::PutString("bottom", "alliance");
-//             } else if(indexerData.indexerContents.back() == Cargo::cargo_Opponent){
-//                 frc::SmartDashboard::PutString("top", "alliance");
-//                 frc::SmartDashboard::PutString("bottom", "opponent");
-//             } else {
-//                 frc::SmartDashboard::PutString("top", "alliance");
-//                 frc::SmartDashboard::PutString("bottom", "unassigned");
-//             }
+            if(indexerData.indexerContents.back() == Cargo::cargo_Alliance){
+                frc::SmartDashboard::PutString("top", "alliance");
+                frc::SmartDashboard::PutString("bottom", "alliance");
+            } else if(indexerData.indexerContents.back() == Cargo::cargo_Opponent){
+                frc::SmartDashboard::PutString("top", "alliance");
+                frc::SmartDashboard::PutString("bottom", "opponent");
+            } else {
+                frc::SmartDashboard::PutString("top", "alliance");
+                frc::SmartDashboard::PutString("bottom", "unassigned");
+            }
 
-//         } else if (indexerData.indexerContents.front() == Cargo::cargo_Opponent){
+        } else if (indexerData.indexerContents.front() == Cargo::cargo_Opponent){
 
-//             if(indexerData.indexerContents.back() == Cargo::cargo_Alliance){
-//                 frc::SmartDashboard::PutString("top", "opponent");
-//                 frc::SmartDashboard::PutString("bottom", "alliance");
-//             } else if(indexerData.indexerContents.back() == Cargo::cargo_Opponent){
-//                 frc::SmartDashboard::PutString("top", "opponent");
-//                 frc::SmartDashboard::PutString("bottom", "opponent");
-//             } else {
-//                 frc::SmartDashboard::PutString("top", "opponent");
-//                 frc::SmartDashboard::PutString("bottom", "unassigned");
-//             }
+            if(indexerData.indexerContents.back() == Cargo::cargo_Alliance){
+                frc::SmartDashboard::PutString("top", "opponent");
+                frc::SmartDashboard::PutString("bottom", "alliance");
+            } else if(indexerData.indexerContents.back() == Cargo::cargo_Opponent){
+                frc::SmartDashboard::PutString("top", "opponent");
+                frc::SmartDashboard::PutString("bottom", "opponent");
+            } else {
+                frc::SmartDashboard::PutString("top", "opponent");
+                frc::SmartDashboard::PutString("bottom", "unassigned");
+            }
 
-//         } else {
-//             if(indexerData.indexerContents.back() == Cargo::cargo_Alliance){
-//                 frc::SmartDashboard::PutString("top", "unassigned");
-//                 frc::SmartDashboard::PutString("bottom", "alliance");
-//             } else if(indexerData.indexerContents.back() == Cargo::cargo_Opponent){
-//                 frc::SmartDashboard::PutString("top", "unassigned");
-//                 frc::SmartDashboard::PutString("bottom", "opponent");
-//             } else {
-//                 frc::SmartDashboard::PutString("top", "unassigned");
-//                 frc::SmartDashboard::PutString("bottom", "unassigned");
-//             }
+        } else {
+            if(indexerData.indexerContents.back() == Cargo::cargo_Alliance){
+                frc::SmartDashboard::PutString("top", "unassigned");
+                frc::SmartDashboard::PutString("bottom", "alliance");
+            } else if(indexerData.indexerContents.back() == Cargo::cargo_Opponent){
+                frc::SmartDashboard::PutString("top", "unassigned");
+                frc::SmartDashboard::PutString("bottom", "opponent");
+            } else {
+                frc::SmartDashboard::PutString("top", "unassigned");
+                frc::SmartDashboard::PutString("bottom", "unassigned");
+            }
             
-//         }
-//     } else {
-//         frc::SmartDashboard::PutString("top", "overload");
-//         frc::SmartDashboard::PutString("bottom", "overload");
-//     }
-// }
+        }
+    } else {
+        frc::SmartDashboard::PutString("top", "overload");
+        frc::SmartDashboard::PutString("bottom", "overload");
+    }
+}
