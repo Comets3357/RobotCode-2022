@@ -3,7 +3,7 @@
 void Robot::RobotInit()
 {
     gyro.RobotInit();
-
+    auton.RobotInit(robotData.autonData);
     drivebase.RobotInit();
 }
 

@@ -3,7 +3,7 @@
 
 void Auton::RobotInit(AutonData &autonData) {
     sendAutonSelectionChooser();
-    // sendStartPointChooser();
+    sendStartPointChooser();
 }
 
 void Auton::AutonomousInit(AutonData &autonData)
@@ -22,7 +22,7 @@ void Auton::AutonomousInit(AutonData &autonData)
     // because getTrajectoryFile() steps autonStep
 
     // CHANGE THIS STRING AT THE END OF THE PATH TO CHANGE ROUTINE SELECTION
-    fs::path autonDirectory = deployDirectory / "Autos" / "fourBallAuton";
+    fs::path autonDirectory = deployDirectory / "Autos" / "hangarFourBall";
     frc::SmartDashboard::PutString("autonDiredctory", autonDirectory.string());
 
     // std::vector<std::string> pathGroup;
@@ -63,21 +63,31 @@ void Auton::AutonomousInit(AutonData &autonData)
 
     autonData.autonSelect = autonChooser.GetSelected();
     frc::SmartDashboard::PutNumber("autonSelect", autonData.autonSelect);
+
+    autonData.startPoint = startPointChooser.GetSelected();
+    frc::SmartDashboard::PutNumber("autonSelect", autonData.startPoint.X().to<double>());
 }
 
 void Auton::sendAutonSelectionChooser() {
     autonChooser.AddOption("Potato", AutonSelect::autonSelect_potato);
     autonChooser.AddOption("Exit Init Line Towards Driver Station", AutonSelect::autonSelect_driveStraight);
-    frc::SmartDashboard::PutData("Auto", &autonChooser);
+    frc::SmartDashboard::PutData("Select Auton:", &autonChooser);
 }
 
-// void Auton::sendStartPointChooser() {
-//     startPointChooser.AddOption("Potato", AutonSelect::autonSelect_potato);
-//     startPointChooser.AddOption("Exit Init Line Towards Driver Station", AutonSelect::autonSelect_driveStraight);
-//     frc::SmartDashboard::PutData("Auto", &autonChooser);
+void Auton::sendStartPointChooser() {
+    startPointChooser.AddOption("(0, 0), 0 deg", getPose(0, 0, 0));
+    frc::SmartDashboard::PutData("Select Start Point:", &autonChooser);
+}
 
-//     return autonChooser.GetSelected();
-// }
+frc::Pose2d Auton::getPose(double x, double y, double deg) {
+    units::meter_t meterX{x};
+    units::meter_t meterY{y};
+
+    const units::radian_t radianYaw{deg / 180 * M_PI};
+    const frc::Rotation2d rotation{radianYaw};
+    frc::Pose2d pose{meterX, meterY, rotation};
+    return pose;
+}
 
 void Auton::AutonomousPeriodic(const RobotData &robotData, AutonData &autonData, ControllerData &controllerData)
 {

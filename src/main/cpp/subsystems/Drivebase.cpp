@@ -214,7 +214,7 @@ void Drivebase::autonControl(const RobotData &robotData, DrivebaseData &drivebas
     }
     else if (drivebaseData.driveMode == driveMode_turnInPlace)
     {
-        turnInPlace(turnInPlaceDegrees - robotData.gyroData.rawYaw, robotData, drivebaseData, autonData);
+        turnInPlaceAuton(turnInPlaceDegrees - robotData.gyroData.rawYaw, robotData, drivebaseData, autonData);
     }
     else if (drivebaseData.driveMode == driveMode_trajectory)
     {
@@ -467,8 +467,7 @@ frc::Pose2d Drivebase::getPose(double x, double y, double deg) {
     units::meter_t meterX{x};
     units::meter_t meterY{y};
 
-    const double pi = 2 * std::acos(0.0);
-    const units::radian_t radianYaw{deg / 180 * pi};
+    const units::radian_t radianYaw{deg / 180 * M_PI};
     const frc::Rotation2d rotation{radianYaw};
     frc::Pose2d pose{meterX, meterY, rotation};
     return pose;
@@ -541,7 +540,7 @@ void Drivebase::getTrajectoryFile(const RobotData &robotData, DrivebaseData &dri
     }
 }
 
-void Drivebase::turnInPlace(double degrees, const RobotData &robotData, DrivebaseData &drivebaseData, AutonData &autonData) {
+void Drivebase::turnInPlaceAuton(double degrees, const RobotData &robotData, DrivebaseData &drivebaseData, AutonData &autonData) {
 
     frc::SmartDashboard::PutNumber("degree diff", degrees);
     

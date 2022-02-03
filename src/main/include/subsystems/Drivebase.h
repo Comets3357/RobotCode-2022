@@ -82,7 +82,7 @@ private:
     void setPercentOutput(double leftVBus, double rightVBus);
     frc::Pose2d getPose(double x, double y, double deg);
     void getTrajectoryFile(const RobotData &robotData, DrivebaseData &drivebaseData, AutonData &autonData);
-    void turnInPlace(double degrees, const RobotData &robotData, DrivebaseData &drivebaseData, AutonData &autonData);
+    void turnInPlaceAuton(double degrees, const RobotData &robotData, DrivebaseData &drivebaseData, AutonData &autonData);
     bool allValuesWithin(std::deque<double> deque, double tolerance);
 
     // odometry
