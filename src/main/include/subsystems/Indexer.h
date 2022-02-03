@@ -24,6 +24,7 @@ struct IndexerData
 {
     std::deque<Cargo> indexerContents;
     bool wrongBall = false;
+  
 };
 
 
@@ -77,6 +78,8 @@ private:
     // debounce counters to time debounce
     int bottomDebounceCount = 0;
     int topDebounceCount = 0;
+
+    bool runWheel = false; // checks if one ball has left shooter so that you can run the wheel and get the other ball out
 
     const double indexerWheelSpeed = 0.3;
     const double indexerBeltSpeed = 0.8;
