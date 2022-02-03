@@ -36,7 +36,7 @@ void Intake::pivotInit(){
     intakePivot_pidController.SetFF(0,0);
     intakePivot_pidController.SetOutputRange(-0.5, 0.5,0);
 
-    intakePivot.SetSmartCurrentLimit(20);
+    intakePivot.SetSmartCurrentLimit(15);
 }
 
 void Intake::singulatorInit(){
@@ -122,10 +122,12 @@ void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
             if(!intakeData.intakeIdle){ // run the singulator while the intake is not idle
                 intakeSingulator.Set(singulatorSpeed);
             }else{
-                intakeRollers.Set(0);
+                
                 intakeSingulator.Set(0);
-                intakePivot_pidController.SetReference(0.1, rev::CANSparkMaxLowLevel::ControlType::kPosition, 0);
             }
+            intakeRollers.Set(0);
+            intakePivot_pidController.SetReference(0.1, rev::CANSparkMaxLowLevel::ControlType::kPosition, 0);
+
         }
     }else{
         intakeRollers.Set(0);
