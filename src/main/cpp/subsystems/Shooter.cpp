@@ -4,7 +4,7 @@
  * CLASS SPECIFIC INITS
  * ---------------------------------------------------------------------------------------------------------------------------------------------------
  * */
-void Shooter::RobotInit()
+void Shooter::RobotInit(ShooterData &shooterData)
 {
     flyWheelInit();
     shooterHoodInit();
@@ -13,6 +13,8 @@ void Shooter::RobotInit()
     shooterHood.Set(0);
 
     isHigh = true;
+
+    shooterData.shootMode = shootMode_none;
 }
 
 void Shooter::shooterHoodInit()
@@ -73,6 +75,7 @@ void Shooter::DisabledInit()
 void Shooter::RobotPeriodic(const RobotData &robotData, ShooterData &shooterData)
 {
     updateData(robotData, shooterData);
+    updateShootMode(robotData.controlData, shooterData);
 
     if (robotData.controlData.mode == mode_teleop_manual)
     {
@@ -102,7 +105,7 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
     //idk about this control data stuff to figure out
 
     if(shooterHoodEncoderAbs.GetOutput() > 0.03){
-        if(robotData.controlData.saShooting){ // Aiming SHOOTING with limelight
+        if(shooterData.shootMode == shootMode_vision){ // Aiming SHOOTING with limelight
 
         flyWheelLead_pidController.SetReference(1500, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
 
@@ -116,7 +119,7 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
             shooterData.readyShoot = false;
         }
 
-        }else if(robotData.controlData.cornerLaunchPadShot){ //FROM THE CLOSER LAUNCH PAD
+        }else if(shooterData.shootMode == shootMode_cornerLaunchPad){ //FROM THE CLOSER LAUNCH PAD
             innerLaunch();
             if ((getWheelVel() > readyShootLimit) /**&& (std::abs(getHoodPos() + 38) <= 1)**/) //dont know why but it wasnt working so commented it out
             {
@@ -128,7 +131,7 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
             }
 
         }
-        else if (robotData.controlData.wallLaunchPadShot) //FROM THE FARTHER LAUNCH PAD
+        else if (shooterData.shootMode == shootMode_wallLaunchPad) //FROM THE FARTHER LAUNCH PAD
         {
             outerLaunch();
             if ((getWheelVel() > readyShootLimit) /**&& (std::abs(getHoodPos() + 42) <= 1)**/)
@@ -140,7 +143,7 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
                 shooterData.readyShoot = false;
             }
         }
-        else if(robotData.controlData.fenderShot) //FROM THE FENDER FIXED SHOT
+        else if(shooterData.shootMode == shootMode_fender) //FROM THE FENDER FIXED SHOT
         {
             fender();
             if ((getWheelVel() > readyShootLimit) /**&& (std::abs(getHoodPos() - 0) <= 1)**/)
@@ -152,7 +155,7 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
                 shooterData.readyShoot = false;
             }
         } 
-        else if (robotData.controlData.sideWallShot) //FROM THE SIDE WALL FIXED SHOT
+        else if (shooterData.shootMode == shootMode_sideWall) //FROM THE SIDE WALL FIXED SHOT
         {
             wall();
             if ((getWheelVel() > readyShootLimit) /** && (std::abs(getHoodPos() +38) <= 1)**/)
@@ -254,6 +257,9 @@ void Shooter::updateData(const RobotData &robotData, ShooterData &shooterData)
     frc::SmartDashboard::PutNumber("flyWheelVel", getWheelVel());
 
     //frc::SmartDashboard::PutNumber("shooter Hood zero to one scale", getHoodPos());
+
+    frc::SmartDashboard::PutNumber("shootMode", shooterData.shootMode);
+    frc::SmartDashboard::PutBoolean("saShooting", robotData.controlData.saShooting);
 
 }
 /**
@@ -392,4 +398,42 @@ double Shooter::absoluteToREV(double value){
     return ((value*slope) + b);
     //return (value*55.8 + -41.4;
     // can we do this based on constants? and then 
+}
+
+void Shooter::updateShootMode(const ControlData &controlData, ShooterData &shooterData) {
+    // pressing a shoot button will set the robot to be in the associated shooting mode. if you press the button again, it will toggle that shoot mode off.
+
+    if (controlData.saShooting) {
+        if (shooterData.shootMode == shootMode_vision) {
+            shooterData.shootMode = shootMode_none;
+        } else { shooterData.shootMode = shootMode_vision; }
+    }
+
+    if (controlData.fenderShot) {
+        if (shooterData.shootMode == shootMode_fender) {
+            shooterData.shootMode = shootMode_none;
+        } else { shooterData.shootMode = shootMode_fender; }
+    }
+
+    if (controlData.sideWallShot) {
+        if (shooterData.shootMode == shootMode_sideWall) {
+            shooterData.shootMode = shootMode_none;
+        } else { shooterData.shootMode = shootMode_sideWall; }
+    }
+
+    if (controlData.wallLaunchPadShot) {
+        if (shooterData.shootMode == shootMode_wallLaunchPad) {
+            shooterData.shootMode = shootMode_none;
+        } else { shooterData.shootMode = shootMode_wallLaunchPad; }
+    }
+
+    if (controlData.cornerLaunchPadShot) {
+        if (shooterData.shootMode == shootMode_cornerLaunchPad) {
+            shooterData.shootMode = shootMode_none;
+        } else { shooterData.shootMode = shootMode_cornerLaunchPad; }
+    }
+}
+
+void Shooter::getAssociatedShootMode() {
+
 }

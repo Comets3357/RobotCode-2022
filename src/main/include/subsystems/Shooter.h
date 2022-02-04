@@ -15,11 +15,21 @@
 
 struct RobotData;
 
+enum ShootMode {
+    shootMode_none,
+    shootMode_vision,
+    shootMode_fender,
+    shootMode_sideWall,
+    shootMode_wallLaunchPad,
+    shootMode_cornerLaunchPad
+};
+
 struct ShooterData
 {
     bool readyShoot;
     int targetVel;
     bool wrongBallReady;
+    ShootMode shootMode = shootMode_none;
 };
 
 class Shooter{
@@ -27,7 +37,7 @@ class Shooter{
 
 
     public:
-        void RobotInit();
+        void RobotInit(ShooterData &shooterData);
         void RobotPeriodic(const RobotData &robotData, ShooterData &shooterData);
         void DisabledInit();
         void updateData(const RobotData &robotData, ShooterData &shooterData);
@@ -59,6 +69,9 @@ class Shooter{
         void wall();
         void fender();
         void endOfTarmac();
+
+        void updateShootMode(const ControlData &controlData, ShooterData &shooterData);
+        void getAssociatedShootMode();
 
         bool hoodZero;
         double targetHoodPos;
