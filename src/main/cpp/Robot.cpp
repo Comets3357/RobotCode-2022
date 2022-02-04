@@ -8,12 +8,9 @@ void Robot::RobotInit()
 
     drivebase.RobotInit();
     intake.RobotInit();
-<<<<<<< Updated upstream
     indexer.RobotInit();
     shooter.RobotInit(robotData.shooterData);
     climb.RobotInit();
-=======
->>>>>>> Stashed changes
 }
 
 void Robot::RobotPeriodic()
@@ -29,12 +26,9 @@ void Robot::RobotPeriodic()
         otherComponents.RobotPeriodic(robotData.otherComponentsData);
         drivebase.RobotPeriodic(robotData, robotData.drivebaseData);
         intake.RobotPeriodic(robotData, robotData.intakeData);
-<<<<<<< Updated upstream
         indexer.RobotPeriodic(robotData, robotData.indexerData);
         shooter.RobotPeriodic(robotData, robotData.shooterData);
         climb.RobotPeriodic(robotData, robotData.climbData);
-=======
->>>>>>> Stashed changes
     }
 }
 
