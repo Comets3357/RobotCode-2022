@@ -15,6 +15,7 @@ void Shooter::RobotInit(ShooterData &shooterData)
     isHigh = true;
 
     shooterData.shootMode = shootMode_none;
+    shooterData.shootUnassignedAsOpponent = false;
 }
 
 void Shooter::shooterHoodInit()
@@ -75,7 +76,7 @@ void Shooter::DisabledInit()
 void Shooter::RobotPeriodic(const RobotData &robotData, ShooterData &shooterData)
 {
     updateData(robotData, shooterData);
-    updateShootMode(robotData.controlData, shooterData);
+    updateShootMode(robotData, shooterData);
 
     if (robotData.controlData.mode == mode_teleop_manual)
     {
@@ -400,40 +401,47 @@ double Shooter::absoluteToREV(double value){
     // can we do this based on constants? and then 
 }
 
-void Shooter::updateShootMode(const ControlData &controlData, ShooterData &shooterData) {
+void Shooter::updateShootMode(const RobotData &robotData, ShooterData &shooterData) {
     // pressing a shoot button will set the robot to be in the associated shooting mode. if you press the button again, it will toggle that shoot mode off.
 
-    if (controlData.saShooting) {
+    if (robotData.controlData.saShooting) {
         if (shooterData.shootMode == shootMode_vision) {
             shooterData.shootMode = shootMode_none;
         } else { shooterData.shootMode = shootMode_vision; }
     }
 
-    if (controlData.fenderShot) {
+    if (robotData.controlData.fenderShot) {
         if (shooterData.shootMode == shootMode_fender) {
             shooterData.shootMode = shootMode_none;
         } else { shooterData.shootMode = shootMode_fender; }
     }
 
-    if (controlData.sideWallShot) {
+    if (robotData.controlData.sideWallShot) {
         if (shooterData.shootMode == shootMode_sideWall) {
             shooterData.shootMode = shootMode_none;
         } else { shooterData.shootMode = shootMode_sideWall; }
     }
 
-    if (controlData.wallLaunchPadShot) {
+    if (robotData.controlData.wallLaunchPadShot) {
         if (shooterData.shootMode == shootMode_wallLaunchPad) {
             shooterData.shootMode = shootMode_none;
         } else { shooterData.shootMode = shootMode_wallLaunchPad; }
     }
 
-    if (controlData.cornerLaunchPadShot) {
+    if (robotData.controlData.cornerLaunchPadShot) {
         if (shooterData.shootMode == shootMode_cornerLaunchPad) {
             shooterData.shootMode = shootMode_none;
         } else { shooterData.shootMode = shootMode_cornerLaunchPad; }
     }
-}
 
-void Shooter::getAssociatedShootMode() {
+    // interpret button data to toggle between shooting unassigned as ours or opponent's
+    if (robotData.controlData.shootUnassignedAsOpponent) {
+        shooterData.shootUnassignedAsOpponent = !shooterData.shootUnassignedAsOpponent;
+    }
 
+    // shut off shooting if all balls have exited (happens once upon ball count going to zero)
+    if (robotData.indexerData.indexerContents.size() == 0 && lastTickBallCount > 0 && shooterData.shootMode != shootMode_none /* probably redundant */) {
+        shooterData.shootMode = shootMode_none;
+    }
+    lastTickBallCount = robotData.indexerData.indexerContents.size();
 }

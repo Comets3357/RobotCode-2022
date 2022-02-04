@@ -59,8 +59,8 @@ struct ControlData
     bool sideWallShot;
     bool fenderShot;
     bool hubShot;//fixed close shot to lower hub from infront of hub SEMIAUTO
-
-    bool wrongBall; //if the ball isn't our alliance color eject ball out shooter SEMIAUTO 
+    bool shootUnassignedAsOpponent = false;
+    bool wrongBall; //if the ball isn't our alliance color eject ball out shooter SEMIAUTO  DEPRECATED (using ControlData.shootUnassignedAsOpponent)
     bool mShooterWheelForward; //get flywheel running MANUAL
     bool mShooterWheelBackward; //get flywheel running backward MANUAL
     double mHood; //moves hood up or down MANUAL (axis)

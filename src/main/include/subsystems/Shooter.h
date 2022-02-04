@@ -30,6 +30,8 @@ struct ShooterData
     int targetVel;
     bool wrongBallReady;
     ShootMode shootMode = shootMode_none;
+    bool shootUnassignedAsOpponent;
+
 };
 
 class Shooter{
@@ -70,8 +72,7 @@ class Shooter{
         void fender();
         void endOfTarmac();
 
-        void updateShootMode(const ControlData &controlData, ShooterData &shooterData);
-        void getAssociatedShootMode();
+        void updateShootMode(const RobotData &robotData, ShooterData &shooterData);
 
         bool hoodZero;
         double targetHoodPos;
@@ -82,6 +83,8 @@ class Shooter{
         int tickCount;
    
         bool isHigh;
+
+        int lastTickBallCount = 0;
     
         //FLywheel Lead
         rev::CANSparkMax flyWheelLead = rev::CANSparkMax(shooterWheelLeadID, rev::CANSparkMax::MotorType::kBrushless);
