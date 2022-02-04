@@ -18,7 +18,6 @@ struct RobotData;
 struct ShooterData
 {
     bool readyShoot;
-    int targetVel;
     bool wrongBallReady;
 };
 
@@ -37,7 +36,8 @@ class Shooter{
         void manual(const RobotData &robotData, ShooterData &shooterData);
         void semiAuto(const RobotData &robotData, ShooterData &shooterData);
 
-        double convertFromABSToZeroToOne(double abs);
+        double convertFromAngleToAbs(double angle);
+        double convertFromAbsToAngle(double abs);
         double absoluteToREV(double value);
 
         void flyWheelInit();

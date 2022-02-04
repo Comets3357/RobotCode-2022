@@ -16,9 +16,6 @@ double Limelight::getHorizontalOffset()
 
 void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelightData, VisionLookup &visionLookup)
 {
-
-    std::shared_ptr<nt::NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("limelight"); //opens up the networktable
-
     //updating data
     limelightData.validTarget = table->GetNumber("tv", 0.0);
     limelightData.distanceToTarget = distanceToTarget();
@@ -29,14 +26,26 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     //x offset will need to change to adjusted value for shooter
     limelightData.correctDistance = correctDistance(limelightData.angleOffset, limelightData.distanceOffset);
 
-    limelightData.desiredHoodPos = getHoodPOS(visionLookup, limelightData);
+    limelightData.desiredHoodPos = getHoodPOS(visionLookup, limelightData); //returns an angle
+    limelightData.desiredVel = getWheelVelocity(visionLookup, limelightData);
+
+
+    limelightData.angleOffset = robotData.limelightData.angleOffset * (180 / 3.141592653589793238463);
+
+    limelightData.xOffset =  table->GetNumber("tx", 0.0);
+    limelightData.yOffset =  table->GetNumber("ty", 0.0);
+
+
+
     
     //returns offset distance and offset angle to robotdata
 
-    frc::SmartDashboard::PutNumber("limelight y offset", robotData.limelightData.yOffset);
-    frc::SmartDashboard::PutNumber("limelight x offset", robotData.limelightData.xOffset);
+    frc::SmartDashboard::PutNumber("limelight y offset", table->GetNumber("ty", 0.0));
+    frc::SmartDashboard::PutNumber("limelight x offset", table->GetNumber("tx", 0.0));
     frc::SmartDashboard::PutNumber("distance offset", robotData.limelightData.distanceOffset);
     frc::SmartDashboard::PutNumber("desired hood", robotData.limelightData.desiredHoodPos);
+
+    frc::SmartDashboard::PutNumber("final correct distance", robotData.limelightData.correctDistance);
 
     // TODO - ADD THE SHOOTER HOOD MOVING FUNCTION: setHoodPos(limelightData.desiredHoodPos); 
 }
@@ -45,6 +54,8 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
  * @return distance from limelight to target in inches
  */
 double Limelight::distanceToTarget(){ 
+    //std::shared_ptr<nt::NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("limelight");
+
     double radianAngle = table->GetNumber("ty", 0.0);
     radianAngle = (radianAngle + limelightAngle) * (3.141592653589793238463 / 180);
     return((hubHeight-limelightMount)/std::tan(radianAngle));
@@ -77,7 +88,7 @@ void Limelight::shooterOffset(const RobotData &robotData, LimelightData &limelig
     limelightData.distanceOffset = std::sqrt(std::pow(yValueOffset,2)+std::pow(xValueOffset,2));
 
     //calculate the angle between the shooter since it is different from that given by the limelight
-    limelightData.angleOffset = (1/std::sin(xValueOffset/limelightData.distanceOffset));
+    limelightData.angleOffset = (std::asin(xValueOffset/limelightData.distanceOffset));
 }
 
 /**
@@ -117,6 +128,36 @@ double Limelight::getHoodPOS(VisionLookup &visionLookup, LimelightData &limeligh
     //multiply the difference in the distance and floored value by the slope to get desired position of hood for that small distance 
     //then add that to the desired position of the lower floored value
     return desiredSlope*(orignalDistance - limelightData.lowerVal*12)+limelightData.lowerValPos;
+
+}
+
+//im sorry i know this belongs in shooter.cpp but its too much work
+double Limelight::getWheelVelocity(VisionLookup &visionLookup, LimelightData &limelightData){
+    double distance = limelightData.correctDistance;
+    double orignalDistance = distance;
+    limelightData.lowerVal = std::floor(distance/12); //lower value in ft
+    limelightData.upperVal = limelightData.lowerVal +1; //upper value in ft
+    
+    //if either of the int values are higher than the highest lookup table value,
+    //set the values to the highest lookup table value
+    if(limelightData.lowerVal > visionLookup.highestVal()){
+        limelightData.lowerVal = visionLookup.highestVal();
+    }
+
+    if(limelightData.upperVal > visionLookup.highestVal()){
+        limelightData.upperVal = visionLookup.highestVal();
+    }
+
+    //use lookup table to get the desired velocities
+    limelightData.lowerValVel = visionLookup.getVelocity(limelightData.lowerVal);
+    limelightData.upperValVel = visionLookup.getVelocity(limelightData.upperVal);
+
+    //get the slope of the line between the upper and lower values
+    double desiredSlope = (limelightData.upperValVel - limelightData.lowerValVel)/12; 
+
+    //multiply the difference in the distance and floored value by the slope to get desired velocity for that small distance 
+    //then add that to the desired position of the lower floored value
+    return desiredSlope*(orignalDistance - limelightData.lowerVal*12)+limelightData.lowerValVel;
 
 }
 

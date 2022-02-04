@@ -4,6 +4,9 @@
 
 #include <networktables/NetworkTable.h>
 #include <networktables/NetworkTableInstance.h>
+#include <networktables/NetworkTableEntry.h>
+#include <networktables/NetworkTableValue.h>
+#include <wpi/span.h>
 #include <cmath>
 #include <frc/DriverStation.h>
 #include <frc/smartdashboard/SmartDashboard.h>
@@ -25,7 +28,11 @@ struct LimelightData
     double upperValPos;
     double lowerValPos;
 
+    double lowerValVel;
+    double upperValVel;
+
     double desiredHoodPos;
+    double desiredVel;
     double distanceToTarget;
     double correctDistance;
 
@@ -50,11 +57,10 @@ private:
     double distanceToTarget();
     double correctDistance(double angleOffset, double originalDistance);
     double getHoodPOS(VisionLookup &visionLookup, LimelightData &limelightData);
+    double getWheelVelocity(VisionLookup &visionLookup, LimelightData &limelightData);
     void shooterOffset(const RobotData &robotData, LimelightData &limelightData);
 
-    std::shared_ptr<nt::NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("limelight"); //opens up the table
-
-
-
+    //std::shared_ptr<nt::NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("limelight");
+    std::shared_ptr<nt::NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("limelight");
 
 };
