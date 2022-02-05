@@ -31,9 +31,15 @@ void Climb::RobotPeriodic(const RobotData &robotData, ClimbData &climbData){
     }
 
     //if the limit switch is read, then the power is set to 0 and the encoder is set to 0
-    if (climbLimit.Get() && climbElevator.Get() <= 0){
+    if (elevatorLimit.Get() && climbElevator.Get() <= 0){
         climbElevator.Set(0);
         climbElevatorEncoder.SetPosition(0);
+    }
+
+    if (armsLimit.Get() && climbArms.Get() > 0)
+    {
+        climbArms.Set(0);
+        climbArmsEncoder.SetPosition(0);
     }
 }
 
@@ -239,4 +245,26 @@ void Climb::RunArmsAndElevatorToPos(int elevatorPos, float elevatorPower, int ar
         stage+=stageAdd;
     }
 
+}
+
+void Climb::zeroArms(float power, int stageAdd){
+    if (!armsLimit.Get()){
+        armsRunning = true;
+        climbArms.Set(abs(power));
+    } else {
+        climbArms.Set(0);
+        armsRunning = false;
+        stage += stageAdd;
+    }
+}
+
+void Climb::zeroElevator(float power, int stageAdd){
+    if (!elevatorLimit.Get()){
+        elevatorRunning = true;
+        climbElevator.Set(abs(power));
+    } else {
+        climbElevator.Set(0);
+        elevatorRunning = false;
+        stage += stageAdd;
+    }
 }

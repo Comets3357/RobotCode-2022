@@ -31,6 +31,9 @@ private:
     void cancelSequence(const RobotData &robotData, ClimbData &climbData);
     void runSequence(const RobotData &robotData, ClimbData &climbData);
 
+    void zeroArms(float power, int stageAdd);
+    void zeroElevator(float power, int stageAdd);
+
     int stage = 0;
 
     bool climbInitiating = false;
@@ -65,7 +68,8 @@ private:
     rev::SparkMaxPIDController climbArms_pidController = climbArms.GetPIDController();
 
     //zeroing sensor
-    rev::SparkMaxLimitSwitch climbLimit = climbElevator.GetForwardLimitSwitch(rev::CANDigitalInput::LimitSwitchPolarity::kNormallyOpen);
+    rev::SparkMaxLimitSwitch elevatorLimit = climbElevator.GetForwardLimitSwitch(rev::CANDigitalInput::LimitSwitchPolarity::kNormallyOpen);
+    rev::SparkMaxLimitSwitch armsLimit = climbArms.GetForwardLimitSwitch(rev::CANDigitalInput::LimitSwitchPolarity::kNormallyOpen);
 
 
 };
