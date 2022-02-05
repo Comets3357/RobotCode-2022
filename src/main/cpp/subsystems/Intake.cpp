@@ -52,6 +52,7 @@ void Intake::RobotPeriodic(const RobotData &robotData, IntakeData &intakeData)
 
     if (robotData.controlData.mode == mode_teleop_manual)
     {
+        //checks to see if the intake is down when switched to manual mode, and if it is bring it up before manual functionality 
         if(!zeroedIntake){
             intakePivot_pidController.SetReference(0.1, rev::CANSparkMaxLowLevel::ControlType::kPosition, 1);
             if(intakePivotEncoder.GetPosition() < 0.5){
@@ -69,6 +70,7 @@ void Intake::RobotPeriodic(const RobotData &robotData, IntakeData &intakeData)
         semiAuto(robotData, intakeData);
     }
 
+    //if anything is broken or not working, reset the motor and it's init functions
     if(intakeRollers.GetFault(rev::CANSparkMax::FaultID::kHasReset)||intakeRollers.GetFault(rev::CANSparkMax::FaultID::kMotorFault)|intakeRollers.GetFault(rev::CANSparkMax::FaultID::kBrownout)){
         rollersInit();
     }
@@ -81,9 +83,10 @@ void Intake::RobotPeriodic(const RobotData &robotData, IntakeData &intakeData)
 }
 
 void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
-    // if(intakePivotEncoder.GetPosition() > 0.5){
-    //     zeroedIntake = false;
-    // }
+    //used to check if the intake is up or down
+    if(intakePivotEncoder.GetPosition() > 0.5){
+        zeroedIntake = false;
+    }
 
     if(intakePivotEncoder2.GetOutput() > 0.03){ //checks to see if the encoder is reading zero because if it is that means the encoder was most likley unplugged and the current values are wrong and we don't want to run any motors
         //constantly updates the intake rev encoder based on the absolute encoder values 
@@ -100,6 +103,7 @@ void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
         // intakePivot.Set(0);
     }  
 
+//INTAKE FUNCTIONALITY
     if (robotData.controlData.saIntake) //you are intaking
     {
         // pivot down
@@ -126,20 +130,21 @@ void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
     }
     else //default case, everything up and not running
     {
-        if(!intakeData.intakeIdle){ // run the singulator while the intake is not idle
+        if(!intakeData.intakeIdle){ // run the singulator while the intake is not idle (basically run it for a second after the intake stops)
             intakeSingulator.Set(singulatorSpeed);
         }else{
             intakeSingulator.Set(0);
         }
 
+        //bring up the intake
         intakePivot_pidController.SetReference(0.1, rev::CANSparkMaxLowLevel::ControlType::kPosition, 0);
         intakeRollers.Set(0);
     }
 }
 
+
 void Intake::manual(const RobotData &robotData, IntakeData &intakeData){
     //intake extended
-    // intakePivot.Set(robotData.controllerData.sLYStick);
     if(robotData.controlData.mIntakeUp){
         intakePivot.Set(-intakePivotSpeed);
     //intake retracted
@@ -161,10 +166,6 @@ void Intake::manual(const RobotData &robotData, IntakeData &intakeData){
     //no intake rollers running
     }else{
         intakeRollers.Set(0);
-    }
-    
-    if(robotData.controlData.mZeroHood){
-        intakePivotEncoder.SetPosition(0);
     }
 
 }
@@ -196,8 +197,6 @@ void Intake::updateData(const RobotData &robotData, IntakeData &intakeData)
 }
 
 bool Intake::intakeIdle(const RobotData &robotData, IntakeData &intakeData){
-
-
     if (robotData.controlData.saIntake || robotData.controlData.saIntakeBackward){
         // if something is commanding the intake then idle count is 25
         idleCount = 50;
@@ -211,9 +210,9 @@ bool Intake::intakeIdle(const RobotData &robotData, IntakeData &intakeData){
 
 }
 
+//converts the intake from absolute values to values the rev can read
 double Intake::absoluteToREV(double value){
     double slope = (revOut - revIn)/(absOut - absIn);
     double b = revIn - (slope*absIn);
     return ((value*slope) + b);
-    //return (value*-121+74.8);
 }

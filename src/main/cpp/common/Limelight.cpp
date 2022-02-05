@@ -7,7 +7,7 @@ void Limelight::RobotInit(const RobotData &robotData)
 }
 
 /**
- * @return vertical offset angle from limelight
+ * @return horizontal offset angle from limelight
  */
 double Limelight::getHorizontalOffset()
 {
@@ -19,35 +19,29 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     //updating data
     limelightData.validTarget = table->GetNumber("tv", 0.0);
     limelightData.distanceToTarget = distanceToTarget();
-
-    //moves the limelight data over to the actual position of the shooter
-    shooterOffset(robotData, limelightData);
-
-    //x offset will need to change to adjusted value for shooter
-    limelightData.correctDistance = correctDistance(limelightData.angleOffset, limelightData.distanceOffset);
-
-    limelightData.desiredHoodPos = getHoodPOS(visionLookup, limelightData); //returns an angle
-    limelightData.desiredVel = getWheelVelocity(visionLookup, limelightData);
-
-
-    limelightData.angleOffset = robotData.limelightData.angleOffset * (180 / 3.141592653589793238463);
-
     limelightData.xOffset =  table->GetNumber("tx", 0.0);
     limelightData.yOffset =  table->GetNumber("ty", 0.0);
 
-
-
+    //moves the limelight data over to the actual position of the shooter
+    shooterOffset(robotData, limelightData);
     
-    //returns offset distance and offset angle to robotdata
+    //updates the angle to be in degrees rather than radians
+    limelightData.angleOffset = robotData.limelightData.angleOffset * (180 / 3.141592653589793238463);
 
+    //the actual distance from the hub based on the turning of the drivebase
+    //THIS IS THE FINAL DISTANCE RECORDED
+    limelightData.correctDistance = correctDistance(limelightData.angleOffset, limelightData.distanceOffset);
+
+    //the desired hood and velocity for shooting from anywhere
+    limelightData.desiredHoodPos = getHoodPOS(visionLookup, limelightData); //returns an angle
+    limelightData.desiredVel = getWheelVelocity(visionLookup, limelightData); //returns rpm
+    
+    //printing data to the dashboard
     frc::SmartDashboard::PutNumber("limelight y offset", table->GetNumber("ty", 0.0));
     frc::SmartDashboard::PutNumber("limelight x offset", table->GetNumber("tx", 0.0));
     frc::SmartDashboard::PutNumber("distance offset", robotData.limelightData.distanceOffset);
     frc::SmartDashboard::PutNumber("desired hood", robotData.limelightData.desiredHoodPos);
-
     frc::SmartDashboard::PutNumber("final correct distance", robotData.limelightData.correctDistance);
-
-    // TODO - ADD THE SHOOTER HOOD MOVING FUNCTION: setHoodPos(limelightData.desiredHoodPos); 
 }
 
 /**
@@ -131,7 +125,10 @@ double Limelight::getHoodPOS(VisionLookup &visionLookup, LimelightData &limeligh
 
 }
 
-//im sorry i know this belongs in shooter.cpp but its too much work
+/**
+ * @return the desired flywheel velocity using lookup table
+ * im sorry i know this belongs in shooter.cpp but its too much work
+ */
 double Limelight::getWheelVelocity(VisionLookup &visionLookup, LimelightData &limelightData){
     double distance = limelightData.correctDistance;
     double orignalDistance = distance;
