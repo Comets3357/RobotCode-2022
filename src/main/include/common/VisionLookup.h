@@ -19,7 +19,7 @@ class VisionLookup
         double getVelocity(double key);
 
         double highestVal();
-
+        double highestVelocity();
         
         // Declaring umap to be of <double, double> type
         // key will be of double type and mapped value will

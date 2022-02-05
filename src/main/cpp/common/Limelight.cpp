@@ -140,12 +140,12 @@ double Limelight::getWheelVelocity(VisionLookup &visionLookup, LimelightData &li
     
     //if either of the int values are higher than the highest lookup table value,
     //set the values to the highest lookup table value
-    if(limelightData.lowerVal > visionLookup.highestVal()){
-        limelightData.lowerVal = visionLookup.highestVal();
+    if(limelightData.lowerVal > visionLookup.highestVelocity()){
+        limelightData.lowerVal = visionLookup.highestVelocity();
     }
 
-    if(limelightData.upperVal > visionLookup.highestVal()){
-        limelightData.upperVal = visionLookup.highestVal();
+    if(limelightData.upperVal > visionLookup.highestVelocity()){
+        limelightData.upperVal = visionLookup.highestVelocity();
     }
 
     //use lookup table to get the desired velocities
