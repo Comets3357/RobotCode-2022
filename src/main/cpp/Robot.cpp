@@ -4,7 +4,6 @@ void Robot::RobotInit()
 {
     timer.RobotInit(robotData.timerData);
     gyro.RobotInit();
-    limelight.RobotInit(robotData);
 
 
     drivebase.RobotInit();
@@ -20,7 +19,6 @@ void Robot::RobotPeriodic()
     gyro.RobotPeriodic(robotData.gyroData);
 
     colorSensor.RobotPeriodic(robotData);
-    visionLookup.RobotPeriodic(robotData, robotData.visionLookupData);
 
 
     if (IsEnabled())
