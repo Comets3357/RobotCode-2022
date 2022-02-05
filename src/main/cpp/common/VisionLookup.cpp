@@ -60,4 +60,14 @@ double VisionLookup::highestVal(){
     return highest;
 }
 
+double VisionLookup::highestVelocity(){
+    double highest = 0;
+    for (auto x : velocityMap){
+        if(x.first > highest){
+            highest = x.first;
+        }
+    }
+    return highest;
+}
+
 
