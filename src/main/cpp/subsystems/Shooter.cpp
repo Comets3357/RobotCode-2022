@@ -118,9 +118,11 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
     if(shooterData.shootMode == shootMode_vision){ // Aiming SHOOTING with limelight// Aiming SHOOTING with limelight
         flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
         shooterHood_pidController.SetReference(absoluteToREV(convertFromAngleToAbs(robotData.limelightData.desiredHoodPos)), rev::CANSparkMaxLowLevel::ControlType::kPosition);
-        
+        //flyWheelLead_pidController.SetReference(1450, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
+
         //once it's a high enough velocity its ready for indexer to run
-        if (getWheelVel() > (robotData.limelightData.desiredVel - 50))
+        if (getWheelVel() > (robotData.limelightData.desiredVel - 40))
+        //if (getWheelVel() > 1400)
         {
             shooterData.readyShoot = true;
         }
@@ -183,11 +185,11 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
         flyWheelLead.Set(0);
 
         //if the hood is too far out bring it in then stop the hood from running 
-        if(shooterHoodEncoderRev.GetPosition() < -3){
-            shooterHood_pidController.SetReference(-2,rev::CANSparkMaxLowLevel::ControlType::kPosition);
-        }else{
-            shooterHood.Set(0);
-        }
+        // if(shooterHoodEncoderRev.GetPosition() < -3){
+        //     shooterHood_pidController.SetReference(-2,rev::CANSparkMaxLowLevel::ControlType::kPosition);
+        // }else{
+        //     shooterHood.Set(0);
+        // }
 
     }
     

@@ -13,6 +13,10 @@ void VisionLookup::RobotInit() {}
 void VisionLookup::RobotPeriodic(const RobotData &robotData, VisionLookupData &visionLookupData)
 {
     // inserting values by using [] operator
+    visionMap[4] = 25.3;
+    visionMap[5] = 27.3;
+    visionMap[6] = 28.8;
+    visionMap[7] = 30.6;
     visionMap[8] = 31.9;
     visionMap[9] = 34.7;
     visionMap[10] = 35.1;
@@ -20,8 +24,16 @@ void VisionLookup::RobotPeriodic(const RobotData &robotData, VisionLookupData &v
     visionMap[12] = 37.7;
     visionMap[13] = 39;
     visionMap[14] = 39.4;
+    // visionMap[15] = ;
+    // visionMap[16] = ;
+    // visionMap[17] = ;
+    // visionMap[18] = ;
 
     // velocity map
+    velocityMap[4] = 1450;
+    velocityMap[5] = 1500;
+    velocityMap[6] = 1600;
+    velocityMap[7] = 1650;
     velocityMap[8] = 1750;
     velocityMap[9] = 1750;
     velocityMap[10] = 1775;
