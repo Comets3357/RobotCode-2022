@@ -13,6 +13,10 @@ void VisionLookup::RobotInit() {}
 void VisionLookup::RobotPeriodic(const RobotData &robotData, VisionLookupData &visionLookupData)
 {
     // inserting values by using [] operator
+
+    // hood angle map
+    // key is the distance in feet
+    // assigned value is the hood position in angle measurment(degrees)
     visionMap[4] = 25.3;
     visionMap[5] = 27.3;
     visionMap[6] = 28.8;
@@ -30,6 +34,8 @@ void VisionLookup::RobotPeriodic(const RobotData &robotData, VisionLookupData &v
     // visionMap[18] = ;
 
     // velocity map
+    // key is the distance in feet
+    // assigned value is the desired flywheel velocity in rpm
     velocityMap[4] = 1450;
     velocityMap[5] = 1500;
     velocityMap[6] = 1600;
@@ -44,6 +50,10 @@ void VisionLookup::RobotPeriodic(const RobotData &robotData, VisionLookupData &v
     velocityMap[15] = 2300;
 }
 
+/**
+ * @param key the distance from the hub
+ * @return the hood angle at the asked for distance 
+ **/
 double VisionLookup::getValue(double key){
 
     std::unordered_map<double,double>::const_iterator got = visionMap.find(key);
@@ -53,6 +63,10 @@ double VisionLookup::getValue(double key){
         return got->second;
 }
 
+/**
+ * @param key the distance from the hub
+ * @return the desired velocity at the asked for distance 
+ **/
 double VisionLookup::getVelocity(double key){
     std::unordered_map<double,double>::const_iterator got = velocityMap.find(key);
     if (got == velocityMap.end())
@@ -62,6 +76,9 @@ double VisionLookup::getVelocity(double key){
 
 }
 
+/**
+ * @return the greatest distance from the hood map
+ **/
 double VisionLookup::highestVal(){
     double highest = 0;
     for (auto x : visionMap){
@@ -72,6 +89,9 @@ double VisionLookup::highestVal(){
     return highest;
 }
 
+/**
+ * @return the greatest distance from the velocity map
+ **/
 double VisionLookup::highestVelocity(){
     double highest = 0;
     for (auto x : velocityMap){

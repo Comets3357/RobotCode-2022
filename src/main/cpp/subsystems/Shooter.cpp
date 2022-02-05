@@ -25,6 +25,7 @@ void Shooter::shooterHoodInit()
     shooterHood.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
     shooterHood.SetSmartCurrentLimit(15);
 
+    //PIDS
     shooterHood_pidController.SetP(0.27);
     shooterHood_pidController.SetI(0);
     shooterHood_pidController.SetD(0);
@@ -51,6 +52,7 @@ void Shooter::flyWheelInit()
 
     readyShootLimit = 1200;
 
+    //PIDS
     flyWheelLead_pidController.SetP(0.0004);
     flyWheelLead_pidController.SetI(0);
     flyWheelLead_pidController.SetD(0);
@@ -96,8 +98,6 @@ void Shooter::RobotPeriodic(const RobotData &robotData, ShooterData &shooterData
 
 void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
 
-    //idk about this control data stuff to figure out
-
     //checks if encoder is functioning, if it is constantly update rev encoder, otherwise don't
     if(shooterHoodEncoderAbs.GetOutput() > 0.03)
     {
@@ -115,14 +115,14 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
     }
 
     //all the shooting logic
-    if(shooterData.shootMode == shootMode_vision){ // Aiming SHOOTING with limelight// Aiming SHOOTING with limelight
+    if(shooterData.shootMode == shootMode_vision){ // Aiming SHOOTING with limelight
+
+        //set the hood and flywheel using pids to the desired values based off the limelight code
         flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
         shooterHood_pidController.SetReference(absoluteToREV(convertFromAngleToAbs(robotData.limelightData.desiredHoodPos)), rev::CANSparkMaxLowLevel::ControlType::kPosition);
-        //flyWheelLead_pidController.SetReference(1450, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
 
         //once it's a high enough velocity its ready for indexer to run
         if (getWheelVel() > (robotData.limelightData.desiredVel - 40))
-        //if (getWheelVel() > 1400)
         {
             shooterData.readyShoot = true;
         }
@@ -131,6 +131,7 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
             shooterData.readyShoot = false;
         }
 
+//FIXED SHOTS 
     }else if(shooterData.shootMode == shootMode_cornerLaunchPad){ //FROM THE CLOSER LAUNCH PAD
         innerLaunch();
         if ((getWheelVel() > readyShootLimit) /**&& (std::abs(getHoodPos() + 38) <= 1)**/) //dont know why but it wasnt working so commented it out
@@ -185,11 +186,11 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
         flyWheelLead.Set(0);
 
         //if the hood is too far out bring it in then stop the hood from running 
-        // if(shooterHoodEncoderRev.GetPosition() < -3){
-        //     shooterHood_pidController.SetReference(-2,rev::CANSparkMaxLowLevel::ControlType::kPosition);
-        // }else{
-        //     shooterHood.Set(0);
-        // }
+        if(shooterHoodEncoderRev.GetPosition() < -3){
+            shooterHood_pidController.SetReference(-2,rev::CANSparkMaxLowLevel::ControlType::kPosition);
+        }else{
+            shooterHood.Set(0);
+        }
 
     }
     
@@ -236,6 +237,7 @@ void Shooter::updateData(const RobotData &robotData, ShooterData &shooterData)
     frc::SmartDashboard::PutBoolean("saShooting", robotData.controlData.saShooting);
 
 }
+
 /**
  * ---------------------------------------------------------------------------------------------------------------------------------------------------
  * COMMON FUNCTIONS
@@ -245,6 +247,9 @@ double Shooter::getWheelVel(){
     return flyWheelLeadEncoder.GetVelocity();
 }
 
+/**
+ * @return converts shooter hood encoder values from angles (degrees) to the values of the absolute encoder
+ **/
 double Shooter::convertFromAngleToAbs(double angle)
 {
     double slope = (hoodabsOut - hoodabsIn)/(hoodAngleOut - hoodAngleIn);
@@ -252,6 +257,9 @@ double Shooter::convertFromAngleToAbs(double angle)
     return ((angle*slope) + b);
 }
 
+/**
+ * @return converts from the absolute encoder values to angles (degrees)
+ **/
 double Shooter::convertFromAbsToAngle(double abs)
 {
     double slope = (hoodAngleOut - hoodAngleIn)/(hoodabsOut - hoodabsIn);
@@ -272,7 +280,7 @@ double Shooter::absoluteToREV(double value){
 
 /**
  * ---------------------------------------------------------------------------------------------------------------------------------------------------
- * FIXED SHOTS FOR BOTH HIGHER AND LOWER
+ * FIXED SHOTS FOR BOTH HIGHER AND LOWER currently only higher
  * ---------------------------------------------------------------------------------------------------------------------------------------------------
  * */
 void Shooter::outerLaunch()
@@ -358,6 +366,13 @@ void Shooter::endOfTarmac()
         readyShootLimit = 1450;
     }
 }
+
+
+/**
+ * ---------------------------------------------------------------------------------------------------------------------------------------------------
+ * CONTROL DATA CONTROLS AND FUNCTIONALITY toggling
+ * ---------------------------------------------------------------------------------------------------------------------------------------------------
+ * */
 
 //toggles if shooting to high hub based on controller data
 void Shooter::setHighHub()

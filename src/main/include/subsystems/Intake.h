@@ -61,13 +61,15 @@ private:
     rev::SparkMaxRelativeEncoder intakeRollersEncoder = intakeRollers.GetEncoder();
 
     rev::CANSparkMax intakePivot = rev::CANSparkMax(intakePivotID, rev::CANSparkMax::MotorType::kBrushless);
+    //THIS IS THE REV ENCODER
     rev::SparkMaxRelativeEncoder intakePivotEncoder = intakePivot.GetEncoder();
     rev::SparkMaxPIDController intakePivot_pidController = intakePivot.GetPIDController();
 
     rev::CANSparkMax intakeSingulator = rev::CANSparkMax(intakeSingulatorID, rev::CANSparkMax::MotorType::kBrushless);
     rev::SparkMaxRelativeEncoder intakeSingulatorEncoder = intakeSingulator.GetEncoder();
 
-    frc::DigitalInput m_input{intakeAbsoluteEncoderPort};         // Input channel
+    frc::DigitalInput m_input{intakeAbsoluteEncoderPort};
+    //THIS IS THE ABSOLUTE ENCODER
     frc::DutyCycle intakePivotEncoder2 = frc::DutyCycle{m_input};
 
 };
