@@ -35,7 +35,9 @@ static const double
     hoodabsOut = 0.043,
     hoodabsIn = 0.742,
     hoodrevOut = -39,
-    hoodrevIn = 0;
+    hoodrevIn = 0,
+    hoodAngleOut = 39.9,
+    hoodAngleIn = 25;
 
 //shooter PID constants:
 static const double
@@ -49,8 +51,8 @@ static const int
 //limelight:
 static const double
     hubHeight = 104,
-    limelightMount = 37,
-    limelightAngle = 37.75,
+    limelightMount = 36.5,
+    limelightAngle = 36.3,
     xcameraDistanceFromBot = 3.0625,
     ycameraDistanceFromBot = 9.5,
     shooterDistanceFromCenterOfBot = 2;

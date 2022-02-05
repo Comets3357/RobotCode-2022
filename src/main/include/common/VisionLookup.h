@@ -16,12 +16,18 @@ class VisionLookup
         void RobotInit();
         void RobotPeriodic(const RobotData &robotData, VisionLookupData &visionLookupData);
         double getValue(double key);
+        double getVelocity(double key);
+
         double highestVal();
+
         
         // Declaring umap to be of <double, double> type
         // key will be of double type and mapped value will
         // be of double type
         unordered_map<double, double> visionMap;
+
+        unordered_map<double, double> velocityMap;
+
 
         
     private:
