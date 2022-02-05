@@ -170,37 +170,37 @@ void Drivebase::teleopControl(const RobotData &robotData)
 {
     
 
-    double tempLDrive = robotData.controlData.lDrive;
-    double tempRDrive = robotData.controlData.rDrive;
+    // double tempLDrive = robotData.controlData.lDrive;
+    // double tempRDrive = robotData.controlData.rDrive;
 
-    // converts from tank to arcade drive, limits the difference between left and right drive
-    double frontBack = robotData.controlData.maxStraight * (tempLDrive + tempRDrive) / 2;
-    double leftRight = robotData.controlData.maxTurn * (tempRDrive - tempLDrive) / 2;
+    // // converts from tank to arcade drive, limits the difference between left and right drive
+    // double frontBack = robotData.controlData.maxStraight * (tempLDrive + tempRDrive) / 2;
+    // double leftRight = robotData.controlData.maxTurn * (tempRDrive - tempLDrive) / 2;
 
-    //deadzone NOT needed for drone controller
-    if (tempLDrive <= -0.08 || tempLDrive >= 0.08)
-    {
-        tempLDrive = (frontBack - leftRight);
-    }
-    else
-    {
-        tempLDrive = 0;
-    }
+    // //deadzone NOT needed for drone controller
+    // if (tempLDrive <= -0.08 || tempLDrive >= 0.08)
+    // {
+    //     tempLDrive = (frontBack - leftRight);
+    // }
+    // else
+    // {
+    //     tempLDrive = 0;
+    // }
 
-    if (tempRDrive <= -0.08 || tempRDrive >= 0.08)
-    {
-        tempRDrive = (frontBack + leftRight);
-    }
-    else
-    {
-        tempRDrive = 0;
-    }
+    // if (tempRDrive <= -0.08 || tempRDrive >= 0.08)
+    // {
+    //     tempRDrive = (frontBack + leftRight);
+    // }
+    // else
+    // {
+    //     tempRDrive = 0;
+    // }
 
-    //set as percent vbus
-    setPercentOutput(tempLDrive, tempRDrive);
+    // //set as percent vbus
+    // setPercentOutput(tempLDrive, tempRDrive);
 
 
-    // turnInPlace(180 - robotData.gyroData.rawYaw);
+    turnInPlaceTeleop(180 - robotData.gyroData.rawYaw, robotData);
 }
 
 void Drivebase::autonControl(const RobotData &robotData, DrivebaseData &drivebaseData, AutonData &autonData) {
@@ -567,6 +567,38 @@ void Drivebase::turnInPlaceAuton(double degrees, const RobotData &robotData, Dri
         setPercentOutput(0, 0);
         getTrajectoryFile(robotData, drivebaseData, autonData);
         frc::SmartDashboard::PutString("AUTON", "TURN IN PLACE");
+    } else {
+        leftOutput = std::pow(std::abs(degrees / 361), 1) + 0.07;
+        rightOutput = std::pow(std::abs(degrees / 361), 1) + 0.07;
+
+    }
+    
+
+    frc::SmartDashboard::PutNumber("leftOutput", leftOutput);
+    frc::SmartDashboard::PutNumber("rightOutput", rightOutput);
+    
+    setPercentOutput(leftOutput * (-directionFactor), rightOutput * (directionFactor));
+}
+
+void Drivebase::turnInPlaceTeleop(double degrees, const RobotData &robotData) {
+    frc::SmartDashboard::PutNumber("degree diff", degrees);
+    
+    lastDegrees.push_back(degrees);
+    if (lastDegrees.size() > 5) {
+        lastDegrees.pop_front();
+    }
+
+    double leftOutput = 0;
+    double rightOutput = 0;
+
+    int directionFactor = 1;
+    if (degrees <= 0) {
+        directionFactor = -1;
+    }
+
+    if (allValuesWithin(lastDegrees, 1)) {
+        setPercentOutput(0, 0);
+        frc::SmartDashboard::PutString("TELEOP", "TURN IN PLACE");
     } else {
         leftOutput = std::pow(std::abs(degrees / 361), 1) + 0.07;
         rightOutput = std::pow(std::abs(degrees / 361), 1) + 0.07;
