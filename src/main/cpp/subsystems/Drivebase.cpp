@@ -64,7 +64,10 @@ void Drivebase::RobotInit()
 }
 
 void Drivebase::TeleopInit(const RobotData &robotData) {
-    resetOdometry(0, 0, 1, 0, robotData);
+    if (!odometryInitialized) {
+        resetOdometry(robotData.autonData.startPoint, robotData.gyroData.rawYaw);
+        odometryInitialized = true;
+    }
 }
 
 void Drivebase::AutonomousInit(const RobotData &robotData, DrivebaseData &drivebaseData, AutonData &autonData) {
@@ -116,6 +119,8 @@ void Drivebase::RobotPeriodic(const RobotData &robotData, DrivebaseData &driveba
     }
 
     frc::SmartDashboard::PutNumber("driveMode", drivebaseData.driveMode);
+
+    frc::SmartDashboard::PutBoolean("odometryInitialized", odometryInitialized);
 }
 
 void Drivebase::DisabledInit()
@@ -126,6 +131,7 @@ void Drivebase::DisabledInit()
     dbLF.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
     dbR.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
     dbRF.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
+    odometryInitialized = false;
 }
 
 // updates encoder and gyro values
@@ -335,11 +341,11 @@ void Drivebase::updateOdometry(const RobotData &robotData, DrivebaseData &driveb
  * @param pose position to reset odometry to (Pose2d)
  * @param resetAngle angle to reset odometry to (degrees, double)
  */
-void Drivebase::resetOdometry(const frc::Pose2d &pose, double resetAngle) {
-    const units::radian_t resetRadians{resetAngle};
-    frc::Rotation2d resetRotation{resetRadians};
+void Drivebase::resetOdometry(const frc::Pose2d &pose, double gyroAngle) {
+    const units::radian_t gyroRadians{gyroAngle};
+    frc::Rotation2d gyroRotation{gyroRadians};
 
-    odometry.ResetPosition(pose, kZeroAngle);
+    odometry.ResetPosition(pose, gyroRotation);
     zeroEncoders();
 }
 

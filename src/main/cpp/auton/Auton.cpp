@@ -22,7 +22,7 @@ void Auton::AutonomousInit(AutonData &autonData)
     // because getTrajectoryFile() steps autonStep
 
     // CHANGE THIS STRING AT THE END OF THE PATH TO CHANGE ROUTINE SELECTION
-    fs::path autonDirectory = deployDirectory / "Autos" / "hangarFourBall";
+    fs::path autonDirectory = deployDirectory / "Autos" / "potato";
     frc::SmartDashboard::PutString("autonDiredctory", autonDirectory.string());
 
     // std::vector<std::string> pathGroup;
@@ -76,7 +76,8 @@ void Auton::sendAutonSelectionChooser() {
 
 void Auton::sendStartPointChooser() {
     startPointChooser.AddOption("(0, 0), 0 deg", getPose(0, 0, 0));
-    frc::SmartDashboard::PutData("Select Start Point:", &autonChooser);
+    startPointChooser.AddOption("(3, 1), 90 deg", getPose(3, 1, 90));
+    frc::SmartDashboard::PutData("Select Start Point:", &startPointChooser);
 }
 
 frc::Pose2d Auton::getPose(double x, double y, double deg) {
