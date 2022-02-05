@@ -15,20 +15,12 @@
 
 struct RobotData;
 
-enum AutonSelect
-{
-    autonSelect_potato,
-    autonSelect_driveStraight,
-    autonSelect_intakeAlternate,
-};
-
 struct AutonData
 {
-    AutonSelect autonSelect = autonSelect_potato;
+    std::string autonRoutineName;
     frc::Trajectory trajectory;
-    int autonStep = -1; // starts at -1 because getTrajectoryFile() increments
+    int autonStep = -1; // starts at -1 because getNextTrajectoryStep() increments
     std::vector<std::string> pathGroup;
-    frc::Pose2d startPoint;
 };
 
 class Auton
@@ -40,12 +32,11 @@ public:
     void DisabledInit();
 private:
     void sendAutonSelectionChooser();
-    void sendStartPointChooser();
-    void potato(const RobotData &robotData, ControllerData &controllerData);
-    void driveStraight(const RobotData &robotData, ControllerData &controllerData);
-    void intakeAlternate(const RobotData &robotData, ControllerData &controllerData);
-    frc::Pose2d getPose(double x, double y, double deg);
 
-    frc::SendableChooser<AutonSelect> autonChooser;
-    frc::SendableChooser<frc::Pose2d> startPointChooser;
+    frc::SendableChooser<std::string> autonChooser;
+
+    // auton routine secondary control functions:
+    void potato(const RobotData &robotData, ControllerData &controllerData);
+
+    frc::Pose2d getPose(double x, double y, double deg);
 };
