@@ -5,6 +5,7 @@ void Robot::RobotInit()
     timer.RobotInit(robotData.timerData);
     gyro.RobotInit();
 
+
     drivebase.RobotInit();
     intake.RobotInit();
     indexer.RobotInit();
@@ -16,8 +17,9 @@ void Robot::RobotPeriodic()
 {
     timer.RobotPeriodic(robotData.timerData);
     gyro.RobotPeriodic(robotData.gyroData);
-    limelight.RobotPeriodic(robotData, robotData.limelightData);
+
     colorSensor.RobotPeriodic(robotData);
+
 
     if (IsEnabled())
     {
@@ -28,8 +30,6 @@ void Robot::RobotPeriodic()
         shooter.RobotPeriodic(robotData, robotData.shooterData);
         climb.RobotPeriodic(robotData, robotData.climbData);
     }
-
-    frc::SmartDashboard::PutBoolean("manual mode", robotData.controlData.manualMode);
 }
 
 void Robot::AutonomousInit() {}
@@ -47,6 +47,7 @@ void Robot::TeleopPeriodic()
 void Robot::DisabledInit()
 {
     timer.DisabledInit();
+
     drivebase.DisabledInit();
     intake.DisabledInit();
     indexer.DisabledInit();
@@ -54,7 +55,10 @@ void Robot::DisabledInit()
     climb.DisabledInit();
 }
 
-void Robot::DisabledPeriodic() {}
+void Robot::DisabledPeriodic() 
+{
+
+}
 void Robot::TestInit() {}
 void Robot::TestPeriodic() {}
 
