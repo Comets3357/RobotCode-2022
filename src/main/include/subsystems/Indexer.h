@@ -24,6 +24,7 @@ struct IndexerData
 {
     std::deque<Cargo> indexerContents;
     bool wrongBall = false;
+  
 };
 
 
@@ -34,12 +35,13 @@ public:
     void RobotInit();
     void RobotPeriodic(const RobotData &robotData, IndexerData &indexerData);
     void DisabledInit();
+    void updateData(const RobotData &robotData, IndexerData &indexerData);
 
 private:
-    void updateData(const RobotData &robotData, IndexerData &indexerData);
     void manual(const RobotData &robotData, IndexerData &indexerData);
     void semiAuto(const RobotData &robotData, IndexerData &indexerData);
     void testControl(const RobotData &robotData);
+    void debuggingStuff(const RobotData &robotData, IndexerData &indexerData);
 
     void indexerBeltInit();
     void indexerWheelInit();
@@ -77,10 +79,12 @@ private:
     int bottomDebounceCount = 0;
     int topDebounceCount = 0;
 
-    const double indexerWheelSpeed = 0.5;
+    bool runWheel = false; // checks if one ball has left shooter so that you can run the wheel and get the other ball out
+
+    const double indexerWheelSpeed = 0.3;
     const double indexerBeltSpeed = 0.8;
-    const double saIndexerWheelIntakeSpeed = 0.2;
-    const double saIndexerBeltIntakeSpeed = 0.4;
+    const double saIndexerWheelIntakeSpeed = 0.3;
+    const double saIndexerBeltIntakeSpeed = 0.8;
 
     // ColorSensor colorSensor{}; //rev v3, for detecting ball color
 

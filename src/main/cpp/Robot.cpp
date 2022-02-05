@@ -9,7 +9,7 @@ void Robot::RobotInit()
     drivebase.RobotInit();
     intake.RobotInit();
     indexer.RobotInit();
-    shooter.RobotInit();
+    shooter.RobotInit(robotData.shooterData);
     climb.RobotInit();
 }
 
@@ -59,6 +59,7 @@ void Robot::DisabledPeriodic()
 {
     shooter.updateData(robotData, robotData.shooterData);
     intake.updateData(robotData, robotData.intakeData);
+    indexer.updateData(robotData, robotData.indexerData);
 }
 void Robot::TestInit() {}
 void Robot::TestPeriodic() {}

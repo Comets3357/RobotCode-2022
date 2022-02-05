@@ -93,16 +93,21 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
 
     controlData.saEjectBalls = controllerData.sABtn && !controlData.shift/*  && (controlData.mode == mode_teleop_sa) */;
 
-    controlData.saShooting = controllerData.sXBtn && !controlData.shift/* && (controlData.mode == mode_teleop_sa) */;
+    controlData.saShooting = controllerData.sXBtnToggled && !controlData.shift/* && (controlData.mode == mode_teleop_sa) */;
     controlData.saFinalShoot = controllerData.sYBtn && !controlData.shift/* && (controlData.mode == mode_teleop_sa); */;
 
     // secondary y to set readyshoot to true in testing
 
-    controlData.upperHubShot = controllerData.sRBumperToggled/*  && (controlData.mode == mode_teleop_sa) */;
-    controlData.fenderShot = controllerData.sABtn && controlData.shift /* && (controlData.mode == mode_teleop_sa) */;
-    controlData.sideWallShot = controllerData.sBBtn && controlData.shift/*  && (controlData.mode == mode_teleop_sa) */;
-    controlData.wallLaunchPadShot = controllerData.sXBtn && controlData.shift/*  && (controlData.mode == mode_teleop_sa) */;
-    controlData.cornerLaunchPadShot = controllerData.sYBtn && controlData.shift /* && (controlData.mode == mode_teleop_sa) */;
+    if (controllerData.sRBumperToggled) {
+        controlData.upperHubShot = !controlData.upperHubShot;
+    }
+    if (controllerData.sBBtnToggled) {
+        controlData.shootUnassignedAsOpponent = !controlData.shootUnassignedAsOpponent;
+    }
+    controlData.fenderShot = controllerData.sABtnToggled && controlData.shift /* && (controlData.mode == mode_teleop_sa) */;
+    controlData.sideWallShot = controllerData.sBBtnToggled && controlData.shift/*  && (controlData.mode == mode_teleop_sa) */;
+    controlData.wallLaunchPadShot = controllerData.sXBtnToggled && controlData.shift/*  && (controlData.mode == mode_teleop_sa) */;
+    controlData.cornerLaunchPadShot = controllerData.sYBtnToggled && controlData.shift /* && (controlData.mode == mode_teleop_sa) */;
     //controlData.hubShot = controllerData.sLCenterBtn; // DEPRECATED -brian
 
     

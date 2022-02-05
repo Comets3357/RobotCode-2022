@@ -4,7 +4,7 @@
  * CLASS SPECIFIC INITS
  * ---------------------------------------------------------------------------------------------------------------------------------------------------
  * */
-void Shooter::RobotInit()
+void Shooter::RobotInit(ShooterData &shooterData)
 {
     flyWheelInit();
     shooterHoodInit();
@@ -13,6 +13,9 @@ void Shooter::RobotInit()
     shooterHood.Set(0);
 
     isHigh = true;
+
+    shooterData.shootMode = shootMode_none;
+    shooterData.shootUnassignedAsOpponent = false;
 }
 
 void Shooter::shooterHoodInit()
@@ -73,6 +76,7 @@ void Shooter::DisabledInit()
 void Shooter::RobotPeriodic(const RobotData &robotData, ShooterData &shooterData)
 {
     updateData(robotData, shooterData);
+    updateShootMode(robotData, shooterData);
 
     if (robotData.controlData.mode == mode_teleop_manual)
     {
@@ -95,7 +99,8 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
     //idk about this control data stuff to figure out
 
     //checks if encoder is functioning, if it is constantly update rev encoder, otherwise don't
-    if(shooterHoodEncoderAbs.GetOutput() > 0.03){
+    if(shooterHoodEncoderAbs.GetOutput() > 0.03)
+    {
         //constantly updates rev hood pos with more accurate abs encoder values
         if(tickCount > 40){
             shooterHoodEncoderRev.SetPosition(absoluteToREV(shooterHoodEncoderAbs.GetOutput()));
@@ -110,7 +115,7 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
     }
 
     //all the shooting logic
-    if(robotData.controlData.saShooting){ // Aiming SHOOTING with limelight
+    if(shooterData.shootMode == shootMode_vision){ // Aiming SHOOTING with limelight// Aiming SHOOTING with limelight
         flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
         shooterHood_pidController.SetReference(absoluteToREV(convertFromAngleToAbs(robotData.limelightData.desiredHoodPos)), rev::CANSparkMaxLowLevel::ControlType::kPosition);
         
@@ -124,7 +129,7 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
             shooterData.readyShoot = false;
         }
 
-    }else if(robotData.controlData.cornerLaunchPadShot){ //FROM THE CLOSER LAUNCH PAD
+    }else if(shooterData.shootMode == shootMode_cornerLaunchPad){ //FROM THE CLOSER LAUNCH PAD
         innerLaunch();
         if ((getWheelVel() > readyShootLimit) /**&& (std::abs(getHoodPos() + 38) <= 1)**/) //dont know why but it wasnt working so commented it out
         {
@@ -134,21 +139,19 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
         {
             shooterData.readyShoot = false;
         }
-
     }
-    else if (robotData.controlData.wallLaunchPadShot) //FROM THE FARTHER LAUNCH PAD
+    else if (shooterData.shootMode == shootMode_wallLaunchPad) //FROM THE FARTHER LAUNCH PAD
     {
         outerLaunch();
         if ((getWheelVel() > readyShootLimit) /**&& (std::abs(getHoodPos() + 42) <= 1)**/)
         {
             shooterData.readyShoot = true;
-        }
-        else
+        }else
         {
             shooterData.readyShoot = false;
         }
     }
-    else if(robotData.controlData.fenderShot) //FROM THE FENDER FIXED SHOT
+    else if(shooterData.shootMode == shootMode_fender) //FROM THE FENDER FIXED SHOT
     {
         fender();
         if ((getWheelVel() > readyShootLimit) /**&& (std::abs(getHoodPos() - 0) <= 1)**/)
@@ -160,10 +163,10 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
             shooterData.readyShoot = false;
         }
     } 
-    else if (robotData.controlData.sideWallShot) //FROM THE SIDE WALL FIXED SHOT
+    else if (shooterData.shootMode == shootMode_sideWall) //FROM THE SIDE WALL FIXED SHOT
     {
         wall();
-        if ((getWheelVel() > readyShootLimit) /** && (std::abs(getHoodPos() +38) <= 1)**/)
+        if ((getWheelVel() > readyShootLimit) /**&& (std::abs(getHoodPos() - 0) <= 1)**/)
         {
             shooterData.readyShoot = true;
         }
@@ -171,7 +174,7 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
         {
             shooterData.readyShoot = false;
         }
-    }
+    } 
     else //IF NO SHOOTING DON'T DO ANYTHING
     {
         shooterData.readyShoot = false;
@@ -190,7 +193,8 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
     
 }
 
-void Shooter::manual(const RobotData &robotData, ShooterData &shooterData){
+void Shooter::manual(const RobotData &robotData, ShooterData &shooterData)
+{
     
     //manual wheel forward
     if(robotData.controlData.mShooterWheelForward){
@@ -225,7 +229,10 @@ void Shooter::updateData(const RobotData &robotData, ShooterData &shooterData)
     frc::SmartDashboard::PutNumber("desired hood to rev", absoluteToREV(convertFromAngleToAbs(robotData.limelightData.desiredHoodPos)));
 
     frc::SmartDashboard::PutNumber("HOOD ANGLE", convertFromAbsToAngle(shooterHoodEncoderAbs.GetOutput()));
-    //frc::SmartDashboard::PutNumber("shooter Hood zero to one scale", getHoodPos());
+
+    frc::SmartDashboard::PutNumber("shootMode", shooterData.shootMode);
+    frc::SmartDashboard::PutBoolean("saShooting", robotData.controlData.saShooting);
+
 }
 /**
  * ---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -363,24 +370,47 @@ void Shooter::setHighHub()
     }
 }
 
-// //takes in the distance from the target and uses that to get the target velocity for shooting at that location
-// void Shooter::velocityBasedOnDistance(const RobotData &robotData, ShooterData &shooterData){
-//     double distance = robotData.limelightData.correctDistance;
-//     if(distance <= 9 && distance >= 7.5){
-//         shooterData.targetVel = 1750;
-//     }else if(distance <= 10){
-//         shooterData.targetVel = 1775;
-//     }else if(distance <= 11){
-//         shooterData.targetVel = 1850;
-//     }else if(distance <= 12){
-//         shooterData.targetVel = 1950;
-//     }else if(distance <= 13){
-//         shooterData.targetVel = 2000;
-//     }else if(distance <= 14){
-//         shooterData.targetVel = 2100;
-//     }else{
-//         shooterData.targetVel = 2300;
-//     }
-// }
+void Shooter::updateShootMode(const RobotData &robotData, ShooterData &shooterData) {
+    // pressing a shoot button will set the robot to be in the associated shooting mode. if you press the button again, it will toggle that shoot mode off.
 
+    if (robotData.controlData.saShooting) {
+        if (shooterData.shootMode == shootMode_vision) {
+            shooterData.shootMode = shootMode_none;
+        } else { shooterData.shootMode = shootMode_vision; }
+    }
 
+    if (robotData.controlData.fenderShot) {
+        if (shooterData.shootMode == shootMode_fender) {
+            shooterData.shootMode = shootMode_none;
+        } else { shooterData.shootMode = shootMode_fender; }
+    }
+
+    if (robotData.controlData.sideWallShot) {
+        if (shooterData.shootMode == shootMode_sideWall) {
+            shooterData.shootMode = shootMode_none;
+        } else { shooterData.shootMode = shootMode_sideWall; }
+    }
+
+    if (robotData.controlData.wallLaunchPadShot) {
+        if (shooterData.shootMode == shootMode_wallLaunchPad) {
+            shooterData.shootMode = shootMode_none;
+        } else { shooterData.shootMode = shootMode_wallLaunchPad; }
+    }
+
+    if (robotData.controlData.cornerLaunchPadShot) {
+        if (shooterData.shootMode == shootMode_cornerLaunchPad) {
+            shooterData.shootMode = shootMode_none;
+        } else { shooterData.shootMode = shootMode_cornerLaunchPad; }
+    }
+
+    // interpret button data to toggle between shooting unassigned as ours or opponent's
+    if (robotData.controlData.shootUnassignedAsOpponent) {
+        shooterData.shootUnassignedAsOpponent = !shooterData.shootUnassignedAsOpponent;
+    }
+
+    // shut off shooting if all balls have exited (happens once upon ball count going to zero)
+    if (robotData.indexerData.indexerContents.size() == 0 && lastTickBallCount > 0 && shooterData.shootMode != shootMode_none /* probably redundant */) {
+        shooterData.shootMode = shootMode_none;
+    }
+    lastTickBallCount = robotData.indexerData.indexerContents.size();
+}

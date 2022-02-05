@@ -15,10 +15,22 @@
 
 struct RobotData;
 
+enum ShootMode {
+    shootMode_none,
+    shootMode_vision,
+    shootMode_fender,
+    shootMode_sideWall,
+    shootMode_wallLaunchPad,
+    shootMode_cornerLaunchPad
+};
+
 struct ShooterData
 {
     bool readyShoot;
     bool wrongBallReady;
+    ShootMode shootMode = shootMode_none;
+    bool shootUnassignedAsOpponent;
+
 };
 
 class Shooter{
@@ -26,7 +38,7 @@ class Shooter{
 
 
     public:
-        void RobotInit();
+        void RobotInit(ShooterData &shooterData);
         void RobotPeriodic(const RobotData &robotData, ShooterData &shooterData);
         void DisabledInit();
         void updateData(const RobotData &robotData, ShooterData &shooterData);
@@ -60,6 +72,8 @@ class Shooter{
         void fender();
         void endOfTarmac();
 
+        void updateShootMode(const RobotData &robotData, ShooterData &shooterData);
+
         bool hoodZero;
         double targetHoodPos;
         double currentHoodPos;
@@ -69,6 +83,8 @@ class Shooter{
         int tickCount;
    
         bool isHigh;
+
+        int lastTickBallCount = 0;
     
         //FLywheel Lead
         rev::CANSparkMax flyWheelLead = rev::CANSparkMax(shooterWheelLeadID, rev::CANSparkMax::MotorType::kBrushless);

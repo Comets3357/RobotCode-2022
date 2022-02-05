@@ -36,7 +36,7 @@ void Intake::pivotInit(){
     intakePivot_pidController.SetFF(0,0);
     intakePivot_pidController.SetOutputRange(-0.5, 0.5,0);
 
-    intakePivot.SetSmartCurrentLimit(10);
+    intakePivot.SetSmartCurrentLimit(15);
 }
 
 void Intake::singulatorInit(){
@@ -134,7 +134,6 @@ void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
 
         intakePivot_pidController.SetReference(0.1, rev::CANSparkMaxLowLevel::ControlType::kPosition, 0);
         intakeRollers.Set(0);
-
     }
 }
 
@@ -143,11 +142,9 @@ void Intake::manual(const RobotData &robotData, IntakeData &intakeData){
     // intakePivot.Set(robotData.controllerData.sLYStick);
     if(robotData.controlData.mIntakeUp){
         intakePivot.Set(-intakePivotSpeed);
-
     //intake retracted
     }else if(robotData.controlData.mIntakeDown){
         intakePivot.Set(intakePivotSpeed);
-
     //not intaking
     }else{
         intakePivot.Set(0);
