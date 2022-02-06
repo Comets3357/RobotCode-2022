@@ -56,11 +56,10 @@ public:
 private:
     double distanceToTarget();
     double correctDistance(double angleOffset, double originalDistance);
-    double getHoodPOS(VisionLookup &visionLookup, LimelightData &limelightData);
-    double getWheelVelocity(VisionLookup &visionLookup, LimelightData &limelightData);
+    double getHoodPOS(VisionLookup &visionLookup, LimelightData &limelightData, const RobotData &robotData);
+    double getWheelVelocity(VisionLookup &visionLookup, LimelightData &limelightData, const RobotData &robotData);
     void shooterOffset(const RobotData &robotData, LimelightData &limelightData);
 
-    //std::shared_ptr<nt::NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("limelight");
     std::shared_ptr<nt::NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("limelight");
 
 };

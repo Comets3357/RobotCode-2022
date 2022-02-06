@@ -107,7 +107,7 @@ void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
     if (robotData.controlData.saIntake) //you are intaking
     {
         // pivot down
-        intakePivot_pidController.SetReference(15, rev::CANSparkMaxLowLevel::ControlType::kPosition,0);
+        intakePivot_pidController.SetReference(revOut - 0.5, rev::CANSparkMaxLowLevel::ControlType::kPosition,0);
 
         //run rollers, singulator
         intakeRollers.Set(intakeRollerSpeed);
@@ -118,14 +118,14 @@ void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
     else if (robotData.controlData.saIntakeBackward)
     {
         intakeRollers.Set(-intakeRollerSpeed);
-        intakePivot_pidController.SetReference(15, rev::CANSparkMaxLowLevel::ControlType::kPosition,0);
+        intakePivot_pidController.SetReference(revOut - 0.5, rev::CANSparkMaxLowLevel::ControlType::kPosition,0);
 
     }
     else if (robotData.controlData.saEjectBalls) //rollers backwards, pivot down
     {
         intakeRollers.Set(-intakeRollersEjectSpeed);
         intakeSingulator.Set(-singulatorSpeed);
-        intakePivot_pidController.SetReference(15, rev::CANSparkMaxLowLevel::ControlType::kPosition,0);
+        intakePivot_pidController.SetReference(revOut - 0.5, rev::CANSparkMaxLowLevel::ControlType::kPosition,0);
 
     }
     else //default case, everything up and not running

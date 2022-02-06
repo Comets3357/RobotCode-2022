@@ -30,6 +30,7 @@ struct ShooterData
     bool wrongBallReady;
     ShootMode shootMode = shootMode_none;
     bool shootUnassignedAsOpponent;
+    bool isHighGeneral;
 
 };
 
@@ -90,11 +91,6 @@ class Shooter{
         rev::CANSparkMax flyWheelLead = rev::CANSparkMax(shooterWheelLeadID, rev::CANSparkMax::MotorType::kBrushless);
         rev::SparkMaxRelativeEncoder flyWheelLeadEncoder = flyWheelLead.GetEncoder();
         rev::SparkMaxPIDController flyWheelLead_pidController = flyWheelLead.GetPIDController();
-
-        //Flywheel follow
-        rev::CANSparkMax flyWheelFollow = rev::CANSparkMax(shooterWheelFollowID, rev::CANSparkMax::MotorType::kBrushless);
-        rev::SparkMaxRelativeEncoder shooterWheelFollowEncoder = flyWheelFollow.GetEncoder(); // what are the points of these if they aren't used?
-        rev::SparkMaxPIDController shooterWheelFollow_pidController = flyWheelFollow.GetPIDController(); // what are the points of these if they aren't used?
 
         //flywheel hood, rev encoder, abs encoder, and pid
         rev::CANSparkMax shooterHood = rev::CANSparkMax(shooterHoodID, rev::CANSparkMax::MotorType::kBrushless);

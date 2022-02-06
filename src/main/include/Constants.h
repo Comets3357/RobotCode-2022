@@ -27,22 +27,16 @@ static const int
 // shooter
 static const int
     shooterWheelLeadID = 32,
-    shooterWheelFollowID = 31,
     shooterHoodID = 33,
     shooterTurretID = 34;
 
 static const double
-    hoodabsOut = 0.043,
-    hoodabsIn = 0.742,
-    hoodrevOut = -39,
+    hoodabsOut = 0.028,
+    hoodabsIn = 0.928,
+    hoodrevOut = -38,
     hoodrevIn = 0,
-    hoodAngleOut = 39.9,
-    hoodAngleIn = 25;
-
-//shooter PID constants:
-static const double
-    swkP = 0.02, swkI = 0, swkD = 0, swkIz = 0, swkFF = 0, swkMaxOutput = 1, swkMinOutput = -1,
-    hkP = 1, hkI = 0, hkD = 0, hkIz = 0, hkFF = 0, hkMaxOutput = 1, hkMinOutput = -1;
+    hoodAngleOut = 43,
+    hoodAngleIn = 21;
 
 // climb
 static const int
