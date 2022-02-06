@@ -20,6 +20,7 @@ void Robot::RobotPeriodic()
     colorSensor.RobotPeriodic(robotData);
     visionLookup.RobotPeriodic(robotData, robotData.visionLookupData);
 
+
     if (IsEnabled())
     {
         otherComponents.RobotPeriodic(robotData.otherComponentsData);

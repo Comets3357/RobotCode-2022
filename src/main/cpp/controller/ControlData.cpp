@@ -27,6 +27,10 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
             break;
             
     }
+    if (controllerData.sLCenterBtnToggled)
+    {
+        controlData.climbMode = !controlData.climbMode;
+    }
 
     // controls:
 
@@ -120,7 +124,17 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
         // change to button for driver control?
     // }
     //controlData.finalShoot;
-    
-
+  
+    //CLIMB
+    if (controlData.climbMode){
+        controlData.saextendElevator = controllerData.sYBtn;
+        controlData.saretractElevator = controllerData.sXBtn;
+        controlData.sapivotArmsIn = controllerData.sABtn;
+        controlData.sapivotArmsOut = controllerData.sBBtn;
+        controlData.sacancelSequence = controllerData.sLStickBtn;
+        controlData.saclimbTraversalSequence = controllerData.sRCenterBtn;
+        controlData.saclimbHeightSequence = controllerData.sLCenterBtn;
+        controlData.saclimbInit = controllerData.sRTrigger;
+    }
   
 }

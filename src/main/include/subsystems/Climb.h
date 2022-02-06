@@ -8,34 +8,68 @@
 #include <rev/CANSparkMax.h>
 #include <rev/SparkMaxPIDController.h>
 #include <rev/CANEncoder.h>
+#include <rev/CANDigitalInput.h>
 
 
 struct RobotData;
 
-struct ClimbData
-{
-
+struct ClimbData {
+    int bar;
+    bool climbing;
 };
 
-class Climb
-{
+class Climb {
 
 public:
     void RobotInit();
-    void RobotPeriodic(const RobotData &robotData, ClimbData &climbData);    
+    void RobotPeriodic(const RobotData &robotData, ClimbData &climbData);  
+    void DisabledPeriodic(const RobotData &robotData, ClimbData &climbData); 
     void DisabledInit();
 
 private:
+
+    void climbInit(const RobotData &robotData, ClimbData &climbData);
+    void cancelSequence(const RobotData &robotData, ClimbData &climbData);
+    void runSequence(const RobotData &robotData, ClimbData &climbData);
+
+    int stage = 0;
+
+    bool climbInitiating = false;
+    bool climbUp = false;
+    bool executeSequence = false;
+    int targetBar = 0;
+
+    bool elevatorDirection; //True is positive, False is negative
+    bool elevatorRunning = false;
+
+    bool armsDirection; //True is positive, False is negative
+    bool armsRunning = false;
+
     void updateData(const RobotData &robotData, ClimbData &climbData);
     void semiAuto(const RobotData &robotData, ClimbData &climbData);
     void manual(const RobotData &robotData, ClimbData &climbData);
 
+    void RunElevatorToPos(int position, float power, int stageAdd, int onBar);
+    void RunArmsToPos(int position, float power, int stageAdd, int onBar);
+    void RunArmsAndElevatorToPos(int elevatorPos, float elevatorPower, int elevatorBar, int armsPos, float armsPower, int armsBar, int stageAdd);
+    void zeroArms(float power, int stageAdd);
+    void zeroElevator(float power, int stageAdd);
+
 
     //CHANGE MOTOr ID STUFF  (just outline lol don't take your life too seriously:))
-    // rev::CANSparkMax climb1 = rev::CANSparkMax(61, rev::CANSparkMax::MotorType::kBrushless);
-    // rev::SparkMaxRelativeEncoder climb1Encoder = climb1.GetEncoder();
-    // rev::SparkMaxPIDController climb1_pidController = climb1.GetPIDController();
+    //initualizes climb elevator motor
+    rev::CANSparkMax climbElevator = rev::CANSparkMax(41, rev::CANSparkMax::MotorType::kBrushless);
+    rev::SparkMaxRelativeEncoder climbElevatorEncoder = climbElevator.GetEncoder();
+    rev::SparkMaxPIDController climbElevator_pidController = climbElevator.GetPIDController();
 
+    //initualizes climb arms motor (i dont know if there are 2 motors yet)
+    rev::CANSparkMax climbArms = rev::CANSparkMax(42, rev::CANSparkMax::MotorType::kBrushless);
+    rev::SparkMaxRelativeEncoder climbArmsEncoder = climbArms.GetEncoder();
+    rev::SparkMaxPIDController climbArms_pidController = climbArms.GetPIDController();
+
+    //zeroing sensor
+    rev::SparkMaxLimitSwitch elevatorLimit = climbElevator.GetForwardLimitSwitch(rev::CANDigitalInput::LimitSwitchPolarity::kNormallyOpen);
+    rev::SparkMaxLimitSwitch armsLimit = climbArms.GetForwardLimitSwitch(rev::CANDigitalInput::LimitSwitchPolarity::kNormallyOpen);
 
 
 };
