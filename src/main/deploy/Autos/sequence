@@ -1,8 +1,0 @@
-break 4
-sequence1
-break 2
-turnInPlace 10
-break 2
-turnInPlace 135
-break 2
-turnInPlace 270

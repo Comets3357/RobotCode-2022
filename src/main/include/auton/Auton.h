@@ -28,15 +28,35 @@ class Auton
 public:
     void RobotInit(AutonData &autonData);
     void AutonomousInit(AutonData &autonData);
-    void AutonomousPeriodic(const RobotData &robotData, AutonData &autonData, ControllerData &controllerData);
+    void AutonomousPeriodic(const RobotData &robotData, AutonData &autonData, ControlData &controlData);
     void DisabledInit();
 private:
     void sendAutonSelectionChooser();
 
     frc::SendableChooser<std::string> autonChooser;
 
-    // auton routine secondary control functions:
-    void potato(const RobotData &robotData, ControllerData &controllerData);
+
+    void potato(const RobotData &robotData, ControlData &controlData);
+    // exit tarmac, collect 1, turn, shoot 2:
+    void exitShootA(const RobotData &robotData, ControlData &controlData);
+    void exitShootB(const RobotData &robotData, ControlData &controlData);
+    void exitShootC(const RobotData &robotData, ControlData &controlData);
+    // three ball autons (exitShoot + terminal shoot):
+    void threeBallA(const RobotData &robotData, ControlData &controlData);
+    void threeBallB(const RobotData &robotData, ControlData &controlData);
+    void threeBallC(const RobotData &robotData, ControlData &controlData);
+    // four ball autons (exitShoot, neighboring ball, termincal shoot):
+    void fourBallA(const RobotData &robotData, ControlData &controlData);
+    void fourBallB(const RobotData &robotData, ControlData &controlData);
+    void fourBallC(const RobotData &robotData, ControlData &controlData);
+
 
     frc::Pose2d getPose(double x, double y, double deg);
+
+
+    // secondary control helper functions:
+    void toggleShoot(double startSec, double endSec);
+
+    // secondary control variables:
+    bool doneTogglingShoot = false;
 };

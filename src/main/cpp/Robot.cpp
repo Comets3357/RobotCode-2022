@@ -30,7 +30,7 @@ void Robot::AutonomousInit()
 void Robot::AutonomousPeriodic()
 {
     timer.EnabledPeriodic(robotData.timerData);
-    auton.AutonomousPeriodic(robotData, robotData.autonData, robotData.controllerData);
+    auton.AutonomousPeriodic(robotData, robotData.autonData, robotData.controlData);
 }
 
 void Robot::TeleopInit()

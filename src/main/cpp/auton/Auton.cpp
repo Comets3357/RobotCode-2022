@@ -45,6 +45,19 @@ void Auton::AutonomousInit(AutonData &autonData)
 
 void Auton::sendAutonSelectionChooser() {
     autonChooser.AddOption("potato", "potato");
+
+    autonChooser.AddOption("exitShootA", "exitShootA");
+    autonChooser.AddOption("exitShootB", "exitShootB");
+    autonChooser.AddOption("exitShootC", "exitShootC");
+
+    autonChooser.AddOption("threeBallA", "threeBallA");
+    autonChooser.AddOption("threeBallB", "threeBallB");
+    autonChooser.AddOption("threeBallC", "threeBallC");
+
+    autonChooser.AddOption("fourBallA", "fourBallA");
+    autonChooser.AddOption("fourBallB", "fourBallB");
+    autonChooser.AddOption("fourBallC", "fourBallC");
+
     frc::SmartDashboard::PutData("Select Auton:", &autonChooser);
 }
 
@@ -58,14 +71,40 @@ frc::Pose2d Auton::getPose(double x, double y, double deg) {
     return pose;
 }
 
-void Auton::AutonomousPeriodic(const RobotData &robotData, AutonData &autonData, ControllerData &controllerData)
+void Auton::AutonomousPeriodic(const RobotData &robotData, AutonData &autonData, ControlData &controlData)
 {
     if (autonData.autonRoutineName == "potato")
     {
-        potato(robotData, controllerData);
+        potato(robotData, controlData);
     }
 }
 
-void Auton::potato(const RobotData &robotData, ControllerData &controllerData)
+
+void Auton::potato(const RobotData &robotData, ControlData &controlData)
 {
 }
+
+
+void exitShootA(const RobotData &robotData, ControlData &controlData) {
+    double sec = robotData.timerData.secSinceEnabled;
+
+    
+}
+
+void exitShootB(const RobotData &robotData, ControlData &controlData) {}
+
+void exitShootC(const RobotData &robotData, ControlData &controlData) {}
+
+
+void threeBallA(const RobotData &robotData, ControlData &controlData) {}
+
+void threeBallB(const RobotData &robotData, ControlData &controlData) {}
+
+void threeBallC(const RobotData &robotData, ControlData &controlData) {}
+
+
+void fourBallA(const RobotData &robotData, ControlData &controlData) {}
+
+void fourBallB(const RobotData &robotData, ControlData &controlData) {}
+
+void fourBallC(const RobotData &robotData, ControlData &controlData) {}
