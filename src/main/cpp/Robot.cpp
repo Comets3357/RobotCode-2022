@@ -23,11 +23,11 @@ void Robot::RobotPeriodic()
 
     if (IsEnabled())
     {
-        otherComponents.RobotPeriodic(robotData.otherComponentsData);
+        //otherComponents.RobotPeriodic(robotData.otherComponentsData);
         drivebase.RobotPeriodic(robotData, robotData.drivebaseData);
-        intake.RobotPeriodic(robotData, robotData.intakeData);
-        indexer.RobotPeriodic(robotData, robotData.indexerData);
-        shooter.RobotPeriodic(robotData, robotData.shooterData);
+        //intake.RobotPeriodic(robotData, robotData.intakeData);
+        //indexer.RobotPeriodic(robotData, robotData.indexerData);
+        //shooter.RobotPeriodic(robotData, robotData.shooterData);
         climb.RobotPeriodic(robotData, robotData.climbData);
     }
 }
