@@ -77,6 +77,12 @@ void Auton::AutonomousPeriodic(const RobotData &robotData, AutonData &autonData,
     {
         potato(robotData, controlData);
     }
+    else if (autonData.autonRoutineName == "exitShootA") {
+        exitShootA(robotData, controlData);
+    }
+    else if (autonData.autonRoutineName == "fourBallC") {
+        fourBallC(robotData, controlData);
+    }
 }
 
 
@@ -88,6 +94,19 @@ void Auton::potato(const RobotData &robotData, ControlData &controlData)
 void exitShootA(const RobotData &robotData, ControlData &controlData) {
     double sec = robotData.timerData.secSinceEnabled;
 
+    // intake
+    controlData.saIntake = true;
+
+    // shooting
+    if (sec > 2 && sec < 2.1) {
+        controlData.saShooting= true;
+    } else {
+        controlData.saShooting = false;
+    }
+
+    if (sec > 3) {
+        controlData.saFinalShoot = true;
+    }
     
 }
 
@@ -107,4 +126,28 @@ void fourBallA(const RobotData &robotData, ControlData &controlData) {}
 
 void fourBallB(const RobotData &robotData, ControlData &controlData) {}
 
-void fourBallC(const RobotData &robotData, ControlData &controlData) {}
+void fourBallC(const RobotData &robotData, ControlData &controlData) {
+    double sec = robotData.timerData.secSinceEnabled;
+
+    // intake
+    controlData.saIntake = true;
+
+    // shooting
+    if (sec > 2 && sec < 2.1) {
+        controlData.saShooting = true;
+    }
+    else {
+        controlData.saShooting = false;
+    }
+
+    if (sec > 3 && sec < 5) {
+        controlData.saFinalShoot = true;
+    }
+    else if (sec > 12 && sec < 15) {
+        controlData.saFinalShoot = true;
+    }
+    else {
+        controlData.saFinalShoot = false;
+    }
+
+}
