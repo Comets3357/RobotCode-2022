@@ -123,15 +123,17 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
     //controlData.finalShoot;
   
     //CLIMB
-    if (controlData.mode == mode_climb_sa || controlData.mode == mode_climb_manual){
-        controlData.saextendElevator = controllerData.sYBtn;
-        controlData.saretractElevator = controllerData.sXBtn;
-        controlData.sapivotArmsIn = controllerData.sABtn;
-        controlData.sapivotArmsOut = controllerData.sBBtn;
-        controlData.sacancelSequence = controllerData.sLStickBtn;
-        controlData.saclimbTraversalSequence = controllerData.sRCenterBtn;
-        controlData.saclimbHeightSequence = controllerData.sLCenterBtn;
-        controlData.saclimbInit = controllerData.sRTrigger;
-    }
+    controlData.saextendElevator = controllerData.sYBtn;
+    controlData.saretractElevator = controllerData.sXBtn;
+    controlData.sapivotArmsIn = controllerData.sABtn;
+    controlData.sapivotArmsOut = controllerData.sBBtn;
+    controlData.sacancelSequence = controllerData.sLStickBtn;
+    controlData.saclimbTraversalSequence = controllerData.sRCenterBtn;
+    controlData.saclimbHeightSequence = controllerData.sLCenterBtn;
+    controlData.saclimbInit = controllerData.sRTrigger;
+
+    controlData.mElevatorExtension = controllerData.sLYStick;
+    controlData.mArmPivot = controllerData.sRXStick;
+    
   
 }

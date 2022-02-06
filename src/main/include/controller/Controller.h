@@ -75,6 +75,9 @@ struct ControlData
     bool saretractElevator;
     bool saextendElevator;
     bool saclimbInit;
+    
+    double mElevatorExtension;
+    double mArmPivot;
 };
 
 struct ControllerData
