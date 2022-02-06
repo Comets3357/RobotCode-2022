@@ -7,6 +7,8 @@
 
 //Header files from us
 #include "controller/Controller.h"
+#include "common/Gyro.h"
+#include "auton/Auton.h"
 #include "RobotData.h"
 
 #include "subsystems/Drivebase.h"
@@ -46,6 +48,7 @@ private:
     OtherComponents otherComponents{};
     Timer timer{};
     ColorSensor colorSensor{};
+    Auton auton{};
 
     // subsystems
     Drivebase drivebase{};

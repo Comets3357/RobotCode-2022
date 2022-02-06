@@ -2,10 +2,10 @@
 
 void Robot::RobotInit()
 {
-    timer.RobotInit(robotData.timerData);
     gyro.RobotInit();
     limelight.RobotInit(robotData);
 
+    auton.RobotInit(robotData.autonData);
     drivebase.RobotInit();
     intake.RobotInit();
     indexer.RobotInit();
@@ -15,7 +15,6 @@ void Robot::RobotInit()
 
 void Robot::RobotPeriodic()
 {
-    timer.RobotPeriodic(robotData.timerData);
     gyro.RobotPeriodic(robotData.gyroData);
     limelight.RobotPeriodic(robotData, robotData.limelightData, visionLookup);
     colorSensor.RobotPeriodic(robotData);
@@ -24,7 +23,7 @@ void Robot::RobotPeriodic()
     if (IsEnabled())
     {
         otherComponents.RobotPeriodic(robotData.otherComponentsData);
-        drivebase.RobotPeriodic(robotData, robotData.drivebaseData);
+        drivebase.RobotPeriodic(robotData, robotData.drivebaseData, robotData.autonData);
         intake.RobotPeriodic(robotData, robotData.intakeData);
         indexer.RobotPeriodic(robotData, robotData.indexerData);
         shooter.RobotPeriodic(robotData, robotData.shooterData);
@@ -32,22 +31,37 @@ void Robot::RobotPeriodic()
     }
 }
 
-void Robot::AutonomousInit() {}
-void Robot::AutonomousPeriodic() {}
-void Robot::TeleopInit() {
+void Robot::AutonomousInit()
+{
+    timer.EnabledInit(robotData.timerData);
+    gyro.AutonomousInit(robotData.gyroData);
+    auton.AutonomousInit(robotData.autonData);
+    drivebase.AutonomousInit(robotData, robotData.drivebaseData, robotData.autonData);
     
-    gyro.TeleopInit();
+}
+
+void Robot::AutonomousPeriodic()
+{
+    timer.EnabledPeriodic(robotData.timerData);
+    auton.AutonomousPeriodic(robotData, robotData.autonData, robotData.controlData);
+}
+
+void Robot::TeleopInit()
+{
+    timer.EnabledInit(robotData.timerData);
+    gyro.TeleopInit(robotData.gyroData);
+    drivebase.TeleopInit(robotData);
+    
 }
 
 void Robot::TeleopPeriodic()
 {
+    timer.EnabledPeriodic(robotData.timerData);
     controller.TeleopPeriodic(robotData, robotData.controllerData, robotData.controlData);
 }
 
 void Robot::DisabledInit()
 {
-    timer.DisabledInit();
-
     drivebase.DisabledInit();
     intake.DisabledInit();
     indexer.DisabledInit();
