@@ -61,7 +61,7 @@ public:
 private:
 
     void updateData(const RobotData &robotData, DrivebaseData &drivebaseData);
-    void teleopControl(const RobotData &robotData);
+    void teleopControl(const RobotData &robotData, DrivebaseData &drivebaseData);
     void autonControl(const RobotData &robotData, DrivebaseData &drivebaseData, AutonData &autonData);
 
     // odometry

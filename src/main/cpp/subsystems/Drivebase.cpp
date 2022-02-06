@@ -90,7 +90,7 @@ void Drivebase::RobotPeriodic(const RobotData &robotData, DrivebaseData &driveba
     }
 
     if (frc::DriverStation::IsTeleop()) {
-        teleopControl(robotData);
+        teleopControl(robotData, drivebaseData);
     }
     else if (frc::DriverStation::IsAutonomous())
     {
@@ -125,36 +125,50 @@ void Drivebase::updateData(const RobotData &robotData, DrivebaseData &drivebaseD
 // driving functions:
 
 // adjusts for the deadzone and converts joystick input to velocity values for PID
-void Drivebase::teleopControl(const RobotData &robotData)
+void Drivebase::teleopControl(const RobotData &robotData, DrivebaseData &drivebaseData)
 {
-    double tempLDrive = robotData.controlData.lDrive;
-    double tempRDrive = robotData.controlData.rDrive;
-
-    // converts from tank to arcade drive, limits the difference between left and right drive
-    double frontBack = robotData.controlData.maxStraight * (tempLDrive + tempRDrive) / 2;
-    double leftRight = robotData.controlData.maxTurn * (tempRDrive - tempLDrive) / 2;
-
-    //deadzone NOT needed for drone controller
-    if (tempLDrive <= -0.08 || tempLDrive >= 0.08)
-    {
-        tempLDrive = (frontBack - leftRight);
+    // assign drive mode
+    if (robotData.controlData.lDrive != 0 || robotData.controlData.rDrive != 0) {
+        drivebaseData.driveMode = driveMode_joystick;
     }
-    else
-    {
-        tempLDrive = 0;
+    else if (robotData.shooterData.shootMode == shootMode_vision) {
+        drivebaseData.driveMode = driveMode_turnInPlace;
     }
 
-    if (tempRDrive <= -0.08 || tempRDrive >= 0.08)
-    {
-        tempRDrive = (frontBack + leftRight);
-    }
-    else
-    {
-        tempRDrive = 0;
-    }
 
-    //set as percent vbus
-    setPercentOutput(tempLDrive, tempRDrive);
+    if (drivebaseData.driveMode == driveMode_joystick) {
+        double tempLDrive = robotData.controlData.lDrive;
+        double tempRDrive = robotData.controlData.rDrive;
+
+        // converts from tank to arcade drive, limits the difference between left and right drive
+        double frontBack = robotData.controlData.maxStraight * (tempLDrive + tempRDrive) / 2;
+        double leftRight = robotData.controlData.maxTurn * (tempRDrive - tempLDrive) / 2;
+
+        //deadzone NOT needed for drone controller
+        if (tempLDrive <= -0.08 || tempLDrive >= 0.08)
+        {
+            tempLDrive = (frontBack - leftRight);
+        }
+        else
+        {
+            tempLDrive = 0;
+        }
+
+        if (tempRDrive <= -0.08 || tempRDrive >= 0.08)
+        {
+            tempRDrive = (frontBack + leftRight);
+        }
+        else
+        {
+            tempRDrive = 0;
+        }
+
+        //set as percent vbus
+        setPercentOutput(tempLDrive, tempRDrive);
+    }
+    else if (drivebaseData.driveMode == driveMode_turnInPlace) {
+        turnInPlaceTeleop(robotData.limelightData.angleOffset, robotData);
+    }
 }
 
 void Drivebase::autonControl(const RobotData &robotData, DrivebaseData &drivebaseData, AutonData &autonData) {
@@ -263,7 +277,7 @@ void Drivebase::resetOdometry(double x, double y, double radians, const RobotDat
     zeroEncoders();
 }
 
-// deprecated
+// deprecated: my own odometry (currently using wpilib odometry)
 /* // reset odometry to any double x, y, tanX, tanY
 void Drivebase::resetOdometry(double x, double y, double tanX, double tanY, const RobotData &robotData) {
     const units::meter_t meterX{x};
