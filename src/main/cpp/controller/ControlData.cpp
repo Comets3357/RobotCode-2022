@@ -27,10 +27,7 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
             break;
             
     }
-    if (controllerData.sLCenterBtnToggled)
-    {
-        controlData.climbMode = !controlData.climbMode;
-    }
+
 
     // controls:
 
@@ -126,7 +123,7 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
     //controlData.finalShoot;
   
     //CLIMB
-    if (controlData.climbMode){
+    if (controlData.mode == mode_climb_sa || controlData.mode == mode_climb_manual){
         controlData.saextendElevator = controllerData.sYBtn;
         controlData.saretractElevator = controllerData.sXBtn;
         controlData.sapivotArmsIn = controllerData.sABtn;

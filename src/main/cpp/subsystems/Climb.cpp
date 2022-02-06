@@ -30,9 +30,9 @@ void Climb::RobotPeriodic(const RobotData &robotData, ClimbData &climbData){
     
     updateData(robotData, climbData);
 
-    if (robotData.controlData.climbMode){
+    if (robotData.controlData.mode == mode_climb_sa || robotData.controlData.mode == mode_climb_manual){
 
-        if (robotData.controlData.manualMode){ //updates whether or not the robot is in manual or semiAuto mode
+        if (robotData.controlData.mode == mode_climb_manual){ //updates whether or not the robot is in manual or semiAuto mode
             manual(robotData, climbData);
         } else {
             //semiAuto(robotData, climbData);
