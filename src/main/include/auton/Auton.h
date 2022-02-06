@@ -19,7 +19,7 @@ struct AutonData
 {
     std::string autonRoutineName;
     frc::Trajectory trajectory;
-    int autonStep = -1; // starts at -1 because getNextTrajectoryStep() increments
+    int autonStep = -1; // starts at -1 because getNextAutonStep() increments
     std::vector<std::string> pathGroup;
 };
 

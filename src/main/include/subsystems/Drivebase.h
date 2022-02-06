@@ -78,7 +78,7 @@ private:
 
     frc::Pose2d getPose(double x, double y, double deg);
 
-    void getNextTrajectoryStep(const RobotData &robotData, DrivebaseData &drivebaseData, AutonData &autonData);
+    void getNextAutonStep(const RobotData &robotData, DrivebaseData &drivebaseData, AutonData &autonData);
 
     void turnInPlaceAuton(double degrees, const RobotData &robotData, DrivebaseData &drivebaseData, AutonData &autonData);
     void turnInPlaceTeleop(double degrees, const RobotData &robotData);

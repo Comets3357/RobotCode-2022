@@ -74,7 +74,7 @@ void Drivebase::AutonomousInit(const RobotData &robotData, DrivebaseData &driveb
     odometryInitialized = false;
 
     // get trajectory from auton's pointer
-    getNextTrajectoryStep(robotData, drivebaseData, autonData);
+    getNextAutonStep(robotData, drivebaseData, autonData);
 }
 
 void Drivebase::RobotPeriodic(const RobotData &robotData, DrivebaseData &drivebaseData, AutonData &autonData)
@@ -183,7 +183,7 @@ void Drivebase::autonControl(const RobotData &robotData, DrivebaseData &drivebas
         setVelocity(0, 0);
         // frc::SmartDashboard::PutNumber("breakEndSec", breakEndSec);
         if (robotData.timerData.secSinceEnabled > breakEndSec) {
-            getNextTrajectoryStep(robotData, drivebaseData, autonData);
+            getNextAutonStep(robotData, drivebaseData, autonData);
         }
     }
     else if (drivebaseData.driveMode == driveMode_turnInPlace)
@@ -202,7 +202,7 @@ void Drivebase::autonControl(const RobotData &robotData, DrivebaseData &drivebas
         // frc::SmartDashboard::PutNumber("trajTotalTime", totalTime);
 
         if (sampleSec.to<double>() > totalTime) {
-            getNextTrajectoryStep(robotData, drivebaseData, autonData);
+            getNextAutonStep(robotData, drivebaseData, autonData);
         }
         
         frc::Trajectory::State trajectoryState = trajectory.Sample(sampleSec);
@@ -346,12 +346,12 @@ frc::Pose2d Drivebase::getPose(double x, double y, double deg) {
     return pose;
 }
 
-void Drivebase::getNextTrajectoryStep(const RobotData &robotData, DrivebaseData &drivebaseData,  AutonData &autonData) {
+void Drivebase::getNextAutonStep(const RobotData &robotData, DrivebaseData &drivebaseData,  AutonData &autonData) {
 
     autonData.autonStep++;
 
     if (autonData.autonStep < autonData.pathGroup.size()) {
-        // frc::SmartDashboard::PutString("getNextTrajectoryStep()", "b");
+        // frc::SmartDashboard::PutString("getNextAutonStep()", "b");
         // frc::SmartDashboard::PutNumber("autonStep", autonData.autonStep);
         // frc::SmartDashboard::PutString("robotData.autonData.pathGroup[robotData.autonData.autonStep", autonData.pathGroup[autonData.autonStep]);
 
@@ -363,7 +363,7 @@ void Drivebase::getNextTrajectoryStep(const RobotData &robotData, DrivebaseData 
         {
             drivebaseData.driveMode = driveMode_turnInPlace;
             turnInPlaceDegrees = robotData.gyroData.rawYaw + std::stod(trajectoryName.substr(12, trajectoryName.length()));
-            
+
             return;
         }
 
@@ -431,7 +431,7 @@ void Drivebase::turnInPlaceAuton(double degrees, const RobotData &robotData, Dri
 
     if (allValuesWithin(lastDegrees, 1)) {
         setPercentOutput(0, 0);
-        getNextTrajectoryStep(robotData, drivebaseData, autonData);
+        getNextAutonStep(robotData, drivebaseData, autonData);
         // frc::SmartDashboard::PutString("AUTON", "TURN IN PLACE");
     } else {
         leftOutput = std::pow(std::abs(degrees / 361), 1) + 0.07;

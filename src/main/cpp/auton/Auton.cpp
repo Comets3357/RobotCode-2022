@@ -91,7 +91,7 @@ void Auton::potato(const RobotData &robotData, ControlData &controlData)
 }
 
 
-void exitShootA(const RobotData &robotData, ControlData &controlData) {
+void Auton::exitShootA(const RobotData &robotData, ControlData &controlData) {
     double sec = robotData.timerData.secSinceEnabled;
 
     // intake
@@ -104,29 +104,29 @@ void exitShootA(const RobotData &robotData, ControlData &controlData) {
         controlData.saShooting = false;
     }
 
-    if (sec > 3) {
+    if (sec > 2.5) {
         controlData.saFinalShoot = true;
     }
     
 }
 
-void exitShootB(const RobotData &robotData, ControlData &controlData) {}
+void Auton::exitShootB(const RobotData &robotData, ControlData &controlData) {}
 
-void exitShootC(const RobotData &robotData, ControlData &controlData) {}
-
-
-void threeBallA(const RobotData &robotData, ControlData &controlData) {}
-
-void threeBallB(const RobotData &robotData, ControlData &controlData) {}
-
-void threeBallC(const RobotData &robotData, ControlData &controlData) {}
+void Auton::exitShootC(const RobotData &robotData, ControlData &controlData) {}
 
 
-void fourBallA(const RobotData &robotData, ControlData &controlData) {}
+void Auton::threeBallA(const RobotData &robotData, ControlData &controlData) {}
 
-void fourBallB(const RobotData &robotData, ControlData &controlData) {}
+void Auton::threeBallB(const RobotData &robotData, ControlData &controlData) {}
 
-void fourBallC(const RobotData &robotData, ControlData &controlData) {
+void Auton::threeBallC(const RobotData &robotData, ControlData &controlData) {}
+
+
+void Auton::fourBallA(const RobotData &robotData, ControlData &controlData) {}
+
+void Auton::fourBallB(const RobotData &robotData, ControlData &controlData) {}
+
+void Auton::fourBallC(const RobotData &robotData, ControlData &controlData) {
     double sec = robotData.timerData.secSinceEnabled;
 
     // intake
@@ -140,7 +140,7 @@ void fourBallC(const RobotData &robotData, ControlData &controlData) {
         controlData.saShooting = false;
     }
 
-    if (sec > 3 && sec < 5) {
+    if (sec > 2.5 && sec < 4.5) {
         controlData.saFinalShoot = true;
     }
     else if (sec > 12 && sec < 15) {
