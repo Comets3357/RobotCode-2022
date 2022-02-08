@@ -15,8 +15,8 @@ static const int
 
 static const double
     absOut = 0.485,
-    absIn = 0.618,
-    revOut = 16.1,
+    absIn = 0.616,
+    revOut = 6.4,
     revIn = 0;
 
 //indexer
@@ -32,8 +32,8 @@ static const int
 
 static const double
     hoodabsOut = 0.028,
-    hoodabsIn = 0.928,
-    hoodrevOut = -38,
+    hoodabsIn = 0.933,
+    hoodrevOut = -37,
     hoodrevIn = 0,
     hoodAngleOut = 43,
     hoodAngleIn = 21;
