@@ -40,7 +40,7 @@ void Robot::AutonomousInit()
     gyro.AutonomousInit(robotData.gyroData);
     auton.AutonomousInit(robotData.autonData);
     drivebase.AutonomousInit(robotData, robotData.drivebaseData, robotData.autonData);
-    
+    shooter.EnabledInit(robotData.shooterData);
 }
 
 void Robot::AutonomousPeriodic()
@@ -53,7 +53,7 @@ void Robot::TeleopInit()
 {
     gyro.TeleopInit(robotData.gyroData);
     drivebase.TeleopInit(robotData);
-    
+    shooter.EnabledInit(robotData.shooterData);
 }
 
 void Robot::TeleopPeriodic()

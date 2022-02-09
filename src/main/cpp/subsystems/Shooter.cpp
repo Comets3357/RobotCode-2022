@@ -4,7 +4,7 @@
  * CLASS SPECIFIC INITS
  * ---------------------------------------------------------------------------------------------------------------------------------------------------
  * */
-void Shooter::RobotInit(ShooterData &shooterData)
+void Shooter::RobotInit()
 {
     flyWheelInit();
     shooterHoodInit();
@@ -13,9 +13,6 @@ void Shooter::RobotInit(ShooterData &shooterData)
     shooterHood.Set(0);
 
     isHigh = true;
-
-    shooterData.shootMode = shootMode_none;
-    shooterData.shootUnassignedAsOpponent = false;
 
     //used for reading flywheel speeds from the dashboard
     frc::SmartDashboard::PutNumber("wheel speed", 0);
@@ -65,6 +62,12 @@ void Shooter::DisabledInit()
 {
     shooterHood.Set(0);
     flyWheelLead.Set(0);
+}
+
+void Shooter::EnabledInit(ShooterData &shooterData)
+{
+    shooterData.shootMode = shootMode_none;
+    shooterData.shootUnassignedAsOpponent = false;
 }
 
 /**
