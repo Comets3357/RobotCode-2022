@@ -193,17 +193,17 @@ void Auton::setShootTime(ControlData &controlData, double currentSec, double sta
             }
 
             // toggle off vision shooting at end of time range
-            if (currentSec - endSec > 0 && currentSec - endSec < 0.05) {
-                controlData.saShooting = true;
-            }
-            else if (currentSec - endSec > 0.05 && currentSec - endSec < 0.1) {
-                controlData.saShooting = false;
-            }
+            // if (currentSec - endSec > 0 && currentSec - endSec < 0.05) {
+            //     controlData.saShooting = true;
+            // }
+            // else if (currentSec - endSec > 0.05 && currentSec - endSec < 0.1) {
+            //     controlData.saShooting = false;
+            // }
 
-            if (currentSec > startSec && currentSec < endSec) {
-                controlData.saFinalShoot = true;
-            } else {
-                controlData.saFinalShoot = false;
-            }
+            // if (currentSec > startSec && currentSec < endSec) {
+            //     controlData.saFinalShoot = true;
+            // } else {
+            //     controlData.saFinalShoot = false;
+            // }
         }
 }
