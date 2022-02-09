@@ -1,3 +1,4 @@
+#include "subsystems/Climb.h"
 #include "RobotData.h"
 
 void Climb::RobotInit(){
@@ -5,9 +6,19 @@ void Climb::RobotInit(){
     climbArms.RestoreFactoryDefaults();
     climbElevator.RestoreFactoryDefaults();
 
+    //do other init stuff (probably more)
+    climbArms.RestoreFactoryDefaults();
+    climbElevator.RestoreFactoryDefaults();
+
     //sets the inversion of the motors
-    climbArms.SetInverted(false);
+    climbArms.SetInverted(true);
     climbElevator.SetInverted(true);
+    climbArms.SetSmartCurrentLimit(45);
+    climbElevator.SetSmartCurrentLimit(80);
+    climbElevator.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse,0);
+    climbElevator.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward,140);
+    climbArms.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse,0);
+    climbArms.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward,250);
 
     //motor idlemode
     climbElevator.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
@@ -28,15 +39,16 @@ void Climb::RobotInit(){
 void Climb::RobotPeriodic(const RobotData &robotData, ClimbData &climbData){
     
     updateData(robotData, climbData);
+    manual(robotData, climbData);
 
-    if (robotData.controlData.climbMode){
+    // if (robotData.controlData.climbMode){
 
-        if (robotData.controlData.manualMode){ //updates whether or not the robot is in manual or semiAuto mode
-            manual(robotData, climbData);
-        } else {
-            //semiAuto(robotData, climbData);
-        }
-    }
+    //     if (robotData.controlData.manualMode){ //updates whether or not the robot is in manual or semiAuto mode
+    //         manual(robotData, climbData);
+    //     } else {
+    //         //semiAuto(robotData, climbData);
+    //     }
+    // }
 
     //if the limit switch is read, then the power is set to 0 and the encoder is set to 0
     if (elevatorLimit.Get() && climbElevator.Get() <= 0){
@@ -53,10 +65,30 @@ void Climb::RobotPeriodic(const RobotData &robotData, ClimbData &climbData){
 
 void Climb::manual(const RobotData &robotData, ClimbData &climbData){
     //manualy sets the elevator with limit
-    if ((climbElevatorEncoder.GetPosition() <= 0 && robotData.controllerData.sLYStick < 0) || (climbElevatorEncoder.GetPosition() >= 55 && robotData.controllerData.sLYStick > 0)){
+    if ((climbElevatorEncoder.GetPosition() <= 0 && robotData.controllerData.sLYStick < 0) || (climbElevatorEncoder.GetPosition() >= 144 && robotData.controllerData.sLYStick > 0)){
         climbElevator.Set(0); //control elevator with left stick
     } else {
-        climbElevator.Set(robotData.controllerData.sLYStick*0.4); //control elevator with left stick); //sets the power to 0 so the elevator stops moving
+        if (robotData.controllerData.sLYStick < -0.08 || robotData.controllerData.sLYStick > 0.08){
+        climbElevator.Set(robotData.controllerData.sLYStick*0.6); //control elevator with left stick); //sets the power to 0 so the elevator stops moving
+        }
+        else{
+            climbElevator.Set(0);
+        }
+    }
+    
+    
+
+    //manualy sets the arms with limit
+    if ((climbArmsEncoder.GetPosition() <= 0 && robotData.controllerData.sRYStick < 0) || (climbArmsEncoder.GetPosition() >= 250 && robotData.controllerData.sRYStick > 0)){
+        
+        climbArms.Set(0); //control arms with right stick
+    } else {
+        if (robotData.controllerData.sRYStick < -0.08 || robotData.controllerData.sRYStick > 0.08){
+            climbArms.Set(robotData.controllerData.sRYStick); //sets the power to 0 so the arms stop moving
+        }
+        else{
+            climbArms.Set(0);
+        }
     }
     
 
@@ -66,7 +98,7 @@ void Climb::manual(const RobotData &robotData, ClimbData &climbData){
     // } else {
     //     climbArms.Set(0); //sets the power to 0 so the arms stop moving
     // }
-    climbArms.Set(robotData.controllerData.sRYStick);
+    //climbArms.Set(robotData.controlData.mArmPivot*.3);
 }
 
 void Climb::semiAuto(const RobotData &robotData, ClimbData &climbData){

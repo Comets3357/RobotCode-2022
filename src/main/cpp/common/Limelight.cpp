@@ -79,7 +79,6 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     limelightData.yOffset = getVerticalOffset();
     limelightData.targetValue = getTarget();
     limelightData.validTarget = table->GetNumber("tv", 0.0);
-
-    table->PutNumber("pipeline", getPipeline(robotData.limelightData.yOffset)); //set the pipeline based on y offset
+    table->PutNumber("ledMode", 1);
 }
 
