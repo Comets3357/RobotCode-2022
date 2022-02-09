@@ -6,9 +6,19 @@ void Climb::RobotInit(){
     climbArms.RestoreFactoryDefaults();
     climbElevator.RestoreFactoryDefaults();
 
+    //do other init stuff (probably more)
+    climbArms.RestoreFactoryDefaults();
+    climbElevator.RestoreFactoryDefaults();
+
     //sets the inversion of the motors
-    climbArms.SetInverted(false);
+    climbArms.SetInverted(true);
     climbElevator.SetInverted(true);
+    climbArms.SetSmartCurrentLimit(45);
+    climbElevator.SetSmartCurrentLimit(80);
+    climbElevator.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse,0);
+    climbElevator.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward,140);
+    climbArms.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse,0);
+    climbArms.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward,250);
 
     //motor idlemode
     climbElevator.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
@@ -54,10 +64,20 @@ void Climb::RobotPeriodic(const RobotData &robotData, ClimbData &climbData){
 
 void Climb::manual(const RobotData &robotData, ClimbData &climbData){
     //manualy sets the elevator with limit
-    if ((climbElevatorEncoder.GetPosition() <= 0 && robotData.controlData.mElevatorExtension < 0) || (climbElevatorEncoder.GetPosition() >= 55 && robotData.controlData.mElevatorExtension > 0)){
+    if ((climbElevatorEncoder.GetPosition() <= 0 && robotData.controlData.mElevatorExtension < 0) || (climbElevatorEncoder.GetPosition() >= 144 && robotData.controlData.mElevatorExtension > 0)){
         climbElevator.Set(0); //control elevator with left stick
     } else {
-        climbElevator.Set(robotData.controlData.mElevatorExtension*0.4); //control elevator with left stick); //sets the power to 0 so the elevator stops moving
+        if (robotData.controlData.mElevatorExtension > -0.08 && robotData.controlData.mElevatorExtension < 0.08){
+            climbElevator.Set(robotData.controlData.mElevatorExtension*0.4); //control elevator with left stick); //sets the power to 0 so the elevator stops moving
+        }
+    }
+
+    if ((climbElevatorEncoder.GetPosition() <= 0 && robotData.controlData.mArmPivot < 0) || (climbElevatorEncoder.GetPosition() >= 250 && robotData.controlData.mArmPivot > 0)){
+        climbArms.Set(0); //control elevator with left stick
+    } else {
+        if (robotData.controlData.mArmPivot > -0.08 && robotData.controlData.mArmPivot < 0.08){
+            climbArms.Set(robotData.controlData.mArmPivot*0.4); //control elevator with left stick); //sets the power to 0 so the elevator stops moving
+        }
     }
     
 
@@ -67,7 +87,7 @@ void Climb::manual(const RobotData &robotData, ClimbData &climbData){
     // } else {
     //     climbArms.Set(0); //sets the power to 0 so the arms stop moving
     // }
-    climbArms.Set(robotData.controlData.mArmPivot*.3);
+    //climbArms.Set(robotData.controlData.mArmPivot*.3);
 }
 
 void Climb::semiAuto(const RobotData &robotData, ClimbData &climbData){
