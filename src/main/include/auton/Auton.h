@@ -55,7 +55,7 @@ private:
 
 
     // secondary control helper functions:
-    void toggleShoot(double startSec, double endSec);
+    void setShootTime(ControlData &controlData, double currentSec, double startSec, double endSec);
 
     // secondary control variables:
     bool doneTogglingShoot = false;

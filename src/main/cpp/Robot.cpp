@@ -49,7 +49,6 @@ void Robot::AutonomousPeriodic()
 
 void Robot::TeleopInit()
 {
-    timer.EnabledInit(robotData.timerData);
     gyro.TeleopInit(robotData.gyroData);
     drivebase.TeleopInit(robotData);
     
