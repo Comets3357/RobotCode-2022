@@ -80,14 +80,24 @@ void Shooter::RobotPeriodic(const RobotData &robotData, ShooterData &shooterData
     updateData(robotData, shooterData);
     updateShootMode(robotData, shooterData);
 
-    if (robotData.controlData.mode == mode_teleop_manual)
-    {
-        manual(robotData, shooterData);
+    if(robotData.controlData.mode == mode_climb_manual || robotData.controlData.mode == mode_climb_sa){
+        shooterHood_pidController.SetReference(-1,rev::CANSparkMaxLowLevel::ControlType::kPosition);
+        flyWheelLead.Set(0);
+
+    }else{
+        if (robotData.controlData.mode == mode_teleop_manual)
+        {
+            manual(robotData, shooterData);
+        }
+        else if (robotData.controlData.mode == mode_teleop_sa)
+        {
+            semiAuto(robotData, shooterData);
+        }
+
     }
-    else if (robotData.controlData.mode == mode_teleop_sa)
-    {
-        semiAuto(robotData, shooterData);
-    }
+
+
+    
     
     //idk about this control data stuff to figure out
     if(robotData.controlData.upperHubShot){
@@ -122,14 +132,10 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
         shooterHood_pidController.SetReference(absoluteToREV(convertFromAngleToAbs(robotData.limelightData.desiredHoodPos)), rev::CANSparkMaxLowLevel::ControlType::kPosition);
         
         //retrieves flywheel speeds from the dashboard
-        double hi = frc::SmartDashboard::GetNumber("wheel speed", 0);
+        //double hi = frc::SmartDashboard::GetNumber("wheel speed", 0);
 
         // flyWheelLead_pidController.SetReference(2000, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
-        //shooterHood_pidController.SetReference(absoluteToREV(convertFromAngleToAbs(robotData.limelightData.desiredHoodPos)), rev::CANSparkMaxLowLevel::ControlType::kPosition);
        
-        //TEST HOW OFF THE HOOD ANGLES ARE
-        //shooterHood_pidController.SetReference(absoluteToREV(convertFromAngleToAbs(32)), rev::CANSparkMaxLowLevel::ControlType::kPosition);
-
         //once it's a high enough velocity its ready for indexer to run
         if (getWheelVel() > (robotData.limelightData.desiredVel - 40))
         // if(getWheelVel() > 1950)

@@ -34,7 +34,7 @@ void Intake::pivotInit(){
     intakePivot_pidController.SetD(0.01,0);
     intakePivot_pidController.SetIZone(0,0);
     intakePivot_pidController.SetFF(0,0);
-    intakePivot_pidController.SetOutputRange(-0.2, 0.2,0);
+    intakePivot_pidController.SetOutputRange(-0.2, 0.4,0);
 
     intakePivot.SetSmartCurrentLimit(15);
 }
@@ -50,25 +50,32 @@ void Intake::RobotPeriodic(const RobotData &robotData, IntakeData &intakeData)
 {
     updateData(robotData, intakeData);
 
-    if (robotData.controlData.mode == mode_teleop_manual)
-    {
-        //checks to see if the intake is down when switched to manual mode, and if it is bring it up before manual functionality 
-        if(!zeroedIntake){
-            intakePivot_pidController.SetReference(0.1, rev::CANSparkMaxLowLevel::ControlType::kPosition, 1);
-            if(intakePivotEncoder.GetPosition() < 0.5){
-                zeroedIntake = true;
+    if(robotData.controlData.mode == mode_climb_manual || robotData.controlData.mode == mode_climb_sa){
+        intakePivot_pidController.SetReference(0.1, rev::CANSparkMaxLowLevel::ControlType::kPosition, 1);
+        intakeRollers.Set(0);
+        intakeSingulator.Set(0);
+
+    }else{
+        if (robotData.controlData.mode == mode_teleop_manual)
+        {
+            //checks to see if the intake is down when switched to manual mode, and if it is bring it up before manual functionality 
+            if(!zeroedIntake){
+                intakePivot_pidController.SetReference(0.1, rev::CANSparkMaxLowLevel::ControlType::kPosition, 1);
+                if(intakePivotEncoder.GetPosition() < 0.5){
+                    zeroedIntake = true;
+                }
+            }else{ 
+                manual(robotData, intakeData);
+
             }
-        }else{ 
-            manual(robotData, intakeData);
-
+            
         }
-        
-
+        else if (robotData.controlData.mode == mode_teleop_sa)
+        {
+            semiAuto(robotData, intakeData);
+        }
     }
-    else if (robotData.controlData.mode == mode_teleop_sa)
-    {
-        semiAuto(robotData, intakeData);
-    }
+    
 
     //if anything is broken or not working, reset the motor and it's init functions
     if(intakeRollers.GetFault(rev::CANSparkMax::FaultID::kHasReset)||intakeRollers.GetFault(rev::CANSparkMax::FaultID::kMotorFault)|intakeRollers.GetFault(rev::CANSparkMax::FaultID::kBrownout)){

@@ -14,14 +14,23 @@ void Indexer::RobotPeriodic(const RobotData &robotData, IndexerData &indexerData
     updateData(robotData, indexerData);
     count(robotData, indexerData);  // accounts for automatic counting as well as manual decrementing
                                     // there are manual functions for incremeneting and decrementing cargo as well, see controldata.cpp
-    if (robotData.controlData.mode == mode_teleop_manual)
-    {
-        manual(robotData, indexerData);
+
+    if(robotData.controlData.mode == mode_climb_manual || robotData.controlData.mode == mode_climb_sa){
+        indexerBelt.Set(0);
+        indexerWheel.Set(0);
+
+    }else{
+        if (robotData.controlData.mode == mode_teleop_manual)
+        {
+            manual(robotData, indexerData);
+        }
+        else if (robotData.controlData.mode == mode_teleop_sa)
+        {
+            semiAuto(robotData, indexerData);
+        }
     }
-    else if (robotData.controlData.mode == mode_teleop_sa)
-    {
-        semiAuto(robotData, indexerData);
-    }
+
+    
     
 
 }
