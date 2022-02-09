@@ -47,6 +47,9 @@ void Climb::RobotPeriodic(const RobotData &robotData, ClimbData &climbData){
         } else {
             //semiAuto(robotData, climbData);
         }
+    } else {
+        climbElevator.Set(0);
+        climbArms.Set(0);
     }
 
     //if the limit switch is read, then the power is set to 0 and the encoder is set to 0
@@ -67,27 +70,28 @@ void Climb::manual(const RobotData &robotData, ClimbData &climbData){
     if ((climbElevatorEncoder.GetPosition() <= 0 && robotData.controlData.mElevatorExtension < 0) || (climbElevatorEncoder.GetPosition() >= 144 && robotData.controlData.mElevatorExtension > 0)){
         climbElevator.Set(0); //control elevator with left stick
     } else {
-        if (robotData.controlData.mElevatorExtension > -0.08 && robotData.controlData.mElevatorExtension < 0.08){
-            climbElevator.Set(robotData.controlData.mElevatorExtension*0.4); //control elevator with left stick); //sets the power to 0 so the elevator stops moving
+        if (robotData.controlData.mElevatorExtension < -0.08 || robotData.controlData.mElevatorExtension > 0.08){
+        climbElevator.Set(robotData.controlData.mElevatorExtension*0.6); //control elevator with left stick); //sets the power to 0 so the elevator stops moving
         }
-    }
-
-    if ((climbElevatorEncoder.GetPosition() <= 0 && robotData.controlData.mArmPivot < 0) || (climbElevatorEncoder.GetPosition() >= 250 && robotData.controlData.mArmPivot > 0)){
-        climbArms.Set(0); //control elevator with left stick
-    } else {
-        if (robotData.controlData.mArmPivot > -0.08 && robotData.controlData.mArmPivot < 0.08){
-            climbArms.Set(robotData.controlData.mArmPivot*0.4); //control elevator with left stick); //sets the power to 0 so the elevator stops moving
+        else{
+            climbElevator.Set(0);
         }
     }
     
+    
 
     //manualy sets the arms with limit
-    // if (climbArmsEncoder.GetPosition() > -1000 && climbArmsEncoder.GetPosition() < 2000){
-    //     climbArms.Set(robotData.controllerData.sRYStick); //control arms with right stick
-    // } else {
-    //     climbArms.Set(0); //sets the power to 0 so the arms stop moving
-    // }
-    //climbArms.Set(robotData.controlData.mArmPivot*.3);
+    if ((climbArmsEncoder.GetPosition() <= 0 && robotData.controlData.mArmPivot < 0) || (climbArmsEncoder.GetPosition() >= 250 && robotData.controlData.mArmPivot > 0)){
+        
+        climbArms.Set(0); //control arms with right stick
+    } else {
+        if (robotData.controlData.mArmPivot < -0.08 || robotData.controlData.mArmPivot > 0.08){
+            climbArms.Set(robotData.controlData.mArmPivot); //sets the power to 0 so the arms stop moving
+        }
+        else{
+            climbArms.Set(0);
+        }
+    }
 }
 
 void Climb::semiAuto(const RobotData &robotData, ClimbData &climbData){

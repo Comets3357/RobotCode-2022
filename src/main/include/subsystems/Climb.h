@@ -58,12 +58,12 @@ private:
 
     //CHANGE MOTOr ID STUFF  (just outline lol don't take your life too seriously:))
     //initualizes climb elevator motor
-    rev::CANSparkMax climbElevator = rev::CANSparkMax(41, rev::CANSparkMax::MotorType::kBrushless);
+    rev::CANSparkMax climbElevator = rev::CANSparkMax(climbElevatorID, rev::CANSparkMax::MotorType::kBrushless);
     rev::SparkMaxRelativeEncoder climbElevatorEncoder = climbElevator.GetEncoder();
     rev::SparkMaxPIDController climbElevator_pidController = climbElevator.GetPIDController();
 
     //initualizes climb arms motor (i dont know if there are 2 motors yet)
-    rev::CANSparkMax climbArms = rev::CANSparkMax(42, rev::CANSparkMax::MotorType::kBrushless);
+    rev::CANSparkMax climbArms = rev::CANSparkMax(climbArmsID, rev::CANSparkMax::MotorType::kBrushless);
     rev::SparkMaxRelativeEncoder climbArmsEncoder = climbArms.GetEncoder();
     rev::SparkMaxPIDController climbArms_pidController = climbArms.GetPIDController();
 

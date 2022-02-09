@@ -20,6 +20,8 @@ void Robot::RobotPeriodic()
     colorSensor.RobotPeriodic(robotData);
     visionLookup.RobotPeriodic(robotData, robotData.visionLookupData);
 
+    frc::SmartDashboard::PutNumber("mode", robotData.controlData.mode);
+
 
     if (IsEnabled())
     {

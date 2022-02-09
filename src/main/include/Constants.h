@@ -30,6 +30,11 @@ static const int
     shooterHoodID = 33,
     shooterTurretID = 34;
 
+// climb
+static const int
+    climbElevatorID = 41,
+    climbArmsID = 43;
+
 static const double
     hoodabsOut = 0.028,
     hoodabsIn = 0.933,
