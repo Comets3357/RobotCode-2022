@@ -119,6 +119,8 @@ void Drivebase::updateData(const RobotData &robotData, DrivebaseData &drivebaseD
     drivebaseData.lDriveVel = dbL.GetSensorCollection().GetIntegratedSensorVelocity() / mpsToTpds;
     drivebaseData.rDriveVel = dbR.GetSensorCollection().GetIntegratedSensorVelocity() / mpsToTpds;
 
+    frc::SmartDashboard::PutNumber("driveMode", drivebaseData.driveMode);
+
     // call updateOdometry
     updateOdometry(robotData, drivebaseData);
 }
@@ -167,7 +169,7 @@ void Drivebase::teleopControl(const RobotData &robotData, DrivebaseData &driveba
         setPercentOutput(tempLDrive, tempRDrive);
     }
     else if (drivebaseData.driveMode == driveMode_turnInPlace) {
-        turnInPlaceTeleop(robotData.limelightData.angleOffset, robotData);
+        // turnInPlaceTeleop(robotData.limelightData.angleOffset, robotData);
     }
 }
 
@@ -178,11 +180,20 @@ void Drivebase::autonControl(const RobotData &robotData, DrivebaseData &drivebas
     // feed wheel speeds to PID
     // check if done with current path by either checking TotalTime() or checking in vicinity of final target point
 
+    frc::SmartDashboard::PutNumber("secSinceEnabled", robotData.timerData.secSinceEnabled);
+
     if (drivebaseData.driveMode == driveMode_break)
     {
-        setVelocity(0, 0);
+        if (robotData.shooterData.shootMode == shootMode_vision) {
+            turnInPlaceAuton(robotData.limelightData.angleOffset, robotData, drivebaseData, autonData);
+            frc::SmartDashboard::PutNumber("angleOffsetLimelight", robotData.limelightData.angleOffset);
+        } else {
+            setVelocity(0, 0);
+        }
         // frc::SmartDashboard::PutNumber("breakEndSec", breakEndSec);
         if (robotData.timerData.secSinceEnabled > breakEndSec) {
+            frc::SmartDashboard::PutNumber("secSinceEnabled", robotData.timerData.secSinceEnabled);
+            frc::SmartDashboard::PutNumber("breakEndSec", breakEndSec);
             getNextAutonStep(robotData, drivebaseData, autonData);
         }
     }
@@ -414,7 +425,7 @@ void Drivebase::getNextAutonStep(const RobotData &robotData, DrivebaseData &driv
 
 void Drivebase::turnInPlaceAuton(double degrees, const RobotData &robotData, DrivebaseData &drivebaseData, AutonData &autonData) {
 
-    // frc::SmartDashboard::PutNumber("degree diff", degrees);
+    frc::SmartDashboard::PutNumber("degree diff", degrees);
     
     lastDegrees.push_back(degrees);
     if (lastDegrees.size() > 5) {
@@ -429,9 +440,13 @@ void Drivebase::turnInPlaceAuton(double degrees, const RobotData &robotData, Dri
         directionFactor = -1;
     }
 
+    frc::SmartDashboard::PutBoolean("allValuesWithin", allValuesWithin(lastDegrees, 1));
     if (allValuesWithin(lastDegrees, 1)) {
         setPercentOutput(0, 0);
-        getNextAutonStep(robotData, drivebaseData, autonData);
+        // only advance auton step if it's not shooting
+        if (robotData.shooterData.shootMode == shootMode_none) {
+            getNextAutonStep(robotData, drivebaseData, autonData);
+        }
         // frc::SmartDashboard::PutString("AUTON", "TURN IN PLACE");
     } else {
         leftOutput = std::pow(std::abs(degrees / 361), 1) + 0.07;
@@ -447,7 +462,7 @@ void Drivebase::turnInPlaceAuton(double degrees, const RobotData &robotData, Dri
 }
 
 void Drivebase::turnInPlaceTeleop(double degrees, const RobotData &robotData) {
-    // frc::SmartDashboard::PutNumber("degree diff", degrees);
+    frc::SmartDashboard::PutNumber("degree diff", degrees);
     
     lastDegrees.push_back(degrees);
     if (lastDegrees.size() > 5) {

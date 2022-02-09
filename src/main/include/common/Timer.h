@@ -2,6 +2,7 @@
 
 #include <frc/Timer.h>
 #include <units/time.h>
+#include <frc/smartdashboard/SmartDashboard.h>
 
 struct TimerData
 {

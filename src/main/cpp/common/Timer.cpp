@@ -11,12 +11,13 @@
 void Timer::EnabledInit(TimerData &timerData) {
     timer.Reset();
     timer.Start();
-    timerData.secSinceEnabled = timer.Get().to<double>();
+    timerData.secSinceEnabled = 0;
 }
 
 void Timer::EnabledPeriodic(TimerData &timerData)
 {
     timerData.secSinceEnabled = timer.Get().to<double>();
+    frc::SmartDashboard::PutNumber("timerData.secSinceEnabled", timerData.secSinceEnabled);
 }
 
 // void Timer::DisabledInit(TimerData &timerData)
