@@ -167,7 +167,7 @@ void Drivebase::teleopControl(const RobotData &robotData, DrivebaseData &driveba
         setPercentOutput(tempLDrive, tempRDrive);
     }
     else if (drivebaseData.driveMode == driveMode_turnInPlace) {
-        turnInPlaceTeleop(robotData.limelightData.angleOffset, robotData);
+        // turnInPlaceTeleop(robotData.limelightData.angleOffset, robotData);
     }
 }
 
@@ -447,7 +447,7 @@ void Drivebase::turnInPlaceAuton(double degrees, const RobotData &robotData, Dri
 }
 
 void Drivebase::turnInPlaceTeleop(double degrees, const RobotData &robotData) {
-    // frc::SmartDashboard::PutNumber("degree diff", degrees);
+    frc::SmartDashboard::PutNumber("degree diff", degrees);
     
     lastDegrees.push_back(degrees);
     if (lastDegrees.size() > 5) {

@@ -22,6 +22,13 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     limelightData.xOffset =  table->GetNumber("tx", 0.0);
     limelightData.yOffset =  table->GetNumber("ty", 0.0);
 
+    if(robotData.shooterData.shootMode != shootMode_vision){
+         table->PutNumber("ledMode", 1);
+    }else{
+        table->PutNumber("ledMode", 0);
+
+    }
+
     //moves the limelight data over to the actual position of the shooter
     shooterOffset(robotData, limelightData);
     

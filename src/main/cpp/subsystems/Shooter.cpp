@@ -115,21 +115,21 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
     if(shooterData.shootMode == shootMode_vision){ // Aiming with limelight
 
         //set the hood and flywheel using pids to the desired values based off the limelight code
-        //flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
-        // shooterHood_pidController.SetReference(absoluteToREV(convertFromAngleToAbs(robotData.limelightData.desiredHoodPos)), rev::CANSparkMaxLowLevel::ControlType::kPosition);
+        flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
+        shooterHood_pidController.SetReference(absoluteToREV(convertFromAngleToAbs(robotData.limelightData.desiredHoodPos)), rev::CANSparkMaxLowLevel::ControlType::kPosition);
         
         //retrieves flywheel speeds from the dashboard
         double hi = frc::SmartDashboard::GetNumber("wheel speed", 0);
 
-        flyWheelLead_pidController.SetReference(2000, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
+        // flyWheelLead_pidController.SetReference(2000, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
         //shooterHood_pidController.SetReference(absoluteToREV(convertFromAngleToAbs(robotData.limelightData.desiredHoodPos)), rev::CANSparkMaxLowLevel::ControlType::kPosition);
        
         //TEST HOW OFF THE HOOD ANGLES ARE
         //shooterHood_pidController.SetReference(absoluteToREV(convertFromAngleToAbs(32)), rev::CANSparkMaxLowLevel::ControlType::kPosition);
 
         //once it's a high enough velocity its ready for indexer to run
-        // if (getWheelVel() > (robotData.limelightData.desiredVel - 40))
-        if(getWheelVel() > 1950)
+        if (getWheelVel() > (robotData.limelightData.desiredVel - 40))
+        // if(getWheelVel() > 1950)
         {
             shooterData.readyShoot = true;
         }
