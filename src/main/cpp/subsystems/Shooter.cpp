@@ -323,8 +323,8 @@ void Shooter::innerLaunch()
     if (isHigh)
     {
         shooterHood_pidController.SetReference(hoodrevOut + 2, rev::CANSparkMaxLowLevel::ControlType::kPosition);
-        flyWheelLead_pidController.SetReference(1825, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
-        readyShootLimit = 1775;
+        flyWheelLead_pidController.SetReference(1875, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
+        readyShootLimit = 1825;
     }
     else if (!isHigh)
     {
@@ -340,8 +340,8 @@ void Shooter::wall()
     {
         //38
         shooterHood_pidController.SetReference(hoodrevOut + 6, rev::CANSparkMaxLowLevel::ControlType::kPosition);
-        flyWheelLead_pidController.SetReference(1700, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
-        readyShootLimit = 1650;
+        flyWheelLead_pidController.SetReference(1750, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
+        readyShootLimit = 1700;
     }
     else if (!isHigh)
     {
@@ -359,13 +359,13 @@ void Shooter::fender()
 
         shooterHood_pidController.SetReference(hoodrevIn-0.25, rev::CANSparkMaxLowLevel::ControlType::kPosition);
         flyWheelLead_pidController.SetReference(1500, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
-        readyShootLimit = 1450;
+        readyShootLimit = 1500;
     }
     else if (!isHigh)
     {
         shooterHood_pidController.SetReference(hoodrevIn-0.25, rev::CANSparkMaxLowLevel::ControlType::kPosition);
         flyWheelLead_pidController.SetReference(1500, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
-        readyShootLimit = 1450;
+        readyShootLimit = 1500;
     }
 }
 

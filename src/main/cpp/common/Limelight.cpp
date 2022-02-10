@@ -23,7 +23,7 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     limelightData.yOffset =  table->GetNumber("ty", 0.0);
 
 //turns off limelight if not shooting
-    if(robotData.shooterData.shootMode != shootMode_vision){
+    if(robotData.shooterData.shootMode == shootMode_none){
          table->PutNumber("ledMode", 1);
     }else{
         table->PutNumber("ledMode", 0);

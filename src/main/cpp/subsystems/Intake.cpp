@@ -51,7 +51,7 @@ void Intake::RobotPeriodic(const RobotData &robotData, IntakeData &intakeData)
     updateData(robotData, intakeData);
 
     if(robotData.controlData.mode == mode_climb_manual || robotData.controlData.mode == mode_climb_sa){
-        intakePivot_pidController.SetReference(0.1, rev::CANSparkMaxLowLevel::ControlType::kPosition, 1);
+        intakePivot_pidController.SetReference(0.1, rev::CANSparkMaxLowLevel::ControlType::kPosition, 0);
         intakeRollers.Set(0);
         intakeSingulator.Set(0);
 
@@ -60,7 +60,7 @@ void Intake::RobotPeriodic(const RobotData &robotData, IntakeData &intakeData)
         {
             //checks to see if the intake is down when switched to manual mode, and if it is bring it up before manual functionality 
             if(!zeroedIntake){
-                intakePivot_pidController.SetReference(0.1, rev::CANSparkMaxLowLevel::ControlType::kPosition, 1);
+                intakePivot_pidController.SetReference(0.1, rev::CANSparkMaxLowLevel::ControlType::kPosition, 0);
                 if(intakePivotEncoder.GetPosition() < 0.5){
                     zeroedIntake = true;
                 }
