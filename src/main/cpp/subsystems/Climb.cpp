@@ -15,7 +15,7 @@ void Climb::RobotInit(){
     climbElevator.SetInverted(true);
     climbArms.SetSmartCurrentLimit(45);
     climbElevator.SetSmartCurrentLimit(80);
-    climbElevator.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse,0);
+    //climbElevator.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse,0);
     climbElevator.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward,140);
     climbArms.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse,0);
     climbArms.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward,250);
@@ -51,9 +51,23 @@ void Climb::RobotPeriodic(const RobotData &robotData, ClimbData &climbData){
     // }
 
     //if the limit switch is read, then the power is set to 0 and the encoder is set to 0
-    if (elevatorLimit.Get() && climbElevator.Get() <= 0){
+    if (elevatorLimit.Get() && climbElevator.Get() <= 0 && !climbData.zeroing){
         climbElevator.Set(0);
         climbElevatorEncoder.SetPosition(0);
+    }
+
+    if (robotData.controlData.climbZeroing){
+        climbData.zeroing = !climbData.zeroing;
+    }
+
+    if (climbData.zeroing)
+    {
+        climbElevator.Set(-0.5);
+        if (elevatorLimit.Get()){
+            climbElevator.Set(0);
+            climbData.zeroing = false;
+        }
+
     }
 
     if (armsLimit.Get() && climbArms.Get() > 0)
@@ -128,7 +142,7 @@ void Climb::climbInit(const RobotData &robotData, ClimbData &climbData){
     if (climbInitiating && climbUp){
         RunElevatorToPos(140,0,0);
     //runs climb down
-    } else if (climbInitiating && !climbUp){
+    } else if (climbInitiating && !climbUp){ 
         RunElevatorToPos(0,0,0);
     }
 }

@@ -48,11 +48,8 @@ struct ControlData
     bool saclimbTraversalSequence;
     bool saclimbHeightSequence;
     bool sacancelSequence;
-    bool sapivotArmsIn;
-    bool sapivotArmsOut;
-    bool saretractElevator;
-    bool saextendElevator;
     bool saclimbInit;
+    bool climbZeroing;
 };
 
 struct ControllerData

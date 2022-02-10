@@ -32,7 +32,8 @@ static const double
 
 // climb
 static const int
-    climbLiftID = 41;
+    climbElevatorID = 41,
+    climbArmsID = 43;
 
 
 // DIO

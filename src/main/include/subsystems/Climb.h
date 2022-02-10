@@ -9,6 +9,7 @@
 #include <rev/SparkMaxPIDController.h>
 #include <rev/CANEncoder.h>
 #include <rev/CANDigitalInput.h>
+#include <frc/DigitalInput.h>
 
 
 struct RobotData;
@@ -16,6 +17,7 @@ struct RobotData;
 struct ClimbData {
     int bar;
     bool climbing;
+    bool zeroing;
 };
 
 class Climb {
@@ -58,17 +60,17 @@ private:
 
     //CHANGE MOTOr ID STUFF  (just outline lol don't take your life too seriously:))
     //initualizes climb elevator motor
-    rev::CANSparkMax climbElevator = rev::CANSparkMax(41, rev::CANSparkMax::MotorType::kBrushless);
+    rev::CANSparkMax climbElevator = rev::CANSparkMax(climbElevatorID, rev::CANSparkMax::MotorType::kBrushless);
     rev::SparkMaxRelativeEncoder climbElevatorEncoder = climbElevator.GetEncoder();
     rev::SparkMaxPIDController climbElevator_pidController = climbElevator.GetPIDController();
 
     //initualizes climb arms motor (i dont know if there are 2 motors yet)
-    rev::CANSparkMax climbArms = rev::CANSparkMax(43, rev::CANSparkMax::MotorType::kBrushless);
+    rev::CANSparkMax climbArms = rev::CANSparkMax(climbArmsID, rev::CANSparkMax::MotorType::kBrushless);
     rev::SparkMaxRelativeEncoder climbArmsEncoder = climbArms.GetEncoder();
     rev::SparkMaxPIDController climbArms_pidController = climbArms.GetPIDController();
 
     //zeroing sensor
-    rev::SparkMaxLimitSwitch elevatorLimit = climbElevator.GetForwardLimitSwitch(rev::CANDigitalInput::LimitSwitchPolarity::kNormallyOpen);
+    frc::DigitalInput elevatorLimit{7};
     rev::SparkMaxLimitSwitch armsLimit = climbArms.GetForwardLimitSwitch(rev::CANDigitalInput::LimitSwitchPolarity::kNormallyOpen);
 
 
