@@ -49,9 +49,9 @@ private:
     void semiAuto(const RobotData &robotData, ClimbData &climbData);
     void manual(const RobotData &robotData, ClimbData &climbData);
 
-    void RunElevatorToPos(int position, float power, int stageAdd, int onBar);
-    void RunArmsToPos(int position, float power, int stageAdd, int onBar);
-    void RunArmsAndElevatorToPos(int elevatorPos, float elevatorPower, int elevatorBar, int armsPos, float armsPower, int armsBar, int stageAdd);
+    void RunElevatorToPos(int position, int stageAdd, int onBar);
+    void RunArmsToPos(int position, int stageAdd, int onBar);
+    void RunArmsAndElevatorToPos(int elevatorPos, int elevatorBar, int armsPos, int armsBar, int stageAdd);
     void zeroArms(float power, int stageAdd);
     void zeroElevator(float power, int stageAdd);
 
