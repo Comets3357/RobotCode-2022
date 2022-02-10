@@ -9,6 +9,11 @@ void Indexer::RobotInit()
 
 }
 
+// init in auton with an alliance ball preloaded
+void Indexer::AutonomousInit(IndexerData &indexerData) {
+    indexerData.indexerContents.push_back(Cargo::cargo_Alliance);
+}
+
 void Indexer::RobotPeriodic(const RobotData &robotData, IndexerData &indexerData)
 {
     updateData(robotData, indexerData);

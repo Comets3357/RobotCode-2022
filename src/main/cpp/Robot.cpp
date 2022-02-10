@@ -40,6 +40,7 @@ void Robot::AutonomousInit()
     gyro.AutonomousInit(robotData.gyroData);
     auton.AutonomousInit(robotData.autonData);
     drivebase.AutonomousInit(robotData, robotData.drivebaseData, robotData.autonData);
+    indexer.AutonomousInit(robotData.indexerData);
     shooter.EnabledInit(robotData.shooterData);
 }
 
