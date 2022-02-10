@@ -133,6 +133,7 @@ void Auton::fourBallC(const RobotData &robotData, ControlData &controlData) {
 
     // intake
     controlData.saIntake = true;
+    controlData.saFinalShoot = true;
 
     frc::SmartDashboard::PutString("FOURBALLC", "RUNNING");
 

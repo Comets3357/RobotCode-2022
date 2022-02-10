@@ -33,6 +33,7 @@ class Indexer
 
 public:
     void RobotInit();
+    void AutonomousInit(IndexerData &indexerData);
     void RobotPeriodic(const RobotData &robotData, IndexerData &indexerData);
     void DisabledInit();
     void updateData(const RobotData &robotData, IndexerData &indexerData);

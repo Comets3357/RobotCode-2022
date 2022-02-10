@@ -15,7 +15,7 @@ void Climb::RobotInit(){
     climbElevator.SetInverted(true);
     climbArms.SetSmartCurrentLimit(45);
     climbElevator.SetSmartCurrentLimit(80);
-    climbElevator.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse,0);
+    climbElevator.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse,-5);
     climbElevator.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward,140);
     climbArms.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse,0);
     climbArms.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward,250);
@@ -67,7 +67,7 @@ void Climb::RobotPeriodic(const RobotData &robotData, ClimbData &climbData){
 
 void Climb::manual(const RobotData &robotData, ClimbData &climbData){
     //manualy sets the elevator with limit
-    if ((climbElevatorEncoder.GetPosition() <= 0 && robotData.controlData.mElevatorExtension < 0) || (climbElevatorEncoder.GetPosition() >= 144 && robotData.controlData.mElevatorExtension > 0)){
+    if ((climbElevatorEncoder.GetPosition() <= -5 && robotData.controlData.mElevatorExtension < 0) || (climbElevatorEncoder.GetPosition() >= 144 && robotData.controlData.mElevatorExtension > 0)){
         climbElevator.Set(0); //control elevator with left stick
     } else {
         if (robotData.controlData.mElevatorExtension < -0.08 || robotData.controlData.mElevatorExtension > 0.08){

@@ -62,7 +62,8 @@ static const int
     HoodAbsoluteEncoderPort = 1,
     bottomBeamBreakPort = 3,
     midBeamBreakPort = 9,
-    topBeamBreakPort = 5;
+    topBeamBreakPort = 5,
+    elevator = 7;   // change name
 
 
 
