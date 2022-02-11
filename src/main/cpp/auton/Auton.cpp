@@ -33,12 +33,16 @@ void Auton::AutonomousInit(AutonData &autonData)
     }
 
     // remove newline char from all but the final line
-    for (int i = 0; i < autonData.pathGroup.size() - 1; i++) {
+    for (int i = 0; i < autonData.pathGroup.size(); i++) {
         std::string correctPathName = autonData.pathGroup[i];
         // if (i == 0) { frc::SmartDashboard::PutString("correctPathName", correctPathName); }
         // wpi::outs() << "ASDFGHJKL" + correctPathName;
-        correctPathName = correctPathName.substr(0, correctPathName.length() - 1);  // get rid of hidden newline from file line read
+        std::string newline{"\n"};
+        if (correctPathName.substr(correctPathName.length() - 1, 1).compare(newline)) {
+            correctPathName = correctPathName.substr(0, correctPathName.length() - 1);  // get rid of hidden newline from file line read
+        }
         autonData.pathGroup[i] = correctPathName;
+        frc::SmartDashboard::PutString(std::to_string(i), autonData.pathGroup[i]);
         // frc::SmartDashboard::PutString(std::to_string(i), autonData.pathGroup[i]);
     }
 }
@@ -57,6 +61,8 @@ void Auton::sendAutonSelectionChooser() {
     autonChooser.AddOption("fourBallA", "fourBallA");
     autonChooser.AddOption("fourBallB", "fourBallB");
     autonChooser.AddOption("fourBallC", "fourBallC");
+
+    autonChooser.AddOption("test", "test");
 
     frc::SmartDashboard::PutData("Select Auton:", &autonChooser);
 }
