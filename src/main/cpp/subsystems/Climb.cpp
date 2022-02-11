@@ -1,7 +1,8 @@
 #include "subsystems/Climb.h"
 #include "RobotData.h"
 
-void Climb::RobotInit(){
+void Climb::RobotInit()
+{
     //do other init stuff (probably more)
     climbArms.RestoreFactoryDefaults();
     climbElevator.RestoreFactoryDefaults();
@@ -31,15 +32,25 @@ void Climb::RobotInit(){
     //PIDS
     climbElevator_pidController.SetP(0.18, 0); //off bar
     climbElevator_pidController.SetOutputRange(-0.5, 0.5, 0);
-    climbElevator_pidController.SetP(0.18, 1); //on bar temp
+    climbElevator_pidController.SetP(1, 1); //on bar temp
     climbElevator_pidController.SetOutputRange(-0.5, 0.5, 1);
+
+    climbArms_pidController.SetP(0.25, 0);
+    climbArms_pidController.SetOutputRange(-0.5, 0.5, 0);
+    climbArms_pidController.SetP(0.5, 0);
+    climbArms_pidController.SetOutputRange(-0.5, 0.5, 1);
     
 }
+
+//arms 0.25
+//arms 0.5
 
 void Climb::RobotPeriodic(const RobotData &robotData, ClimbData &climbData){
     
     updateData(robotData, climbData);
     manual(robotData, climbData);
+
+    //if (stage == 0) RunElevatorToPos(0.1, 1, 0);
 
     // if (robotData.controlData.climbMode){
 
@@ -51,10 +62,10 @@ void Climb::RobotPeriodic(const RobotData &robotData, ClimbData &climbData){
     // }
 
     //if the limit switch is read, then the power is set to 0 and the encoder is set to 0
-    if (elevatorLimit.Get() && climbElevator.Get() <= 0 && !climbData.zeroing){
-        climbElevator.Set(0);
-        climbElevatorEncoder.SetPosition(0);
-    }
+    // if (elevatorLimit.Get() && climbElevator.Get() <= 0 && !climbData.zeroing){
+    //     climbElevator.Set(0);
+    //     climbElevatorEncoder.SetPosition(0);
+    // }
 
     if (robotData.controlData.climbZeroing){
         climbData.zeroing = !climbData.zeroing;
@@ -62,10 +73,11 @@ void Climb::RobotPeriodic(const RobotData &robotData, ClimbData &climbData){
 
     if (climbData.zeroing)
     {
-        climbElevator.Set(-0.5);
-        if (elevatorLimit.Get()){
+        climbElevator.Set(-0.03);
+        if (!elevatorLimit.Get()){
             climbElevator.Set(0);
             climbData.zeroing = false;
+            climbElevatorEncoder.SetPosition(0);
         }
 
     }
@@ -79,11 +91,11 @@ void Climb::RobotPeriodic(const RobotData &robotData, ClimbData &climbData){
 
 void Climb::manual(const RobotData &robotData, ClimbData &climbData){
     //manualy sets the elevator with limit
-    if ((climbElevatorEncoder.GetPosition() <= 0 && robotData.controllerData.sLYStick < 0) || (climbElevatorEncoder.GetPosition() >= 144 && robotData.controllerData.sLYStick > 0)){
+    if (climbElevatorEncoder.GetPosition() >= 144 && robotData.controllerData.sLYStick > 0){
         climbElevator.Set(0); //control elevator with left stick
     } else {
         if (robotData.controllerData.sLYStick < -0.08 || robotData.controllerData.sLYStick > 0.08){
-        climbElevator.Set(robotData.controllerData.sLYStick*0.6); //control elevator with left stick); //sets the power to 0 so the elevator stops moving
+        climbElevator.Set(robotData.controllerData.sLYStick*0.4); //control elevator with left stick); //sets the power to 0 so the elevator stops moving
         }
         else{
             climbElevator.Set(0);
@@ -200,6 +212,8 @@ void Climb::DisabledInit(){
 // updates encoder and gyro values
 void Climb::updateData(const RobotData &robotData, ClimbData &climbData){
     frc::SmartDashboard::PutNumber("encoder value", climbElevatorEncoder.GetPosition());
+    frc::SmartDashboard::PutBoolean("limitClimb", elevatorLimit.Get());
+    frc::SmartDashboard::PutNumber("climb value", climbElevator.Get());
 }
 
 void Climb::DisabledPeriodic(const RobotData &robotData, ClimbData &climbData)
@@ -250,6 +264,12 @@ void Climb::RunElevatorToPos(int position, int stageAdd, int onBar){
     // }
 
     if (climbElevatorEncoder.GetPosition() > position + 1 || climbElevatorEncoder.GetPosition() < position - 1){
+        elevatorRunning = true;
+        // if (//angular moment < 1){
+        //     climbElevator_pidController.SetReference(position, rev::ControlType::kPosition, onBar);
+        // } else {
+        //     climbElevator.Set(0);
+        // }
         elevatorRunning = true;
         climbElevator_pidController.SetReference(position, rev::ControlType::kPosition, onBar);
     } else {

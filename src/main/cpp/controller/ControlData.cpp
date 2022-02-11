@@ -83,12 +83,12 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
     //controlData.finalShoot;
   
     //CLIMB
-    if (controlData.climbMode){
-        controlData.sacancelSequence = controllerData.sLStickBtn;
-        controlData.saclimbTraversalSequence = controllerData.sRCenterBtn;
-        controlData.saclimbHeightSequence = controllerData.sLCenterBtn;
-        controlData.saclimbInit = controllerData.sRTrigger;
-        controlData.climbZeroing = controllerData.sABtnToggled;
-    }
+    controlData.sacancelSequence = controllerData.sLStickBtn;
+    controlData.saclimbTraversalSequence = controllerData.sRCenterBtn;
+    controlData.saclimbHeightSequence = controllerData.sLCenterBtn;
+    controlData.saclimbInit = controllerData.sRTrigger;
+    controlData.climbZeroing = controllerData.sABtnToggled;
+    
+    
   
 }
