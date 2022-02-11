@@ -22,6 +22,8 @@ void Robot::RobotPeriodic()
 
     frc::SmartDashboard::PutNumber("mode", robotData.controlData.mode);
 
+    //frc::SmartDashboard::PutNumber("mode", robotData.controlData.mode);
+
 
     if (IsEnabled())
     {

@@ -123,17 +123,12 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
     //controlData.finalShoot;
   
     //CLIMB
-    controlData.saextendElevator = controllerData.sYBtn;
-    controlData.saretractElevator = controllerData.sXBtn;
-    controlData.sapivotArmsIn = controllerData.sABtn;
-    controlData.sapivotArmsOut = controllerData.sBBtn;
     controlData.sacancelSequence = controllerData.sLStickBtn;
     controlData.saclimbTraversalSequence = controllerData.sRCenterBtn;
     controlData.saclimbHeightSequence = controllerData.sLCenterBtn;
     controlData.saclimbInit = controllerData.sRTrigger;
-
-    controlData.mElevatorExtension = controllerData.sLYStick;
-    controlData.mArmPivot = controllerData.sRXStick;
+    controlData.climbZeroing = controllerData.sABtnToggled;
+    
     
   
 }

@@ -9,6 +9,7 @@
 #include <rev/SparkMaxPIDController.h>
 #include <rev/CANEncoder.h>
 #include <rev/CANDigitalInput.h>
+#include <frc/DigitalInput.h>
 
 
 struct RobotData;
@@ -16,6 +17,7 @@ struct RobotData;
 struct ClimbData {
     int bar;
     bool climbing;
+    bool zeroing;
 };
 
 class Climb {
@@ -49,9 +51,9 @@ private:
     void semiAuto(const RobotData &robotData, ClimbData &climbData);
     void manual(const RobotData &robotData, ClimbData &climbData);
 
-    void RunElevatorToPos(int position, float power, int stageAdd, int onBar);
-    void RunArmsToPos(int position, float power, int stageAdd, int onBar);
-    void RunArmsAndElevatorToPos(int elevatorPos, float elevatorPower, int elevatorBar, int armsPos, float armsPower, int armsBar, int stageAdd);
+    void RunElevatorToPos(int position, int stageAdd, int onBar);
+    void RunArmsToPos(int position, int stageAdd, int onBar);
+    void RunArmsAndElevatorToPos(int elevatorPos, int elevatorBar, int armsPos, int armsBar, int stageAdd);
     void zeroArms(float power, int stageAdd);
     void zeroElevator(float power, int stageAdd);
 
@@ -68,8 +70,7 @@ private:
     rev::SparkMaxPIDController climbArms_pidController = climbArms.GetPIDController();
 
     //zeroing sensor
-    rev::SparkMaxLimitSwitch elevatorLimit = climbElevator.GetForwardLimitSwitch(rev::CANDigitalInput::LimitSwitchPolarity::kNormallyOpen);
-    rev::SparkMaxLimitSwitch armsLimit = climbArms.GetForwardLimitSwitch(rev::CANDigitalInput::LimitSwitchPolarity::kNormallyOpen);
+    frc::DigitalInput elevatorLimit{7};
 
 
 };
