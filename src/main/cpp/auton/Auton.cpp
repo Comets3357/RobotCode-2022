@@ -196,14 +196,30 @@ void Auton::setShootTime(ControlData &controlData, double currentSec, double sta
         
         // frc::SmartDashboard::PutNumber("secDiff", currentSec - startSec);
 
-        if (currentSec - startSec > -1 && currentSec - endSec < 0.1) {
+        // only should be worrying about the relevant call of this function based on the time stamps in the call
+        if (currentSec > (startSec - 1) && currentSec < (endSec + 0.2)) {
+
+            frc::SmartDashboard::PutNumber("currentSecShooting", currentSec);
             // toggle on vision shooting 1 sec before start of time range
-            if (currentSec - startSec > -1 && currentSec - startSec < -0.95) {
+            frc::SmartDashboard::PutString("shooting", "BOOOP");
+
+            if (currentSec > startSec - 1 && currentSec < startSec - 0.9) {
                 controlData.saShooting = true;
             }
-            else if (currentSec - startSec > -0.95 && currentSec - startSec < -0.9) {
+            else if (currentSec > startSec - 0.9 && currentSec < startSec - 0.8) {
                 controlData.saShooting = false;
             }
+
+            if (currentSec > endSec && currentSec < endSec + 0.1) {
+                controlData.saShooting = true;
+            }
+            else if (currentSec > endSec + 0.1 && currentSec < endSec + 0.2) {
+                controlData.saShooting = false;
+            }
+
+
+            frc::SmartDashboard::PutNumber("startSec", startSec);
+            frc::SmartDashboard::PutNumber("endSec", endSec);
 
             // toggle off vision shooting at end of time range
             // if (currentSec - endSec > 0 && currentSec - endSec < 0.05) {

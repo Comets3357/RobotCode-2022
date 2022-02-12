@@ -445,8 +445,8 @@ void Shooter::updateShootMode(const RobotData &robotData, ShooterData &shooterDa
     }
 
     // shut off shooting if all balls have exited (happens once upon ball count going to zero)
-    if (robotData.indexerData.indexerContents.size() == 0 && lastTickBallCount > 0 && shooterData.shootMode != shootMode_none /* probably redundant */) {
-        shooterData.shootMode = shootMode_none;
-    }
-    lastTickBallCount = robotData.indexerData.indexerContents.size();
+    // if (robotData.indexerData.indexerContents.size() == 0 && lastTickBallCount > 0 && shooterData.shootMode != shootMode_none /* probably redundant */) {
+    //     shooterData.shootMode = shootMode_none;
+    // }
+    // lastTickBallCount = robotData.indexerData.indexerContents.size();
 }

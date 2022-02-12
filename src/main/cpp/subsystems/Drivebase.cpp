@@ -444,14 +444,14 @@ void Drivebase::turnInPlaceAuton(double degrees, const RobotData &robotData, Dri
     if (allValuesWithin(lastDegrees, 1)) {
         setPercentOutput(0, 0);
         // only advance auton step if it's not shooting
-        if (robotData.shooterData.shootMode == shootMode_none) {
+        if (drivebaseData.driveMode == driveMode_turnInPlace) {
             getNextAutonStep(robotData, drivebaseData, autonData);
         }
         // frc::SmartDashboard::PutString("AUTON", "TURN IN PLACE");
     } else {
+        // profile that adjusts aggressiveness of turn based on the amount of degrees left to turn. has been tuned for speed & accuracy on both small and large turns
         leftOutput = std::pow(std::abs(degrees / 361), 1) + 0.07;
         rightOutput = std::pow(std::abs(degrees / 361), 1) + 0.07;
-
     }
     
 
