@@ -24,6 +24,8 @@ struct IndexerData
 {
     std::deque<Cargo> indexerContents;
     bool wrongBall = false;
+    bool topBeamToggledOn; // sensed a ball
+    bool topBeamToggledOff; // stopped sensing a ball
   
 };
 
@@ -56,6 +58,7 @@ private:
 
     void saBeltControl(const RobotData &robotData, IndexerData &indexerData);
     void saWheelControl(const RobotData &robotData, IndexerData &indexerData);
+    bool pauseBelt(const RobotData &robotData, IndexerData &indexerData);
 
     bool getBottomBeam();
     bool getMidBeam();
@@ -63,8 +66,9 @@ private:
 
     // get if it was toggled to state specified in bool broken
     bool getBottomBeamToggled(bool broken);
-    // bool getMidBeamToggled(bool broken); // not in use
     bool getTopBeamToggled(bool broken);
+
+    void updateTopBeamToggled(IndexerData &indexerData);
 
     
     
@@ -79,6 +83,7 @@ private:
     // debounce counters to time debounce
     int bottomDebounceCount = 0;
     int topDebounceCount = 0;
+    int pauseBeltCount = 0;
 
     bool runWheel = false; // checks if one ball has left shooter so that you can run the wheel and get the other ball out
 
