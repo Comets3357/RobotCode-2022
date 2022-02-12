@@ -23,14 +23,10 @@ void Intake::RobotPeriodic(const RobotData &robotData, IntakeData &intakeData)
 {
     updateData(robotData, intakeData);
 
-    if (robotData.controlData.manualMode)
-    {
-        manual(robotData, intakeData);
+    if(robotData.controlData.climbMode){
+        intakePivot_pidController.SetReference(0.1, rev::CANSparkMaxLowLevel::ControlType::kPosition, 0);
+        intakeRollers.Set(0);
 
-    }
-    else
-    {
-        semiAuto(robotData, intakeData);
     }
 
     if(tickCount > 40){
@@ -196,21 +192,13 @@ void Intake::pivotInit(){
 
     intakePivot.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
 
-    //down
-    intakePivot_pidController.SetP(0.74,0);
+
+    intakePivot_pidController.SetP(0.18,0);
     intakePivot_pidController.SetI(0,0);
-    intakePivot_pidController.SetD(0.2,0);
+    intakePivot_pidController.SetD(0.01,0);
     intakePivot_pidController.SetIZone(0,0);
     intakePivot_pidController.SetFF(0,0);
-    intakePivot_pidController.SetOutputRange(-0.205, 0.16,0);
-
-    //up
-    intakePivot_pidController.SetP(0.99,1);
-    intakePivot_pidController.SetI(0,1);
-    intakePivot_pidController.SetD(0.3,1);
-    intakePivot_pidController.SetIZone(0,1);
-    intakePivot_pidController.SetFF(0,1);
-    intakePivot_pidController.SetOutputRange(-.2, 0.15,1);
+    intakePivot_pidController.SetOutputRange(-0.2, 0.4,0);
 
     intakePivot.SetSmartCurrentLimit(45);
 }
