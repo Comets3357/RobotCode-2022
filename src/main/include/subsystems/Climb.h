@@ -71,7 +71,6 @@ private:
 
     //zeroing sensor
     frc::DigitalInput elevatorLimit{7};
-    rev::SparkMaxLimitSwitch armsLimit = climbArms.GetForwardLimitSwitch(rev::CANDigitalInput::LimitSwitchPolarity::kNormallyOpen);
 
 
 };

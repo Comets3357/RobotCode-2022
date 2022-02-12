@@ -9,59 +9,96 @@
 #include <rev/CANEncoder.h>
 #include <rev/SparkMaxLimitSwitch.h>
 #include <frc/smartdashboard/SmartDashboard.h>
+#include <frc/controller/PIDController.h>
+#include <frc/DutyCycle.h>
+#include <frc/DigitalSource.h>
 
 struct RobotData;
+
+enum ShootMode {
+    shootMode_none,
+    shootMode_vision,
+    shootMode_fender,
+    shootMode_sideWall,
+    shootMode_wallLaunchPad,
+    shootMode_cornerLaunchPad
+};
 
 struct ShooterData
 {
     bool readyShoot;
-    int targetVel;
     bool wrongBallReady;
+    ShootMode shootMode = shootMode_none;
+    bool shootUnassignedAsOpponent;
+    bool isHighGeneral;
+
 };
 
-class Shooter
-{
+class Shooter{
+
+
 
     public:
         void RobotInit();
         void RobotPeriodic(const RobotData &robotData, ShooterData &shooterData);
         void DisabledInit();
-
-    private:
+        void EnabledInit(ShooterData &shooterData);
         void updateData(const RobotData &robotData, ShooterData &shooterData);
+
+    
+    private:
         void manual(const RobotData &robotData, ShooterData &shooterData);
         void semiAuto(const RobotData &robotData, ShooterData &shooterData);
 
-        void shooterWheelLeadInit();
-        void shooterWheelFollowInit();
+        double convertFromAngleToAbs(double angle);
+        double convertFromAbsToAngle(double abs);
+        double absoluteToREV(double value);
+
+        void flyWheelInit();
         void shooterHoodInit();
 
         double getHoodPos();
         double getWheelPos();
         double getWheelVel();
         double getHoodOffset();
-        bool getHoodLimitSwitch();
 
         void setHood(double power);
         void setWheel(double power);
         void setHoodPos(double pos);
         void setTurretPos(double pos);
 
-        bool hoodZero = false;
+        void setHighHub();
+        void outerLaunch();
+        void innerLaunch();
+        void wall();
+        void fender();
+        void endOfTarmac();
 
-        //CHANGE MOTOr ID STUFF
-        rev::CANSparkMax shooterWheelLead = rev::CANSparkMax(shooterWheelLeadID, rev::CANSparkMax::MotorType::kBrushless);
-        rev::SparkMaxRelativeEncoder shooterWheelLeadEncoder = shooterWheelLead.GetEncoder();
-        rev::SparkMaxPIDController shooterWheelLead_pidController = shooterWheelLead.GetPIDController();
+        void updateShootMode(const RobotData &robotData, ShooterData &shooterData);
 
-        rev::CANSparkMax shooterWheelFollow = rev::CANSparkMax(shooterWheelFollowID, rev::CANSparkMax::MotorType::kBrushless);
-        rev::SparkMaxRelativeEncoder shooterWheelFollowEncoder = shooterWheelFollow.GetEncoder();
-        rev::SparkMaxPIDController shooterWheelFollow_pidController = shooterWheelFollow.GetPIDController();
+        bool hoodZero;
+        double targetHoodPos;
+        double currentHoodPos;
+        double desiredPos;
+        double calculatedPower;
+        int readyShootLimit;
+        int tickCount;
+   
+        bool isHigh;
 
+        int lastTickBallCount = 0;
+    
+        //FLywheel Lead
+        rev::CANSparkMax flyWheelLead = rev::CANSparkMax(shooterWheelLeadID, rev::CANSparkMax::MotorType::kBrushless);
+        rev::SparkMaxRelativeEncoder flyWheelLeadEncoder = flyWheelLead.GetEncoder();
+        rev::SparkMaxPIDController flyWheelLead_pidController = flyWheelLead.GetPIDController();
+
+        //flywheel hood, rev encoder, abs encoder, and pid
         rev::CANSparkMax shooterHood = rev::CANSparkMax(shooterHoodID, rev::CANSparkMax::MotorType::kBrushless);
-        rev::SparkMaxRelativeEncoder shooterHoodEncoder = shooterHood.GetEncoder();
+        rev::SparkMaxRelativeEncoder shooterHoodEncoderRev = shooterHood.GetEncoder();
         rev::SparkMaxPIDController shooterHood_pidController = shooterHood.GetPIDController();
-
-        rev::SparkMaxLimitSwitch hoodReverseLimit = shooterHood.GetReverseLimitSwitch(rev::SparkMaxLimitSwitch::Type::kNormallyClosed);
+        
+        frc::DigitalInput m_input{HoodAbsoluteEncoderPort};
+        frc::DutyCycle shooterHoodEncoderAbs = frc::DutyCycle{m_input};
 
 };

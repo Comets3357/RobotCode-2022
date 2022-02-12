@@ -11,37 +11,55 @@ static const int
 static const int
     intakeRollerID = 12,
     intakePivotID = 11,
-    intakeMecanumID = 13;
+    intakeSingulatorID = 13;
+
+static const double
+    absOut = 0.485,
+    absIn = 0.616,
+    revOut = 6.4,
+    revIn = 0;
 
 //indexer
 static const int
-    indexerBeltsID = 21,
-    indexerWheelID = 22;
+    indexerBeltsID = 22,
+    indexerWheelID = 21;
 
 // shooter
 static const int
-    shooterWheelLeadID = 31,
-    shooterWheelFollowID = 32,
+    shooterWheelLeadID = 32,
     shooterHoodID = 33,
     shooterTurretID = 34;
 
-//shooter PID constants:
 static const double
-    swkP = 0.02, swkI = 0, swkD = 0, swkIz = 0, swkFF = 0, swkMaxOutput = 1, swkMinOutput = -1,
-    hkP = 1, hkI = 0, hkD = 0, hkIz = 0, hkFF = 0, hkMaxOutput = 1, hkMinOutput = -1;
+    hoodabsOut = 0.028,
+    hoodabsIn = 0.933,
+    hoodrevOut = -37,
+    hoodrevIn = 0,
+    hoodAngleOut = 43,
+    hoodAngleIn = 21;
 
 // climb
 static const int
     climbElevatorID = 41,
     climbArmsID = 43;
 
+//limelight:
+static const double
+    hubHeight = 104,
+    limelightMount = 36.5,
+    limelightAngle = 36.3,
+    xcameraDistanceFromBot = 3.0625,
+    ycameraDistanceFromBot = 9.5,
+    shooterDistanceFromCenterOfBot = 2;
 
 // DIO
 static const int
-    intakeAbsoluteEncoderPort = 0,
+    intakeAbsoluteEncoderPort = 8,
+    HoodAbsoluteEncoderPort = 1,
     bottomBeamBreakPort = 3,
-    midBeamBreakPort = 4,
-    topBeamBreakPort = 5;
+    midBeamBreakPort = 9,
+    topBeamBreakPort = 5,
+    elevator = 7;   // change name
 
 
 

@@ -52,20 +52,22 @@ void Climb::RobotPeriodic(const RobotData &robotData, ClimbData &climbData){
     //semiAuto(robotData, climbData);
 
     //RunElevatorToPos(10,0,0);
+    if (robotData.controlData.mode == mode_climb_sa || robotData.controlData.mode == mode_climb_manual){
+    //if (stage == 0) RunElevatorToPos(0.1, 1, 0);
 
     //climbElevator_pidController.SetReference(50, rev::ControlType::kPosition, 0);
-
-    //if (stage == 0) RunArmsAndElevatorToPos(100, 0,30,0,1);
-
-    if (robotData.controlData.climbMode){
-
-        if (robotData.controlData.manualMode){ //updates whether or not the robot is in manual or semiAuto mode
+        if (robotData.controlData.mode == mode_climb_manual){ //updates whether or not the robot is in manual or semiAuto mode
             manual(robotData, climbData);
         } else {
-            semiAuto(robotData, climbData);
+            //semiAuto(robotData, climbData);
         }
+    } else {
+        climbElevator.Set(0);
+        climbArms.Set(0);
     }
+    // if (robotData.controlData.climbMode){
 
+    //if (stage == 0) RunArmsAndElevatorToPos(100, 0,30,0,1);
     //if the limit switch is read, then the power is set to 0 and the encoder is set to 0
     // if (!elevatorLimit.Get() && climbElevator.Get() <= 0 && !climbData.zeroing){
     //     climbElevator.Set(0);
@@ -85,12 +87,6 @@ void Climb::RobotPeriodic(const RobotData &robotData, ClimbData &climbData){
             climbElevatorEncoder.SetPosition(0);
         }
 
-    }
-
-    if (armsLimit.Get() && climbArms.Get() > 0)
-    {
-        climbArms.Set(0);
-        climbArmsEncoder.SetPosition(0);
     }
 }
 

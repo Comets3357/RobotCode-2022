@@ -2,10 +2,10 @@
 
 void Robot::RobotInit()
 {
-    timer.RobotInit(robotData.timerData);
     gyro.RobotInit();
+    limelight.RobotInit(robotData);
 
-
+    auton.RobotInit(robotData.autonData);
     drivebase.RobotInit();
     intake.RobotInit();
     indexer.RobotInit();
@@ -15,41 +15,58 @@ void Robot::RobotInit()
 
 void Robot::RobotPeriodic()
 {
-    timer.RobotPeriodic(robotData.timerData);
     gyro.RobotPeriodic(robotData.gyroData);
-
+    limelight.RobotPeriodic(robotData, robotData.limelightData, visionLookup);
     colorSensor.RobotPeriodic(robotData);
+    visionLookup.RobotPeriodic(robotData, robotData.visionLookupData);
+
+    frc::SmartDashboard::PutNumber("mode", robotData.controlData.mode);
 
     //frc::SmartDashboard::PutNumber("mode", robotData.controlData.mode);
 
 
     if (IsEnabled())
     {
-        //otherComponents.RobotPeriodic(robotData.otherComponentsData);
-        drivebase.RobotPeriodic(robotData, robotData.drivebaseData);
+        otherComponents.RobotPeriodic(robotData.otherComponentsData);
+        drivebase.RobotPeriodic(robotData, robotData.drivebaseData, robotData.autonData);
         intake.RobotPeriodic(robotData, robotData.intakeData);
-        //indexer.RobotPeriodic(robotData, robotData.indexerData);
-        //shooter.RobotPeriodic(robotData, robotData.shooterData);
+        indexer.RobotPeriodic(robotData, robotData.indexerData);
+        shooter.RobotPeriodic(robotData, robotData.shooterData);
         climb.RobotPeriodic(robotData, robotData.climbData);
     }
 }
 
-void Robot::AutonomousInit() {}
-void Robot::AutonomousPeriodic() {}
-void Robot::TeleopInit() {
-    
-    gyro.TeleopInit();
+void Robot::AutonomousInit()
+{
+    timer.EnabledInit(robotData.timerData);
+    gyro.AutonomousInit(robotData.gyroData);
+    auton.AutonomousInit(robotData.autonData);
+    drivebase.AutonomousInit(robotData, robotData.drivebaseData, robotData.autonData);
+    indexer.AutonomousInit(robotData.indexerData);
+    shooter.EnabledInit(robotData.shooterData);
+}
+
+void Robot::AutonomousPeriodic()
+{
+    timer.EnabledPeriodic(robotData.timerData);
+    auton.AutonomousPeriodic(robotData, robotData.autonData, robotData.controlData);
+}
+
+void Robot::TeleopInit()
+{
+    gyro.TeleopInit(robotData.gyroData);
+    drivebase.TeleopInit(robotData);
+    shooter.EnabledInit(robotData.shooterData);
 }
 
 void Robot::TeleopPeriodic()
 {
+    timer.EnabledPeriodic(robotData.timerData);
     controller.TeleopPeriodic(robotData, robotData.controllerData, robotData.controlData);
 }
 
 void Robot::DisabledInit()
 {
-    timer.DisabledInit();
-
     drivebase.DisabledInit();
     intake.DisabledInit();
     indexer.DisabledInit();
@@ -59,7 +76,9 @@ void Robot::DisabledInit()
 
 void Robot::DisabledPeriodic() 
 {
-
+    shooter.updateData(robotData, robotData.shooterData);
+    intake.updateData(robotData, robotData.intakeData);
+    indexer.updateData(robotData, robotData.indexerData);
 }
 void Robot::TestInit() {}
 void Robot::TestPeriodic() {}
