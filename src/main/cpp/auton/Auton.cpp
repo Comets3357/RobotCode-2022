@@ -33,13 +33,23 @@ void Auton::AutonomousInit(AutonData &autonData)
     }
 
     // remove newline char from all but the final line
-    for (int i = 0; i < autonData.pathGroup.size() - 1; i++) {
+    for (int i = 0; i < autonData.pathGroup.size(); i++) {
         std::string correctPathName = autonData.pathGroup[i];
-        // if (i == 0) { frc::SmartDashboard::PutString("correctPathName", correctPathName); }
-        // wpi::outs() << "ASDFGHJKL" + correctPathName;
-        correctPathName = correctPathName.substr(0, correctPathName.length() - 1);  // get rid of hidden newline from file line read
+
+        // frc::SmartDashboard::PutBoolean("int bool" + std::to_string(i), correctPathName[correctPathName.length() - 1] == 13);
+        // frc::SmartDashboard::PutNumber(std::to_string(i) + "int", correctPathName[correctPathName.length() - 1]);
+
+        // if the last char in the string is a newline, delete it for proper auton selection processing
+        if (int(correctPathName[correctPathName.length() - 1]) == 13) {
+            correctPathName = correctPathName.substr(0, correctPathName.length() - 1);  // get rid of hidden newline from file line read
+        }
+        
         autonData.pathGroup[i] = correctPathName;
-        // frc::SmartDashboard::PutString(std::to_string(i), autonData.pathGroup[i]);
+
+        frc::SmartDashboard::PutString(std::to_string(i), autonData.pathGroup[i]);
+        
+        
+        // frc::SmartDashboard::PutString(std::to_string(i), autonData.pathGroup[i]);        
     }
 }
 
@@ -57,6 +67,8 @@ void Auton::sendAutonSelectionChooser() {
     autonChooser.AddOption("fourBallA", "fourBallA");
     autonChooser.AddOption("fourBallB", "fourBallB");
     autonChooser.AddOption("fourBallC", "fourBallC");
+
+    autonChooser.AddOption("test", "test");
 
     frc::SmartDashboard::PutData("Select Auton:", &autonChooser);
 }
@@ -184,14 +196,30 @@ void Auton::setShootTime(ControlData &controlData, double currentSec, double sta
         
         // frc::SmartDashboard::PutNumber("secDiff", currentSec - startSec);
 
-        if (currentSec - startSec > -1 && currentSec - endSec < 0.1) {
+        // only should be worrying about the relevant call of this function based on the time stamps in the call
+        if (currentSec > (startSec - 1) && currentSec < (endSec + 0.2)) {
+
+            frc::SmartDashboard::PutNumber("currentSecShooting", currentSec);
             // toggle on vision shooting 1 sec before start of time range
-            if (currentSec - startSec > -1 && currentSec - startSec < -0.95) {
+            frc::SmartDashboard::PutString("shooting", "BOOOP");
+
+            if (currentSec > startSec - 1 && currentSec < startSec - 0.9) {
                 controlData.saShooting = true;
             }
-            else if (currentSec - startSec > -0.95 && currentSec - startSec < -0.9) {
+            else if (currentSec > startSec - 0.9 && currentSec < startSec - 0.8) {
                 controlData.saShooting = false;
             }
+
+            if (currentSec > endSec && currentSec < endSec + 0.1) {
+                controlData.saShooting = true;
+            }
+            else if (currentSec > endSec + 0.1 && currentSec < endSec + 0.2) {
+                controlData.saShooting = false;
+            }
+
+
+            frc::SmartDashboard::PutNumber("startSec", startSec);
+            frc::SmartDashboard::PutNumber("endSec", endSec);
 
             // toggle off vision shooting at end of time range
             // if (currentSec - endSec > 0 && currentSec - endSec < 0.05) {
