@@ -24,6 +24,7 @@ enum ShootMode {
     shootMode_cornerLaunchPad
 };
 
+
 struct ShooterData
 {
     bool readyShoot;
@@ -86,6 +87,10 @@ class Shooter{
         bool isHigh;
 
         int lastTickBallCount = 0;
+
+        int x = 0;
+        int y = 0;
+        int vel = 0;
     
         //FLywheel Lead
         rev::CANSparkMax flyWheelLead = rev::CANSparkMax(shooterWheelLeadID, rev::CANSparkMax::MotorType::kBrushless);

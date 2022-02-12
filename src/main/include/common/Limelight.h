@@ -8,6 +8,7 @@
 #include <networktables/NetworkTableValue.h>
 #include <wpi/span.h>
 #include <cmath>
+#include <deque>
 #include <frc/DriverStation.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 
@@ -39,6 +40,11 @@ struct LimelightData
     //shooter corrections:
     double distanceOffset;
     double angleOffset;
+
+    std::deque<double> distances;
+
+    double avgDistance = 0;
+
 };
 
 class Limelight
@@ -59,6 +65,8 @@ private:
     double getHoodPOS(VisionLookup &visionLookup, LimelightData &limelightData, const RobotData &robotData);
     double getWheelVelocity(VisionLookup &visionLookup, LimelightData &limelightData, const RobotData &robotData);
     void shooterOffset(const RobotData &robotData, LimelightData &limelightData);
+
+    void averageDistance(const RobotData &robotData, LimelightData &limelightData);
 
     std::shared_ptr<nt::NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("limelight");
 
