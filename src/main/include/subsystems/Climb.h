@@ -36,6 +36,8 @@ private:
 
     int stage = 0;
 
+    float angularRate = 0;
+
     bool climbInitiating = false;
     bool climbUp = false;
     bool executeSequence = false;
