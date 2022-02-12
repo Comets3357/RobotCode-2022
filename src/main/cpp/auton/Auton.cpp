@@ -35,15 +35,21 @@ void Auton::AutonomousInit(AutonData &autonData)
     // remove newline char from all but the final line
     for (int i = 0; i < autonData.pathGroup.size(); i++) {
         std::string correctPathName = autonData.pathGroup[i];
-        // if (i == 0) { frc::SmartDashboard::PutString("correctPathName", correctPathName); }
-        // wpi::outs() << "ASDFGHJKL" + correctPathName;
-        std::string newline{"\n"};
-        if (correctPathName.substr(correctPathName.length() - 1, 1).compare(newline)) {
+
+        // frc::SmartDashboard::PutBoolean("int bool" + std::to_string(i), correctPathName[correctPathName.length() - 1] == 13);
+        // frc::SmartDashboard::PutNumber(std::to_string(i) + "int", correctPathName[correctPathName.length() - 1]);
+
+        // if the last char in the string is a newline, delete it for proper auton selection processing
+        if (int(correctPathName[correctPathName.length() - 1]) == 13) {
             correctPathName = correctPathName.substr(0, correctPathName.length() - 1);  // get rid of hidden newline from file line read
         }
+        
         autonData.pathGroup[i] = correctPathName;
+
         frc::SmartDashboard::PutString(std::to_string(i), autonData.pathGroup[i]);
-        // frc::SmartDashboard::PutString(std::to_string(i), autonData.pathGroup[i]);
+        
+        
+        // frc::SmartDashboard::PutString(std::to_string(i), autonData.pathGroup[i]);        
     }
 }
 
