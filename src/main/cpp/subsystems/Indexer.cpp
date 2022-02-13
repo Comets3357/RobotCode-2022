@@ -16,6 +16,7 @@ void Indexer::AutonomousInit(IndexerData &indexerData) {
 
 void Indexer::RobotPeriodic(const RobotData &robotData, IndexerData &indexerData)
 {
+    updateTopBeamToggled(indexerData);
     updateData(robotData, indexerData);
     count(robotData, indexerData);  // accounts for automatic counting as well as manual decrementing
                                     // there are manual functions for incremeneting and decrementing cargo as well, see controldata.cpp
@@ -245,9 +246,12 @@ void Indexer::saWheelControl(const RobotData &robotData, IndexerData &indexerDat
 }
 
 bool Indexer::pauseBelt(const RobotData &robotData, IndexerData &indexerData){
+    frc::SmartDashboard::PutNumber("pausebeltcount", pauseBeltCount);
+    frc::SmartDashboard::PutBoolean("top beam sensing?", getTopBeam());
+    // frc::SmartDashboard::PutBoolean("pause belt?", pauseBelt(robotData, indexerData));
     if(indexerData.topBeamToggledOn){   // the top sensor was just toggled on
                                                     // concern: if it was toggled on due to belt slippage?
-        pauseBeltCount = 5;                         // set pause belt count for .1s
+        pauseBeltCount = 2;                         // set pause belt count for .1s
         return true;
     } else if (pauseBeltCount > 0){
         pauseBeltCount--;
@@ -324,6 +328,7 @@ bool Indexer::getTopBeamToggled(bool broken){
 }
 
 void Indexer::updateTopBeamToggled(IndexerData &indexerData){
+
     
     // debouncing. if it's not done debouncing just return
     if(topDebounceCount > 0){
@@ -340,12 +345,20 @@ void Indexer::updateTopBeamToggled(IndexerData &indexerData){
             topDebounceCount = 2;
             indexerData.topBeamToggledOff = false;
             indexerData.topBeamToggledOn = true;
-        } 
+        } else {
+            prevTopBeam = getTopBeam();
+            indexerData.topBeamToggledOff = false;
+            indexerData.topBeamToggledOn = false;
+        }
     } else {                // top sensor does not sense a ball
         if(prevTopBeam){    // previously sensed a ball, it was toggled
             prevTopBeam = getTopBeam();
             topDebounceCount = 2;
             indexerData.topBeamToggledOff = true;
+            indexerData.topBeamToggledOn = false;
+        } else {
+            prevTopBeam = getTopBeam();
+            indexerData.topBeamToggledOff = false;
             indexerData.topBeamToggledOn = false;
         }
     }

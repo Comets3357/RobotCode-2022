@@ -133,7 +133,7 @@ void Drivebase::teleopControl(const RobotData &robotData, DrivebaseData &driveba
     if (robotData.controlData.lDrive != 0 || robotData.controlData.rDrive != 0) {
         drivebaseData.driveMode = driveMode_joystick;
     }
-    else if (robotData.shooterData.shootMode == shootMode_vision) {
+    else if (robotData.controlData.shootMode == shootMode_vision) {
         drivebaseData.driveMode = driveMode_turnInPlace;
     }
 
@@ -184,7 +184,7 @@ void Drivebase::autonControl(const RobotData &robotData, DrivebaseData &drivebas
 
     if (drivebaseData.driveMode == driveMode_break)
     {
-        if (robotData.shooterData.shootMode == shootMode_vision) {
+        if (robotData.controlData.shootMode == shootMode_vision) {
             turnInPlaceAuton(robotData.limelightData.angleOffset, robotData, drivebaseData, autonData);
             frc::SmartDashboard::PutNumber("angleOffsetLimelight", robotData.limelightData.angleOffset);
         } else {

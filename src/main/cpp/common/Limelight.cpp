@@ -29,7 +29,7 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
 
     // }
 
-    table->PutNumber("ledMode", 0);
+    //table->PutNumber("ledMode", 0);
 
 
     //moves the limelight data over to the actual position of the shooter
@@ -107,8 +107,8 @@ double Limelight::correctDistance(double angleOffset, double originalDistance)
  * @return the desired hood position using lookup table
  */
 double Limelight::getHoodPOS(VisionLookup &visionLookup, LimelightData &limelightData, const RobotData &robotData){
-    //double distance = limelightData.distanceOffset;
-    double distance = limelightData.avgDistance;
+    double distance = limelightData.distanceOffset;
+    //double distance = limelightData.avgDistance;
     double orignalDistance = distance;
     limelightData.lowerVal = std::floor(distance/12); //lower value in ft
     limelightData.upperVal = limelightData.lowerVal +1; //upper value in ft
@@ -149,8 +149,8 @@ double Limelight::getHoodPOS(VisionLookup &visionLookup, LimelightData &limeligh
  * im sorry i know this belongs in shooter.cpp but its too much work
  */
 double Limelight::getWheelVelocity(VisionLookup &visionLookup, LimelightData &limelightData, const RobotData &robotData){
-    //double distance = limelightData.distanceOffset;
-    double distance = limelightData.avgDistance;
+    double distance = limelightData.distanceOffset;
+    //double distance = limelightData.avgDistance;
     double orignalDistance = distance;
     limelightData.lowerVal = std::floor(distance/12); //lower value in ft
     limelightData.upperVal = limelightData.lowerVal +1; //upper value in ft
@@ -197,7 +197,7 @@ void Limelight::averageDistance(const RobotData &robotData, LimelightData &limel
     // if(robotData.limelightData.distances.size() < 6){
     //     limelightData.distances.push_back(distance);
     // }else{ //once it's full run through the deque and add it to the total
-    //     for(int i = 0; (unsigned)i < robotData.limelightData.distances.size()+1; i ++){
+    //     for(int i = 0; (unsigned)i < robotData.limelightData.distances.size(); i ++){
     //         total += robotData.limelightData.distances.at(i);
     //     }
 

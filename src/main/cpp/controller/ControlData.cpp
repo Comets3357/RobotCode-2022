@@ -109,7 +109,6 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
     controlData.sideWallShot = controllerData.sBBtnToggled && controlData.shift/*  && (controlData.mode == mode_teleop_sa) */;
     controlData.wallLaunchPadShot = controllerData.sXBtnToggled && controlData.shift/*  && (controlData.mode == mode_teleop_sa) */;
     controlData.cornerLaunchPadShot = controllerData.sYBtnToggled && controlData.shift /* && (controlData.mode == mode_teleop_sa) */;
-    //controlData.hubShot = controllerData.sLCenterBtn; // DEPRECATED -brian
 
     
     // if(robotData.indexerData.indexerContents.front() == Cargo::cargo_Opponent){
@@ -129,6 +128,50 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
     controlData.saclimbInit = controllerData.sRTrigger;
     controlData.climbZeroing = controllerData.sABtnToggled;
     
-    
-  
+}
+
+void Controller::updateShootMode(const RobotData &robotData, ControlData &controlData) {
+    // pressing a shoot button will set the robot to be in the associated shooting mode. if you press the button again, it will toggle that shoot mode off.
+
+    if (robotData.controlData.saShooting) {
+        if (controlData.shootMode == shootMode_vision) {
+            controlData.shootMode = shootMode_none;
+        } else {controlData.shootMode = shootMode_vision; }
+    }
+
+    if (robotData.controlData.fenderShot) {
+        if (controlData.shootMode == shootMode_fender) {
+            controlData.shootMode = shootMode_none;
+        } else { controlData.shootMode = shootMode_fender; }
+    }
+
+    if (robotData.controlData.sideWallShot) {
+        if (controlData.shootMode == shootMode_sideWall) {
+            controlData.shootMode = shootMode_none;
+        } else { controlData.shootMode = shootMode_sideWall; }
+    }
+
+    if (robotData.controlData.wallLaunchPadShot) {
+        if (controlData.shootMode == shootMode_wallLaunchPad) {
+            controlData.shootMode = shootMode_none;
+        } else { controlData.shootMode = shootMode_wallLaunchPad; }
+    }
+
+    if (robotData.controlData.cornerLaunchPadShot) {
+        if (controlData.shootMode == shootMode_cornerLaunchPad) {
+            controlData.shootMode = shootMode_none;
+        } else { controlData.shootMode = shootMode_cornerLaunchPad; }
+    }
+
+    // interpret button data to toggle between shooting unassigned as ours or opponent's
+    if (robotData.controlData.shootUnassignedAsOpponent) {
+        controlData.shootUnassignedAsOpponent = !controlData.shootUnassignedAsOpponent;
+    }
+
+
+    // shut off shooting if all balls have exited (happens once upon ball count going to zero)
+    // if (robotData.indexerData.indexerContents.size() == 0 && lastTickBallCount > 0 && shooterData.shootMode != shootMode_none /* probably redundant */) {
+    //     shooterData.shootMode = shootMode_none;
+    // }
+    // lastTickBallCount = robotData.indexerData.indexerContents.size();
 }
