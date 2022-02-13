@@ -145,63 +145,23 @@ void Auton::fourBallC(const RobotData &robotData, ControlData &controlData) {
 
     // intake
     controlData.saIntake = true;
-    controlData.saFinalShoot = true;
 
     frc::SmartDashboard::PutString("FOURBALLC", "RUNNING");
 
-    setShootTime(controlData, currentSec, 4.5, 6.5);
-    setShootTime(controlData, currentSec, 13, 15);
-
-    // // shooting
-    // if (currentSec > 2 && currentSec < 2.1) {
-    //     controlData.saShooting = true;
-    // }
-    // if (currentSec > 2.1 && currentSec < 2.2) {
-    //     controlData.saShooting = false;
-    // }
-
-    // if (currentSec > 2.5 && currentSec < 4.5) {
-    //     controlData.saFinalShoot = true;
-    // }
-    // else if (currentSec > 12 && currentSec < 15) {
-    //     controlData.saFinalShoot = true;
-    // }
-    // else {
-    //     controlData.saFinalShoot = false;
-    // }
-
-
-    // if (currentSec > 4.5 && currentSec < 4.6) {
-    //     controlData.saShooting = true;
-    // }
-    // if (currentSec > 4.6 && currentSec < 4.7) {
-    //     controlData.saShooting = false;
-    // }
-
-    // if (currentSec > 4.7 && currentSec < ) {
-    //     controlData.saFinalShoot = true;
-    // }
-    // else if (currentSec > 12 && currentSec < 15) {
-    //     controlData.saFinalShoot = true;
-    // }
-    // else {
-    //     controlData.saFinalShoot = false;
-    // }
-
+    setShootTime(controlData, currentSec, 3, 5);
+    setShootTime(controlData, currentSec, 10.5, 15);
 }
 
 
 // can only handle times to the 0.1 second precision
 void Auton::setShootTime(ControlData &controlData, double currentSec, double startSec, double endSec) {
         
-        // frc::SmartDashboard::PutNumber("secDiff", currentSec - startSec);
 
         // only should be worrying about the relevant call of this function based on the time stamps in the call
         if (currentSec > (startSec - 1) && currentSec < (endSec + 0.2)) {
 
             frc::SmartDashboard::PutNumber("currentSecShooting", currentSec);
             // toggle on vision shooting 1 sec before start of time range
-            frc::SmartDashboard::PutString("shooting", "BOOOP");
 
             if (currentSec > startSec - 1 && currentSec < startSec - 0.9) {
                 controlData.saShooting = true;
@@ -217,22 +177,10 @@ void Auton::setShootTime(ControlData &controlData, double currentSec, double sta
                 controlData.saShooting = false;
             }
 
-
-            frc::SmartDashboard::PutNumber("startSec", startSec);
-            frc::SmartDashboard::PutNumber("endSec", endSec);
-
-            // toggle off vision shooting at end of time range
-            // if (currentSec - endSec > 0 && currentSec - endSec < 0.05) {
-            //     controlData.saShooting = true;
-            // }
-            // else if (currentSec - endSec > 0.05 && currentSec - endSec < 0.1) {
-            //     controlData.saShooting = false;
-            // }
-
-            // if (currentSec > startSec && currentSec < endSec) {
-            //     controlData.saFinalShoot = true;
-            // } else {
-            //     controlData.saFinalShoot = false;
-            // }
+            if (currentSec > startSec && currentSec < endSec) {
+                controlData.saFinalShoot = true;
+            } else {
+                controlData.saFinalShoot = false;
+            }
         }
 }

@@ -252,6 +252,7 @@ void Shooter::updateData(const RobotData &robotData, ShooterData &shooterData)
 
     frc::SmartDashboard::PutNumber("shootMode", shooterData.shootMode);
     frc::SmartDashboard::PutBoolean("saShooting", robotData.controlData.saShooting);
+    frc::SmartDashboard::PutBoolean("saFinalShoot", robotData.controlData.saFinalShoot);
 
     shooterData.isHighGeneral = isHigh;
 
