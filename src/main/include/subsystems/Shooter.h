@@ -15,28 +15,16 @@
 
 struct RobotData;
 
-enum ShootMode {
-    shootMode_none,
-    shootMode_vision,
-    shootMode_fender,
-    shootMode_sideWall,
-    shootMode_wallLaunchPad,
-    shootMode_cornerLaunchPad
-};
-
 struct ShooterData
 {
     bool readyShoot;
     bool wrongBallReady;
-    ShootMode shootMode = shootMode_none;
     bool shootUnassignedAsOpponent;
     bool isHighGeneral;
 
 };
 
 class Shooter{
-
-
 
     public:
         void RobotInit();
@@ -67,14 +55,12 @@ class Shooter{
         void setHoodPos(double pos);
         void setTurretPos(double pos);
 
-        void setHighHub();
-        void outerLaunch();
-        void innerLaunch();
-        void wall();
-        void fender();
-        void endOfTarmac();
-
-        void updateShootMode(const RobotData &robotData, ShooterData &shooterData);
+        void setHighHub(const RobotData &robotData);
+        void outerLaunch(const RobotData &robotData);
+        void innerLaunch(const RobotData &robotData);
+        void wall(const RobotData &robotData);
+        void fender(const RobotData &robotData);
+        void endOfTarmac(const RobotData &robotData);
 
         bool hoodZero;
         double targetHoodPos;
@@ -87,6 +73,10 @@ class Shooter{
         bool isHigh;
 
         int lastTickBallCount = 0;
+
+        int x = 0;
+        int y = 0;
+        int vel = 0;
     
         //FLywheel Lead
         rev::CANSparkMax flyWheelLead = rev::CANSparkMax(shooterWheelLeadID, rev::CANSparkMax::MotorType::kBrushless);

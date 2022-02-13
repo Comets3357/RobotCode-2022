@@ -73,5 +73,8 @@ private:
     //zeroing sensor
     frc::DigitalInput elevatorLimit{7};
 
+    // //zeroing sensor
+    // rev::SparkMaxLimitSwitch elevatorLimit = climbElevator.GetForwardLimitSwitch(rev::SparkMaxLimitSwitch::Type::kNormallyOpen);
+    // rev::SparkMaxLimitSwitch armsLimit = climbArms.GetForwardLimitSwitch(rev::SparkMaxLimitSwitch::Type::kNormallyOpen);
 
 };

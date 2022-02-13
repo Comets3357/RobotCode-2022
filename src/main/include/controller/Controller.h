@@ -13,10 +13,21 @@ enum Mode {
     mode_climb_manual
 };
 
+enum ShootMode {
+    shootMode_none,
+    shootMode_vision,
+    shootMode_fender,
+    shootMode_sideWall,
+    shootMode_wallLaunchPad,
+    shootMode_cornerLaunchPad
+};
+
 struct ControlData
 {
     // states:
     Mode mode{mode_teleop_sa};
+    ShootMode shootMode = shootMode_none;
+    
     bool shift = false;
 
     // drivebase:
@@ -146,6 +157,7 @@ class Controller
 
         void updateBtnData(ControllerData &controllerData);
         void updateControlData(const RobotData &robotData, const ControllerData &controllerData, ControlData &controlData);
+        void updateShootMode(const RobotData &robotData, ControlData &controlData);
 
         // basic btn getters:
         bool getBtn(int js, int index);

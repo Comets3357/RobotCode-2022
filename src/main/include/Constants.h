@@ -45,6 +45,7 @@ static const int
 
 //limelight:
 static const double
+    pi = 3.141592653589793238463,
     hubHeight = 104,
     limelightMount = 36.5,
     limelightAngle = 36.3,

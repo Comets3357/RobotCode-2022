@@ -196,17 +196,14 @@ void Intake::updateData(const RobotData &robotData, IntakeData &intakeData)
 {
     intakeData.intakeIdle = intakeIdle(robotData, intakeData);
     frc::SmartDashboard::PutNumber("Pivot built in Pos", intakePivotEncoder.GetPosition());
-    frc::SmartDashboard::PutNumber("Pivot absolute Pos", intakePivotEncoder2.GetOutput());
-    frc::SmartDashboard::PutNumber("Changed pos", absoluteToREV(intakePivotEncoder2.GetOutput()));
+    // frc::SmartDashboard::PutNumber("Pivot absolute Pos", intakePivotEncoder2.GetOutput());
+    //frc::SmartDashboard::PutNumber("Changed pos", absoluteToREV(intakePivotEncoder2.GetOutput()));
 
-    frc::SmartDashboard::PutBoolean("idle?", intakeData.intakeIdle);
-    frc::SmartDashboard::PutNumber("idle count", idleCount);
+    //frc::SmartDashboard::PutBoolean("idle?", intakeData.intakeIdle);
+    //frc::SmartDashboard::PutNumber("idle count", idleCount);
 
-    frc::SmartDashboard::PutBoolean("shift", robotData.controlData.shift);
-    frc::SmartDashboard::PutNumber("mode", robotData.controlData.mode);
+    // frc::SmartDashboard::PutNumber("mode", robotData.controlData.mode);
     
-    frc::SmartDashboard::PutBoolean("upper hub shot", robotData.controlData.upperHubShot);
-
 }
 
 bool Intake::intakeIdle(const RobotData &robotData, IntakeData &intakeData){
