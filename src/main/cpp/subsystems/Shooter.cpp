@@ -4,7 +4,7 @@
  * CLASS SPECIFIC INITS
  * ---------------------------------------------------------------------------------------------------------------------------------------------------
  * */
-void Shooter::RobotInit(ShooterData &shooterData)
+void Shooter::RobotInit()
 {
     flyWheelInit();
     shooterHoodInit();
@@ -13,9 +13,6 @@ void Shooter::RobotInit(ShooterData &shooterData)
     shooterHood.Set(0);
 
     isHigh = true;
-
-    shooterData.shootMode = shootMode_none;
-    shooterData.shootUnassignedAsOpponent = false;
 
     //used for reading flywheel speeds from the dashboard
     frc::SmartDashboard::PutNumber("wheel speed", 0);
@@ -67,6 +64,12 @@ void Shooter::DisabledInit()
     flyWheelLead.Set(0);
 }
 
+void Shooter::EnabledInit(ShooterData &shooterData)
+{
+    shooterData.shootMode = shootMode_none;
+    shooterData.shootUnassignedAsOpponent = false;
+}
+
 /**
  * ---------------------------------------------------------------------------------------------------------------------------------------------------
  * PERIODIC AND DRIVER CONTROL FUNCTIONS
@@ -77,14 +80,24 @@ void Shooter::RobotPeriodic(const RobotData &robotData, ShooterData &shooterData
     updateData(robotData, shooterData);
     updateShootMode(robotData, shooterData);
 
-    if (robotData.controlData.mode == mode_teleop_manual)
-    {
-        manual(robotData, shooterData);
+    if(robotData.controlData.mode == mode_climb_manual || robotData.controlData.mode == mode_climb_sa){
+        shooterHood_pidController.SetReference(-1,rev::CANSparkMaxLowLevel::ControlType::kPosition);
+        flyWheelLead.Set(0);
+
+    }else{
+        if (robotData.controlData.mode == mode_teleop_manual)
+        {
+            manual(robotData, shooterData);
+        }
+        else if (robotData.controlData.mode == mode_teleop_sa)
+        {
+            semiAuto(robotData, shooterData);
+        }
+
     }
-    else if (robotData.controlData.mode == mode_teleop_sa)
-    {
-        semiAuto(robotData, shooterData);
-    }
+
+
+    
     
     //idk about this control data stuff to figure out
     if(robotData.controlData.upperHubShot){
@@ -114,8 +127,8 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
     //all the shooting logic
     if(shooterData.shootMode == shootMode_vision){ // Aiming with limelight
         //set the hood and flywheel using pids to the desired values based off the limelight code
-        //flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
-        // shooterHood_pidController.SetReference(absoluteToREV(convertFromAngleToAbs(robotData.limelightData.desiredHoodPos)), rev::CANSparkMaxLowLevel::ControlType::kPosition);
+        flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
+        shooterHood_pidController.SetReference(absoluteToREV(convertFromAngleToAbs(robotData.limelightData.desiredHoodPos)), rev::CANSparkMaxLowLevel::ControlType::kPosition);
         
         //retrieves flywheel speeds from the dashboard
         double hi = frc::SmartDashboard::GetNumber("wheel speed", 0);
@@ -306,8 +319,8 @@ void Shooter::innerLaunch()
     if (isHigh)
     {
         shooterHood_pidController.SetReference(hoodrevOut + 2, rev::CANSparkMaxLowLevel::ControlType::kPosition);
-        flyWheelLead_pidController.SetReference(1825, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
-        readyShootLimit = 1775;
+        flyWheelLead_pidController.SetReference(1875, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
+        readyShootLimit = 1825;
     }
     else if (!isHigh)
     {
@@ -323,8 +336,8 @@ void Shooter::wall()
     {
         //38
         shooterHood_pidController.SetReference(hoodrevOut + 6, rev::CANSparkMaxLowLevel::ControlType::kPosition);
-        flyWheelLead_pidController.SetReference(1700, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
-        readyShootLimit = 1650;
+        flyWheelLead_pidController.SetReference(1750, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
+        readyShootLimit = 1700;
     }
     else if (!isHigh)
     {
@@ -427,8 +440,8 @@ void Shooter::updateShootMode(const RobotData &robotData, ShooterData &shooterDa
     }
 
     // shut off shooting if all balls have exited (happens once upon ball count going to zero)
-    if (robotData.indexerData.indexerContents.size() == 0 && lastTickBallCount > 0 && shooterData.shootMode != shootMode_none /* probably redundant */) {
-        shooterData.shootMode = shootMode_none;
-    }
-    lastTickBallCount = robotData.indexerData.indexerContents.size();
+    // if (robotData.indexerData.indexerContents.size() == 0 && lastTickBallCount > 0 && shooterData.shootMode != shootMode_none /* probably redundant */) {
+    //     shooterData.shootMode = shootMode_none;
+    // }
+    // lastTickBallCount = robotData.indexerData.indexerContents.size();
 }

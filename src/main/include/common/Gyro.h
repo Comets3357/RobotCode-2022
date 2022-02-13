@@ -17,10 +17,11 @@ class Gyro
 
 public:
     void RobotInit();
-    void TeleopInit();
+    void AutonomousInit(GyroData &gyroData);
+    void TeleopInit(GyroData &gyroData);
     void RobotPeriodic(GyroData &gyroData);
 
 private:
-    //AHRS gyro{frc::SPI::Port::kMXP};
+    AHRS gyro{frc::SPI::Port::kMXP};
 
 };

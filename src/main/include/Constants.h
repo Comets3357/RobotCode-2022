@@ -40,7 +40,8 @@ static const double
 
 // climb
 static const int
-    climbLiftID = 41;
+    climbElevatorID = 41,
+    climbArmsID = 43;
 
 //limelight:
 static const double
@@ -58,7 +59,8 @@ static const int
     HoodAbsoluteEncoderPort = 1,
     bottomBeamBreakPort = 3,
     midBeamBreakPort = 9,
-    topBeamBreakPort = 5;
+    topBeamBreakPort = 5,
+    elevator = 7;   // change name
 
 
 

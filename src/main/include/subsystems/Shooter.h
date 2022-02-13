@@ -40,9 +40,10 @@ class Shooter{
 
 
     public:
-        void RobotInit(ShooterData &shooterData);
+        void RobotInit();
         void RobotPeriodic(const RobotData &robotData, ShooterData &shooterData);
         void DisabledInit();
+        void EnabledInit(ShooterData &shooterData);
         void updateData(const RobotData &robotData, ShooterData &shooterData);
 
     

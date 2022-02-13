@@ -66,6 +66,15 @@ struct ControlData
     double mHood; //moves hood up or down MANUAL (axis)
     double mTurret; // moves turret left or right MANUAL (axis)
 
+    //climb:
+    bool saclimbTraversalSequence;
+    bool saclimbHeightSequence;
+    bool sacancelSequence;
+    bool saclimbInit;
+    bool climbZeroing;
+    
+    double mElevatorExtension;
+    double mArmPivot;
 };
 
 struct ControllerData
@@ -115,6 +124,9 @@ struct ControllerData
 
     bool sLCenterBtnToggled = false;
     bool sRCenterBtnToggled = false;
+
+    bool sLTriggerToggled = false;
+    bool sRTriggerToggled = false;
 
     int sDPad = -1;
 };
