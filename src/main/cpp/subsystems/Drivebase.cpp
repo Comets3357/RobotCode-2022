@@ -57,7 +57,6 @@ void Drivebase::RobotInit()
 
 
     odometryInitialized = false;
-    // frc::SmartDashboard::PutData("Field", &field);
 }
 
 void Drivebase::TeleopInit(const RobotData &robotData) {
@@ -249,7 +248,9 @@ void Drivebase::updateOdometry(const RobotData &robotData, DrivebaseData &driveb
 
     odometry.Update(currentRotation, leftDistance, rightDistance);
 
-    // field.SetRobotPose(odometry.GetPose());
+    field.SetRobotPose(odometry.GetPose());
+    frc::SmartDashboard::PutData("Field", &field);
+
 
     drivebaseData.currentPose = odometry.GetPose();
     frc::SmartDashboard::PutNumber("currentPoseX", drivebaseData.currentPose.Translation().X().to<double>());

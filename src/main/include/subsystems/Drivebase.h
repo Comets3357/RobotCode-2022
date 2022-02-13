@@ -100,7 +100,7 @@ private:
     frc::Trajectory trajectory{};
     frc::RamseteController ramseteController{};
 
-    // frc::Field2d field;
+    frc::Field2d field;
 
     double trajectorySecOffset = 0;
     
