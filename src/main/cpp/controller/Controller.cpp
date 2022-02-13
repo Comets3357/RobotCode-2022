@@ -11,7 +11,7 @@
 void Controller::TeleopPeriodic(const RobotData &robotData, ControllerData &controllerData, ControlData &controlData)
 {
     updateBtnData(controllerData);
-    updateControlData(controllerData, controlData);
+    updateControlData(robotData, controllerData, controlData);
 }
 
 bool Controller::getBtn(int js, int index)
@@ -95,7 +95,9 @@ void Controller::updateBtnData(ControllerData &controllerData)
     controllerData.sLTrigger = getAxis(1, 2);
     controllerData.sRTrigger = getAxis(1, 3);
     controllerData.sLBumper = getBtn(1, 5);
+    controllerData.sLBumperToggled = getBtnToggled(1, 5);
     controllerData.sRBumper = getBtn(1, 6);
+    controllerData.sRBumperToggled = getBtnToggled(1, 6);
 
     controllerData.sABtn = getBtn(1, 1);
     controllerData.sBBtn = getBtn(1, 2);
@@ -114,6 +116,9 @@ void Controller::updateBtnData(ControllerData &controllerData)
     controllerData.sRCenterBtnToggled = getBtnToggled(1, 8);
 
     controllerData.sDPad = getPOV(1, 0);
+
+    controllerData.sRTriggerToggled = getBtnToggled(1,3);
+    controllerData.sLTriggerToggled = getBtnToggled(1,3);
 
 
 }

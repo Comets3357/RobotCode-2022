@@ -1,49 +1,99 @@
 #pragma once
 
 #include "Constants.h"
+#include "common/ColorSensor.h"
 
 #include <frc/DriverStation.h>
-#include <frc/TimedRobot.h>
-#include <ctre/Phoenix.h>
 #include <rev/CANSparkMax.h>
 #include <rev/SparkMaxPIDController.h>
 #include <rev/CANEncoder.h>
 #include <frc/DigitalInput.h>
 
+#include <deque>
+
 struct RobotData;
+
+enum Cargo
+{
+    cargo_Alliance,
+    cargo_Opponent,
+    cargo_Unassigned 
+};
 
 struct IndexerData
 {
-
+    std::deque<Cargo> indexerContents;
+    bool wrongBall = false;
+    bool topBeamToggledOn; // sensed a ball
+    bool topBeamToggledOff; // stopped sensing a ball
+  
 };
+
 
 class Indexer
 {
 
 public:
     void RobotInit();
+    void AutonomousInit(IndexerData &indexerData);
     void RobotPeriodic(const RobotData &robotData, IndexerData &indexerData);
-    
     void DisabledInit();
+    void updateData(const RobotData &robotData, IndexerData &indexerData);
 
 private:
-    void updateData(const RobotData &robotData, IndexerData &indexerData);
     void manual(const RobotData &robotData, IndexerData &indexerData);
     void semiAuto(const RobotData &robotData, IndexerData &indexerData);
+    void testControl(const RobotData &robotData);
+    void debuggingStuff(const RobotData &robotData, IndexerData &indexerData);
 
     void indexerBeltInit();
     void indexerWheelInit();
 
-    frc::DigitalInput proxIndexerFront{2};
-    frc::DigitalInput proxIndexerBack{3};
+    void incrementCount(const RobotData &robotData, IndexerData &indexerData);
+    void newCargo(const RobotData &robotData, IndexerData &indexerData);
+    void assignCargoColor(const RobotData &robotData, IndexerData &indexerData);
+    void decrementCount(const RobotData &robotData, IndexerData &indexerData, bool reverse);
+    void mDecrement(const RobotData &robotData, IndexerData &indexerData);
+    void count(const RobotData &robotData, IndexerData &indexerData);
 
-    const double mIndexerWheelSpeed = 0.2;
-    const double mIndexerBeltSpeed = 0.2;
-    const double saIndexerWheelIntakeSpeed = 0.2;
-    const double saIndexerBeltIntakeSpeed = 0.2;
+    void saBeltControl(const RobotData &robotData, IndexerData &indexerData);
+    void saWheelControl(const RobotData &robotData, IndexerData &indexerData);
+    bool pauseBelt(const RobotData &robotData, IndexerData &indexerData);
 
+    bool getBottomBeam();
+    bool getMidBeam();
+    bool getTopBeam();
 
-    //CHANGE MOTOr ID STUFF  (just outline lol don't take your life too seriously:))
+    // get if it was toggled to state specified in bool broken
+    bool getBottomBeamToggled(bool broken);
+    bool getTopBeamToggled(bool broken);
+
+    void updateTopBeamToggled(IndexerData &indexerData);
+
+    
+    
+    frc::DigitalInput bottomBeamBreak{bottomBeamBreakPort};
+    frc::DigitalInput midBeamBreak{midBeamBreakPort};
+    frc::DigitalInput topBeamBreak{topBeamBreakPort};
+
+    bool prevBottomBeam = false;
+    // bool prevMidBeam = false;
+    bool prevTopBeam = false;
+
+    // debounce counters to time debounce
+    int bottomDebounceCount = 0;
+    int topDebounceCount = 0;
+    int pauseBeltCount = 0;
+
+    bool runWheel = false; // checks if one ball has left shooter so that you can run the wheel and get the other ball out
+
+    const double indexerWheelSpeed = 0.3;
+    const double indexerBeltSpeed = 0.8;
+    const double saIndexerWheelIntakeSpeed = 0.3;
+    const double saIndexerBeltIntakeSpeed = 0.8;
+
+    // ColorSensor colorSensor{}; //rev v3, for detecting ball color
+
     rev::CANSparkMax indexerBelt = rev::CANSparkMax(indexerBeltsID, rev::CANSparkMax::MotorType::kBrushless);
     rev::SparkMaxRelativeEncoder indexerBeltEncoder = indexerBelt.GetEncoder();
     rev::SparkMaxPIDController indexerBelt_pidController = indexerBelt.GetPIDController();

@@ -1,18 +1,33 @@
 #include "controller/Controller.h"
+#include "RobotData.h"
 
 // for updating states of control variables (to be accessed by other subsystems)
-void Controller::updateControlData(const ControllerData &controllerData, ControlData &controlData)
+void Controller::updateControlData(const RobotData &robotData, const ControllerData &controllerData, ControlData &controlData)
 {
     // states:
     controlData.shift = controllerData.sLBumper;
-    if (controllerData.sRCenterBtnToggled)
-    {
-        controlData.manualMode = !controlData.manualMode;
+    
+    switch (controllerData.sDPad) {
+        case -1:
+            break;
+        case 0: // up
+            controlData.mode = mode_teleop_manual;
+            break;
+        case 90:    // right
+            controlData.mode = mode_teleop_sa;
+            break;
+        case 180:   // down
+            controlData.mode = mode_climb_manual;
+            break;
+        case 270:   // left
+            controlData.mode = mode_climb_sa;
+            break;
+        default:
+            controlData.mode = mode_teleop_sa;
+            break;
+            
     }
-    if (controllerData.sRCenterBtnToggled)
-    {
-        controlData.climbMode = !controlData.climbMode;
-    }
+
 
     // controls:
 
@@ -44,16 +59,76 @@ void Controller::updateControlData(const ControllerData &controllerData, Control
     }
 
 
-    //INTAKE::
-    controlData.mIntakeDown = controllerData.sYBtn;
-    controlData.mIntakeRollers = controllerData.sRBumper;
-    controlData.mIntakeRollersBackward = controllerData.sABtn;
-    controlData.saIntake = controllerData.sRBumper;
-    controlData.saIntakeBackward = controllerData.sABtn;
 
-    //INDEXER:
-    controlData.mIndexerBackwards = controllerData.sBBtn;
-    controlData.mIndexer = controllerData.sXBtn;
-    controlData.saEjectBalls = controllerData.sBBtn;
+    // manual:
+
+    
+    controlData.mIntakeDown = controllerData.sRBumper /* && (controlData.mode == mode_teleop_manual) */;
+    controlData.mIntakeUp = controllerData.sRBumper && controlData.shift /* && (controlData.mode == mode_teleop_manual) */;
+    controlData.mIntakeRollersIn = controllerData.sRTrigger > 0.5 /* && (controlData.mode == mode_teleop_manual) */;
+    controlData.mIntakeRollersOut = controllerData.sRTrigger > 0.5 && controlData.shift /* && (controlData.mode == mode_teleop_manual) */;
+    
+    controlData.mZeroHood = controllerData.sLStickBtn /* && (controlData.mode == mode_teleop_manual) */;
+    controlData.mZeroTurret = controllerData.sRStickBtn /* && (controlData.mode == mode_teleop_manual) */;
+    controlData.mHood = controllerData.sLYStick/*  && (controlData.mode == mode_teleop_manual) */;
+    controlData.mTurret = controllerData.sRXStick /* && (controlData.mode == mode_teleop_manual) */;
+    controlData.mShooterWheelForward = controllerData.sXBtn /* && (controlData.mode == mode_teleop_manual) */;
+    controlData.mShooterWheelBackward = controllerData.sXBtn && controlData.shift/*  && (controlData.mode == mode_teleop_manual) */;
+
+    controlData.mSideWheelForward = controllerData.sBBtn/*  && (controlData.mode == mode_teleop_manual) */;
+    controlData.mSideWheelBackward = controllerData.sBBtn && controlData.shift /* && (controlData.mode == mode_teleop_manual) */;
+    controlData.mCenterWheelForward = controllerData.sABtn /* && (controlData.mode == mode_teleop_manual) */;
+    controlData.mCenterWheelBackward = controllerData.sABtn && controlData.shift/*  && (controlData.mode == mode_teleop_manual) */;
+    controlData.mIndexerUp = controllerData.sYBtn/*  && (controlData.mode == mode_teleop_manual) */;
+    controlData.mIndexerDown = controllerData.sYBtn && controlData.shift/*  && (controlData.mode == mode_teleop_manual) */;
+    controlData.mDecrementCargo = controllerData.sLCenterBtnToggled /* && (controlData.mode == mode_teleop_manual) */;
+    controlData.mIncrementCargo = controllerData.sRCenterBtnToggled /* && (controlData.mode == mode_teleop_manual) */;
+
+    
+
+    // semi-auto:
+
+    
+    controlData.saIntake = controllerData.sRTrigger > 0.5/*  && (controlData.mode == mode_teleop_sa) */;
+    controlData.saIntakeBackward = controllerData.sLTrigger > 0.5 /* && (controlData.mode == mode_teleop_sa) */;
+
+    controlData.saEjectBalls = controllerData.sABtn && !controlData.shift/*  && (controlData.mode == mode_teleop_sa) */;
+
+    controlData.saShooting = controllerData.sXBtnToggled && !controlData.shift/* && (controlData.mode == mode_teleop_sa) */;
+    controlData.saFinalShoot = controllerData.sYBtn && !controlData.shift/* && (controlData.mode == mode_teleop_sa); */;
+
+    // secondary y to set readyshoot to true in testing
+
+    if (controllerData.sRBumperToggled) {
+        controlData.upperHubShot = !controlData.upperHubShot;
+    }
+    if (controllerData.sBBtnToggled) {
+        controlData.shootUnassignedAsOpponent = !controlData.shootUnassignedAsOpponent;
+    }
+    controlData.fenderShot = controllerData.sABtnToggled && controlData.shift /* && (controlData.mode == mode_teleop_sa) */;
+    controlData.sideWallShot = controllerData.sBBtnToggled && controlData.shift/*  && (controlData.mode == mode_teleop_sa) */;
+    controlData.wallLaunchPadShot = controllerData.sXBtnToggled && controlData.shift/*  && (controlData.mode == mode_teleop_sa) */;
+    controlData.cornerLaunchPadShot = controllerData.sYBtnToggled && controlData.shift /* && (controlData.mode == mode_teleop_sa) */;
+    //controlData.hubShot = controllerData.sLCenterBtn; // DEPRECATED -brian
+
+    
+    // if(robotData.indexerData.indexerContents.front() == Cargo::cargo_Opponent){
+    //     controlData.wrongBall = true;
+    // } else if(robotData.indexerData.indexerContents.front() == Cargo::cargo_Alliance){
+    //     controlData.wrongBall = false;
+    // } else if (robotData.indexerData.indexerContents.front() == Cargo::cargo_Unassigned){
+    //     controlData.wrongBall = true; 
+        // change to button for driver control?
+    // }
+    //controlData.finalShoot;
+  
+    //CLIMB
+    controlData.sacancelSequence = controllerData.sLStickBtn;
+    controlData.saclimbTraversalSequence = controllerData.sRCenterBtn;
+    controlData.saclimbHeightSequence = controllerData.sLCenterBtn;
+    controlData.saclimbInit = controllerData.sBBtn;
+    controlData.climbZeroing = controllerData.sABtnToggled;
+    
+    
   
 }

@@ -22,7 +22,7 @@ struct ColorSensorData {
 class ColorSensor {
     public: 
         void RobotInit();
-        void RobotPeriodic(RobotData &RobotData);
+        void RobotPeriodic(RobotData &robotData);
         void Disabled();
 
     private:
@@ -45,4 +45,4 @@ class ColorSensor {
         //tune these
         static constexpr frc::Color kBlueCargo = frc::Color(0.1763, 0.4508, 0.3728);
         static constexpr frc::Color kRedCargo = frc::Color(0.3546, 0.4361, 0.2093);
-};
+}; 

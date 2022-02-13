@@ -10,6 +10,7 @@ struct GyroData
     double rawYaw = 0;
     double rawPitch = 0;
     double rawRoll = 0;
+    double angularMomentum;
 };
 
 class Gyro
@@ -17,7 +18,8 @@ class Gyro
 
 public:
     void RobotInit();
-    void TeleopInit();
+    void AutonomousInit(GyroData &gyroData);
+    void TeleopInit(GyroData &gyroData);
     void RobotPeriodic(GyroData &gyroData);
 
 private:
