@@ -57,17 +57,17 @@ void VisionLookup::RobotPeriodic(const RobotData &robotData, VisionLookupData &v
     // velocity map
     // key is the distance in feet
     // assigned value is the desired flywheel velocity in rpm
-    velocityMap[4] = 1530;
-    velocityMap[5] = 1550;
-    velocityMap[6] = 1550;
-    velocityMap[7] = 1560;
-    velocityMap[8] = 1600;
-    velocityMap[9] = 1640;
-    velocityMap[10] = 1675;
-    velocityMap[11] = 1695;
-    velocityMap[12] = 1750;
-    velocityMap[13] = 1770;
-    velocityMap[14] = 1880;
+    velocityMap[4] = 1530; //1721
+    velocityMap[5] = 1550; //1744
+    velocityMap[6] = 1550; //1744
+    velocityMap[7] = 1560; //1755
+    velocityMap[8] = 1600; //1800
+    velocityMap[9] = 1640; //1845
+    velocityMap[10] = 1675; //1884
+    velocityMap[11] = 1695; //1907
+    velocityMap[12] = 1750; //1969
+    velocityMap[13] = 1770; //1991
+    velocityMap[14] = 1880; //2115
     // velocityMap[15] = 2300;
     // velocityMap[16] = ;
     // velocityMap[17] = ;

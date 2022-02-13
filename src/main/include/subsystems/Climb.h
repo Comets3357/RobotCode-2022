@@ -37,8 +37,8 @@ private:
     // rev::SparkMaxPIDController climb1_pidController = climb1.GetPIDController();
 
 
-    //zeroing sensor
-    rev::SparkMaxLimitSwitch elevatorLimit = climbElevator.GetForwardLimitSwitch(rev::SparkMaxLimitSwitch::Type::kNormallyOpen);
-    rev::SparkMaxLimitSwitch armsLimit = climbArms.GetForwardLimitSwitch(rev::SparkMaxLimitSwitch::Type::kNormallyOpen);
+    // //zeroing sensor
+    // rev::SparkMaxLimitSwitch elevatorLimit = climbElevator.GetForwardLimitSwitch(rev::SparkMaxLimitSwitch::Type::kNormallyOpen);
+    // rev::SparkMaxLimitSwitch armsLimit = climbArms.GetForwardLimitSwitch(rev::SparkMaxLimitSwitch::Type::kNormallyOpen);
 
 };

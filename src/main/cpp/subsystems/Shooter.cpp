@@ -30,7 +30,7 @@ void Shooter::shooterHoodInit()
     shooterHood.SetSmartCurrentLimit(15);
 
     //PIDS
-    shooterHood_pidController.SetP(0.378); //0.193
+    shooterHood_pidController.SetP(0.378); //0.193 
     shooterHood_pidController.SetI(0);
     shooterHood_pidController.SetD(0);
     shooterHood_pidController.SetIZone(0);
@@ -52,7 +52,7 @@ void Shooter::flyWheelInit()
     readyShootLimit = 1200;
 
     //PIDS
-    flyWheelLead_pidController.SetP(0.002);
+    flyWheelLead_pidController.SetP(0.002); 
     flyWheelLead_pidController.SetI(0);
     flyWheelLead_pidController.SetD(0.005);
     flyWheelLead_pidController.SetIZone(0);
