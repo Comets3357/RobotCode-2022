@@ -15,9 +15,9 @@
 struct RobotData;
 
 struct ClimbData {
-    int bar;
-    bool climbing;
-    bool zeroing;
+    int bar = 2;
+    bool climbing = false;
+    bool zeroing = false;
 };
 
 class Climb {
@@ -35,6 +35,8 @@ private:
     void runSequence(const RobotData &robotData, ClimbData &climbData);
 
     int stage = 0;
+
+    float angularRate = 0;
 
     bool climbInitiating = false;
     bool climbUp = false;
@@ -54,7 +56,6 @@ private:
     void RunElevatorToPos(int position, int stageAdd, int onBar);
     void RunArmsToPos(int position, int stageAdd, int onBar);
     void RunArmsAndElevatorToPos(int elevatorPos, int elevatorBar, int armsPos, int armsBar, int stageAdd);
-    void zeroArms(float power, int stageAdd);
     void zeroElevator(float power, int stageAdd);
 
 

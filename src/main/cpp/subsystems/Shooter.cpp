@@ -81,8 +81,9 @@ void Shooter::RobotPeriodic(const RobotData &robotData, ShooterData &shooterData
     updateShootMode(robotData, shooterData);
 
     if(robotData.controlData.mode == mode_climb_manual || robotData.controlData.mode == mode_climb_sa){
-        shooterHood_pidController.SetReference(-1,rev::CANSparkMaxLowLevel::ControlType::kPosition);
+        //shooterHood_pidController.SetReference(0,rev::CANSparkMaxLowLevel::ControlType::kPosition);
         flyWheelLead.Set(0);
+        shooterHood.Set(0);
 
     }else{
         if (robotData.controlData.mode == mode_teleop_manual)
