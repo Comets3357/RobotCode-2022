@@ -29,6 +29,9 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
 
     // }
 
+    table->PutNumber("ledMode", 0);
+
+
     //moves the limelight data over to the actual position of the shooter
     shooterOffset(robotData, limelightData);
     
@@ -191,19 +194,19 @@ void Limelight::averageDistance(const RobotData &robotData, LimelightData &limel
     double total = 0;
 
     //if size is less then 6 keep adding updated distances until the deque is full
-    if(robotData.limelightData.distances.size() < 6){
-        limelightData.distances.push_back(distance);
-    }else{ //once it's full run through the deque and add it to the total
-        for(int i = 0; (unsigned)i < robotData.limelightData.distances.size()+1; i ++){
-            total += robotData.limelightData.distances.at(i);
-        }
+    // if(robotData.limelightData.distances.size() < 6){
+    //     limelightData.distances.push_back(distance);
+    // }else{ //once it's full run through the deque and add it to the total
+    //     for(int i = 0; (unsigned)i < robotData.limelightData.distances.size()+1; i ++){
+    //         total += robotData.limelightData.distances.at(i);
+    //     }
 
-        //make sure to remove the first value and add an updated distance to the end
-        limelightData.distances.pop_front();
-        limelightData.distances.push_back(distance);
-    }
+    //     //make sure to remove the first value and add an updated distance to the end
+    //     limelightData.distances.pop_front();
+    //     limelightData.distances.push_back(distance);
+    // }
 
     //return the average of those distances
-    limelightData.avgDistance = total/5;
+    limelightData.avgDistance = distance;
 
 }
