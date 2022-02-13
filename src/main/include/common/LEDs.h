@@ -15,13 +15,9 @@ public:
 
 private:
     //in constructor port, deviceaddress
-    frc::I2C arduino = frc::I2C(frc::I2C::Port::kOnboard, 1);
-    frc::I2C indexerArduinoA = frc::I2C(frc::I2C::Port::kOnboard, 2);
-    frc::I2C indexerArduinoB = frc::I2C(frc::I2C::Port::kOnboard, 3);
-    frc::I2C shooterArduino = frc::I2C(frc::I2C::Port::kOnboard, 4);
+    frc::I2C leftArduino = frc::I2C(frc::I2C::Port::kOnboard, 1);
+    frc::I2C rightArduino = frc::I2C(frc::I2C::Port::kOnboard, 2);
     bool success = false;
-    int colorCode = 5;
-    int indexerColorCodeA = 4;
-    int indexerColorCodeB = 4;
-    int shooterColorCode = 4;
+    int leftColorCode = 5;
+    int rightColorCode = 6;
 };
