@@ -30,6 +30,9 @@ public:
 
 private:
 
+    float elevatorSpeed = 0.6;
+    float armsSpeed = 1;
+
     void climbInit(const RobotData &robotData, ClimbData &climbData);
     void cancelSequence(const RobotData &robotData, ClimbData &climbData);
     void runSequence(const RobotData &robotData, ClimbData &climbData);
@@ -56,7 +59,9 @@ private:
     void RunElevatorToPos(int position, int stageAdd, int onBar);
     void RunArmsToPos(int position, int stageAdd, int onBar);
     void RunArmsAndElevatorToPos(int elevatorPos, int elevatorBar, int armsPos, int armsBar, int stageAdd);
-    void zeroElevator(float power, int stageAdd);
+    void ZeroElevator(float power, int stageAdd);
+
+    void ChangeElevatorSpeed(float speed, int stageAdd);
 
 
     //CHANGE MOTOr ID STUFF  (just outline lol don't take your life too seriously:))
@@ -73,5 +78,8 @@ private:
     //zeroing sensor
     frc::DigitalInput elevatorLimit{7};
 
+    // //zeroing sensor
+    // rev::SparkMaxLimitSwitch elevatorLimit = climbElevator.GetForwardLimitSwitch(rev::SparkMaxLimitSwitch::Type::kNormallyOpen);
+    // rev::SparkMaxLimitSwitch armsLimit = climbArms.GetForwardLimitSwitch(rev::SparkMaxLimitSwitch::Type::kNormallyOpen);
 
 };

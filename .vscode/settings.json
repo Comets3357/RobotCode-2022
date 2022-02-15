@@ -78,7 +78,8 @@
     "thread": "cpp",
     "cinttypes": "cpp",
     "typeinfo": "cpp",
-    "*.inc": "cpp"
+    "*.inc": "cpp",
+    "core": "cpp",
+    "matrixfunctions": "cpp"
   },
-  "C_Cpp.errorSquiggles": "Disabled"
 }

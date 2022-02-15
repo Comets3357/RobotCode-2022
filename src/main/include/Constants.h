@@ -26,7 +26,7 @@ static const int
 
 // shooter
 static const int
-    shooterWheelLeadID = 32,
+    shooterWheelLeadID = 31,
     shooterHoodID = 33,
     shooterTurretID = 34;
 
@@ -45,6 +45,7 @@ static const int
 
 //limelight:
 static const double
+    pi = 3.141592653589793238463,
     hubHeight = 104,
     limelightMount = 36.5,
     limelightAngle = 36.3,

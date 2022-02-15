@@ -7,7 +7,6 @@
 #include <rev/CANSparkMax.h>
 #include <rev/SparkMaxPIDController.h>
 #include <rev/CANEncoder.h>
-#include <rev/SparkMaxLimitSwitch.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc/controller/PIDController.h>
 #include <frc/DutyCycle.h>
@@ -15,28 +14,16 @@
 
 struct RobotData;
 
-enum ShootMode {
-    shootMode_none,
-    shootMode_vision,
-    shootMode_fender,
-    shootMode_sideWall,
-    shootMode_wallLaunchPad,
-    shootMode_cornerLaunchPad
-};
-
 struct ShooterData
 {
     bool readyShoot;
     bool wrongBallReady;
-    ShootMode shootMode = shootMode_none;
     bool shootUnassignedAsOpponent;
     bool isHighGeneral;
 
 };
 
 class Shooter{
-
-
 
     public:
         void RobotInit();
@@ -53,6 +40,7 @@ class Shooter{
         double convertFromAngleToAbs(double angle);
         double convertFromAbsToAngle(double abs);
         double absoluteToREV(double value);
+        void checkReadyShoot(ShooterData &shooterData);
 
         void flyWheelInit();
         void shooterHoodInit();
@@ -67,26 +55,15 @@ class Shooter{
         void setHoodPos(double pos);
         void setTurretPos(double pos);
 
-        void setHighHub();
-        void outerLaunch();
-        void innerLaunch();
-        void wall();
-        void fender();
-        void endOfTarmac();
+        void setHighHub(const RobotData &robotData);
+        void outerLaunch(const RobotData &robotData);
+        void innerLaunch(const RobotData &robotData);
+        void wall(const RobotData &robotData);
+        void fender(const RobotData &robotData);
+        void endOfTarmac(const RobotData &robotData);
 
-        void updateShootMode(const RobotData &robotData, ShooterData &shooterData);
-
-        bool hoodZero;
-        double targetHoodPos;
-        double currentHoodPos;
-        double desiredPos;
-        double calculatedPower;
         int readyShootLimit;
         int tickCount;
-   
-        bool isHigh;
-
-        int lastTickBallCount = 0;
     
         //FLywheel Lead
         rev::CANSparkMax flyWheelLead = rev::CANSparkMax(shooterWheelLeadID, rev::CANSparkMax::MotorType::kBrushless);

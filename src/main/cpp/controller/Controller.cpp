@@ -12,6 +12,7 @@ void Controller::TeleopPeriodic(const RobotData &robotData, ControllerData &cont
 {
     updateBtnData(controllerData);
     updateControlData(robotData, controllerData, controlData);
+    updateShootMode(robotData, controlData);
 }
 
 bool Controller::getBtn(int js, int index)
@@ -66,7 +67,6 @@ double Controller::getAxis(int js, int index)
 void Controller::updateBtnData(ControllerData &controllerData)
 {
     // primary controls:
-
     if (frc::DriverStation::GetJoystickName(0) == "FrSky Taranis Joystick")
     {
         // if using the flight stick, axises are inverted compared to xbox

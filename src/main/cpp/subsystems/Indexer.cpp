@@ -16,6 +16,7 @@ void Indexer::AutonomousInit(IndexerData &indexerData) {
 
 void Indexer::RobotPeriodic(const RobotData &robotData, IndexerData &indexerData)
 {
+    updateTopBeamToggled(indexerData);
     updateData(robotData, indexerData);
     count(robotData, indexerData);  // accounts for automatic counting as well as manual decrementing
                                     // there are manual functions for incremeneting and decrementing cargo as well, see controldata.cpp
@@ -79,6 +80,7 @@ void Indexer::updateData(const RobotData &robotData, IndexerData &indexerData)
     //     indexerData.wrongBall = true; 
     // }
     debuggingStuff(robotData, indexerData);
+    
 }
 
 
@@ -159,12 +161,24 @@ void Indexer::assignCargoColor(const RobotData &robotData, IndexerData &indexerD
 // senses if balls leave indexer and removes them from the deque
 void Indexer::decrementCount(const RobotData &robotData, IndexerData &indexerData, bool reverse){
     
-    if (indexerData.indexerContents.size() > 0){ // making sure we don't pop when there's nothing in there
-        if (reverse && getBottomBeamToggled(false)){ // if you're reversing and bb1 toggles off (ball passed completely through)
+    // if (indexerData.indexerContents.size() > 0){ // making sure we don't pop when there's nothing in there
+    //     if (reverse && getBottomBeamToggled(false)){ // if you're reversing and bb1 toggles off (ball passed completely through)
+    //         indexerData.indexerContents.pop_back();
+    //     }else if (!reverse && indexerData.topBeamToggledOff && robotData.shooterData.readyShoot){
+    //         indexerData.indexerContents.pop_front();
+    //         runWheel = true;
+    //     }
+    // }
+
+    if (reverse && getBottomBeamToggled(false)){ // if you're reversing and bb1 toggles off (ball passed completely through)
+        
+        if (indexerData.indexerContents.size() > 0){
             indexerData.indexerContents.pop_back();
-        }else if (!reverse && getTopBeamToggled(false) && robotData.shooterData.readyShoot){
+        }
+
+    }else if (!reverse && indexerData.topBeamToggledOff && robotData.controlData.saFinalShoot){
+        if (indexerData.indexerContents.size() > 0){
             indexerData.indexerContents.pop_front();
-            runWheel = true;
         }
     }
 }
@@ -182,13 +196,13 @@ void Indexer::count(const RobotData &robotData, IndexerData &indexerData){
     if(bottomDebounceCount > 0){
         bottomDebounceCount--;
     }
-    if(topDebounceCount > 0){
-        topDebounceCount--;
-    }
+    // if(topDebounceCount > 0){
+    //     topDebounceCount--;
+    // }
     if(robotData.controlData.saEjectBalls || robotData.controlData.mIndexerDown){ // if BACKWARDS
         decrementCount(robotData, indexerData, true); //true means you're reversing
-    } else {
-        decrementCount(robotData, indexerData, false);
+    } else { // you are going forwards. this runs every time as you go forward
+        decrementCount(robotData, indexerData, false); // going forward
         incrementCount(robotData, indexerData);
     }
 
@@ -203,21 +217,22 @@ void Indexer::saBeltControl(const RobotData &robotData, IndexerData &indexerData
 
     if(robotData.controlData.saEjectBalls){ // if indexer is REVERSING (saEject or manual indexer backwards)
         indexerBelt.Set(-indexerBeltSpeed);
-    } else if ((robotData.shooterData.readyShoot&& robotData.controlData.saFinalShoot)|| (!getTopBeam() && !robotData.intakeData.intakeIdle)){ // if you're shooting or (BB3 is not  and the intake isn't idle)
+    } else if ((!pauseBelt(robotData, indexerData) && robotData.shooterData.readyShoot && robotData.controlData.saFinalShoot)|| (!getTopBeam() && !robotData.intakeData.intakeIdle)){ // if you're shooting or (BB3 is not  and the intake isn't idle)
         indexerBelt.Set(indexerBeltSpeed);
     }  else {
         indexerBelt.Set(0);
     }
-    
 
 }
 
 void Indexer::saWheelControl(const RobotData &robotData, IndexerData &indexerData){
 
-    if(getTopBeam() == true){
+    if(getTopBeam()){
         runWheel = false; 
         // set this to true in decrementcount logic
         // checks if we should run the wheel so that we don't jam the balls up together in the indexer
+    } else {
+        runWheel = true;
     }
 
     if(robotData.controlData.saEjectBalls){ // if indexer is REVERSING (saEject or manual indexer backwards)
@@ -228,6 +243,22 @@ void Indexer::saWheelControl(const RobotData &robotData, IndexerData &indexerDat
         indexerWheel.Set(0);
     }
     
+}
+
+bool Indexer::pauseBelt(const RobotData &robotData, IndexerData &indexerData){
+    frc::SmartDashboard::PutNumber("pausebeltcount", pauseBeltCount);
+    frc::SmartDashboard::PutBoolean("top beam sensing?", getTopBeam());
+    // frc::SmartDashboard::PutBoolean("pause belt?", pauseBelt(robotData, indexerData));
+    if(indexerData.topBeamToggledOn){   // the top sensor was just toggled on
+                                                    // concern: if it was toggled on due to belt slippage?
+        pauseBeltCount = 2;                         // set pause belt count for .1s
+        return true;
+    } else if (pauseBeltCount > 0){
+        pauseBeltCount--;
+        return true;
+    } else {                                        // pause belt false, belt paused for sufficient time
+        return false;
+    }
 }
 
 // basic getter, init functions below
@@ -265,16 +296,7 @@ bool Indexer::getBottomBeamToggled(bool broken){
     }
 }
 
-// bool Indexer::getMidBeamToggled(bool broken){
-//     if (getMidBeam() == broken && prevMidBeam != broken){
-//         // set prev to current and return true
-//         prevMidBeam = getMidBeam();
-//         return true;
-//     } else {
-//         prevMidBeam = getMidBeam();
-//         return false;
-//     }
-// }
+
 
 /**
  * @param broken -- true is if it toggled to sensing a ball
@@ -303,6 +325,47 @@ bool Indexer::getTopBeamToggled(bool broken){
         prevTopBeam = getTopBeam();
         return false;
     }
+}
+
+void Indexer::updateTopBeamToggled(IndexerData &indexerData){
+
+    
+    // debouncing. if it's not done debouncing just return
+    if(topDebounceCount > 0){
+        topDebounceCount--;
+        prevTopBeam = getTopBeam();
+        indexerData.topBeamToggledOff = false;
+        indexerData.topBeamToggledOn = false;
+        return;
+    }
+
+    if(getTopBeam()) {      // top sensor senses a ball
+        if(!prevTopBeam){   // previously did not sense a ball, it was toggled
+            prevTopBeam = getTopBeam();
+            topDebounceCount = 2;
+            indexerData.topBeamToggledOff = false;
+            indexerData.topBeamToggledOn = true;
+        } else {
+            prevTopBeam = getTopBeam();
+            indexerData.topBeamToggledOff = false;
+            indexerData.topBeamToggledOn = false;
+        }
+    } else {                // top sensor does not sense a ball
+        if(prevTopBeam){    // previously sensed a ball, it was toggled
+            prevTopBeam = getTopBeam();
+            topDebounceCount = 2;
+            indexerData.topBeamToggledOff = true;
+            indexerData.topBeamToggledOn = false;
+        } else {
+            prevTopBeam = getTopBeam();
+            indexerData.topBeamToggledOff = false;
+            indexerData.topBeamToggledOn = false;
+        }
+    }
+
+
+
+
 }
 
 void Indexer::indexerBeltInit(){
