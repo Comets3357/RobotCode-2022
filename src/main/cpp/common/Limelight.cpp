@@ -22,6 +22,8 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     limelightData.xOffset =  table->GetNumber("tx", 0.0);
     limelightData.yOffset =  table->GetNumber("ty", 0.0);
 
+    limelightData.xOffset = limelightData.xOffset * (pi/180);
+
     //turns off limelight if not shooting
     // if(robotData.shooterData.shootMode == shootMode_none){
     //      //table->PutNumber("ledMode", 1);
@@ -37,6 +39,7 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     
     //updates the angle to be in degrees rather than radians
     limelightData.angleOffset = robotData.limelightData.angleOffset * (180 / pi);
+    frc::SmartDashboard::PutNumber("angleOffset", limelightData.angleOffset);
 
     //the actual distance from the hub based on the turning of the drivebase
     //limelightData.correctDistance = correctDistance(limelightData.angleOffset, limelightData.distanceOffset);

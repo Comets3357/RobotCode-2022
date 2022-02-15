@@ -130,11 +130,13 @@ void Drivebase::updateData(const RobotData &robotData, DrivebaseData &drivebaseD
 void Drivebase::teleopControl(const RobotData &robotData, DrivebaseData &drivebaseData)
 {
     // assign drive mode
-    if (robotData.controlData.lDrive != 0 || robotData.controlData.rDrive != 0) {
+    if ((robotData.controlData.lDrive <= -0.08 || robotData.controlData.lDrive >= 0.08) || (robotData.controlData.rDrive <= -0.08 || robotData.controlData.rDrive >= 0.08)) {
         drivebaseData.driveMode = driveMode_joystick;
     }
     else if (robotData.controlData.shootMode == shootMode_vision) {
         drivebaseData.driveMode = driveMode_turnInPlace;
+    } else {
+        drivebaseData.driveMode = driveMode_joystick;
     }
 
 
@@ -169,7 +171,7 @@ void Drivebase::teleopControl(const RobotData &robotData, DrivebaseData &driveba
         setPercentOutput(tempLDrive, tempRDrive);
     }
     else if (drivebaseData.driveMode == driveMode_turnInPlace) {
-        // turnInPlaceTeleop(robotData.limelightData.angleOffset, robotData);
+        turnInPlaceTeleop(-robotData.limelightData.angleOffset, robotData);
     }
 }
 
@@ -477,12 +479,12 @@ void Drivebase::turnInPlaceTeleop(double degrees, const RobotData &robotData) {
         directionFactor = -1;
     }
 
-    if (allValuesWithin(lastDegrees, 1)) {
+    if (allValuesWithin(lastDegrees, 3)) {
         setPercentOutput(0, 0);
         // frc::SmartDashboard::PutString("TELEOP", "TURN IN PLACE");
     } else {
-        leftOutput = std::pow(std::abs(degrees / 361), 1) + 0.07;
-        rightOutput = std::pow(std::abs(degrees / 361), 1) + 0.07;
+        leftOutput = std::pow(std::abs(degrees / 361), 1) + 0.15;
+        rightOutput = std::pow(std::abs(degrees / 361), 1) + 0.15;
 
     }
     
