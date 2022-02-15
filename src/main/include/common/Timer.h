@@ -8,6 +8,7 @@ struct TimerData
 {
     double secSinceInit = 0;
     double secSinceEnabled = 0;  // use this most of the time
+    double secRemaining;
 };
 
 class Timer

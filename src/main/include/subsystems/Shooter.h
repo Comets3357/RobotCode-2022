@@ -22,6 +22,9 @@ struct ShooterData
     bool shootUnassignedAsOpponent;
     bool isHighGeneral;
 
+    // for dashboard
+    bool doneShooting;
+    bool flyWheelUpToSpeed;
 };
 
 class Shooter{
