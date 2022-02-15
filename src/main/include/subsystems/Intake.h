@@ -42,7 +42,7 @@ private:
     void mecanumInit();
     double absoluteToREV(double value);
     bool intakeIdle(const RobotData &robotData, IntakeData &intakeData);
-
+    void encoderPluggedIn(const IntakeData &intakeData);
 
     double intakePivotSpeed = 0.1;
     double intakeRollerSpeed = 0.9;
@@ -62,7 +62,7 @@ private:
 
     rev::CANSparkMax intakePivot = rev::CANSparkMax(intakePivotID, rev::CANSparkMax::MotorType::kBrushless);
     //THIS IS THE REV ENCODER
-    rev::SparkMaxRelativeEncoder intakePivotEncoder = intakePivot.GetEncoder();
+    rev::SparkMaxRelativeEncoder intakePivotEncoderRev = intakePivot.GetEncoder();
     rev::SparkMaxPIDController intakePivot_pidController = intakePivot.GetPIDController();
 
     rev::CANSparkMax intakeSingulator = rev::CANSparkMax(intakeSingulatorID, rev::CANSparkMax::MotorType::kBrushless);
@@ -70,6 +70,6 @@ private:
 
     frc::DigitalInput m_input{intakeAbsoluteEncoderPort};
     //THIS IS THE ABSOLUTE ENCODER
-    frc::DutyCycle intakePivotEncoder2 = frc::DutyCycle{m_input};
+    frc::DutyCycle intakePivotEncoderAbs = frc::DutyCycle{m_input};
 
 };

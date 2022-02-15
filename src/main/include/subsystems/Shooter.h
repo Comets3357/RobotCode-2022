@@ -7,7 +7,6 @@
 #include <rev/CANSparkMax.h>
 #include <rev/SparkMaxPIDController.h>
 #include <rev/CANEncoder.h>
-#include <rev/SparkMaxLimitSwitch.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc/controller/PIDController.h>
 #include <frc/DutyCycle.h>
@@ -41,6 +40,7 @@ class Shooter{
         double convertFromAngleToAbs(double angle);
         double convertFromAbsToAngle(double abs);
         double absoluteToREV(double value);
+        void checkReadyShoot(ShooterData &shooterData);
 
         void flyWheelInit();
         void shooterHoodInit();
@@ -62,21 +62,8 @@ class Shooter{
         void fender(const RobotData &robotData);
         void endOfTarmac(const RobotData &robotData);
 
-        bool hoodZero;
-        double targetHoodPos;
-        double currentHoodPos;
-        double desiredPos;
-        double calculatedPower;
         int readyShootLimit;
         int tickCount;
-   
-        bool isHigh;
-
-        int lastTickBallCount = 0;
-
-        int x = 0;
-        int y = 0;
-        int vel = 0;
     
         //FLywheel Lead
         rev::CANSparkMax flyWheelLead = rev::CANSparkMax(shooterWheelLeadID, rev::CANSparkMax::MotorType::kBrushless);

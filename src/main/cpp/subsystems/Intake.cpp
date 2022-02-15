@@ -8,7 +8,7 @@ void Intake::RobotInit()
     rollersInit();
     singulatorInit();
                 
-    intakePivotEncoder.SetPosition(0);
+    intakePivotEncoderRev.SetPosition(0);
     intakeRollersEncoder.SetPosition(0);
     intakeSingulatorEncoder.SetPosition(0);
 
@@ -61,7 +61,7 @@ void Intake::RobotPeriodic(const RobotData &robotData, IntakeData &intakeData)
             //checks to see if the intake is down when switched to manual mode, and if it is bring it up before manual functionality 
             if(!zeroedIntake){
                 intakePivot_pidController.SetReference(0.1, rev::CANSparkMaxLowLevel::ControlType::kPosition, 0);
-                if(intakePivotEncoder.GetPosition() < 0.5){
+                if(intakePivotEncoderRev.GetPosition() < 0.3){
                     zeroedIntake = true;
                 }
             }else{ 
@@ -91,24 +91,11 @@ void Intake::RobotPeriodic(const RobotData &robotData, IntakeData &intakeData)
 
 void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
     //used to check if the intake is up or down
-    if(intakePivotEncoder.GetPosition() > 0.5){
+    if(intakePivotEncoderRev.GetPosition() > 0.5){
         zeroedIntake = false;
     }
 
-    if(intakePivotEncoder2.GetOutput() > 0.03){ //checks to see if the encoder is reading zero because if it is that means the encoder was most likley unplugged and the current values are wrong and we don't want to run any motors
-        //constantly updates the intake rev encoder based on the absolute encoder values 
-        if(tickCount > 45){
-            intakePivotEncoder.SetPosition(absoluteToREV(intakePivotEncoder2.GetOutput()));
-            tickCount = (tickCount+1)%50;
-        }else{
-            tickCount = (tickCount+1)%50;
-        }
-
-    }else{
-        // intakeRollers.Set(0);
-        // intakeSingulator.Set(0);
-        // intakePivot.Set(0);
-    }  
+    encoderPluggedIn(intakeData);
 
 //INTAKE FUNCTIONALITY
     if (robotData.controlData.saIntake) //you are intaking
@@ -141,6 +128,11 @@ void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
             intakeSingulator.Set(singulatorSpeed);
         }else{
             intakeSingulator.Set(0);
+        }
+
+        //encoderPluggedIn(intakeData); 
+        if(intakePivotEncoderAbs.GetOutput() == absIn){
+            intakePivotEncoderRev.SetPosition(0);
         }
 
         //bring up the intake
@@ -177,7 +169,7 @@ void Intake::manual(const RobotData &robotData, IntakeData &intakeData){
 
      if(robotData.controlData.mZeroHood)
     {
-        intakePivotEncoder.SetPosition(0);
+        intakePivotEncoderRev.SetPosition(0);
     }
 
 
@@ -195,7 +187,7 @@ void Intake::DisabledInit()
 void Intake::updateData(const RobotData &robotData, IntakeData &intakeData)
 {
     intakeData.intakeIdle = intakeIdle(robotData, intakeData);
-    frc::SmartDashboard::PutNumber("Pivot built in Pos", intakePivotEncoder.GetPosition());
+    frc::SmartDashboard::PutNumber("Pivot built in Pos", intakePivotEncoderRev.GetPosition());
     // frc::SmartDashboard::PutNumber("Pivot absolute Pos", intakePivotEncoder2.GetOutput());
     //frc::SmartDashboard::PutNumber("Changed pos", absoluteToREV(intakePivotEncoder2.GetOutput()));
 
@@ -225,4 +217,19 @@ double Intake::absoluteToREV(double value){
     double slope = (revOut - revIn)/(absOut - absIn);
     double b = revIn - (slope*absIn);
     return ((value*slope) + b);
+}
+
+//checks to see if the encoder is reading zero because if it is that means the encoder was most likley unplugged and the current values are wrong and we don't want to run any motors
+void Intake::encoderPluggedIn(const IntakeData &intakeData){
+    if (intakePivotEncoderAbs.GetOutput() > 0.03){
+        //constantly updates the intake rev encoder based on the absolute encoder values 
+        if (tickCount > 30){
+            intakePivotEncoderRev.SetPosition(absoluteToREV(intakePivotEncoderAbs.GetOutput()));
+            tickCount = (tickCount + 1) % 40;
+        } else {
+            tickCount = (tickCount + 1) % 40;
+        }
+
+    } else {
+    }
 }
