@@ -83,6 +83,7 @@ struct ControlData
     bool sacancelSequence;
     bool saclimbInit;
     bool climbZeroing;
+    bool sapauseSequence;
     
     double mElevatorExtension;
     double mArmPivot;
