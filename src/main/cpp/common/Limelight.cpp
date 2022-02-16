@@ -12,11 +12,17 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
 
 
     //turns off limelight if not shooting
-    // if(robotData.shooterData.shootMode == shootMode_none){
-    //      //table->PutNumber("ledMode", 1);
-    // }else{
-        //table->PutNumber("ledMode", 0);
-    // }
+    if(robotData.controlData.shootMode == shootMode_none){
+         table->PutNumber("ledMode", 1);
+    }else{
+
+    }
+
+    table->PutNumber("ledMode", 0);
+
+
+    //moves the limelight data over to the actual position of the shooter
+    shooterOffset(robotData, limelightData);
     
     //updates the angle to be in degrees rather than radians
     //the actual distance from the hub based on the turning of the drivebase

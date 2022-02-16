@@ -483,8 +483,8 @@ void Drivebase::turnInPlaceTeleop(double degrees, const RobotData &robotData) {
         setPercentOutput(0, 0);
         // frc::SmartDashboard::PutString("TELEOP", "TURN IN PLACE");
     } else {
-        leftOutput = std::pow(std::abs(degrees / 361), 1) + 0.15;
-        rightOutput = std::pow(std::abs(degrees / 361), 1) + 0.15;
+        leftOutput = std::pow(std::abs(degrees / 361), 1) + 0.07;
+        rightOutput = std::pow(std::abs(degrees / 361), 1) + 0.07;
 
     }
     
