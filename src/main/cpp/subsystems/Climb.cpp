@@ -177,11 +177,19 @@ void Climb::climbInit(const RobotData &robotData, ClimbData &climbData)
 //cancels the climb sequence
 void Climb::cancelSequence(const RobotData &robotData, ClimbData &climbData)
 {
+    if (robotData.controlData.sapauseSequence)
+    {
+        executeSequence = false; //press a button, semiAuto code stops
+        climbElevator.Set(0); //sets the power to zero to make it stop moving
+        climbArms.Set(0); //sets the power to zero to make it stop moving
+    }
+
     if (robotData.controlData.sacancelSequence)
     {
         executeSequence = false; //press a button, semiAuto code stops
         climbElevator.Set(0); //sets the power to zero to make it stop moving
         climbArms.Set(0); //sets the power to zero to make it stop moving
+        stage = 0;
     }
 }
 
@@ -192,7 +200,7 @@ void Climb::runSequence(const RobotData &robotData, ClimbData &climbData)
     //sets variables to go up to 3rd bar
     if (robotData.controlData.saclimbHeightSequence)
     {//3rd bar
-        stage = 0;//for testing
+        //stage = 0;//for testing
         executeSequence = true; //press right center button, semiAuto code runs
         climbData.climbing = true;
         targetBar = 3; //reaches to bar 3
@@ -202,7 +210,7 @@ void Climb::runSequence(const RobotData &robotData, ClimbData &climbData)
     //sets variables to go up to 4th bar
     else if (robotData.controlData.saclimbTraversalSequence)
     {//4th bar
-        stage = 0;//for testing
+        //stage = 0;//for testing
         executeSequence = true; //press left center button, semiAuto code runs
         climbData.climbing = true;
         targetBar = 4; //reaches to bar 4
