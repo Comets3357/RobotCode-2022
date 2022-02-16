@@ -51,7 +51,8 @@ static const double
     limelightAngle = 36.3,
     xcameraDistanceFromBot = 3.0625,
     ycameraDistanceFromBot = 9.5,
-    shooterDistanceFromCenterOfBot = 2;
+    shooterDistanceFromCenterOfBot = 2,
+    crosshairOffset = 0;
 
 // DIO
 static const int

@@ -51,7 +51,6 @@ class Limelight
 {
 
 public:
-    void RobotInit(const RobotData &robotData);
     void RobotPeriodic(const RobotData &robotData, LimelightData &limelightData, VisionLookup &visionLookup);
     double getHorizontalOffset();
     double getVerticalOffset();
@@ -68,6 +67,7 @@ private:
 
     void averageDistance(const RobotData &robotData, LimelightData &limelightData);
 
+    //network table for limelight
     std::shared_ptr<nt::NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("limelight");
 
 };
