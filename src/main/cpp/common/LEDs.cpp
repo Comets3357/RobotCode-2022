@@ -2,17 +2,8 @@
 #include "common/LEDs.h"
 #include "Robot.h"
 
-void LEDs::RobotInit(){
-
-}
-
-void LEDs::TeleopInit(){
-
-}
-
 void LEDs::RobotPeriodic(const RobotData &robotData){
     //this makes the robot LEDs be different colors depending on the mode
-
     //writes the value of colorCode to device address 1 (the left arduino), which then color codes the LEDs based upon the value
     //if the write is successful, success = true
     if (robotData.shooterData.readyShoot){
@@ -33,11 +24,12 @@ void LEDs::RobotPeriodic(const RobotData &robotData){
     }
 
     //Writes to the right arduino/LED strip; should display indexer contents
+    //Basically just takes the color value of the ball and tells the LEDs what color to display
     //Also since the enum depends on the alliance you're on, it doubles the amount of code :(
     if (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed){
         if (robotData.indexerData.indexerContents.at(0) == Cargo::cargo_Alliance && robotData.indexerData.indexerContents.at(1) == Cargo::cargo_Opponent){
-            rightColorCode = 0;
-            success = !rightArduino.Write(2, rightColorCode);
+            rightColorCode = 0; //value corresponding to the alliance/opponent combination on the LED arduino side
+            success = !rightArduino.Write(2, rightColorCode); //writes the value to the indexer arduino, which will display the color combination on the LEDs
         } else if (robotData.indexerData.indexerContents.at(0) == Cargo::cargo_Opponent && robotData.indexerData.indexerContents.at(1) == Cargo::cargo_Alliance){
             rightColorCode = 1;
             success = !rightArduino.Write(2, rightColorCode);

@@ -9,8 +9,6 @@ struct LEDsData {
 
 class LEDs {
 public:
-    void RobotInit();
-    void TeleopInit();
     void RobotPeriodic(const RobotData &robotData);
 
 private:
