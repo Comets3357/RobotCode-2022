@@ -18,6 +18,7 @@ void Robot::RobotPeriodic()
     limelight.RobotPeriodic(robotData, robotData.limelightData, visionLookup);
     colorSensor.RobotPeriodic(robotData);
     visionLookup.RobotPeriodic(robotData, robotData.visionLookupData);
+    LED.RobotPeriodic(robotData);
 
     frc::SmartDashboard::PutNumber("mode", robotData.controlData.mode);
 
