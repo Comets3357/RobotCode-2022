@@ -1,58 +1,40 @@
 
 #include "RobotData.h"
 
-void Limelight::RobotInit(const RobotData &robotData) 
-{
-    
-}
-
-/**
- * @return horizontal offset angle from limelight in radians
- */
-double Limelight::getHorizontalOffset()
-{
-    return table->GetNumber("tx", 0.0) * (pi / 180);
-}
-
 void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelightData, VisionLookup &visionLookup)
 {
     //updating data
     limelightData.validTarget = table->GetNumber("tv", 0.0);
     limelightData.distanceToTarget = distanceToTarget();
-    limelightData.xOffset =  table->GetNumber("tx", 0.0);
+    limelightData.xOffset =  table->GetNumber("tx", 0.0) * (pi/180); //RADIANS
     limelightData.yOffset =  table->GetNumber("ty", 0.0);
+    limelightData.angleOffset = robotData.limelightData.angleOffset * (180 / pi);
 
-    limelightData.xOffset = limelightData.xOffset * (pi/180);
 
     //turns off limelight if not shooting
     // if(robotData.shooterData.shootMode == shootMode_none){
     //      //table->PutNumber("ledMode", 1);
     // }else{
-
+        //table->PutNumber("ledMode", 0);
     // }
-
-    //table->PutNumber("ledMode", 0);
-
+    
+    //updates the angle to be in degrees rather than radians
+    //the actual distance from the hub based on the turning of the drivebase
+    //limelightData.correctDistance = correctDistance(limelightData.angleOffset, limelightData.distanceOffset);
 
     //moves the limelight data over to the actual position of the shooter
     shooterOffset(robotData, limelightData);
-    
-    //updates the angle to be in degrees rather than radians
-    limelightData.angleOffset = robotData.limelightData.angleOffset * (180 / pi);
-    frc::SmartDashboard::PutNumber("angleOffset", limelightData.angleOffset);
-
-    //the actual distance from the hub based on the turning of the drivebase
-    //limelightData.correctDistance = correctDistance(limelightData.angleOffset, limelightData.distanceOffset);
+    //averages the distances provided by the limelight in order to make the shooting sequence smoother
+    averageDistance(robotData, limelightData);
 
     //the desired hood and velocity for shooting from anywhere
     limelightData.desiredHoodPos = getHoodPOS(visionLookup, limelightData, robotData); //returns an angle
     limelightData.desiredVel = getWheelVelocity(visionLookup, limelightData, robotData); //returns rpm
     
-    //averages the distances provided by the limelight in order to make the shooting sequence smoother
-    averageDistance(robotData, limelightData);
     
     //printing data to the dashboard
     frc::SmartDashboard::PutNumber("distance offset", robotData.limelightData.distanceOffset);
+    frc::SmartDashboard::PutNumber("angleOffset", limelightData.angleOffset);
     //frc::SmartDashboard::PutNumber("desired hood", robotData.limelightData.desiredHoodPos);
     //frc::SmartDashboard::PutNumber("final correct distance", robotData.limelightData.correctDistance);
 }
@@ -65,7 +47,7 @@ double Limelight::distanceToTarget(){
 
     double radianAngle = table->GetNumber("ty", 0.0);
     radianAngle = (radianAngle + limelightAngle) * (pi / 180);
-    return((hubHeight-limelightMount)/std::tan(radianAngle));
+    return(((hubHeight + crosshairOffset)-limelightMount)/std::tan(radianAngle));
 }
 
 /**
@@ -100,6 +82,7 @@ void Limelight::shooterOffset(const RobotData &robotData, LimelightData &limelig
 
 /**
  * @returns finds the corrected distance for when we turn the robot
+ * NOT USED
  */
 double Limelight::correctDistance(double angleOffset, double originalDistance)
 {
@@ -212,4 +195,12 @@ void Limelight::averageDistance(const RobotData &robotData, LimelightData &limel
     //return the average of those distances
     limelightData.avgDistance = distance;
 
+}
+
+/**
+ * @return horizontal offset angle from limelight in radians
+ */
+double Limelight::getHorizontalOffset()
+{
+    return table->GetNumber("tx", 0.0) * (pi / 180);
 }

@@ -20,6 +20,7 @@
 #include "common/VisionLookup.h"
 #include "common/OtherComponents.h"
 #include "common/ColorSensor.h"
+#include "common/LEDs.h"
 
 //Robot class inherits from TimedRobot
 class Robot : public frc::TimedRobot
@@ -49,6 +50,8 @@ private:
     Timer timer{};
     ColorSensor colorSensor{};
     Auton auton{};
+    LEDs LED{};
+    
 
     // subsystems
     Drivebase drivebase{};
