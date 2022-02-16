@@ -23,7 +23,6 @@ enum Cargo
 struct IndexerData
 {
     std::deque<Cargo> indexerContents;
-    bool wrongBall = false;
     bool topBeamToggledOn; // sensed a ball
     bool topBeamToggledOff; // stopped sensing a ball
   
@@ -38,16 +37,14 @@ public:
     void AutonomousInit(IndexerData &indexerData);
     void RobotPeriodic(const RobotData &robotData, IndexerData &indexerData);
     void DisabledInit();
-    void updateData(const RobotData &robotData, IndexerData &indexerData);
+    void DisabledPeriodic(const RobotData &robotData, IndexerData &indexerData);
 
 private:
+    void updateData(const RobotData &robotData, IndexerData &indexerData);
     void manual(const RobotData &robotData, IndexerData &indexerData);
     void semiAuto(const RobotData &robotData, IndexerData &indexerData);
-    void testControl(const RobotData &robotData);
-    void debuggingStuff(const RobotData &robotData, IndexerData &indexerData);
 
-    void indexerBeltInit();
-    void indexerWheelInit();
+    void debuggingStuff(const RobotData &robotData, IndexerData &indexerData);
 
     void incrementCount(const RobotData &robotData, IndexerData &indexerData);
     void newCargo(const RobotData &robotData, IndexerData &indexerData);
@@ -60,15 +57,18 @@ private:
     void saWheelControl(const RobotData &robotData, IndexerData &indexerData);
     bool pauseBelt(const RobotData &robotData, IndexerData &indexerData);
 
+
     bool getBottomBeam();
     bool getMidBeam();
     bool getTopBeam();
 
     // get if it was toggled to state specified in bool broken
     bool getBottomBeamToggled(bool broken);
-    bool getTopBeamToggled(bool broken);
-
+    bool getTopBeamToggled(bool broken); // not in use
     void updateTopBeamToggled(IndexerData &indexerData);
+
+    void indexerBeltInit();
+    void indexerWheelInit();
 
     
     
@@ -77,7 +77,6 @@ private:
     frc::DigitalInput topBeamBreak{topBeamBreakPort};
 
     bool prevBottomBeam = false;
-    // bool prevMidBeam = false;
     bool prevTopBeam = false;
 
     // debounce counters to time debounce
