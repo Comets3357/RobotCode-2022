@@ -33,27 +33,65 @@ void LEDs::RobotPeriodic(const RobotData &robotData){
     }
 
     //Writes to the right arduino/LED strip; should display indexer contents
-    if (robotData.indexerData.indexerContents.at(0) == CargoColor::cargo_Red && robotData.indexerData.indexerContents.at(1) == CargoColor::cargo_Blue){
-        rightColorCode = 0;
-        success = !rightArduino.Write(2, rightColorCode);
-    } else if (robotData.indexerData.indexerContents.at(0) == CargoColor::cargo_Blue && robotData.indexerData.indexerContents.at(1) == CargoColor::cargo_Red){
-        rightColorCode = 1;
-        success = !rightArduino.Write(2, rightColorCode);
-    } else if (robotData.indexerData.indexerContents.at(0) == CargoColor::cargo_Red && robotData.indexerData.indexerContents.at(1) == CargoColor::cargo_Unknown){
-        rightColorCode = 2;
-        success = !rightArduino.Write(2, rightColorCode);
-    } else if (robotData.indexerData.indexerContents.at(0) == CargoColor::cargo_Blue && robotData.indexerData.indexerContents.at(1) == CargoColor::cargo_Unknown){
-        rightColorCode = 3;
-        success = !rightArduino.Write(2, rightColorCode);
-    } else if (robotData.indexerData.indexerContents.at(0) == CargoColor::cargo_Unknown && robotData.indexerData.indexerContents.at(1) == CargoColor::cargo_Red){
-        rightColorCode = 4;
-        success = !rightArduino.Write(2, rightColorCode);
-    } else if (robotData.indexerData.indexerContents.at(0) == CargoColor::cargo_Unknown && robotData.indexerData.indexerContents.at(1) == CargoColor::cargo_Blue){
-        rightColorCode = 5;
-        success = !rightArduino.Write(2, rightColorCode);
-    } else if (robotData.indexerData.indexerContents.at(0) == CargoColor::cargo_Unknown && robotData.indexerData.indexerContents.at(1) == CargoColor::cargo_Unknown){
-        rightColorCode = 6;
-        success = !rightArduino.Write(2, rightColorCode);
+    //Also since the enum depends on the alliance you're on, it doubles the amount of code :(
+    if (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed){
+        if (robotData.indexerData.indexerContents.at(0) == Cargo::cargo_Alliance && robotData.indexerData.indexerContents.at(1) == Cargo::cargo_Opponent){
+            rightColorCode = 0;
+            success = !rightArduino.Write(2, rightColorCode);
+        } else if (robotData.indexerData.indexerContents.at(0) == Cargo::cargo_Opponent && robotData.indexerData.indexerContents.at(1) == Cargo::cargo_Alliance){
+            rightColorCode = 1;
+            success = !rightArduino.Write(2, rightColorCode);
+        } else if (robotData.indexerData.indexerContents.at(0) == Cargo::cargo_Alliance && robotData.indexerData.indexerContents.at(1) == Cargo::cargo_Unassigned){
+            rightColorCode = 2;
+            success = !rightArduino.Write(2, rightColorCode);
+        } else if (robotData.indexerData.indexerContents.at(0) == Cargo::cargo_Opponent && robotData.indexerData.indexerContents.at(1) == Cargo::cargo_Unassigned){
+            rightColorCode = 3;
+            success = !rightArduino.Write(2, rightColorCode);
+        } else if (robotData.indexerData.indexerContents.at(0) == Cargo::cargo_Unassigned && robotData.indexerData.indexerContents.at(1) == Cargo::cargo_Alliance){
+            rightColorCode = 4;
+            success = !rightArduino.Write(2, rightColorCode);
+        } else if (robotData.indexerData.indexerContents.at(0) == Cargo::cargo_Unassigned && robotData.indexerData.indexerContents.at(1) == Cargo::cargo_Opponent){
+            rightColorCode = 5;
+            success = !rightArduino.Write(2, rightColorCode);
+        } else if (robotData.indexerData.indexerContents.at(0) == Cargo::cargo_Unassigned && robotData.indexerData.indexerContents.at(1) == Cargo::cargo_Unassigned){
+            rightColorCode = 6;
+            success = !rightArduino.Write(2, rightColorCode);
+        } else if (robotData.indexerData.indexerContents.at(0) == Cargo::cargo_Alliance && robotData.indexerData.indexerContents.at(1) == Cargo::cargo_Alliance){
+            rightColorCode = 7;
+            success = !rightArduino.Write(2, rightColorCode);
+        } else if (robotData.indexerData.indexerContents.at(0) == Cargo::cargo_Opponent && robotData.indexerData.indexerContents.at(1) == Cargo::cargo_Opponent){
+            rightColorCode = 8;
+            success = !rightArduino.Write(2, rightColorCode);
+        }
+    } else if (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue){
+        if (robotData.indexerData.indexerContents.at(0) == Cargo::cargo_Opponent && robotData.indexerData.indexerContents.at(1) == Cargo::cargo_Alliance){
+            rightColorCode = 0;
+            success = !rightArduino.Write(2, rightColorCode);
+        } else if (robotData.indexerData.indexerContents.at(0) == Cargo::cargo_Alliance && robotData.indexerData.indexerContents.at(1) == Cargo::cargo_Opponent){
+            rightColorCode = 1;
+            success = !rightArduino.Write(2, rightColorCode);
+        } else if (robotData.indexerData.indexerContents.at(0) == Cargo::cargo_Opponent && robotData.indexerData.indexerContents.at(1) == Cargo::cargo_Unassigned){
+            rightColorCode = 2;
+            success = !rightArduino.Write(2, rightColorCode);
+        } else if (robotData.indexerData.indexerContents.at(0) == Cargo::cargo_Alliance && robotData.indexerData.indexerContents.at(1) == Cargo::cargo_Unassigned){
+            rightColorCode = 3;
+            success = !rightArduino.Write(2, rightColorCode);
+        } else if (robotData.indexerData.indexerContents.at(0) == Cargo::cargo_Unassigned && robotData.indexerData.indexerContents.at(1) == Cargo::cargo_Opponent){
+            rightColorCode = 4;
+            success = !rightArduino.Write(2, rightColorCode);
+        } else if (robotData.indexerData.indexerContents.at(0) == Cargo::cargo_Unassigned && robotData.indexerData.indexerContents.at(1) == Cargo::cargo_Alliance){
+            rightColorCode = 5;
+            success = !rightArduino.Write(2, rightColorCode);
+        } else if (robotData.indexerData.indexerContents.at(0) == Cargo::cargo_Unassigned && robotData.indexerData.indexerContents.at(1) == Cargo::cargo_Unassigned){
+            rightColorCode = 6;
+            success = !rightArduino.Write(2, rightColorCode);
+        } else if (robotData.indexerData.indexerContents.at(0) == Cargo::cargo_Opponent && robotData.indexerData.indexerContents.at(1) == Cargo::cargo_Opponent){
+            rightColorCode = 7;
+            success = !rightArduino.Write(2, rightColorCode);
+        } else if (robotData.indexerData.indexerContents.at(0) == Cargo::cargo_Alliance && robotData.indexerData.indexerContents.at(1) == Cargo::cargo_Alliance){
+            rightColorCode = 8;
+            success = !rightArduino.Write(2, rightColorCode);
+        }
     }
 
     //prints true if the write was successful, and false if it aborted
