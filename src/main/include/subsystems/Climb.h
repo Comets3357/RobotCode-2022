@@ -40,6 +40,7 @@ private:
     int stage = 0;
 
     float angularRate = 0;
+    float angle = 0;
 
     bool climbInitiating = false;
     bool climbUp = false;
@@ -62,6 +63,9 @@ private:
     void ZeroElevator(float power, int stageAdd);
 
     void ChangeElevatorSpeed(float speed, int stageAdd);
+
+    void WaitUntilGyro(int cmp, float gyroValue, int stageAdd);
+    void CheckGyroPosition(int cmp, float gyroValue, int failAdd, int successAdd);
 
 
     //CHANGE MOTOr ID STUFF  (just outline lol don't take your life too seriously:))
