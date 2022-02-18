@@ -128,7 +128,7 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
         // if (getWheelVel() > (wheelSpeed - 50))
 
         //once it's a high enough velocity its ready for indexer to run
-        if (getWheelVel() > (robotData.limelightData.desiredVel - 15))
+        if (getWheelVel() > (robotData.limelightData.desiredVel - 30))
         {
             shooterData.readyShoot = true;
         }
