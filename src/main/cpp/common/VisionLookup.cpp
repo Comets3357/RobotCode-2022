@@ -28,12 +28,11 @@ void VisionLookup::RobotPeriodic(const RobotData &robotData, VisionLookupData &v
     visionMap[12] = 34.28;
     visionMap[13] = 34.28;
     visionMap[14] = 37.2;
-    // lowVisionMap[15] = ;
-    // lowVisionMap[16] = ;
-    // lowVisionMap[17] = ;
-    // lowVisionMap[18] = ;
-    // lowVisionMap[19] = ;
-    // lowVisionMap[20] = ;
+    visionMap[15] = 41.12;
+    visionMap[16] = 42.54;
+    visionMap[17] = 42.57;
+    visionMap[18] = 42.58;
+    visionMap[19] = 43;
 
     // hood angle map LOW HUB
     lowVisionMap[4] = 25.3;
@@ -67,12 +66,12 @@ void VisionLookup::RobotPeriodic(const RobotData &robotData, VisionLookupData &v
     velocityMap[11] = 1907; //1907
     velocityMap[12] = 1969; //1969
     velocityMap[13] = 1991; //1991
-    velocityMap[14] = 2115; //2115
-    // velocityMap[15] = 2300;
-    // velocityMap[16] = ;
-    // velocityMap[17] = ;
-    // velocityMap[18] = ;
-    // velocityMap[19] = ;
+    velocityMap[14] = 2100; //2115
+    velocityMap[15] = 2100;
+    velocityMap[16] = 2150;
+    velocityMap[17] = 2200;
+    velocityMap[18] = 2300;
+    velocityMap[19] = 2400;
     // velocityMap[20] = ;
 
     
