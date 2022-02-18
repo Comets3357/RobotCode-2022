@@ -36,28 +36,27 @@ void Drivebase::RobotInit()
     dbRF.ConfigStatorCurrentLimit(StatorCurrentLimitConfiguration(true, 45, 50, 1.0));
 
     // PIDs for blue db
-    dbL.Config_kF(0, 0.032514);
+    /* dbL.Config_kF(0, 0.032514);
     dbL.Config_kP(0, 0.038723);
     dbL.Config_kD(0, 0);
 
     dbR.Config_kF(0, 0.032514);
     dbR.Config_kP(0, 0.038723);
-    dbR.Config_kD(0, 0);
+    dbR.Config_kD(0, 0); */
 
     // PIDs for 2022
-    /* dbL.Config_kF(0, 0.073067);
-    dbL.Config_kP(0, 0.19673);
+    dbL.Config_kF(0, 0.072659);
+    dbL.Config_kP(0, 0.67606);
     dbL.Config_kD(0, 0);
 
-    dbR.Config_kF(0, 0.073067);
-    dbR.Config_kP(0, 0.19673);
-    dbR.Config_kD(0, 0); */
+    dbR.Config_kF(0, 0.072659);
+    dbR.Config_kP(0, 0.67606);
+    dbR.Config_kD(0, 0);
 
     setPercentOutput(0, 0);
 
 
     odometryInitialized = false;
-    // frc::SmartDashboard::PutData("Field", &field);
 }
 
 void Drivebase::TeleopInit(const RobotData &robotData) {
@@ -251,7 +250,9 @@ void Drivebase::updateOdometry(const RobotData &robotData, DrivebaseData &driveb
 
     odometry.Update(currentRotation, leftDistance, rightDistance);
 
-    // field.SetRobotPose(odometry.GetPose());
+    field.SetRobotPose(odometry.GetPose());
+    frc::SmartDashboard::PutData("Field", &field);
+
 
     drivebaseData.currentPose = odometry.GetPose();
     frc::SmartDashboard::PutNumber("currentPoseX", drivebaseData.currentPose.Translation().X().to<double>());
