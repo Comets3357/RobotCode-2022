@@ -47,31 +47,28 @@ void Climb::RobotInit()
 
 void Climb::RobotPeriodic(const RobotData &robotData, ClimbData &climbData)
 {
-    
+    //updates
     updateData(robotData, climbData);
-    //manual(robotData, climbData);
-    //semiAuto(robotData, climbData);
 
-    //RunElevatorToPos(10,0,0);
     if (robotData.controlData.mode == mode_climb_sa || robotData.controlData.mode == mode_climb_manual)
     {
-    //if (stage == 0) RunElevatorToPos(0.1, 1, 0);
-
-    //climbElevator_pidController.SetReference(50, rev::ControlType::kPosition, 0);
         if (robotData.controlData.mode == mode_climb_manual)
         { //updates whether or not the robot is in manual or semiAuto mode
             manual(robotData, climbData);
         }
-        else {
+        else
+        {
             semiAuto(robotData, climbData);
         }
     } 
     else
     {
+        //sets powers to 0 if the mode is changed out of climb mode
         climbElevator.Set(0);
         climbArms.Set(0);
     }
 
+    //softlimit max for elevator
     if (climbElevatorEncoder.GetPosition() >= 145 && climbElevator.Get() > 0)
     {
         climbElevator.Set(0);
@@ -100,6 +97,7 @@ void Climb::RobotPeriodic(const RobotData &robotData, ClimbData &climbData)
     }
 }
 
+//manual
 void Climb::manual(const RobotData &robotData, ClimbData &climbData)
 {
     //manualy sets the elevator with limit. I use the limit switch as the bottom limit
@@ -112,6 +110,7 @@ void Climb::manual(const RobotData &robotData, ClimbData &climbData)
         //deadzone
         if (robotData.controllerData.sLYStick < -0.08 || robotData.controllerData.sLYStick > 0.08)
         {
+            
             climbElevator.Set(robotData.controllerData.sLYStick*0.4); //control elevator with left stick); //sets the power to 0 so the elevator stops moving
         }
         else
@@ -223,18 +222,18 @@ void Climb::runSequence(const RobotData &robotData, ClimbData &climbData)
         if (stage == 0) RunArmsToPos(0,1,0);
         else if (stage == 1) RunElevatorToPos(0,1,0); //Elevator goes down to latch on 2nd/3rd bar
         else if (stage == 2) ZeroElevator(0.5,1);
-        else if (stage == 3) RunArmsToPos(55,1,0); //Elevator goes up to latch the arms onto the bar with the elevator a little above
+        else if (stage == 3) RunArmsToPos(70,1,0); //Elevator goes up to latch the arms onto the bar with the elevator a little above
         else if (stage == 4) RunElevatorToPos(30,1,0); //Outer Arms pivot the robot so the elevator is facing the next bar
         else if (stage == 5) RunArmsAndElevatorToPos(100,0,220,1,1);
-        else if (stage == 6) WaitUntilGyro(1, -44.5, 1);
+        else if (stage == 6) WaitUntilGyro(-1, -47, 1);
         else if (stage == 7) RunElevatorToPos(145,1,1);
-        else if (stage == 9) RunArmsToPos(200,1,1); //Elevator goes up to reach the next bar
-        else if (stage == 10) RunArmsToPos(140,1,1);
-        else if (stage == 11) CheckGyroPosition(-1, -44.5, -2, 1);
-        else if (stage == 12) ChangeElevatorSpeed(0.5, 1); //Outer arms pivot back to latch the elevator onto the 3rd bar
-        else if (stage == 13) RunElevatorToPos(100,1,1); //Elevator moves down to lift robot to the next bar. Outer arms move a little bit
-        else if (stage == 14) ChangeElevatorSpeed(elevatorSpeed, 1);
-        else if (stage == 15)
+        else if (stage == 8) RunArmsToPos(200,1,1); //Elevator goes up to reach the next bar
+        else if (stage == 9) RunArmsToPos(140,1,1);
+        else if (stage == 10) CheckGyroPosition(1, -44, -2, 1);
+        else if (stage == 11) ChangeElevatorSpeed(0.5, 1); //Outer arms pivot back to latch the elevator onto the 3rd bar
+        else if (stage == 12) RunElevatorToPos(100,1,1); //Elevator moves down to lift robot to the next bar. Outer arms move a little bit
+        else if (stage == 13) ChangeElevatorSpeed(elevatorSpeed, 1);
+        else if (stage == 14)
         { //do it again if the bot isnt on the top bar
             //resets everything
             stage = 0;
@@ -257,7 +256,7 @@ void Climb::CheckGyroPosition(int cmp, float gyroValue, int failAdd, int success
 {
     if (cmp == 1)
     {
-        if (gyroValue > angle)
+        if (gyroValue < angle)
         {
             stage += successAdd;
         }
@@ -268,7 +267,7 @@ void Climb::CheckGyroPosition(int cmp, float gyroValue, int failAdd, int success
     }
     else if (cmp == -1)
     {
-        if (gyroValue < angle)
+        if (gyroValue > angle)
         {
             stage += successAdd;
         }
@@ -294,14 +293,14 @@ void Climb::WaitUntilGyro(int cmp, float gyroValue, int stageAdd)
 {
     if (cmp == 1)
     {
-        if (gyroValue > angle)
+        if (gyroValue < angle)
         {
             stage += stageAdd;
         }
     }
     else if (cmp == -1)
     {
-        if (gyroValue < angle)
+        if (gyroValue > angle)
         {
             stage += stageAdd;
         }
@@ -334,6 +333,7 @@ void Climb::DisabledInit()
 void Climb::updateData(const RobotData &robotData, ClimbData &climbData)
 {
     angularRate = robotData.gyroData.angularMomentum;
+    angle = robotData.gyroData.rawRoll;
     
     frc::SmartDashboard::PutNumber("encoder value", climbElevatorEncoder.GetPosition());
     frc::SmartDashboard::PutBoolean("limitClimb", elevatorLimit.Get());
