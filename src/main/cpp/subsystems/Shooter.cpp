@@ -213,7 +213,7 @@ void Shooter::updateData(const RobotData &robotData, ShooterData &shooterData)
     frc::SmartDashboard::PutNumber("HOOD ANGLE", convertFromAbsToAngle(shooterHoodEncoderAbs.GetOutput()));
     frc::SmartDashboard::PutNumber("flywheel vel", flyWheelLeadEncoder.GetVelocity());
 
-    frc::SmartDashboard::PutNumber("shootMode", shooterData.shootMode);
+    frc::SmartDashboard::PutNumber("shootMode", robotData.controlData.shootMode);
     frc::SmartDashboard::PutBoolean("saShooting", robotData.controlData.saShooting);
     frc::SmartDashboard::PutBoolean("saFinalShoot", robotData.controlData.saFinalShoot);
 }
