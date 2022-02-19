@@ -10,6 +10,7 @@
 #include <rev/CANEncoder.h>
 #include <rev/CANDigitalInput.h>
 #include <frc/DigitalInput.h>
+#include <frc/DutyCycle.h>
 
 
 struct RobotData;
@@ -40,6 +41,7 @@ private:
     int stage = 0;
 
     float angularRate = 0;
+    float angle = 0;
 
     bool climbInitiating = false;
     bool climbUp = false;
@@ -63,6 +65,9 @@ private:
 
     void ChangeElevatorSpeed(float speed, int stageAdd);
 
+    void WaitUntilGyro(int cmp, float gyroValue, int stageAdd);
+    void CheckGyroPosition(int cmp, float gyroValue, int failAdd, int successAdd);
+
 
     //CHANGE MOTOr ID STUFF  (just outline lol don't take your life too seriously:))
     //initualizes climb elevator motor
@@ -82,4 +87,7 @@ private:
     // rev::SparkMaxLimitSwitch elevatorLimit = climbElevator.GetForwardLimitSwitch(rev::SparkMaxLimitSwitch::Type::kNormallyOpen);
     // rev::SparkMaxLimitSwitch armsLimit = climbArms.GetForwardLimitSwitch(rev::SparkMaxLimitSwitch::Type::kNormallyOpen);
 
+    frc::DigitalInput m_input{4};
+    //THIS IS THE ABSOLUTE ENCODER
+    frc::DutyCycle climbArmsAbs = frc::DutyCycle{m_input};
 };

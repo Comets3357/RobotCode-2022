@@ -53,6 +53,8 @@ static const double
 static const int
     climbElevatorID = 41,
     climbArmsID = 43;
+    
+const float climbArmsZero = 0.811;
 
 //limelight:
 static const double
@@ -68,6 +70,7 @@ static const double
 // DIO
 static const int
     intakeAbsoluteEncoderPort = 8,
+    climbArmsAbsID = 4,
     HoodAbsoluteEncoderPort = 1,
     bottomBeamBreakPort = 3,
     midBeamBreakPort = 9,
