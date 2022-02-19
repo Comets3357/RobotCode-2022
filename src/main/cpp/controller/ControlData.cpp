@@ -105,6 +105,7 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
     if (controllerData.sBBtnToggled) {
         controlData.shootUnassignedAsOpponent = !controlData.shootUnassignedAsOpponent;
     }
+    
     controlData.fenderShot = controllerData.sABtnToggled && controlData.shift /* && (controlData.mode == mode_teleop_sa) */;
     controlData.sideWallShot = controllerData.sBBtnToggled && controlData.shift/*  && (controlData.mode == mode_teleop_sa) */;
     controlData.wallLaunchPadShot = controllerData.sXBtnToggled && controlData.shift/*  && (controlData.mode == mode_teleop_sa) */;

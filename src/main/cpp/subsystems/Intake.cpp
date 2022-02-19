@@ -20,7 +20,7 @@ void Intake::RobotInit()
 void Intake::rollersInit(){
     intakeRollers.RestoreFactoryDefaults();
     intakeRollers.SetInverted(true);
-    intakeRollers.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+    intakeRollers.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
     intakeRollers.SetSmartCurrentLimit(45);
 }
 
@@ -29,12 +29,12 @@ void Intake::pivotInit(){
     intakePivot.SetInverted(false);
     intakePivot.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
     //down
-    intakePivot_pidController.SetP(0.18,0);
-    intakePivot_pidController.SetI(0,0);
-    intakePivot_pidController.SetD(0.01,0);
-    intakePivot_pidController.SetIZone(0,0);
-    intakePivot_pidController.SetFF(0,0);
-    intakePivot_pidController.SetOutputRange(-0.2, 0.4,0);
+    intakePivot_pidController.SetP(0.23);
+    intakePivot_pidController.SetI(0);
+    intakePivot_pidController.SetD(0.01);
+    intakePivot_pidController.SetIZone(0);
+    intakePivot_pidController.SetFF(0);
+    intakePivot_pidController.SetOutputRange(-0.3, 0.2);
 
     intakePivot.SetSmartCurrentLimit(15);
 }
@@ -59,15 +59,16 @@ void Intake::RobotPeriodic(const RobotData &robotData, IntakeData &intakeData)
         if (robotData.controlData.mode == mode_teleop_manual)
         {
             //checks to see if the intake is down when switched to manual mode, and if it is bring it up before manual functionality 
-            if(!zeroedIntake){
-                intakePivot_pidController.SetReference(0.1, rev::CANSparkMaxLowLevel::ControlType::kPosition, 0);
-                if(intakePivotEncoderRev.GetPosition() < 0.3){
-                    zeroedIntake = true;
-                }
-            }else{ 
-                manual(robotData, intakeData);
+            // if(!zeroedIntake){
+            //     intakePivot_pidController.SetReference(0.1, rev::CANSparkMaxLowLevel::ControlType::kPosition, 0);
+            //     if(intakePivotEncoderRev.GetPosition() < 0.3){
+            //         zeroedIntake = true;
+            //     }
+            // }else{ 
 
-            }
+            // }
+            manual(robotData, intakeData);
+
             
         }
         else if (robotData.controlData.mode == mode_teleop_sa)
@@ -188,7 +189,7 @@ void Intake::updateData(const RobotData &robotData, IntakeData &intakeData)
 {
     intakeData.intakeIdle = intakeIdle(robotData, intakeData);
     frc::SmartDashboard::PutNumber("Pivot built in Pos", intakePivotEncoderRev.GetPosition());
-    // frc::SmartDashboard::PutNumber("Pivot absolute Pos", intakePivotEncoder2.GetOutput());
+    frc::SmartDashboard::PutNumber("Pivot absolute Pos", intakePivotEncoderAbs.GetOutput());
     //frc::SmartDashboard::PutNumber("Changed pos", absoluteToREV(intakePivotEncoder2.GetOutput()));
 
     //frc::SmartDashboard::PutBoolean("idle?", intakeData.intakeIdle);
