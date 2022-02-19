@@ -10,6 +10,7 @@
 #include <rev/CANEncoder.h>
 #include <rev/CANDigitalInput.h>
 #include <frc/DigitalInput.h>
+#include <frc/DutyCycle.h>
 
 
 struct RobotData;
@@ -86,4 +87,7 @@ private:
     // rev::SparkMaxLimitSwitch elevatorLimit = climbElevator.GetForwardLimitSwitch(rev::SparkMaxLimitSwitch::Type::kNormallyOpen);
     // rev::SparkMaxLimitSwitch armsLimit = climbArms.GetForwardLimitSwitch(rev::SparkMaxLimitSwitch::Type::kNormallyOpen);
 
+    frc::DigitalInput m_input{4};
+    //THIS IS THE ABSOLUTE ENCODER
+    frc::DutyCycle climbArmsAbs = frc::DutyCycle{m_input};
 };

@@ -20,7 +20,7 @@ void Intake::RobotInit()
 void Intake::rollersInit(){
     intakeRollers.RestoreFactoryDefaults();
     intakeRollers.SetInverted(true);
-    intakeRollers.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+    intakeRollers.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
     intakeRollers.SetSmartCurrentLimit(45);
 }
 
@@ -29,12 +29,12 @@ void Intake::pivotInit(){
     intakePivot.SetInverted(false);
     intakePivot.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
     //down
-    intakePivot_pidController.SetP(0.18,0);
-    intakePivot_pidController.SetI(0,0);
-    intakePivot_pidController.SetD(0.01,0);
-    intakePivot_pidController.SetIZone(0,0);
-    intakePivot_pidController.SetFF(0,0);
-    intakePivot_pidController.SetOutputRange(-0.2, 0.4,0);
+    intakePivot_pidController.SetP(0.23);
+    intakePivot_pidController.SetI(0);
+    intakePivot_pidController.SetD(0.01);
+    intakePivot_pidController.SetIZone(0);
+    intakePivot_pidController.SetFF(0);
+    intakePivot_pidController.SetOutputRange(-0.3, 0.2);
 
     intakePivot.SetSmartCurrentLimit(15);
 }

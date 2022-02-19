@@ -14,9 +14,9 @@ static const int
     intakeSingulatorID = 13;
 
 static const double
-    absOut = 0.485,
-    absIn = 0.616,
-    revOut = 6.4,
+    absOut = 0.465,
+    absIn = 0.605,
+    revOut = 6.14,
     revIn = 0;
 
 //indexer
@@ -42,6 +42,8 @@ static const double
 static const int
     climbElevatorID = 41,
     climbArmsID = 43;
+    
+const float climbArmsZero = 0.811;
 
 //limelight:
 static const double
@@ -56,6 +58,7 @@ static const double
 // DIO
 static const int
     intakeAbsoluteEncoderPort = 8,
+    climbArmsAbsID = 4,
     HoodAbsoluteEncoderPort = 1,
     bottomBeamBreakPort = 3,
     midBeamBreakPort = 9,
