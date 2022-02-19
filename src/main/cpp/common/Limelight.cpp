@@ -4,28 +4,20 @@
 void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelightData, VisionLookup &visionLookup)
 {
     //updating data
-    limelightData.validTarget = table->GetNumber("tv", 0.0);
-    limelightData.distanceToTarget = distanceToTarget();
+    limelightData.validTarget = table->GetNumber("tv", 0.0); //valid target or not
+    limelightData.distanceToTarget = distanceToTarget(); 
     limelightData.xOffset =  table->GetNumber("tx", 0.0) * (pi/180); //RADIANS
     limelightData.yOffset =  table->GetNumber("ty", 0.0);
-    limelightData.angleOffset = robotData.limelightData.angleOffset * (180 / pi);
-
-
+    limelightData.angleOffset = robotData.limelightData.angleOffset * (180 / pi); //Degrees
 
     //turns off limelight if not shooting
     if(robotData.controlData.shootMode == shootMode_none){
          table->PutNumber("ledMode", 1);
     }else{
-
+        table->PutNumber("ledMode", 0);
     }
-
-    table->PutNumber("ledMode", 0);
-
-
-    //moves the limelight data over to the actual position of the shooter
-    shooterOffset(robotData, limelightData);
     
-    table->PutNumber("ledMode", 0);
+    //table->PutNumber("ledMode", 0);
 
     //updates the angle to be in degrees rather than radians
     //the actual distance from the hub based on the turning of the drivebase
@@ -40,7 +32,6 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     limelightData.desiredHoodPos = getHoodPOS(visionLookup, limelightData, robotData); //returns an angle
     limelightData.desiredVel = getWheelVelocity(visionLookup, limelightData, robotData); //returns rpm
     
-    
     //printing data to the dashboard
     frc::SmartDashboard::PutNumber("distance offset", robotData.limelightData.distanceOffset);
     frc::SmartDashboard::PutNumber("angleOffset", limelightData.angleOffset);
@@ -52,11 +43,10 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
  * @return distance from limelight to target in inches
  */
 double Limelight::distanceToTarget(){ 
-    //std::shared_ptr<nt::NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("limelight");
-
     double radianAngle = table->GetNumber("ty", 0.0);
     radianAngle = (radianAngle + limelightAngle) * (pi / 180);
     return(((hubHeight + crosshairOffset)-limelightMount)/std::tan(radianAngle));
+
 }
 
 /**
@@ -130,6 +120,7 @@ double Limelight::getHoodPOS(VisionLookup &visionLookup, LimelightData &limeligh
     //     limelightData.upperValPos = visionLookup.getLowValue(limelightData.upperVal);
     // }
 
+    //gets value from the lookup table
     limelightData.lowerValPos = visionLookup.getValue(limelightData.lowerVal);
     limelightData.upperValPos = visionLookup.getValue(limelightData.upperVal);
 
@@ -139,13 +130,10 @@ double Limelight::getHoodPOS(VisionLookup &visionLookup, LimelightData &limeligh
     //multiply the difference in the distance and floored value by the slope to get desired position of hood for that small distance 
     //then add that to the desired position of the lower floored value
     return (desiredSlope*(orignalDistance - limelightData.lowerVal*12)+limelightData.lowerValPos);
-    //return limelightData.lowerValPos;
 }
 
 /**
  * @return the desired flywheel velocity using lookup table
- * im sorry i know this belongs in shooter.cpp but it
- * s too much work
  */
 double Limelight::getWheelVelocity(VisionLookup &visionLookup, LimelightData &limelightData, const RobotData &robotData){
     double distance = limelightData.distanceOffset;
@@ -176,6 +164,7 @@ double Limelight::getWheelVelocity(VisionLookup &visionLookup, LimelightData &li
 
     // }
 
+    //gets value from the lookup table
     limelightData.lowerValVel = visionLookup.getVelocity(limelightData.lowerVal);
     limelightData.upperValVel = visionLookup.getVelocity(limelightData.upperVal);
 
@@ -195,17 +184,20 @@ void Limelight::averageDistance(const RobotData &robotData, LimelightData &limel
     double distance = robotData.limelightData.distanceOffset;
     double total = 0;
 
-   
+    //if size is less then 6 keep adding updated distances until the deque is full
+    // if(robotData.limelightData.distances.size() < 6){
+    //     limelightData.distances.push_back(distance);
+    // }else{ //once it's full run through the deque and add it to the total
+    //     for(int i = 0; (unsigned)i < robotData.limelightData.distances.size(); i ++){
+    //         total += robotData.limelightData.distances.at(i);
+    //     }
+
+    //     //make sure to remove the first value and add an updated distance to the end
+    //     limelightData.distances.pop_front();
+    //     limelightData.distances.push_back(distance);
+    // }
 
     //return the average of those distances
     limelightData.avgDistance = distance;
 
-}
-
-/**
- * @return horizontal offset angle from limelight in radians
- */
-double Limelight::getHorizontalOffset()
-{
-    return table->GetNumber("tx", 0.0) * (pi / 180);
 }

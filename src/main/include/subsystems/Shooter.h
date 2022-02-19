@@ -17,9 +17,7 @@ struct RobotData;
 struct ShooterData
 {
     bool readyShoot;
-    bool wrongBallReady;
     bool shootUnassignedAsOpponent;
-    bool isHighGeneral;
 
 };
 
@@ -41,21 +39,14 @@ class Shooter{
         double convertFromAbsToAngle(double abs);
         double absoluteToREV(double value);
         void checkReadyShoot(ShooterData &shooterData);
+        void encoderPluggedIn(const ShooterData &shooterData);
 
         void flyWheelInit();
         void shooterHoodInit();
 
-        double getHoodPos();
-        double getWheelPos();
         double getWheelVel();
-        double getHoodOffset();
 
-        void setHood(double power);
-        void setWheel(double power);
-        void setHoodPos(double pos);
-        void setTurretPos(double pos);
-
-        void setHighHub(const RobotData &robotData);
+        //FIXED SHOTS
         void outerLaunch(const RobotData &robotData);
         void innerLaunch(const RobotData &robotData);
         void wall(const RobotData &robotData);

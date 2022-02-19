@@ -12,8 +12,6 @@ void VisionLookup::RobotInit() {}
 
 void VisionLookup::RobotPeriodic(const RobotData &robotData, VisionLookupData &visionLookupData)
 {
-    // inserting values by using [] operator
-
     // hood angle map HIGH HUB
     // key is the distance in feet
     // assigned value is the hood position in angle measurment(degrees)
@@ -34,18 +32,38 @@ void VisionLookup::RobotPeriodic(const RobotData &robotData, VisionLookupData &v
     visionMap[18] = 42.58;
     visionMap[19] = 43;
 
+    // velocity map
+    // key is the distance in feet
+    // assigned value is the desired flywheel velocity in rpm
+    velocityMap[4] = 1721; 
+    velocityMap[5] = 1744; 
+    velocityMap[6] = 1744; 
+    velocityMap[7] = 1755; 
+    velocityMap[8] = 1800; 
+    velocityMap[9] = 1845; 
+    velocityMap[10] = 1884; 
+    velocityMap[11] = 1907; 
+    velocityMap[12] = 1969; 
+    velocityMap[13] = 1991; 
+    velocityMap[14] = 2100; 
+    velocityMap[15] = 2100;
+    velocityMap[16] = 2150;
+    velocityMap[17] = 2200;
+    velocityMap[18] = 2300;
+    velocityMap[19] = 2400;
+
     // hood angle map LOW HUB
-    lowVisionMap[4] = 25.3;
-    lowVisionMap[5] = 27.3;
-    lowVisionMap[6] = 28.8;
-    lowVisionMap[7] = 30.6;
-    lowVisionMap[8] = 31.9;
-    lowVisionMap[9] = 34.7;
-    lowVisionMap[10] = 35.1;
-    lowVisionMap[11] = 37.25;
-    lowVisionMap[12] = 37.7;
-    lowVisionMap[13] = 39;
-    lowVisionMap[14] = 39.4;
+    // lowVisionMap[4] = 25.3;
+    // lowVisionMap[5] = 27.3;
+    // lowVisionMap[6] = 28.8;
+    // lowVisionMap[7] = 30.6;
+    // lowVisionMap[8] = 31.9;
+    // lowVisionMap[9] = 34.7;
+    // lowVisionMap[10] = 35.1;
+    // lowVisionMap[11] = 37.25;
+    // lowVisionMap[12] = 37.7;
+    // lowVisionMap[13] = 39;
+    // lowVisionMap[14] = 39.4;
     // lowVisionMap[15] = ;
     // lowVisionMap[16] = ;
     // lowVisionMap[17] = ;
@@ -53,41 +71,20 @@ void VisionLookup::RobotPeriodic(const RobotData &robotData, VisionLookupData &v
     // lowVisionMap[19] = ;
     // lowVisionMap[20] = ;
 
-    // velocity map
-    // key is the distance in feet
-    // assigned value is the desired flywheel velocity in rpm
-    velocityMap[4] = 1721; //1721
-    velocityMap[5] = 1744; //1744
-    velocityMap[6] = 1744; //1744
-    velocityMap[7] = 1755; //1755
-    velocityMap[8] = 1800; //1800
-    velocityMap[9] = 1845; //1845
-    velocityMap[10] = 1884; //1884
-    velocityMap[11] = 1907; //1907
-    velocityMap[12] = 1969; //1969
-    velocityMap[13] = 1991; //1991
-    velocityMap[14] = 2100; //2115
-    velocityMap[15] = 2100;
-    velocityMap[16] = 2150;
-    velocityMap[17] = 2200;
-    velocityMap[18] = 2300;
-    velocityMap[19] = 2400;
-    // velocityMap[20] = ;
-
     
     // velocity map LOW HUB
-    lowVelocityMap[4] = 1450;
-    lowVelocityMap[5] = 1500;
-    lowVelocityMap[6] = 1600;
-    lowVelocityMap[7] = 1650;
-    lowVelocityMap[8] = 1750;
-    lowVelocityMap[9] = 1750;
-    lowVelocityMap[10] = 1775;
-    lowVelocityMap[11] = 1850;
-    lowVelocityMap[12] = 1950;
-    lowVelocityMap[13] = 2000;
-    lowVelocityMap[14] = 2100;
-    lowVelocityMap[15] = 2300;
+    // lowVelocityMap[4] = 1450;
+    // lowVelocityMap[5] = 1500;
+    // lowVelocityMap[6] = 1600;
+    // lowVelocityMap[7] = 1650;
+    // lowVelocityMap[8] = 1750;
+    // lowVelocityMap[9] = 1750;
+    // lowVelocityMap[10] = 1775;
+    // lowVelocityMap[11] = 1850;
+    // lowVelocityMap[12] = 1950;
+    // lowVelocityMap[13] = 2000;
+    // lowVelocityMap[14] = 2100;
+    // lowVelocityMap[15] = 2300;
     // lowVelocityMap[16] = ;
     // lowVelocityMap[17] = ;
     // lowVelocityMap[18] = ;
@@ -111,20 +108,6 @@ double VisionLookup::getValue(double key){
 
 /**
  * @param key the distance from the hub
- * @return the hood angle at the asked for distance
- * FOR LOW HUB 
- **/
-double VisionLookup::getLowValue(double key){
-
-    std::unordered_map<double,double>::const_iterator got = lowVisionMap.find(key);
-    if (got == lowVisionMap.end())
-        return 0;
-    else
-        return got->second;
-}
-
-/**
- * @param key the distance from the hub
  * @return the desired velocity at the asked for distance 
  **/
 double VisionLookup::getVelocity(double key){
@@ -134,20 +117,6 @@ double VisionLookup::getVelocity(double key){
     }else{
         return got->second;
     }
-
-}
-
-/**
- * @param key the distance from the hub
- * @return the desired velocity at the asked for distance 
- * FOR LOW HUB
- **/
-double VisionLookup::getLowVelocity(double key){
-    std::unordered_map<double,double>::const_iterator got = lowVelocityMap.find(key);
-    if (got == lowVelocityMap.end())
-        return 0;
-    else
-        return got->second;
 
 }
 
@@ -176,5 +145,35 @@ double VisionLookup::highestVelocity(){
     }
     return highest;
 }
+
+/**
+ * @param key the distance from the hub
+ * @return the hood angle at the asked for distance
+ * FOR LOW HUB 
+ **/
+// double VisionLookup::getLowValue(double key){
+
+//     std::unordered_map<double,double>::const_iterator got = lowVisionMap.find(key);
+//     if (got == lowVisionMap.end())
+//         return 0;
+//     else
+//         return got->second;
+// }
+
+/**
+ * @param key the distance from the hub
+ * @return the desired velocity at the asked for distance 
+ * FOR LOW HUB
+ **/
+// double VisionLookup::getLowVelocity(double key){
+//     std::unordered_map<double,double>::const_iterator got = lowVelocityMap.find(key);
+//     if (got == lowVelocityMap.end())
+//         return 0;
+//     else
+//         return got->second;
+
+// }
+
+
 
 

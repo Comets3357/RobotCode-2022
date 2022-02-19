@@ -42,13 +42,6 @@ static const double
     hoodAngleOut = 43,
     hoodAngleIn = 21;
 
-    // hoodabsOut = 0.028,
-    // hoodabsIn = 0.90,
-    // hoodrevOut = -37,
-    // hoodrevIn = 0,
-    // hoodAngleOut = 43,
-    // hoodAngleIn = 21;
-
 // climb
 static const int
     climbElevatorID = 41,
@@ -74,9 +67,7 @@ static const int
     HoodAbsoluteEncoderPort = 1,
     bottomBeamBreakPort = 3,
     midBeamBreakPort = 9,
-    topBeamBreakPort = 5,
-    elevator = 7;   // change name
-
+    topBeamBreakPort = 5;
 
 
 

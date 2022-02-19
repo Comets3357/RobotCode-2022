@@ -99,21 +99,7 @@ void Shooter::RobotPeriodic(const RobotData &robotData, ShooterData &shooterData
 
 void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
 
-    //checks if encoder is functioning, if it is constantly update rev encoder, otherwise don't update the rev values
-    if(shooterHoodEncoderAbs.GetOutput() > 0.03)
-    {
-        // constantly updates rev hood pos with more accurate abs encoder values (you know in case the rev belt skips)
-        if(tickCount > 40){
-            shooterHoodEncoderRev.SetPosition(absoluteToREV(shooterHoodEncoderAbs.GetOutput()));
-            tickCount = (tickCount+1)%50;
-        }else{
-            tickCount = (tickCount+1)%50;
-        }
-
-    }else{
-        // shooterHood.Set(0);
-        // flyWheelLead.Set(0);
-    }
+    encoderPluggedIn(shooterData);
 
     //SHOOTING LOGIC
     if(robotData.controlData.shootMode == shootMode_vision){ // Aiming with limelight
@@ -205,20 +191,18 @@ void Shooter::updateData(const RobotData &robotData, ShooterData &shooterData)
 {
     frc::SmartDashboard::PutNumber("shooter Hood ABS", shooterHoodEncoderAbs.GetOutput());
     frc::SmartDashboard::PutNumber("shooter Hood REV", shooterHoodEncoderRev.GetPosition());
-    //frc::SmartDashboard::PutNumber("shooter changed", absoluteToREV(shooterHoodEncoderAbs.GetOutput()));
-    frc::SmartDashboard::PutNumber("desired hood to rev", robotData.limelightData.desiredHoodPos);
-    frc::SmartDashboard::PutNumber("high or no", robotData.controlData.upperHubShot);
+    // frc::SmartDashboard::PutNumber("shooter changed", absoluteToREV(shooterHoodEncoderAbs.GetOutput()));
+    // frc::SmartDashboard::PutNumber("desired hood to rev", robotData.limelightData.desiredHoodPos);
+    // frc::SmartDashboard::PutNumber("high or no", robotData.controlData.upperHubShot);
 
     frc::SmartDashboard::PutBoolean("shooter ready shoot", shooterData.readyShoot);
     frc::SmartDashboard::PutNumber("HOOD ANGLE", convertFromAbsToAngle(shooterHoodEncoderAbs.GetOutput()));
     frc::SmartDashboard::PutNumber("flywheel vel", flyWheelLeadEncoder.GetVelocity());
-    frc::SmartDashboard::PutNumber("DESIRED VEL", robotData.limelightData.desiredVel);
+    // frc::SmartDashboard::PutNumber("DESIRED VEL", robotData.limelightData.desiredVel);
 
-
-
-    frc::SmartDashboard::PutNumber("shootMode", robotData.controlData.shootMode);
-    frc::SmartDashboard::PutBoolean("saShooting", robotData.controlData.saShooting);
-    frc::SmartDashboard::PutBoolean("saFinalShoot", robotData.controlData.saFinalShoot);
+    // frc::SmartDashboard::PutNumber("shootMode", robotData.controlData.shootMode);
+    // frc::SmartDashboard::PutBoolean("saShooting", robotData.controlData.saShooting);
+    // frc::SmartDashboard::PutBoolean("saFinalShoot", robotData.controlData.saFinalShoot);
 }
 
 /**
@@ -359,4 +343,18 @@ void Shooter::checkReadyShoot(ShooterData &shooterData){
     }
 }
 
+//checks to see if the encoder is reading zero because if it is that means the encoder was most likley unplugged and the current values are wrong and we don't want to run any motors
+void Shooter::encoderPluggedIn(const ShooterData &shooterData){
+    if (shooterHoodEncoderAbs.GetOutput() > 0.03){
+        //constantly updates the intake rev encoder based on the absolute encoder values 
+        if (tickCount > 30){
+            shooterHoodEncoderRev.SetPosition(absoluteToREV(shooterHoodEncoderAbs.GetOutput()));
+            tickCount = (tickCount + 1) % 40;
+        } else {
+            tickCount = (tickCount + 1) % 40;
+        }
+
+    } else {
+    }
+}
 
