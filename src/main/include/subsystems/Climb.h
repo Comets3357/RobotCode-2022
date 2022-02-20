@@ -19,6 +19,13 @@ struct ClimbData {
     int bar = 2;
     bool climbing = false;
     bool zeroing = false;
+    float benchTestClimbArmsSpeed = 0;
+    float benchTestClimbElevatorSpeed = 0;
+    bool limitSwitchWorking = false;
+    bool upperLimit = false;
+    bool lowerLimit = false;
+    bool armsUpperLimit = false;
+    bool armsLowerLimit = false;
 };
 
 class Climb {
@@ -28,6 +35,8 @@ public:
     void RobotPeriodic(const RobotData &robotData, ClimbData &climbData);  
     void DisabledPeriodic(const RobotData &robotData, ClimbData &climbData); 
     void DisabledInit();
+    void TestPeriodic(const RobotData &robotData, ClimbData &climbData);
+    void TestInit(ClimbData &climbData);
 
 private:
 
@@ -37,6 +46,13 @@ private:
     void climbInit(const RobotData &robotData, ClimbData &climbData);
     void cancelSequence(const RobotData &robotData, ClimbData &climbData);
     void runSequence(const RobotData &robotData, ClimbData &climbData);
+
+    //bench test
+    void checkElevatorDeadStop(ClimbData &climbData);
+    void checkArmsDeadStop(ClimbData &climbData);
+    bool armsEncoderInRange(const ClimbData &climbData);
+    void elevatorLimitSwitchWorking(ClimbData &climbData);
+    bool elevatorEncoderInRange(const ClimbData &climbData);
 
     int stage = 0;
 

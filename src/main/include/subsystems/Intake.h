@@ -20,6 +20,13 @@ struct RobotData;
 struct IntakeData
 {
     bool intakeIdle;
+    bool absEncoderInRange = true;
+    float intakeBenchTestSpeed = 0;
+    float benchTestIntakePivotSpeed = 0;
+    float benchTestIntakeRollersSpeed = 0;
+    float benchTestSingulatorSpeed = 0;
+    bool topDeadStop = false;
+    bool bottomDeadStop = false;
 };
 
 class Intake
@@ -28,7 +35,9 @@ class Intake
 public:
     void RobotInit();
     void RobotPeriodic(const RobotData &robotData, IntakeData &intakeData);
+    void TestPeriodic(const RobotData &robotData, IntakeData &intakeData);
     void DisabledInit();
+    void DisabledPeriodic(const RobotData &robotData, IntakeData &intakeData);
     void updateData(const RobotData &robotData, IntakeData &intakeData);
 
 
@@ -42,7 +51,11 @@ private:
     void mecanumInit();
     double absoluteToREV(double value);
     bool intakeIdle(const RobotData &robotData, IntakeData &intakeData);
-    void encoderPluggedIn(const IntakeData &intakeData);
+
+    //bench test
+    bool encoderPluggedIn(const IntakeData &intakeData);
+    bool encoderInRange(const IntakeData &intakeData);
+    void checkDeadStop(IntakeData &intakeData);
 
     double intakePivotSpeed = 0.1;
     double intakeRollerSpeed = 0.9;

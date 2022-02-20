@@ -96,8 +96,6 @@ void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
         zeroedIntake = false;
     }
 
-    encoderPluggedIn(intakeData);
-
 //INTAKE FUNCTIONALITY
     if (robotData.controlData.saIntake) //you are intaking
     {
@@ -220,17 +218,145 @@ double Intake::absoluteToREV(double value){
     return ((value*slope) + b);
 }
 
-//checks to see if the encoder is reading zero because if it is that means the encoder was most likley unplugged and the current values are wrong and we don't want to run any motors
-void Intake::encoderPluggedIn(const IntakeData &intakeData){
-    if (intakePivotEncoderAbs.GetOutput() > 0.03){
-        //constantly updates the intake rev encoder based on the absolute encoder values 
-        if (tickCount > 30){
-            intakePivotEncoderRev.SetPosition(absoluteToREV(intakePivotEncoderAbs.GetOutput()));
-            tickCount = (tickCount + 1) % 40;
-        } else {
-            tickCount = (tickCount + 1) % 40;
+//BENCH TEST CODE
+void Intake::TestPeriodic(const RobotData &robotData, IntakeData &intakeData){
+    frc::SmartDashboard::PutBoolean("Intake abs encoder working", encoderPluggedIn(intakeData));
+    frc::SmartDashboard::PutBoolean("Intake abs encoder reading in correct range", encoderInRange(intakeData));
+    frc::SmartDashboard::PutNumber("Intake encoder position", intakePivotEncoderRev.GetPosition());
+    frc::SmartDashboard::PutBoolean("Intake hit top dead stop", intakeData.topDeadStop);
+    frc::SmartDashboard::PutBoolean("Intake hit bottom dead stop", intakeData.bottomDeadStop);
+    frc::SmartDashboard::PutNumber("Intake actual abs encoder value", intakePivotEncoderAbs.GetOutput());
+    frc::SmartDashboard::PutNumber("Intake expected top absolute encoder value", absIn);
+    frc::SmartDashboard::PutNumber("Intake expected bottom absolute encoder value", absOut);
+    frc::SmartDashboard::PutNumber("Intake pivot speed", intakeData.benchTestIntakePivotSpeed);
+    
+    checkDeadStop(intakeData);
+
+    //runs the bench test sequence
+    if (robotData.benchTestData.testStage == BenchTestStage::BenchTestStage_Intake && robotData.controlData.startBenchTest){ //checks if we're testing intake
+        if (encoderPluggedIn(intakeData) && encoderInRange(intakeData)){ //checks if the encoder is working
+            if (robotData.benchTestData.stage == 0){
+                //pivot down
+                intakeData.benchTestIntakePivotSpeed = .05; //sets the pivot speed
+                intakeData.benchTestIntakeRollersSpeed = 0; //sets the rollers speed
+                intakeData.benchTestSingulatorSpeed = 0; //sets the singulator (sideways wheel) speed
+            } else if (robotData.benchTestData.stage == 1){
+                //pivot up
+                intakeData.benchTestIntakePivotSpeed = -.05;
+                intakeData.benchTestIntakeRollersSpeed = 0;
+                intakeData.benchTestSingulatorSpeed = 0;
+            } else if (robotData.benchTestData.stage == 2){
+                //zero everything - probably should be function
+                intakeData.benchTestIntakePivotSpeed = 0;
+                intakeData.benchTestIntakeRollersSpeed = 0;
+                intakeData.benchTestSingulatorSpeed = 0;
+                intakePivotEncoderRev.SetPosition(0);
+            } else if (robotData.benchTestData.stage == 3){
+                //run rollers fowards
+                intakeData.benchTestIntakePivotSpeed = 0;
+                intakeData.benchTestIntakeRollersSpeed = robotData.benchTestData.currentSpeed;
+                intakeData.benchTestSingulatorSpeed = 0;
+                intakePivotEncoderRev.SetPosition(0);
+            } else if (robotData.benchTestData.stage == 4){
+                //run rollers backwards
+                intakeData.benchTestIntakePivotSpeed = 0;
+                intakeData.benchTestIntakeRollersSpeed = -robotData.benchTestData.currentSpeed;
+                intakeData.benchTestSingulatorSpeed = 0;
+            } else if (robotData.benchTestData.stage == 5){
+                //run singulator forwards
+                intakeData.benchTestIntakePivotSpeed = 0;
+                intakeData.benchTestIntakeRollersSpeed = 0;
+                intakeData.benchTestSingulatorSpeed = robotData.benchTestData.currentSpeed; 
+            } else if (robotData.benchTestData.stage == 6){
+                //run singulator backwards
+                intakeData.benchTestIntakePivotSpeed = 0;
+                intakeData.benchTestIntakeRollersSpeed = 0;
+                intakeData.benchTestSingulatorSpeed = -robotData.benchTestData.currentSpeed;
+            } else if (robotData.benchTestData.PIDMode && robotData.benchTestData.stage > 6){ //starts testing in pid mode
+                if (robotData.benchTestData.stage == 7){
+                    // bring pivot down
+                    intakeData.benchTestIntakePivotSpeed = 0;
+                    intakeData.benchTestIntakeRollersSpeed = 0;
+                    intakeData.benchTestSingulatorSpeed = 0;
+                    intakePivot_pidController.SetReference(revOut, rev::CANSparkMaxLowLevel::ControlType::kPosition, 0);
+                } else if (robotData.benchTestData.stage == 8){
+                    // bring pivot up
+                    intakeData.benchTestIntakePivotSpeed = 0;
+                    intakeData.benchTestIntakeRollersSpeed = 0;
+                    intakeData.benchTestSingulatorSpeed = 0;
+                    intakePivot_pidController.SetReference(revIn, rev::CANSparkMaxLowLevel::ControlType::kPosition, 0);
+                } else {
+                    intakeData.benchTestIntakePivotSpeed = 0;
+                    intakeData.benchTestIntakeRollersSpeed = 0;
+                    intakeData.benchTestSingulatorSpeed = 0;
+                }
+            } else {
+                intakeData.benchTestIntakePivotSpeed = 0;
+                intakeData.benchTestIntakeRollersSpeed = 0;
+                intakeData.benchTestSingulatorSpeed = 0;
+            }
         }
 
+        //sets the speed of the motors (unless the pivot hit a dead stop)
+        if (!intakeData.topDeadStop && !intakeData.bottomDeadStop){
+            intakePivot.Set(intakeData.benchTestIntakePivotSpeed);
+        } else {
+            intakePivot.Set(0);
+        }
+
+        intakeRollers.Set(intakeData.benchTestIntakeRollersSpeed);
+        intakeSingulator.Set(intakeData.benchTestSingulatorSpeed);
     } else {
+        intakeData.benchTestIntakePivotSpeed = 0; //if not testing intake, then the speed of the motors is set to 0
+        intakeData.benchTestIntakeRollersSpeed = 0;
+        intakeData.benchTestSingulatorSpeed = 0;
     }
+}
+
+//checks to see if the encoder is reading zero because if it is that means the encoder was most likley unplugged and the current values are wrong and we don't want to run any motors
+bool Intake::encoderPluggedIn(const IntakeData &intakeData){
+    if (intakePivotEncoderAbs.GetOutput() > 0.03){
+        //constantly updates the intake rev encoder based on the absolute encoder values 
+        if (tickCount > 45){
+            intakePivotEncoderRev.SetPosition(absoluteToREV(intakePivotEncoderAbs.GetOutput()));
+            tickCount = (tickCount + 1) % 50;
+        } else {
+            tickCount = (tickCount + 1) % 50;
+        }
+
+        return true; //returns true to indicate that the encoder is functioning
+    } else {
+        return false;
+    }
+}
+
+//checks if the encoder is reading values in the incorrect range, and if the values aren't reasonable, then the motors stop running in the bench test function
+bool Intake::encoderInRange(const IntakeData &intakeData){
+    if (intakePivot.Get() > 0 && intakePivotEncoderAbs.GetOutput() < absOut - .01){
+        intakePivot.Set(0);
+        return false;
+    } else if (intakePivot.Get() < 0 && intakePivotEncoderAbs.GetOutput() > absIn + .01){
+        intakePivot.Set(0);
+        return false;
+    } else {
+        return true;
+    }
+}
+
+//checks if the motor has hit a dead stop
+void Intake::checkDeadStop(IntakeData &intakeData){
+    if (intakeData.benchTestIntakePivotSpeed > 0 && intakePivotEncoderAbs.GetOutput() < absOut + .01){
+        intakeData.topDeadStop = false;
+        intakeData.bottomDeadStop = true;
+    } else if (intakeData.benchTestIntakePivotSpeed < 0 && intakePivotEncoderAbs.GetOutput() > absIn - .01){
+        intakeData.topDeadStop = true;
+        intakeData.bottomDeadStop = false;
+    } else {
+        intakeData.topDeadStop = false;
+        intakeData.bottomDeadStop = false;
+    }
+}
+
+void Intake::DisabledPeriodic(const RobotData &robotData, IntakeData &intakeData){
+    updateData(robotData, intakeData);
 }
