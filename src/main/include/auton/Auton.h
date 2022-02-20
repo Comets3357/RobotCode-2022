@@ -50,6 +50,8 @@ private:
     void fourBallB(const RobotData &robotData, ControlData &controlData);
     void fourBallC(const RobotData &robotData, ControlData &controlData);
 
+    void sixBallC(const RobotData &robotData, ControlData &controlData);
+
 
     frc::Pose2d getPose(double x, double y, double deg);
 
