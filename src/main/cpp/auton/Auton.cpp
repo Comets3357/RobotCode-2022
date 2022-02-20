@@ -68,6 +68,8 @@ void Auton::sendAutonSelectionChooser() {
     autonChooser.AddOption("fourBallB", "fourBallB");
     autonChooser.AddOption("fourBallC", "fourBallC");
 
+    autonChooser.AddOption("sixBallC", "sixBallC");
+
     autonChooser.AddOption("test", "test");
 
     frc::SmartDashboard::PutData("Select Auton:", &autonChooser);
@@ -92,10 +94,19 @@ void Auton::AutonomousPeriodic(const RobotData &robotData, AutonData &autonData,
         potato(robotData, controlData);
     }
     else if (autonData.autonRoutineName == "exitShootA") {
-        exitShootA(robotData, controlData);
+        exitShoot(robotData, controlData);
+    }
+    else if (autonData.autonRoutineName == "exitShootB") {
+        exitShoot(robotData, controlData);
+    }
+    else if (autonData.autonRoutineName == "exitShootC") {
+        exitShoot(robotData, controlData);
     }
     else if (autonData.autonRoutineName == "fourBallC") {
         fourBallC(robotData, controlData);
+    }
+    else if (autonData.autonRoutineName == "sixBallC") {
+        sixBallC(robotData, controlData);
     }
 }
 
@@ -105,24 +116,31 @@ void Auton::potato(const RobotData &robotData, ControlData &controlData)
 }
 
 
-void Auton::exitShootA(const RobotData &robotData, ControlData &controlData) {
+void Auton::exitShoot(const RobotData &robotData, ControlData &controlData) {
     double currentSec = robotData.timerData.secSinceEnabled;
 
     // intake
-    controlData.saIntake = true;
+    if (currentSec > 0 && currentSec < 6) {
+        controlData.saIntake= true;
+    } else {
+        controlData.saIntake = false;
+    }
 
     // shooting
-    if (currentSec > 2 && currentSec < 2.1) {
+    if (currentSec > 2 && currentSec < 8) {
         controlData.saShooting= true;
     } else {
         controlData.saShooting = false;
     }
 
-    if (currentSec > 2.5) {
+    if (currentSec > 4) {
         controlData.saFinalShoot = true;
+    } else {
+        controlData.saFinalShoot = false;
     }
-    
 }
+
+void Auton::exitShootA(const RobotData &robotData, ControlData &controlData) {}
 
 void Auton::exitShootB(const RobotData &robotData, ControlData &controlData) {}
 
@@ -148,39 +166,43 @@ void Auton::fourBallC(const RobotData &robotData, ControlData &controlData) {
 
     frc::SmartDashboard::PutString("FOURBALLC", "RUNNING");
 
-    setShootTime(controlData, currentSec, 3, 5);
-    setShootTime(controlData, currentSec, 10.5, 15);
+    if (currentSec > 3 && currentSec < 5) {
+        controlData.shootMode = shootMode_vision;
+    } else if (currentSec > 12 && currentSec < 15) {
+        controlData.shootMode = shootMode_vision;
+    } else {
+        controlData.shootMode = shootMode_none;
+    }
+
+    // setShootTime(controlData, currentSec, 3, 5);
+    // setShootTime(controlData, currentSec, 10.5, 15);
+}
+
+void Auton::sixBallC(const RobotData &robotData, ControlData &controlData) {
+    double currentSec = robotData.timerData.secSinceEnabled;
+
+    controlData.saIntake = false;
+
+    // if (currentSec > 3 && currentSec < 5) {
+    //     controlData.shootMode = shootMode_vision;
+    // } else if (currentSec > 3 && currentSec < 5) {
+    //     controlData.shootMode = shootMode_vision;
+    // } else {
+    //     controlData.shootMode = shootMode_none;
+    // }
 }
 
 
 // can only handle times to the 0.1 second precision
-void Auton::setShootTime(ControlData &controlData, double currentSec, double startSec, double endSec) {
+void Auton::setShootTime(const RobotData &robotData, ControlData &controlData, double start) {
         
+    double currentSec = robotData.timerData.secSinceEnabled;
 
-        // only should be worrying about the relevant call of this function based on the time stamps in the call
-        if (currentSec > (startSec - 1) && currentSec < (endSec + 0.2)) {
+    if (currentSec > start - 1 && currentSec < start + 3) {
+        controlData.shootMode = shootMode_vision;
+    }
 
-            frc::SmartDashboard::PutNumber("currentSecShooting", currentSec);
-            // toggle on vision shooting 1 sec before start of time range
-
-            if (currentSec > startSec - 1 && currentSec < startSec - 0.9) {
-                controlData.saShooting = true;
-            }
-            else if (currentSec > startSec - 0.9 && currentSec < startSec - 0.8) {
-                controlData.saShooting = false;
-            }
-
-            if (currentSec > endSec && currentSec < endSec + 0.1) {
-                controlData.saShooting = true;
-            }
-            else if (currentSec > endSec + 0.1 && currentSec < endSec + 0.2) {
-                controlData.saShooting = false;
-            }
-
-            if (currentSec > startSec && currentSec < endSec) {
-                controlData.saFinalShoot = true;
-            } else {
-                controlData.saFinalShoot = false;
-            }
-        }
+    if (currentSec > start && currentSec < start + 3) {
+        controlData.saFinalShoot = true;
+    }
 }

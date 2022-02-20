@@ -101,10 +101,10 @@ void Drivebase::DisabledInit()
 {
     
     setPercentOutput(0, 0);
-    dbL.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
-    dbLF.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
-    dbR.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
-    dbRF.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
+    dbL.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
+    dbLF.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
+    dbR.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
+    dbRF.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
     odometryInitialized = false;
 }
 
@@ -192,7 +192,7 @@ void Drivebase::autonControl(const RobotData &robotData, DrivebaseData &drivebas
             setVelocity(0, 0);
         }
         // frc::SmartDashboard::PutNumber("breakEndSec", breakEndSec);
-        if (robotData.timerData.secSinceEnabled > breakEndSec) {
+        if (robotData.timerData.secSinceEnabled > breakEndSec && robotData.controlData.shootMode == shootMode_none) {
             frc::SmartDashboard::PutNumber("secSinceEnabled", robotData.timerData.secSinceEnabled);
             frc::SmartDashboard::PutNumber("breakEndSec", breakEndSec);
             getNextAutonStep(robotData, drivebaseData, autonData);
@@ -424,6 +424,9 @@ void Drivebase::getNextAutonStep(const RobotData &robotData, DrivebaseData &driv
             // frc::SmartDashboard::PutBoolean("odometryInitialized", odometryInitialized);
         }
     }
+    else {
+        drivebaseData.driveMode = driveMode_break;
+    }
 }
 
 void Drivebase::turnInPlaceAuton(double degrees, const RobotData &robotData, DrivebaseData &drivebaseData, AutonData &autonData) {
@@ -453,8 +456,8 @@ void Drivebase::turnInPlaceAuton(double degrees, const RobotData &robotData, Dri
         // frc::SmartDashboard::PutString("AUTON", "TURN IN PLACE");
     } else {
         // profile that adjusts aggressiveness of turn based on the amount of degrees left to turn. has been tuned for speed & accuracy on both small and large turns
-        leftOutput = std::pow(std::abs(degrees / 361), 1) + 0.07;
-        rightOutput = std::pow(std::abs(degrees / 361), 1) + 0.07;
+        leftOutput = std::pow(std::abs(degrees / 361), 1) + 0.12;
+        rightOutput = std::pow(std::abs(degrees / 361), 1) + 0.12;
     }
     
 
