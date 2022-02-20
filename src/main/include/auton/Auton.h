@@ -38,6 +38,7 @@ private:
 
     void potato(const RobotData &robotData, ControlData &controlData);
     // exit tarmac, collect 1, turn, shoot 2:
+    void exitShoot(const RobotData &robotData, ControlData &controlData);
     void exitShootA(const RobotData &robotData, ControlData &controlData);
     void exitShootB(const RobotData &robotData, ControlData &controlData);
     void exitShootC(const RobotData &robotData, ControlData &controlData);
@@ -57,7 +58,7 @@ private:
 
 
     // secondary control helper functions:
-    void setShootTime(ControlData &controlData, double currentSec, double startSec, double endSec);
+    void setShootTime(const RobotData &robotData, ControlData &controlData, double start);
 
     // secondary control variables:
     bool doneTogglingShoot = false;

@@ -424,6 +424,9 @@ void Drivebase::getNextAutonStep(const RobotData &robotData, DrivebaseData &driv
             // frc::SmartDashboard::PutBoolean("odometryInitialized", odometryInitialized);
         }
     }
+    else {
+        drivebaseData.driveMode = driveMode_break;
+    }
 }
 
 void Drivebase::turnInPlaceAuton(double degrees, const RobotData &robotData, DrivebaseData &drivebaseData, AutonData &autonData) {
