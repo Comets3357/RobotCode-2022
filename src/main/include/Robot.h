@@ -51,6 +51,7 @@ private:
     ColorSensor colorSensor{};
     Auton auton{};
     LEDs LED{};
+    BenchTest benchTest{};
     
 
     // subsystems

@@ -38,6 +38,7 @@ public:
     void RobotPeriodic(const RobotData &robotData, IndexerData &indexerData);
     void DisabledInit();
     void DisabledPeriodic(const RobotData &robotData, IndexerData &indexerData);
+    void TestPeriodic(const RobotData &robotData, IndexerData &indexerData);
 
 private:
     void updateData(const RobotData &robotData, IndexerData &indexerData);

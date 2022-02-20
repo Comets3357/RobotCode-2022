@@ -443,3 +443,32 @@ void Indexer::indexerWheelInit(){
     indexerWheel.SetSmartCurrentLimit(25);
 }
 
+//BENCH TEST CODE
+void Indexer::TestPeriodic(const RobotData &robotData, IndexerData &indexerData){
+    frc::SmartDashboard::PutNumber("Color sensor number", robotData.colorSensorData.colorValue);
+    frc::SmartDashboard::PutNumber("First indexer encoder", indexerBeltEncoder.GetPosition());
+    frc::SmartDashboard::PutNumber("Second indexer encoder", indexerWheelEncoder.GetPosition());
+
+    if (robotData.benchTestData.testStage == BenchTestStage::BenchTestStage_Indexer && robotData.controlData.startBenchTest){ //checks if we're testing indexer
+        if (robotData.benchTestData.stage == 0){
+            //run wheel forwards
+            indexerWheel.Set(robotData.benchTestData.currentSpeed); //sets the wheel speed
+            indexerBelt.Set(0); //sets the belt speed
+        } else if (robotData.benchTestData.stage == 1){
+            //run wheel backwards
+            indexerWheel.Set(-robotData.benchTestData.currentSpeed);
+            indexerBelt.Set(0);
+        } else if (robotData.benchTestData.stage == 2){
+            //run belt forwards
+            indexerBelt.Set(robotData.benchTestData.currentSpeed);
+            indexerWheel.Set(0);
+        } else if (robotData.benchTestData.stage == 3){
+            //run belt backwards
+            indexerBelt.Set(-robotData.benchTestData.currentSpeed);
+            indexerWheel.Set(0);
+        }
+    } else {
+        indexerWheel.Set(0);
+        indexerBelt.Set(0);
+    }
+}
