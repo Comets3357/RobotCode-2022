@@ -40,7 +40,7 @@ public:
 
 private:
 
-    float elevatorSpeed = 0.6;
+    float elevatorSpeed = 0.9;
     float armsSpeed = 1;
 
     void climbInit(const RobotData &robotData, ClimbData &climbData);
@@ -83,6 +83,9 @@ private:
 
     void WaitUntilGyro(int cmp, float gyroValue, int stageAdd);
     void CheckGyroPosition(int cmp, float gyroValue, int failAdd, int successAdd);
+
+    void PullBotOff(int position, float gyro, int stageAdd, int onBar);
+    void waitTillDirection(int direction, float value, int stageAdd, int bar);
 
 
     //CHANGE MOTOr ID STUFF  (just outline lol don't take your life too seriously:))
