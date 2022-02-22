@@ -48,6 +48,7 @@ class Shooter{
         void shooterHoodInit();
 
         double getWheelVel();
+        void setShooterWheel(double speed);
 
         //FIXED SHOTS
         void outerLaunch(const RobotData &robotData);

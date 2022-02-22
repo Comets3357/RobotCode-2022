@@ -66,9 +66,8 @@ void Intake::RobotPeriodic(const RobotData &robotData, IntakeData &intakeData)
             //     }
             // }else{ 
 
-            // }
+            // }          
             manual(robotData, intakeData);
-
             
         }
         else if (robotData.controlData.mode == mode_teleop_sa)
@@ -86,7 +85,6 @@ void Intake::RobotPeriodic(const RobotData &robotData, IntakeData &intakeData)
         pivotInit();
     }
 
-    // add fault case for singulator?
 
 }
 
@@ -165,12 +163,6 @@ void Intake::manual(const RobotData &robotData, IntakeData &intakeData){
     }else{
         intakeRollers.Set(0);
     }
-
-     if(robotData.controlData.mZeroHood)
-    {
-        intakePivotEncoderRev.SetPosition(0);
-    }
-
 
 }
 
