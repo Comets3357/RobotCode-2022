@@ -40,7 +40,7 @@ public:
 
 private:
 
-    float elevatorSpeed = 0.9;
+    float elevatorSpeed = 0.8;
     float armsSpeed = 1;
 
     void climbInit(const RobotData &robotData, ClimbData &climbData);
