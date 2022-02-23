@@ -7,10 +7,6 @@ void Intake::RobotInit()
     pivotInit();
     rollersInit();
     singulatorInit();
-                
-    intakePivotEncoderRev.SetPosition(0);
-    intakeRollersEncoder.SetPosition(0);
-    intakeSingulatorEncoder.SetPosition(0);
 
     intakePivot.Set(0);
     intakeRollers.Set(0);

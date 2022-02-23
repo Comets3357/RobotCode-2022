@@ -247,20 +247,31 @@ void Climb::runSequence(const RobotData &robotData, ClimbData &climbData)
     //starts going up to bar
     if (executeSequence && climbData.bar < 4)
     { //checks if you want to run the sequence, and also if you're already at bar 4, then you can't run it
-        if (stage == 0) RunArmsAndElevatorToPos(0,1,0,0,1); //Elevator goes down to latch on 2nd/3rd bar
-        else if (stage == 1) ZeroElevator(0.5,1);
-        else if (stage == 2) RunArmsToPos(70,1,0); //Elevator goes up to latch the arms onto the bar with the elevator a little above
-        else if (stage == 3) RunElevatorToPos(30,1,0); //Outer Arms pivot the robot so the elevator is facing the next bar
-        else if (stage == 4) ChangeElevatorSpeed(1,1);
-        else if (stage == 5) RunArmsAndElevatorToPos(100,0,200,1,1);
-        else if (stage == 6) WaitUntilGyro(-1, -42, 1);
-        else if (stage == 7) RunElevatorToPos(144.5,1,1);
-        else if (stage == 8) ChangeElevatorSpeed(elevatorSpeed,1);
-        else if (stage == 9) RunArmsToPos(140,1,1);
-        else if (stage == 10) ChangeElevatorSpeed(0.5, 1);
-        else if (stage == 11) RunElevatorToPos(110,1,1);
-        else if (stage == 12) ChangeElevatorSpeed(elevatorSpeed, 1);
-        else if (stage == 13)
+        if (stage == 0)
+        {
+            if (climbData.bar == 2)
+            {
+                ChangeElevatorSpeed(1,1);
+            } else {
+                stage += 1;
+            }
+        }
+        else if (stage == 1) RunArmsAndElevatorToPos(25,1,0,0,1); //Elevator goes down to latch on 2nd/3rd bar
+        else if (stage == 2) RunElevatorToPos(0,1,1);
+        else if (stage == 3) ChangeElevatorSpeed(elevatorSpeed, 1);
+        else if (stage == 4) ZeroElevator(0.8,1);
+        else if (stage == 5) RunArmsToPos(70,1,0); //Elevator goes up to latch the arms onto the bar with the elevator a little above
+        else if (stage == 6) RunElevatorToPos(30,1,0); //Outer Arms pivot the robot so the elevator is facing the next bar
+        else if (stage == 7) ChangeElevatorSpeed(1,1);
+        else if (stage == 8) RunArmsAndElevatorToPos(110,0,200,1,1);
+        else if (stage == 9) WaitUntilGyro(-1, -40, 1);
+        else if (stage == 10) RunElevatorToPos(144.5,1,1);
+        else if (stage == 11) ChangeElevatorSpeed(elevatorSpeed,1);
+        else if (stage == 12) RunArmsToPos(130,1,1);
+        else if (stage == 13) ChangeElevatorSpeed(0.5, 1);
+        else if (stage == 14) RunElevatorToPos(110,1,1);
+        else if (stage == 15) ChangeElevatorSpeed(elevatorSpeed, 1);
+        else if (stage == 16)
         { //do it again if the bot isnt on the top bar
             //resets everything
             stage = 0;
