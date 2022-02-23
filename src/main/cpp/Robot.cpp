@@ -1,4 +1,5 @@
 #include "Robot.h"
+#include <frc/livewindow/LiveWindow.h>
 
 void Robot::RobotInit()
 {
@@ -18,14 +19,14 @@ void Robot::RobotPeriodic()
     limelight.RobotPeriodic(robotData, robotData.limelightData, visionLookup);
     colorSensor.RobotPeriodic(robotData);
     visionLookup.RobotPeriodic(robotData, robotData.visionLookupData);
-    // LED.RobotPeriodic(robotData);
+    LED.RobotPeriodic(robotData);
 
     frc::SmartDashboard::PutNumber("mode", robotData.controlData.mode);
 
     //frc::SmartDashboard::PutNumber("mode", robotData.controlData.mode);
 
 
-    if (IsEnabled())
+    if (IsEnabled() && !IsTest())
     {
         otherComponents.RobotPeriodic(robotData.otherComponentsData);
         drivebase.RobotPeriodic(robotData, robotData.drivebaseData, robotData.autonData);
@@ -80,8 +81,36 @@ void Robot::DisabledPeriodic()
     intake.updateData(robotData, robotData.intakeData);
     indexer.DisabledPeriodic(robotData, robotData.indexerData);
 }
-void Robot::TestInit() {}
-void Robot::TestPeriodic() {}
+
+
+void Robot::TestInit(){
+    frc::LiveWindow::SetEnabled(false); // to block their weird dashboard thing
+    frc::SmartDashboard::PutBoolean("Does this even reach this test function", true);
+
+    gyro.RobotInit();
+
+    drivebase.RobotInit();
+    intake.RobotInit();
+    indexer.RobotInit();
+    shooter.RobotInit();
+    climb.RobotInit();
+    climb.TestInit(robotData.climbData);
+}
+
+//BENCH TEST CODE
+void Robot::TestPeriodic(){
+    frc::SmartDashboard::PutBoolean("Does this even reach this test function x2", true);
+
+    //runs all of the test functions (and one controller function) so things actually run
+    controller.TestPeriodic(robotData, robotData.controllerData, robotData.controlData);
+    benchTest.TestPeriodic(robotData, robotData.benchTestData);
+
+    climb.TestPeriodic(robotData, robotData.climbData);
+    drivebase.TestPeriodic(robotData, robotData.drivebaseData);
+    indexer.TestPeriodic(robotData, robotData.indexerData);
+    intake.TestPeriodic(robotData, robotData.intakeData);
+    shooter.TestPeriodic(robotData, robotData.shooterData);
+}
 
 #ifndef RUNNING_FRC_TESTS
 int main()
