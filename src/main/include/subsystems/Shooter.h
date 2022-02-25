@@ -43,7 +43,7 @@ class Shooter{
         double convertFromAbsToAngle(double abs);
         double absoluteToREV(double value);
         void checkReadyShoot(ShooterData &shooterData);
-
+        
         void flyWheelInit();
         void shooterHoodInit();
 

@@ -98,14 +98,18 @@ void Shooter::RobotPeriodic(const RobotData &robotData, ShooterData &shooterData
 
 void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
 
+    encoderPluggedIn(shooterData);
+
     //SHOOTING LOGIC
     if(robotData.controlData.shootMode == shootMode_vision){ // Aiming with limelight
         //set the hood and flywheel using pids to the desired values based off the limelight code
-        if(frc::DriverStation::GetBatteryVoltage() > 12.6){
-            flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
-        }else{
-            flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel+60, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
-        }
+        // if(frc::DriverStation::GetBatteryVoltage() > 12.6){
+        //     flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
+        // }else{
+        //     flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel+60, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
+        // }
+        flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel+20, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
+
         shooterHood_pidController.SetReference(absoluteToREV(convertFromAngleToAbs(robotData.limelightData.desiredHoodPos)), rev::CANSparkMaxLowLevel::ControlType::kPosition);
         
         //FOR TESTING PURPOSES
@@ -116,10 +120,11 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
 
         //once it's a high enough velocity its ready for indexer to run
         if (shooterData.readyShoot == false && (getWheelVel() > (robotData.limelightData.desiredVel - 30)))
-        // if you're not in readyShoot yet and the wheel velocity is above 30 under the desire velocity, readyShoot will become true
+        //if you're not in readyShoot yet and the wheel velocity is above 30 under the desire velocity, readyShoot will become true
         {
             shooterData.readyShoot = true;
         }
+        //else
         else if (shooterData.readyShoot == true && (getWheelVel() < (robotData.limelightData.desiredVel - 100)))
         // if you're already in readyShoot, you'll only exit readyShoot if the wheel velocity drops below 100 below the desired velocity
         {
@@ -205,7 +210,7 @@ void Shooter::updateData(const RobotData &robotData, ShooterData &shooterData)
     frc::SmartDashboard::PutBoolean("shooter ready shoot", shooterData.readyShoot);
     frc::SmartDashboard::PutNumber("HOOD ANGLE", convertFromAbsToAngle(shooterHoodEncoderAbs.GetOutput()));
     frc::SmartDashboard::PutNumber("flywheel vel", flyWheelLeadEncoder.GetVelocity());
-    // frc::SmartDashboard::PutNumber("DESIRED VEL", robotData.limelightData.desiredVel);
+    frc::SmartDashboard::PutNumber("DESIRED VEL", robotData.limelightData.desiredVel);
 
     // frc::SmartDashboard::PutNumber("shootMode", robotData.controlData.shootMode);
     // frc::SmartDashboard::PutBoolean("saShooting", robotData.controlData.saShooting);
@@ -360,7 +365,22 @@ void Shooter::checkReadyShoot(ShooterData &shooterData){
     }
 }
 
-//BENCH TEST CODE
+//for checking voltage and setting the set shot wheel speed accordingly
+void Shooter::setShooterWheel(double speed){
+    if(frc::DriverStation::GetBatteryVoltage() > 12.5){
+        flyWheelLead_pidController.SetReference(speed, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
+    }else{
+        flyWheelLead_pidController.SetReference(speed+40, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
+    }
+}
+
+
+
+/**
+ * ---------------------------------------------------------------------------------------------------------------------------------------------------
+ * BENCH TEST CODE
+ * ---------------------------------------------------------------------------------------------------------------------------------------------------
+ * */
 void Shooter::TestPeriodic(const RobotData &robotData, ShooterData &shooterData){
     frc::SmartDashboard::PutBoolean("Shooter abs encoder working", encoderPluggedIn(shooterData));
     frc::SmartDashboard::PutBoolean("Shooter abs encoder reading in correct range", encoderInRange(shooterData));
@@ -465,14 +485,6 @@ void Shooter::checkDeadStop(ShooterData &shooterData){
     } else {
         shooterData.topDeadStop = false;
         shooterData.bottomDeadStop = false;
-    }
-}
-//for checking voltage and setting the set shot wheel speed accordingly
-void Shooter::setShooterWheel(double speed){
-    if(frc::DriverStation::GetBatteryVoltage() > 12.5){
-        flyWheelLead_pidController.SetReference(speed, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
-    }else{
-        flyWheelLead_pidController.SetReference(speed+40, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
     }
 }
 

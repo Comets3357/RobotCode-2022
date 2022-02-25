@@ -312,7 +312,7 @@ bool Indexer::pauseBelt(const RobotData &robotData, IndexerData &indexerData){
 
     if(indexerData.topBeamToggledOn){   // the top sensor was just toggled on
                                         // concern: if it was toggled on due to belt slippage?
-        pauseBeltCount = 2;             // set pause belt count for .1s
+        pauseBeltCount = 5;             // set pause belt count for .1s
         return true;
     } else if (pauseBeltCount > 0){
         pauseBeltCount--;
@@ -433,7 +433,7 @@ void Indexer::indexerBeltInit(){
     indexerBelt.RestoreFactoryDefaults();
     indexerBelt.SetInverted(true);
     indexerBelt.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-    indexerBelt.SetSmartCurrentLimit(15);
+    indexerBelt.SetSmartCurrentLimit(25);
 }
 
 void Indexer::indexerWheelInit(){

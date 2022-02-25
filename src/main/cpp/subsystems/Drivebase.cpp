@@ -30,10 +30,10 @@ void Drivebase::RobotInit()
   *  Use supply current limits to prevent breakers from tripping
   *
   *                                                               enabled | Limit(amp) | Trigger Threshold(amp) | Trigger Threshold Time(s)  */
-    dbL.ConfigStatorCurrentLimit(StatorCurrentLimitConfiguration(true, 45, 50, 1.0));
-    dbLF.ConfigStatorCurrentLimit(StatorCurrentLimitConfiguration(true, 45, 50, 1.0));
-    dbR.ConfigStatorCurrentLimit(StatorCurrentLimitConfiguration(true, 45, 50, 1.0));
-    dbRF.ConfigStatorCurrentLimit(StatorCurrentLimitConfiguration(true, 45, 50, 1.0));
+    dbL.ConfigStatorCurrentLimit(StatorCurrentLimitConfiguration(true, 75, 50, 1.0));
+    dbLF.ConfigStatorCurrentLimit(StatorCurrentLimitConfiguration(true, 75, 50, 1.0));
+    dbR.ConfigStatorCurrentLimit(StatorCurrentLimitConfiguration(true, 75, 50, 1.0));
+    dbRF.ConfigStatorCurrentLimit(StatorCurrentLimitConfiguration(true, 75, 50, 1.0));
 
     // PIDs for blue db
     /* dbL.Config_kF(0, 0.032514);

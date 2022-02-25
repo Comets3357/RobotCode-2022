@@ -22,9 +22,6 @@ void Robot::RobotPeriodic()
 
     frc::SmartDashboard::PutNumber("mode", robotData.controlData.mode);
 
-    //frc::SmartDashboard::PutNumber("mode", robotData.controlData.mode);
-
-
     if (IsEnabled())
     {
         otherComponents.RobotPeriodic(robotData.otherComponentsData);
@@ -76,8 +73,8 @@ void Robot::DisabledInit()
 
 void Robot::DisabledPeriodic() 
 {
-    shooter.updateData(robotData, robotData.shooterData);
-    intake.updateData(robotData, robotData.intakeData);
+    shooter.DisabledPeriodic(robotData, robotData.shooterData);
+    intake.DisabledPeriodic(robotData, robotData.intakeData);
     indexer.DisabledPeriodic(robotData, robotData.indexerData);
 }
 void Robot::TestInit() {}
