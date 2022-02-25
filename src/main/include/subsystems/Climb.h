@@ -42,6 +42,7 @@ private:
 
     float elevatorSpeed = 0.8;
     float armsSpeed = 1;
+    int zeroingTimer = 0;
 
     void climbInit(const RobotData &robotData, ClimbData &climbData);
     void cancelSequence(const RobotData &robotData, ClimbData &climbData);
@@ -80,6 +81,7 @@ private:
     void ZeroElevator(float power, int stageAdd);
 
     void ChangeElevatorSpeed(float speed, int stageAdd);
+    void ChangeElevatorSpeedOnBar(float speed, bool run, int stageAdd);
 
     void WaitUntilGyro(int cmp, float gyroValue, int stageAdd);
     void CheckGyroPosition(int cmp, float gyroValue, int failAdd, int successAdd);
