@@ -17,10 +17,11 @@ struct RobotData;
 struct ShooterData
 {
     bool readyShoot;
-    bool wrongBallReady;
     bool shootUnassignedAsOpponent;
-    bool isHighGeneral;
-
+    float benchTestShooterHoodSpeed = 0;
+    float benchTestFlyWheelSpeed = 0;
+    bool topDeadStop = false;
+    bool bottomDeadStop = false;
 };
 
 class Shooter{
@@ -29,9 +30,10 @@ class Shooter{
         void RobotInit();
         void RobotPeriodic(const RobotData &robotData, ShooterData &shooterData);
         void DisabledInit();
+        void DisabledPeriodic(const RobotData &robotData, ShooterData &shooterData);
         void EnabledInit(ShooterData &shooterData);
         void updateData(const RobotData &robotData, ShooterData &shooterData);
-
+        void TestPeriodic(const RobotData &robotData, ShooterData &shooterData);
     
     private:
         void manual(const RobotData &robotData, ShooterData &shooterData);
@@ -45,22 +47,19 @@ class Shooter{
         void flyWheelInit();
         void shooterHoodInit();
 
-        double getHoodPos();
-        double getWheelPos();
         double getWheelVel();
-        double getHoodOffset();
 
-        void setHood(double power);
-        void setWheel(double power);
-        void setHoodPos(double pos);
-        void setTurretPos(double pos);
-
-        void setHighHub(const RobotData &robotData);
+        //FIXED SHOTS
         void outerLaunch(const RobotData &robotData);
         void innerLaunch(const RobotData &robotData);
         void wall(const RobotData &robotData);
         void fender(const RobotData &robotData);
         void endOfTarmac(const RobotData &robotData);
+
+        //bench test
+        bool encoderPluggedIn(const ShooterData &shooterData);
+        bool encoderInRange(const ShooterData &shooterData);
+        void checkDeadStop(ShooterData &shooterData);
 
         int readyShootLimit;
         int tickCount;

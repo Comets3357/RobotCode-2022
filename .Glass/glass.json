@@ -1,5 +1,62 @@
 {
+  "NetworkTables": {
+    "SmartDashboard": {
+      "Field": {
+        "open": true
+      },
+      "open": true
+    },
+    "limelight": {
+      "open": true
+    },
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/LiveWindow/Ungrouped/DigitalInput[1]": "Digital Input",
+      "/LiveWindow/Ungrouped/DigitalInput[3]": "Digital Input",
+      "/LiveWindow/Ungrouped/DigitalInput[5]": "Digital Input",
+      "/LiveWindow/Ungrouped/DigitalInput[7]": "Digital Input",
+      "/LiveWindow/Ungrouped/DigitalInput[8]": "Digital Input",
+      "/LiveWindow/Ungrouped/DigitalInput[9]": "Digital Input",
+      "/LiveWindow/Ungrouped/navX-Sensor[4]": "Gyro",
+      "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/Select Auton:": "String Chooser"
+    },
+    "windows": {
+      "/SmartDashboard/Field": {
+        "Robot": {
+          "arrowColor": [
+            0.9843137264251709,
+            0.3803921639919281,
+            0.14509804546833038,
+            255.0
+          ],
+          "color": [
+            0.2666666805744171,
+            0.2666666805744171,
+            0.2666666805744171,
+            255.0
+          ],
+          "length": 0.9143999814987183,
+          "style": "Box/Image",
+          "width": 0.7620000243186951
+        },
+        "height": 8.229999542236328,
+        "image": "C:\\Users\\Travis-Chan Laptop\\Desktop\\COMETS\\Software\\RobotCode-2022\\PathWeaver\\FieldWidgetDiagram.png",
+        "width": 16.459999084472656,
+        "window": {
+          "visible": true
+        }
+      }
+    }
+  },
   "NetworkTables Log": {
     "visible": true
+  },
+  "NetworkTables Settings": {
+    "mode": "Client",
+    "serverTeam": "3357"
+  },
+  "NetworkTables View": {
+    "visible": false
   }
 }

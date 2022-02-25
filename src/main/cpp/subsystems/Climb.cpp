@@ -1,6 +1,12 @@
 #include "subsystems/Climb.h"
 #include "RobotData.h"
 
+// 1 overtild the bot so that there cannot be any bounceback
+// 2 wait until the bot is swinging forward before tilting the bot towards the bar
+// 3 when pulling off of the bar only pull when the gyro senses that the arms are on the bar
+// 4 shorten the extent when going up to the next bar so it will lock when moving onto the bar
+// 5 wait until the bot stops swinging
+
 void Climb::RobotInit()
 {
     //do other init stuff (probably more)
@@ -39,9 +45,6 @@ void Climb::RobotInit()
     climbArms_pidController.SetOutputRange(-armsSpeed, armsSpeed, 1);
     
 }
-
-//arms 0.25
-//arms 0.5
 
 void Climb::RobotPeriodic(const RobotData &robotData, ClimbData &climbData)
 {
@@ -108,6 +111,11 @@ void Climb::RobotPeriodic(const RobotData &robotData, ClimbData &climbData)
             }
         }
 
+    }
+
+    if (climbArmsAbs.GetOutput() > 0.811 && climbArms.Get() < 0)
+    {
+        climbArms.Set(0);
     }
 }
 
@@ -221,8 +229,7 @@ void Climb::runSequence(const RobotData &robotData, ClimbData &climbData)
         climbData.climbing = true;
         targetBar = 3; //reaches to bar 3
         ChangeElevatorSpeed(elevatorSpeed, 0);
-    }
-    //sets variables to go up to 4th bar
+    }//sets variables to go up to 4th bar
     else if (robotData.controlData.saclimbTraversalSequence)
     {//4th bar
         //stage = 0;//for testing
@@ -235,20 +242,23 @@ void Climb::runSequence(const RobotData &robotData, ClimbData &climbData)
     //starts going up to bar
     if (executeSequence && climbData.bar < 4)
     { //checks if you want to run the sequence, and also if you're already at bar 4, then you can't run it
-        if (stage == 0) RunArmsAndElevatorToPos(0,1,0,0,1); //Elevator goes down to latch on 2nd/3rd bar
-        else if (stage == 1) ZeroElevator(0.5,1);
-        else if (stage == 2) RunArmsToPos(70,1,0); //Elevator goes up to latch the arms onto the bar with the elevator a little above
-        else if (stage == 3) RunElevatorToPos(30,1,0); //Outer Arms pivot the robot so the elevator is facing the next bar
-        else if (stage == 4) RunArmsAndElevatorToPos(100,0,220,1,1);
-        else if (stage == 5) WaitUntilGyro(-1, -45, 1);
-        else if (stage == 6) RunElevatorToPos(144.5,1,1);
-        //else if (stage == 8) RunArmsToPos(200,1,1); //Elevator goes up to reach the next bar
-        else if (stage == 7) RunArmsToPos(135,1,1);
-        // else if (stage == 10) CheckGyroPosition(1, -50, -2, 1);
-        else if (stage == 8) ChangeElevatorSpeed(0.5, 1); //Outer arms pivot back to latch the elevator onto the 3rd bar
-        else if (stage == 9) RunElevatorToPos(100,1,1); //Elevator moves down to lift robot to the next bar. Outer arms move a little bit
-        else if (stage == 10) ChangeElevatorSpeed(elevatorSpeed, 1);
-        else if (stage == 11)
+        if (stage == 0) ChangeElevatorSpeedOnBar(1,climbData.bar==2,1);
+        else if (stage == 1) RunArmsAndElevatorToPos(25,1,0,0,1); //Elevator goes down to latch on 2nd/3rd bar
+        else if (stage == 2) RunElevatorToPos(0,1,1);
+        else if (stage == 3) ChangeElevatorSpeed(elevatorSpeed, 1);
+        else if (stage == 4) ZeroElevator(0.8,1);
+        else if (stage == 5) RunArmsToPos(70,1,0); //Elevator goes up to latch the arms onto the bar with the elevator a little above
+        else if (stage == 6) RunElevatorToPos(30,1,0); //Outer Arms pivot the robot so the elevator is facing the next bar
+        else if (stage == 7) ChangeElevatorSpeed(1,1);
+        else if (stage == 8) RunArmsAndElevatorToPos(110,0,200,1,1);
+        else if (stage == 9) WaitUntilGyro(-1, -40, 1);
+        else if (stage == 10) RunElevatorToPos(144.5,1,1);
+        else if (stage == 11) ChangeElevatorSpeed(elevatorSpeed,1);
+        else if (stage == 12) RunArmsToPos(130,1,1);
+        else if (stage == 13) ChangeElevatorSpeed(0.5, 1);
+        else if (stage == 14) RunElevatorToPos(110,1,1);
+        else if (stage == 15) ChangeElevatorSpeed(elevatorSpeed, 1);
+        else if (stage == 16)
         { //do it again if the bot isnt on the top bar
             //resets everything
             stage = 0;
@@ -264,6 +274,85 @@ void Climb::runSequence(const RobotData &robotData, ClimbData &climbData)
             climbArms.Set(0);
             climbElevator.Set(0);
         }
+    }
+}
+
+
+// updates encoder and gyro values
+void Climb::updateData(const RobotData &robotData, ClimbData &climbData)
+{
+    angularRate = robotData.gyroData.angularMomentum;
+    angle = robotData.gyroData.rawRoll;
+    
+    frc::SmartDashboard::PutNumber("encoder value", climbElevatorEncoder.GetPosition());
+    frc::SmartDashboard::PutBoolean("limitClimb", elevatorLimit.Get());
+    frc::SmartDashboard::PutNumber("climb value", climbElevator.Get());
+    frc::SmartDashboard::PutNumber("climb stage", angularRate);
+    frc::SmartDashboard::PutBoolean("climbInitiationg", climbInitiating);
+    frc::SmartDashboard::PutBoolean("executeSequence", executeSequence);
+    frc::SmartDashboard::PutNumber("armEncoder", climbArmsEncoder.GetPosition());
+    frc::SmartDashboard::PutNumber("armsAbs", climbArmsAbs.GetOutput());
+    frc::SmartDashboard::PutNumber("bar", climbData.bar);
+}
+
+void Climb::ChangeElevatorSpeedOnBar(float speed, bool run, int stageAdd)
+{
+    if (run)
+    {
+        ChangeElevatorSpeed(1,1);
+    } else {
+        stage += 1;
+    }
+}
+
+void Climb::waitTillDirection(int direction, float value, int stageAdd, int bar)
+{
+    if (direction == 1)
+    {
+        if (angularRate > value)
+        {
+            stage += stageAdd;
+        }
+    } else if (direction == -1)
+    {
+        if (angularRate < value)
+        {
+            stage += stageAdd;
+        }
+    }
+    if (bar != 3)
+    {
+        stage += stageAdd;
+    }
+}
+
+void Climb::PullBotOff(int position, float gyro, int stageAdd, int onBar)
+{
+    // if (climbElevatorEncoder.GetPosition() > position + 1 || climbElevatorEncoder.GetPosition() < position - 1)
+    // {
+
+        
+    // }
+    if (onBar){
+        if (angle > gyro)
+        {
+            climbElevator_pidController.SetReference(position, rev::CANSparkMax::ControlType::kPosition, onBar);
+        }
+        else
+        {
+            climbElevator.Set(0);
+            
+        }
+    } else{
+        climbElevator_pidController.SetReference(position, rev::CANSparkMax::ControlType::kPosition, onBar);
+    }
+    elevatorRunning = true;
+    if (angle > -20)
+    {
+        climbElevator.Set(0);
+        elevatorRunning = false;
+        climbInitiating = false;
+        stage += stageAdd;
     }
 }
 
@@ -308,14 +397,14 @@ void Climb::WaitUntilGyro(int cmp, float gyroValue, int stageAdd)
 {
     if (cmp == 1)
     {
-        if (gyroValue < angle)
+        if (gyroValue < angle && angularRate > 10)
         {
             stage += stageAdd;
         }
     }
     else if (cmp == -1)
     {
-        if (gyroValue > angle)
+        if (gyroValue > angle && angularRate > 10)
         {
             stage += stageAdd;
         }
@@ -344,21 +433,6 @@ void Climb::DisabledInit()
     climbArms.Set(0);
 }
 
-// updates encoder and gyro values
-void Climb::updateData(const RobotData &robotData, ClimbData &climbData)
-{
-    angularRate = robotData.gyroData.angularMomentum;
-    angle = robotData.gyroData.rawRoll;
-    
-    frc::SmartDashboard::PutNumber("encoder value", climbElevatorEncoder.GetPosition());
-    frc::SmartDashboard::PutBoolean("limitClimb", elevatorLimit.Get());
-    frc::SmartDashboard::PutNumber("climb value", climbElevator.Get());
-    frc::SmartDashboard::PutNumber("climb stage", angularRate);
-    frc::SmartDashboard::PutBoolean("climbInitiationg", climbInitiating);
-    frc::SmartDashboard::PutBoolean("executeSequence", executeSequence);
-    frc::SmartDashboard::PutNumber("armEncoder", climbArmsEncoder.GetPosition());
-    frc::SmartDashboard::PutNumber("armsAbs", climbArmsAbs.GetOutput());
-}
 
 //runs update when disabled
 void Climb::DisabledPeriodic(const RobotData &robotData, ClimbData &climbData)
@@ -373,9 +447,9 @@ void Climb::RunElevatorToPos(int position, int stageAdd, int onBar)
     {
         elevatorRunning = true;
         if (onBar){
-            if (abs(angularRate) < 40)
+            if (abs(angularRate) < 60)
             {
-                climbElevator_pidController.SetReference(position, rev::ControlType::kPosition, onBar);
+                climbElevator_pidController.SetReference(position, rev::CANSparkMax::ControlType::kPosition, onBar);
             }
             else
             {
@@ -383,7 +457,7 @@ void Climb::RunElevatorToPos(int position, int stageAdd, int onBar)
                 
             }
         } else{
-            climbElevator_pidController.SetReference(position, rev::ControlType::kPosition, onBar);
+            climbElevator_pidController.SetReference(position, rev::CANSparkMax::ControlType::kPosition, onBar);
         }
         elevatorRunning = true;
         
@@ -403,7 +477,7 @@ void Climb::RunArmsToPos(int position, int stageAdd, int onBar)
     if (climbArmsEncoder.GetPosition() > position + 1 || climbArmsEncoder.GetPosition() < position - 1)
     {
         armsRunning = true;
-        climbArms_pidController.SetReference(position, rev::ControlType::kPosition, onBar);
+        climbArms_pidController.SetReference(position, rev::CANSparkMax::ControlType::kPosition, onBar);
     }
     else
     {
@@ -431,11 +505,140 @@ void Climb::ZeroElevator(float power, int stageAdd)
     {
         elevatorRunning = true;
         climbElevator.Set(-abs(power));
+        zeroingTimer += 1;
     }
     else 
     {
         climbElevator.Set(0);
         elevatorRunning = false;
         stage += stageAdd;
+        zeroingTimer = 0;
+    }
+    if (zeroingTimer > 20)
+    {
+        climbElevator.Set(0);
+        elevatorRunning = false;
+        stage += stageAdd;
+        zeroingTimer = 0;
     }
 }
+
+
+void Climb::TestInit(ClimbData &climbData){
+    elevatorLimitSwitchWorking(climbData); //checks if the limits switch starts in false, which it's supposed to; if it doesn't start in false, then the bench test won't run
+    climbArms.SetInverted(true);
+}
+
+//BENCH TEST CODE
+void Climb::TestPeriodic(const RobotData &robotData, ClimbData &climbData){
+    //gets sensor values and prints them to the smart dashboard
+    frc::SmartDashboard::PutNumber("Arms encoder value", climbArmsEncoder.GetPosition());
+    frc::SmartDashboard::PutBoolean("Elevator limit switch state", elevatorLimit.Get());
+    frc::SmartDashboard::PutBoolean("Arms encoder reading in correct range", armsEncoderInRange(climbData));
+    frc::SmartDashboard::PutBoolean("Elevator encoder reading in correct range", elevatorEncoderInRange(climbData));
+    frc::SmartDashboard::PutBoolean("Climb limit switch working", climbData.limitSwitchWorking);
+    frc::SmartDashboard::PutNumber("arms speed", climbData.benchTestClimbArmsSpeed);
+    frc::SmartDashboard::PutNumber("elevator speed", climbData.benchTestClimbElevatorSpeed);
+    frc::SmartDashboard::PutBoolean("Elevator hit top dead stop", climbData.upperLimit);
+    frc::SmartDashboard::PutBoolean("Elevator hit bottom dead stop", climbData.lowerLimit);
+    frc::SmartDashboard::PutBoolean("Arms hit top dead stop", climbData.armsUpperLimit);
+    frc::SmartDashboard::PutBoolean("Arms hit lower dead stop", climbData.armsLowerLimit);
+
+    checkElevatorDeadStop(climbData);
+    checkArmsDeadStop(climbData);
+
+    if (robotData.benchTestData.testStage == BenchTestStage::BenchTestStage_Climb && robotData.controlData.startBenchTest){ //checks if we're testing climb
+        if (climbData.limitSwitchWorking){ //checks if the limit switch is working
+            if (robotData.benchTestData.stage == 0){
+                //move climb arms forwards
+                climbData.benchTestClimbArmsSpeed = .1; //sets the arms speed
+                climbData.benchTestClimbElevatorSpeed = 0; //sets the elevator speed
+            } else if (robotData.benchTestData.stage == 1){
+                //move climb arms backwards
+                climbData.benchTestClimbArmsSpeed = -.1;
+                climbData.benchTestClimbElevatorSpeed = 0;
+            } else if (robotData.benchTestData.stage == 2){
+                //move climb elevator up
+                climbData.benchTestClimbArmsSpeed = 0;
+                climbData.benchTestClimbElevatorSpeed = .1;
+            } else if (robotData.benchTestData.stage == 3){
+                //move climb elevator down
+                climbData.benchTestClimbArmsSpeed = 0;
+                climbData.benchTestClimbElevatorSpeed = -.1;
+            }
+        }
+
+        //uses the variables in the above ^ code to set the motor speeds (also checks if the motor has hit a dead stop, and if so, the motor stops)
+        if (!climbData.upperLimit && !climbData.lowerLimit){
+            climbElevator.Set(climbData.benchTestClimbElevatorSpeed);
+        } else {
+            climbElevator.Set(0);
+        }
+
+        if (!climbData.armsUpperLimit && !climbData.armsLowerLimit){
+            climbArms.Set(climbData.benchTestClimbArmsSpeed);
+        } else {
+            climbArms.Set(0);
+        }
+    } else {
+        climbData.benchTestClimbArmsSpeed = 0;
+        climbData.benchTestClimbElevatorSpeed = 0;
+    }
+}
+
+//sets the limits so the robot doesn't break while running this code
+void Climb::checkElevatorDeadStop(ClimbData &climbData){
+    if (climbElevatorEncoder.GetPosition() >= 50 && climbData.benchTestClimbElevatorSpeed > 0){
+        climbData.upperLimit = true;
+        climbData.lowerLimit = false;
+    } else if (!elevatorLimit.Get() && climbData.benchTestClimbElevatorSpeed < 0){
+        climbData.upperLimit = false;
+        climbData.lowerLimit = true;
+    } else {
+        climbData.upperLimit = false;
+        climbData.lowerLimit = false;
+    }
+}
+
+//sets the limits so the robot doesn't break while running this code
+void Climb::checkArmsDeadStop(ClimbData &climbData){
+    if (climbArmsEncoder.GetPosition() >= 100 && climbData.benchTestClimbArmsSpeed > 0){
+        climbData.armsUpperLimit = false;
+        climbData.armsLowerLimit = true;
+    } else if (climbArmsEncoder.GetPosition() <= 0 && climbData.benchTestClimbArmsSpeed < 0){
+        climbData.armsUpperLimit = true;
+        climbData.armsLowerLimit = false;
+    } else {
+        climbData.armsUpperLimit = false;
+        climbData.armsLowerLimit = false;
+    }
+}
+
+//checks if the encoder is reading values in the expected range
+bool Climb::armsEncoderInRange(const ClimbData &climbData){
+    if (climbArmsEncoder.GetPosition() > 0 && climbArmsEncoder.GetPosition() < 250){
+        return true;
+    } else {
+        return false;
+    }
+}
+
+//checks if the encoder is reading values in the expected range
+bool Climb::elevatorEncoderInRange(const ClimbData &climbData){
+    if (climbElevatorEncoder.GetPosition() > 0 && climbElevatorEncoder.GetPosition() < 250){
+        return true;
+    } else {
+        return false;
+    }
+}
+
+//checks if the limit switch is working
+void Climb::elevatorLimitSwitchWorking(ClimbData &climbData){
+    if (elevatorLimit.Get()){
+        climbData.limitSwitchWorking = false; //false to indicate that the limit switch isn't functioning
+    } else {
+        climbData.limitSwitchWorking = true;
+    }
+}
+
+//note for future self: make new things for arms absolute encoder for bench test

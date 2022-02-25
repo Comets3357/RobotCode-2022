@@ -30,34 +30,33 @@ void Drivebase::RobotInit()
   *  Use supply current limits to prevent breakers from tripping
   *
   *                                                               enabled | Limit(amp) | Trigger Threshold(amp) | Trigger Threshold Time(s)  */
-    dbL.ConfigStatorCurrentLimit(StatorCurrentLimitConfiguration(true, 45, 50, 1.0));
-    dbLF.ConfigStatorCurrentLimit(StatorCurrentLimitConfiguration(true, 45, 50, 1.0));
-    dbR.ConfigStatorCurrentLimit(StatorCurrentLimitConfiguration(true, 45, 50, 1.0));
-    dbRF.ConfigStatorCurrentLimit(StatorCurrentLimitConfiguration(true, 45, 50, 1.0));
+    dbL.ConfigStatorCurrentLimit(StatorCurrentLimitConfiguration(true, 75, 50, 1.0));
+    dbLF.ConfigStatorCurrentLimit(StatorCurrentLimitConfiguration(true, 75, 50, 1.0));
+    dbR.ConfigStatorCurrentLimit(StatorCurrentLimitConfiguration(true, 75, 50, 1.0));
+    dbRF.ConfigStatorCurrentLimit(StatorCurrentLimitConfiguration(true, 75, 50, 1.0));
 
     // PIDs for blue db
-    dbL.Config_kF(0, 0.032514);
+    /* dbL.Config_kF(0, 0.032514);
     dbL.Config_kP(0, 0.038723);
     dbL.Config_kD(0, 0);
 
     dbR.Config_kF(0, 0.032514);
     dbR.Config_kP(0, 0.038723);
-    dbR.Config_kD(0, 0);
+    dbR.Config_kD(0, 0); */
 
     // PIDs for 2022
-    /* dbL.Config_kF(0, 0.073067);
-    dbL.Config_kP(0, 0.19673);
+    dbL.Config_kF(0, 0.072659);
+    dbL.Config_kP(0, 0.67606);
     dbL.Config_kD(0, 0);
 
-    dbR.Config_kF(0, 0.073067);
-    dbR.Config_kP(0, 0.19673);
-    dbR.Config_kD(0, 0); */
+    dbR.Config_kF(0, 0.072659);
+    dbR.Config_kP(0, 0.67606);
+    dbR.Config_kD(0, 0);
 
     setPercentOutput(0, 0);
 
 
     odometryInitialized = false;
-    // frc::SmartDashboard::PutData("Field", &field);
 }
 
 void Drivebase::TeleopInit(const RobotData &robotData) {
@@ -102,10 +101,10 @@ void Drivebase::DisabledInit()
 {
     
     setPercentOutput(0, 0);
-    dbL.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
-    dbLF.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
-    dbR.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
-    dbRF.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
+    dbL.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
+    dbLF.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
+    dbR.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
+    dbRF.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
     odometryInitialized = false;
 }
 
@@ -130,11 +129,13 @@ void Drivebase::updateData(const RobotData &robotData, DrivebaseData &drivebaseD
 void Drivebase::teleopControl(const RobotData &robotData, DrivebaseData &drivebaseData)
 {
     // assign drive mode
-    if (robotData.controlData.lDrive != 0 || robotData.controlData.rDrive != 0) {
+    if ((robotData.controlData.lDrive <= -0.08 || robotData.controlData.lDrive >= 0.08) || (robotData.controlData.rDrive <= -0.08 || robotData.controlData.rDrive >= 0.08)) {
         drivebaseData.driveMode = driveMode_joystick;
     }
     else if (robotData.controlData.shootMode == shootMode_vision) {
         drivebaseData.driveMode = driveMode_turnInPlace;
+    } else {
+        drivebaseData.driveMode = driveMode_joystick;
     }
 
 
@@ -169,7 +170,7 @@ void Drivebase::teleopControl(const RobotData &robotData, DrivebaseData &driveba
         setPercentOutput(tempLDrive, tempRDrive);
     }
     else if (drivebaseData.driveMode == driveMode_turnInPlace) {
-        // turnInPlaceTeleop(robotData.limelightData.angleOffset, robotData);
+        turnInPlaceTeleop(-robotData.limelightData.angleOffset, robotData);
     }
 }
 
@@ -191,7 +192,7 @@ void Drivebase::autonControl(const RobotData &robotData, DrivebaseData &drivebas
             setVelocity(0, 0);
         }
         // frc::SmartDashboard::PutNumber("breakEndSec", breakEndSec);
-        if (robotData.timerData.secSinceEnabled > breakEndSec) {
+        if (robotData.timerData.secSinceEnabled > breakEndSec && robotData.controlData.shootMode == shootMode_none) {
             frc::SmartDashboard::PutNumber("secSinceEnabled", robotData.timerData.secSinceEnabled);
             frc::SmartDashboard::PutNumber("breakEndSec", breakEndSec);
             getNextAutonStep(robotData, drivebaseData, autonData);
@@ -249,7 +250,9 @@ void Drivebase::updateOdometry(const RobotData &robotData, DrivebaseData &driveb
 
     odometry.Update(currentRotation, leftDistance, rightDistance);
 
-    // field.SetRobotPose(odometry.GetPose());
+    field.SetRobotPose(odometry.GetPose());
+    frc::SmartDashboard::PutData("Field", &field);
+
 
     drivebaseData.currentPose = odometry.GetPose();
     frc::SmartDashboard::PutNumber("currentPoseX", drivebaseData.currentPose.Translation().X().to<double>());
@@ -421,6 +424,9 @@ void Drivebase::getNextAutonStep(const RobotData &robotData, DrivebaseData &driv
             // frc::SmartDashboard::PutBoolean("odometryInitialized", odometryInitialized);
         }
     }
+    else {
+        drivebaseData.driveMode = driveMode_break;
+    }
 }
 
 void Drivebase::turnInPlaceAuton(double degrees, const RobotData &robotData, DrivebaseData &drivebaseData, AutonData &autonData) {
@@ -450,8 +456,8 @@ void Drivebase::turnInPlaceAuton(double degrees, const RobotData &robotData, Dri
         // frc::SmartDashboard::PutString("AUTON", "TURN IN PLACE");
     } else {
         // profile that adjusts aggressiveness of turn based on the amount of degrees left to turn. has been tuned for speed & accuracy on both small and large turns
-        leftOutput = std::pow(std::abs(degrees / 361), 1) + 0.07;
-        rightOutput = std::pow(std::abs(degrees / 361), 1) + 0.07;
+        leftOutput = std::pow(std::abs(degrees / 361), 1) + 0.12;
+        rightOutput = std::pow(std::abs(degrees / 361), 1) + 0.12;
     }
     
 
@@ -477,7 +483,7 @@ void Drivebase::turnInPlaceTeleop(double degrees, const RobotData &robotData) {
         directionFactor = -1;
     }
 
-    if (allValuesWithin(lastDegrees, 1)) {
+    if (allValuesWithin(lastDegrees, 3)) {
         setPercentOutput(0, 0);
         // frc::SmartDashboard::PutString("TELEOP", "TURN IN PLACE");
     } else {
@@ -514,4 +520,30 @@ void Drivebase::sendStartPointChooser() {
     startPointChooser.AddOption("(0, 0), 0 deg", getPose(0, 0, 0));
     startPointChooser.AddOption("(3, 1), 90 deg", getPose(3, 1, 90));
     frc::SmartDashboard::PutData("Select Start Point:", &startPointChooser);
+}
+
+//BENCH TEST CODE
+void Drivebase::TestPeriodic(const RobotData &robotData, DrivebaseData &drivebaseData){
+    if (robotData.benchTestData.testStage == BenchTestStage::BenchTestStage_Drivebase && robotData.controlData.startBenchTest){ //checks if we're testing drivebase
+        if (robotData.benchTestData.stage == 0){
+            //move right motors forwards
+            dbR.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, robotData.benchTestData.currentSpeed); //sets the right side speed
+            dbL.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0); //sets the left side speed
+        } else if (robotData.benchTestData.stage == 1){
+            //move right motors backwards
+            dbR.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, -robotData.benchTestData.currentSpeed);
+            dbL.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
+        } else if (robotData.benchTestData.stage == 2){
+            //move left motors forwards
+            dbR.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
+            dbL.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, robotData.benchTestData.currentSpeed);
+        } else if (robotData.benchTestData.stage == 3){
+            //move left motors backwards
+            dbR.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
+            dbL.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, -robotData.benchTestData.currentSpeed);
+        }
+    } else {
+        dbR.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
+        dbL.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
+    }
 }

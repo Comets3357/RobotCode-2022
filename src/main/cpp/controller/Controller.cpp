@@ -15,6 +15,11 @@ void Controller::TeleopPeriodic(const RobotData &robotData, ControllerData &cont
     updateShootMode(robotData, controlData);
 }
 
+void Controller::TestPeriodic(const RobotData &robotData, ControllerData &controllerData, ControlData &controlData){
+    updateBtnData(controllerData);
+    updateControlData(robotData, controllerData, controlData);
+}
+
 bool Controller::getBtn(int js, int index)
 {
     if (js == 1)
@@ -33,9 +38,13 @@ bool Controller::getBtnToggled(int js, int index)
     {
         return secondary.GetRawButtonPressed(index);
     }
-    else
+    else if (js == 0)
     {
         return primary.GetRawButtonPressed(index);
+    }
+    else
+    {
+        return testControl.GetRawButtonPressed(index);
     }
 }
 
@@ -120,5 +129,11 @@ void Controller::updateBtnData(ControllerData &controllerData)
     controllerData.sRTriggerToggled = getBtnToggled(1,3);
     controllerData.sLTriggerToggled = getBtnToggled(1,3);
 
+    //bench test controls
 
+    controllerData.testAButton = getBtnToggled(2, 1);
+    controllerData.testBButton = getBtnToggled(2, 2);
+    controllerData.testXButton = getBtnToggled(2, 3);
+    controllerData.testYButton = getBtnToggled(2, 4);
+    controllerData.testRBumper = getBtnToggled(2, 6);
 }

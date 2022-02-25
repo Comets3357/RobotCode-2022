@@ -1,55 +1,40 @@
 
 #include "RobotData.h"
 
-void Limelight::RobotInit(const RobotData &robotData) 
-{
-    
-}
-
-/**
- * @return horizontal offset angle from limelight in radians
- */
-double Limelight::getHorizontalOffset()
-{
-    return table->GetNumber("tx", 0.0) * (pi / 180);
-}
-
 void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelightData, VisionLookup &visionLookup)
 {
     //updating data
-    limelightData.validTarget = table->GetNumber("tv", 0.0);
-    limelightData.distanceToTarget = distanceToTarget();
-    limelightData.xOffset =  table->GetNumber("tx", 0.0);
+    limelightData.validTarget = table->GetNumber("tv", 0.0); //valid target or not
+    limelightData.distanceToTarget = distanceToTarget(); 
+    limelightData.xOffset =  table->GetNumber("tx", 0.0) * (pi/180); //RADIANS
     limelightData.yOffset =  table->GetNumber("ty", 0.0);
+    limelightData.angleOffset = robotData.limelightData.angleOffset; //Degrees
 
     //turns off limelight if not shooting
-    // if(robotData.shooterData.shootMode == shootMode_none){
-    //      //table->PutNumber("ledMode", 1);
-    // }else{
-
-    // }
-
+    if(robotData.controlData.shootMode == shootMode_none){
+         table->PutNumber("ledMode", 1);
+    }else{
+        table->PutNumber("ledMode", 0);
+    }
+    
     //table->PutNumber("ledMode", 0);
 
+    //updates the angle to be in degrees rather than radians
+    //the actual distance from the hub based on the turning of the drivebase
+    //limelightData.correctDistance = correctDistance(limelightData.angleOffset, limelightData.distanceOffset);
 
     //moves the limelight data over to the actual position of the shooter
     shooterOffset(robotData, limelightData);
-    
-    //updates the angle to be in degrees rather than radians
-    limelightData.angleOffset = robotData.limelightData.angleOffset * (180 / pi);
-
-    //the actual distance from the hub based on the turning of the drivebase
-    //limelightData.correctDistance = correctDistance(limelightData.angleOffset, limelightData.distanceOffset);
+    //averages the distances provided by the limelight in order to make the shooting sequence smoother
+    averageDistance(robotData, limelightData);
 
     //the desired hood and velocity for shooting from anywhere
     limelightData.desiredHoodPos = getHoodPOS(visionLookup, limelightData, robotData); //returns an angle
     limelightData.desiredVel = getWheelVelocity(visionLookup, limelightData, robotData); //returns rpm
     
-    //averages the distances provided by the limelight in order to make the shooting sequence smoother
-    averageDistance(robotData, limelightData);
-    
     //printing data to the dashboard
     frc::SmartDashboard::PutNumber("distance offset", robotData.limelightData.distanceOffset);
+    frc::SmartDashboard::PutNumber("angleOffset", limelightData.angleOffset);
     //frc::SmartDashboard::PutNumber("desired hood", robotData.limelightData.desiredHoodPos);
     //frc::SmartDashboard::PutNumber("final correct distance", robotData.limelightData.correctDistance);
 }
@@ -58,11 +43,10 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
  * @return distance from limelight to target in inches
  */
 double Limelight::distanceToTarget(){ 
-    //std::shared_ptr<nt::NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("limelight");
-
     double radianAngle = table->GetNumber("ty", 0.0);
     radianAngle = (radianAngle + limelightAngle) * (pi / 180);
-    return((hubHeight-limelightMount)/std::tan(radianAngle));
+    return(((hubHeight + crosshairOffset)-limelightMount)/std::tan(radianAngle));
+
 }
 
 /**
@@ -93,10 +77,12 @@ void Limelight::shooterOffset(const RobotData &robotData, LimelightData &limelig
 
     //calculate the angle between the shooter since it is different from that given by the limelight
     limelightData.angleOffset = (std::asin(xValueOffset/limelightData.distanceOffset));
+    limelightData.angleOffset *= (180/pi);
 }
 
 /**
  * @returns finds the corrected distance for when we turn the robot
+ * NOT USED
  */
 double Limelight::correctDistance(double angleOffset, double originalDistance)
 {
@@ -125,16 +111,19 @@ double Limelight::getHoodPOS(VisionLookup &visionLookup, LimelightData &limeligh
 
     
     //checks to see if the controldata for shooting in the highhub is true
-    if(robotData.shooterData.isHighGeneral){
-        //use lookup table to get the desired hood positions
-        limelightData.lowerValPos = visionLookup.getValue(limelightData.lowerVal);
-        limelightData.upperValPos = visionLookup.getValue(limelightData.upperVal);
+    // if(robotData.shooterData.isHighGeneral){
+    //     //use lookup table to get the desired hood positions
+        
 
-    }else if(!robotData.shooterData.isHighGeneral){ //LOW HUB VALUES
-        //use lookup table to get the desired hood positions
-        limelightData.lowerValPos = visionLookup.getLowValue(limelightData.lowerVal);
-        limelightData.upperValPos = visionLookup.getLowValue(limelightData.upperVal);
-    }
+    // }else if(!robotData.shooterData.isHighGeneral){ //LOW HUB VALUES
+    //     //use lookup table to get the desired hood positions
+    //     limelightData.lowerValPos = visionLookup.getLowValue(limelightData.lowerVal);
+    //     limelightData.upperValPos = visionLookup.getLowValue(limelightData.upperVal);
+    // }
+
+    //gets value from the lookup table
+    limelightData.lowerValPos = visionLookup.getValue(limelightData.lowerVal);
+    limelightData.upperValPos = visionLookup.getValue(limelightData.upperVal);
 
     //get the slope of the line between the upper and lower values
     double desiredSlope = (limelightData.upperValPos - limelightData.lowerValPos)/12; 
@@ -146,7 +135,6 @@ double Limelight::getHoodPOS(VisionLookup &visionLookup, LimelightData &limeligh
 
 /**
  * @return the desired flywheel velocity using lookup table
- * im sorry i know this belongs in shooter.cpp but its too much work
  */
 double Limelight::getWheelVelocity(VisionLookup &visionLookup, LimelightData &limelightData, const RobotData &robotData){
     double distance = limelightData.distanceOffset;
@@ -165,17 +153,21 @@ double Limelight::getWheelVelocity(VisionLookup &visionLookup, LimelightData &li
         limelightData.upperVal = visionLookup.highestVelocity();
     }
     
-    if(robotData.shooterData.isHighGeneral){
-        //use lookup table to get the desired velocities
-        limelightData.lowerValVel = visionLookup.getVelocity(limelightData.lowerVal);
-        limelightData.upperValVel = visionLookup.getVelocity(limelightData.upperVal);
+    // if(robotData.shooterData.isHighGeneral){
+    //     //use lookup table to get the desired velocities
+    //     limelightData.lowerValVel = visionLookup.getVelocity(limelightData.lowerVal);
+    //     limelightData.upperValVel = visionLookup.getVelocity(limelightData.upperVal);
 
-    }else if(!robotData.shooterData.isHighGeneral){ //LOW HUB
-        //use lookup table to get the desired velocities
-        limelightData.lowerValVel = visionLookup.getLowVelocity(limelightData.lowerVal);
-        limelightData.upperValVel = visionLookup.getLowVelocity(limelightData.upperVal);
+    // }else if(!robotData.shooterData.isHighGeneral){ //LOW HUB
+    //     //use lookup table to get the desired velocities
+    //     limelightData.lowerValVel = visionLookup.getLowVelocity(limelightData.lowerVal);
+    //     limelightData.upperValVel = visionLookup.getLowVelocity(limelightData.upperVal);
 
-    }
+    // }
+
+    //gets value from the lookup table
+    limelightData.lowerValVel = visionLookup.getVelocity(limelightData.lowerVal);
+    limelightData.upperValVel = visionLookup.getVelocity(limelightData.upperVal);
 
     //get the slope of the line between the upper and lower values
     double desiredSlope = (limelightData.upperValVel - limelightData.lowerValVel)/12; 

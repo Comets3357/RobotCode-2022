@@ -14,6 +14,10 @@ static const int
     intakeSingulatorID = 13;
 
 static const double
+    // absOut = 0.485,
+    // absIn = 0.616,
+    // revOut = 6.4,
+    // revIn = 0;
     absOut = 0.465,
     absIn = 0.605,
     revOut = 6.14,
@@ -33,7 +37,7 @@ static const int
 static const double
     hoodabsOut = 0.028,
     hoodabsIn = 0.933,
-    hoodrevOut = -37,
+    hoodrevOut = -38,
     hoodrevIn = 0,
     hoodAngleOut = 43,
     hoodAngleIn = 21;
@@ -50,10 +54,11 @@ static const double
     pi = 3.141592653589793238463,
     hubHeight = 104,
     limelightMount = 36.5,
-    limelightAngle = 36.3,
+    limelightAngle = 36.2,
     xcameraDistanceFromBot = 3.0625,
     ycameraDistanceFromBot = 9.5,
-    shooterDistanceFromCenterOfBot = 2;
+    shooterDistanceFromCenterOfBot = 2,
+    crosshairOffset = 0;
 
 // DIO
 static const int
@@ -62,9 +67,7 @@ static const int
     HoodAbsoluteEncoderPort = 1,
     bottomBeamBreakPort = 3,
     midBeamBreakPort = 9,
-    topBeamBreakPort = 5,
-    elevator = 7;   // change name
-
+    topBeamBreakPort = 5;
 
 
 
