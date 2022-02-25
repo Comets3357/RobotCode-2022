@@ -198,9 +198,9 @@ void Shooter::updateData(const RobotData &robotData, ShooterData &shooterData)
     frc::SmartDashboard::PutNumber("flywheel vel", flyWheelLeadEncoder.GetVelocity());
     // frc::SmartDashboard::PutNumber("DESIRED VEL", robotData.limelightData.desiredVel);
 
-    // frc::SmartDashboard::PutNumber("shootMode", robotData.controlData.shootMode);
-    // frc::SmartDashboard::PutBoolean("saShooting", robotData.controlData.saShooting);
-    // frc::SmartDashboard::PutBoolean("saFinalShoot", robotData.controlData.saFinalShoot);
+    frc::SmartDashboard::PutNumber("shootMode", robotData.controlData.shootMode);
+    frc::SmartDashboard::PutBoolean("saShooting", robotData.controlData.saShooting);
+    frc::SmartDashboard::PutBoolean("saFinalShoot", robotData.controlData.saFinalShoot);
 }
 
 /**

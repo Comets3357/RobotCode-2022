@@ -128,9 +128,9 @@ void Auton::exitShoot(const RobotData &robotData, ControlData &controlData) {
 
     // shooting
     if (currentSec > 2 && currentSec < 8) {
-        controlData.saShooting= true;
+        controlData.shootMode = shootMode_vision;
     } else {
-        controlData.saShooting = false;
+        controlData.shootMode = shootMode_none;
     }
 
     if (currentSec > 4) {

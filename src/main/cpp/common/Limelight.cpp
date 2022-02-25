@@ -8,7 +8,7 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     limelightData.distanceToTarget = distanceToTarget(); 
     limelightData.xOffset =  table->GetNumber("tx", 0.0) * (pi/180); //RADIANS
     limelightData.yOffset =  table->GetNumber("ty", 0.0);
-    limelightData.angleOffset = robotData.limelightData.angleOffset * (180 / pi); //Degrees
+    limelightData.angleOffset = robotData.limelightData.angleOffset; //Degrees
 
     //turns off limelight if not shooting
     if(robotData.controlData.shootMode == shootMode_none){
@@ -77,6 +77,7 @@ void Limelight::shooterOffset(const RobotData &robotData, LimelightData &limelig
 
     //calculate the angle between the shooter since it is different from that given by the limelight
     limelightData.angleOffset = (std::asin(xValueOffset/limelightData.distanceOffset));
+    limelightData.angleOffset *= (180/pi);
 }
 
 /**
