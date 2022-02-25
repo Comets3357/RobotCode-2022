@@ -424,11 +424,9 @@ bool Shooter::encoderPluggedIn(const ShooterData &shooterData){
 
 //checks if the encoder is reading presumably correct values (i.e. values in the expected range)
 bool Shooter::encoderInRange(const ShooterData &shooterData){
-    if (shooterData.benchTestShooterHoodSpeed > 0 && shooterHoodEncoderAbs.GetOutput() > hoodabsIn + .005){ //out of range
-        //shooterHood.Set(0);
+    if (shooterData.benchTestShooterHoodSpeed > 0 && shooterHoodEncoderAbs.GetOutput() > hoodabsIn + .02){ //out of range
         return false;
-    } else if (shooterData.benchTestShooterHoodSpeed < 0 && shooterHoodEncoderAbs.GetOutput() < hoodabsOut - .005){ //out of range
-        //shooterHood.Set(0);
+    } else if (shooterData.benchTestShooterHoodSpeed < 0 && shooterHoodEncoderAbs.GetOutput() < hoodabsOut - .02){ //out of range
         return false;
     } else {
         return true; //everything else is within range, so return true

@@ -85,7 +85,6 @@ void Robot::DisabledPeriodic()
 
 void Robot::TestInit(){
     frc::LiveWindow::SetEnabled(false); // to block their weird dashboard thing
-    frc::SmartDashboard::PutBoolean("Does this even reach this test function", true);
 
     gyro.RobotInit();
 
@@ -99,8 +98,6 @@ void Robot::TestInit(){
 
 //BENCH TEST CODE
 void Robot::TestPeriodic(){
-    frc::SmartDashboard::PutBoolean("Does this even reach this test function x2", true);
-
     //runs all of the test functions (and one controller function) so things actually run
     controller.TestPeriodic(robotData, robotData.controllerData, robotData.controlData);
     benchTest.TestPeriodic(robotData, robotData.benchTestData);
