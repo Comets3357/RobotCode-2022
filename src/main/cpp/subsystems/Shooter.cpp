@@ -104,12 +104,12 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
     //SHOOTING LOGIC
     if(robotData.controlData.shootMode == shootMode_vision){ // Aiming with limelight
         //set the hood and flywheel using pids to the desired values based off the limelight code
-        // if(frc::DriverStation::GetBatteryVoltage() > 12.6){
-        //     flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
-        // }else{
-        //     flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel+60, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
-        // }
-        flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel+20, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
+        if(frc::DriverStation::GetBatteryVoltage() > 12.6){
+            flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
+        }else{
+            flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel+20, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
+        }
+        //flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel+20, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
 
         shooterHood_pidController.SetReference(absoluteToREV(convertFromAngleToAbs(robotData.limelightData.desiredHoodPos)), rev::CANSparkMaxLowLevel::ControlType::kPosition);
         
@@ -371,7 +371,7 @@ void Shooter::setShooterWheel(double speed){
     if(frc::DriverStation::GetBatteryVoltage() > 12.5){
         flyWheelLead_pidController.SetReference(speed, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
     }else{
-        flyWheelLead_pidController.SetReference(speed+40, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
+        flyWheelLead_pidController.SetReference(speed+20, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
     }
 }
 
