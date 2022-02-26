@@ -148,6 +148,11 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
 void Controller::updateShootMode(const RobotData &robotData, ControlData &controlData) {
     // pressing a shoot button will set the robot to be in the associated shooting mode. if you press the button again, it will toggle that shoot mode off.
 
+    if (controlData.mode != mode_teleop_sa) {
+        controlData.shootMode = shootMode_none;
+        return;
+    }
+
     if (robotData.controlData.saShooting) {
         if (controlData.shootMode == shootMode_vision) {
             controlData.shootMode = shootMode_none;
@@ -185,8 +190,7 @@ void Controller::updateShootMode(const RobotData &robotData, ControlData &contro
 
 
     // shut off shooting if all balls have exited (happens once upon ball count going to zero)
-    // if (robotData.indexerData.indexerContents.size() == 0 && lastTickBallCount > 0 && shooterData.shootMode != shootMode_none /* probably redundant */) {
-    //     shooterData.shootMode = shootMode_none;
-    // }
-    // lastTickBallCount = robotData.indexerData.indexerContents.size();
+    if (robotData.indexerData.eBallCountZero) {
+        controlData.shootMode = shootMode_none;
+    }
 }

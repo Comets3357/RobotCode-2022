@@ -48,6 +48,7 @@ struct ControlData
     bool mZeroTurret; //set the turret encoder to zero MANUAL
     bool saIntake; //runs the intake rollers and brings intake down and the indexer to intake balls SEMIAUTO
     bool saIntakeBackward; //runs the intake backwards SEMIAUTO
+    bool saIntakeIdle; // turns intakeIdle true while held
 
     //indexer:
     bool mSideWheelForward;
