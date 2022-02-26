@@ -11,13 +11,13 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     limelightData.angleOffset = robotData.limelightData.angleOffset; //Degrees
 
     //turns off limelight if not shooting
-    if(robotData.controlData.shootMode == shootMode_none){
-         table->PutNumber("ledMode", 1);
-    }else{
-        table->PutNumber("ledMode", 0);
-    }
+    // if(robotData.controlData.shootMode == shootMode_none){
+    //     table->PutNumber("ledMode", 1);
+    // }else{
+    //     table->PutNumber("ledMode", 0);
+    // }
     
-    //table->PutNumber("ledMode", 0);
+    table->PutNumber("ledMode", 0);
 
     //updates the angle to be in degrees rather than radians
     //the actual distance from the hub based on the turning of the drivebase
@@ -33,7 +33,7 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     limelightData.desiredVel = getWheelVelocity(visionLookup, limelightData, robotData); //returns rpm
     
     //printing data to the dashboard
-    frc::SmartDashboard::PutNumber("distance offset", robotData.limelightData.distanceOffset);
+    frc::SmartDashboard::PutNumber("distance offset", robotData.limelightData.distanceOffset/12);
     frc::SmartDashboard::PutNumber("angleOffset", limelightData.angleOffset);
     //frc::SmartDashboard::PutNumber("desired hood", robotData.limelightData.desiredHoodPos);
     //frc::SmartDashboard::PutNumber("final correct distance", robotData.limelightData.correctDistance);

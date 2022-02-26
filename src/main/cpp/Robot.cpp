@@ -77,8 +77,8 @@ void Robot::DisabledInit()
 
 void Robot::DisabledPeriodic() 
 {
-    shooter.updateData(robotData, robotData.shooterData);
-    intake.updateData(robotData, robotData.intakeData);
+    shooter.DisabledPeriodic(robotData, robotData.shooterData);
+    intake.DisabledPeriodic(robotData, robotData.intakeData);
     indexer.DisabledPeriodic(robotData, robotData.indexerData);
 }
 

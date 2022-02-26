@@ -62,9 +62,8 @@ void Intake::RobotPeriodic(const RobotData &robotData, IntakeData &intakeData)
             //     }
             // }else{ 
 
-            // }
+            // }          
             manual(robotData, intakeData);
-
             
         }
         else if (robotData.controlData.mode == mode_teleop_sa)
@@ -82,7 +81,6 @@ void Intake::RobotPeriodic(const RobotData &robotData, IntakeData &intakeData)
         pivotInit();
     }
 
-    // add fault case for singulator?
 
 }
 
@@ -92,6 +90,8 @@ void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
         zeroedIntake = false;
     }
 
+    encoderPluggedIn(intakeData);
+
 //INTAKE FUNCTIONALITY
     if (robotData.controlData.saIntake) //you are intaking
     {
@@ -100,7 +100,7 @@ void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
 
         //run rollers, singulator
         intakeRollers.Set(intakeRollerSpeed);
-        intakeSingulator.Set(singulatorSpeed);
+        intakeSingulator.Set(intakesingulatorSpeed);
         
     }
     //intake down and rollers backwards
@@ -113,14 +113,14 @@ void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
     else if (robotData.controlData.saEjectBalls) //rollers backwards, pivot down
     {
         intakeRollers.Set(-intakeRollersEjectSpeed);
-        intakeSingulator.Set(-singulatorSpeed);
+        intakeSingulator.Set(-intakesingulatorSpeed);
         intakePivot_pidController.SetReference(revOut - 0.1, rev::CANSparkMaxLowLevel::ControlType::kPosition,0);
 
     }
     else //default case, everything up and not running
     {
         if(!intakeData.intakeIdle){ // run the singulator while the intake is not idle (basically run it for a second after the intake stops)
-            intakeSingulator.Set(singulatorSpeed);
+            intakeSingulator.Set(intakesingulatorSpeed);
         }else{
             intakeSingulator.Set(0);
         }
@@ -162,11 +162,11 @@ void Intake::manual(const RobotData &robotData, IntakeData &intakeData){
         intakeRollers.Set(0);
     }
 
-     if(robotData.controlData.mZeroHood)
-    {
-        intakePivotEncoderRev.SetPosition(0);
+    if(robotData.controlData.mSideWheelForward){
+        intakeSingulator.Set(intakesingulatorSpeed);
+    }else if(robotData.controlData.mSideWheelBackward){
+        intakeSingulator.Set(-intakesingulatorSpeed);
     }
-
 
 }
 

@@ -43,11 +43,12 @@ class Shooter{
         double convertFromAbsToAngle(double abs);
         double absoluteToREV(double value);
         void checkReadyShoot(ShooterData &shooterData);
-
+        
         void flyWheelInit();
         void shooterHoodInit();
 
         double getWheelVel();
+        void setShooterWheel(double speed);
 
         //FIXED SHOTS
         void outerLaunch(const RobotData &robotData);

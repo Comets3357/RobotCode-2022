@@ -60,7 +60,7 @@ private:
     double intakePivotSpeed = 0.1;
     double intakeRollerSpeed = 0.9;
     double intakeMecanumSpeed = 0.2;
-    double singulatorSpeed = -0.6;
+    double intakesingulatorSpeed = -0.6;
     double intakeRollersEjectSpeed = 0.5;
     double armDownPosition = 0.428;
     int tickCount = 0;
