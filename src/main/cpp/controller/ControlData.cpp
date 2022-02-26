@@ -89,8 +89,10 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
     // semi-auto:
 
     
-    controlData.saIntake = controllerData.sRTrigger > 0.5/*  && (controlData.mode == mode_teleop_sa) */;
+    controlData.saIntake = (controllerData.sRTrigger > 0.5) && !controlData.shift;/*  && (controlData.mode == mode_teleop_sa) */;
     controlData.saIntakeBackward = controllerData.sLTrigger > 0.5 /* && (controlData.mode == mode_teleop_sa) */;
+    controlData.saIntakeIdle = (controllerData.sRTrigger > 0.5) && controlData.shift;
+    frc::SmartDashboard::PutBoolean("saIntakeIdle", controlData.saIntakeIdle);
 
     controlData.saEjectBalls = controllerData.sABtn && !controlData.shift/*  && (controlData.mode == mode_teleop_sa) */;
 
