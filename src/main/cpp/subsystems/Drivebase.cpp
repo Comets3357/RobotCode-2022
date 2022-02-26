@@ -60,11 +60,11 @@ void Drivebase::RobotInit()
 }
 
 void Drivebase::TeleopInit(const RobotData &robotData) {
-    if (!odometryInitialized) {
-        frc::Pose2d startPoint = startPointChooser.GetSelected();
-        resetOdometry(startPoint, robotData.gyroData.rawYaw);
-        odometryInitialized = true;
-    }
+    // if (!odometryInitialized) {
+    //     frc::Pose2d startPoint = startPointChooser.GetSelected();
+    //     resetOdometry(startPoint, robotData.gyroData.rawYaw);
+    //     odometryInitialized = true;
+    // }
 }
 
 void Drivebase::AutonomousInit(const RobotData &robotData, DrivebaseData &drivebaseData, AutonData &autonData) {    
@@ -417,12 +417,15 @@ void Drivebase::getNextAutonStep(const RobotData &robotData, DrivebaseData &driv
                 // frc::SmartDashboard::PutNumber("firstRadians", firstRadians);
 
                 resetOdometry(firstX, firstY, firstRadians, robotData);
+                frc::SmartDashboard::PutNumber("autonStep OdoInit", autonData.autonStep);
 
                 odometryInitialized = true;
             }
 
-            // frc::SmartDashboard::PutBoolean("odometryInitialized", odometryInitialized);
+            frc::SmartDashboard::PutBoolean("odometryInitialized", odometryInitialized);
         }
+
+        frc::SmartDashboard::PutNumber("autonStep", autonData.autonStep);
     }
     else {
         drivebaseData.driveMode = driveMode_break;
@@ -447,7 +450,7 @@ void Drivebase::turnInPlaceAuton(double degrees, const RobotData &robotData, Dri
     }
 
     frc::SmartDashboard::PutBoolean("allValuesWithin", allValuesWithin(lastDegrees, 1));
-    if (allValuesWithin(lastDegrees, 1)) {
+    if (allValuesWithin(lastDegrees, 5)) {
         setPercentOutput(0, 0);
         // only advance auton step if it's not shooting
         if (drivebaseData.driveMode == driveMode_turnInPlace) {
@@ -456,8 +459,8 @@ void Drivebase::turnInPlaceAuton(double degrees, const RobotData &robotData, Dri
         // frc::SmartDashboard::PutString("AUTON", "TURN IN PLACE");
     } else {
         // profile that adjusts aggressiveness of turn based on the amount of degrees left to turn. has been tuned for speed & accuracy on both small and large turns
-        leftOutput = std::pow(std::abs(degrees / 361), 1) + 0.12;
-        rightOutput = std::pow(std::abs(degrees / 361), 1) + 0.12;
+        leftOutput = std::pow(std::abs(degrees / 400), 1.3) + 0.09;
+        rightOutput = std::pow(std::abs(degrees / 400), 1.3) + 0.09;
     }
     
 
@@ -487,9 +490,8 @@ void Drivebase::turnInPlaceTeleop(double degrees, const RobotData &robotData) {
         setPercentOutput(0, 0);
         // frc::SmartDashboard::PutString("TELEOP", "TURN IN PLACE");
     } else {
-        leftOutput = std::pow(std::abs(degrees / 361), 1) + 0.07;
-        rightOutput = std::pow(std::abs(degrees / 361), 1) + 0.07;
-
+        leftOutput = std::pow(std::abs(degrees / 400), 1.3) + 0.09;
+        rightOutput = std::pow(std::abs(degrees / 400), 1.3) + 0.09;
     }
     
 
