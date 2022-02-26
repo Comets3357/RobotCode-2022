@@ -120,7 +120,7 @@ void Auton::exitShoot(const RobotData &robotData, ControlData &controlData) {
     double currentSec = robotData.timerData.secSinceEnabled;
 
     // intake
-    if (currentSec > 0 && currentSec < 6) {
+    if (currentSec > 0 && currentSec < 4) {
         controlData.saIntake= true;
     } else {
         controlData.saIntake = false;
@@ -164,45 +164,38 @@ void Auton::fourBallC(const RobotData &robotData, ControlData &controlData) {
     // intake
     controlData.saIntake = true;
 
-    frc::SmartDashboard::PutString("FOURBALLC", "RUNNING");
-
-    if (currentSec > 3 && currentSec < 5) {
+    // shooting
+    if (currentSec > 1 && currentSec < 6) {
         controlData.shootMode = shootMode_vision;
-    } else if (currentSec > 12 && currentSec < 15) {
+    } else if (currentSec > 11) {
         controlData.shootMode = shootMode_vision;
-    } else {
+    }
+    else {
         controlData.shootMode = shootMode_none;
     }
 
-    // setShootTime(controlData, currentSec, 3, 5);
-    // setShootTime(controlData, currentSec, 10.5, 15);
+    if (currentSec > 3 && currentSec < 6) {
+        controlData.saFinalShoot = true;
+    } else if (currentSec > 12) {
+        controlData.saFinalShoot = true;
+    }else {
+        controlData.saFinalShoot = false;
+    }
 }
 
-void Auton::sixBallC(const RobotData &robotData, ControlData &controlData) {
-    double currentSec = robotData.timerData.secSinceEnabled;
-
-    controlData.saIntake = false;
-
-    // if (currentSec > 3 && currentSec < 5) {
-    //     controlData.shootMode = shootMode_vision;
-    // } else if (currentSec > 3 && currentSec < 5) {
-    //     controlData.shootMode = shootMode_vision;
-    // } else {
-    //     controlData.shootMode = shootMode_none;
-    // }
-}
+void Auton::sixBallC(const RobotData &robotData, ControlData &controlData) {}
 
 
 // can only handle times to the 0.1 second precision
-void Auton::setShootTime(const RobotData &robotData, ControlData &controlData, double start) {
+// void Auton::setShootTime(const RobotData &robotData, ControlData &controlData, double start, double end) {
         
-    double currentSec = robotData.timerData.secSinceEnabled;
+//     double currentSec = robotData.timerData.secSinceEnabled;
 
-    if (currentSec > start - 1 && currentSec < start + 3) {
-        controlData.shootMode = shootMode_vision;
-    }
+//     if (currentSec > start - 2 && currentSec < end) {
+//         controlData.shootMode = shootMode_vision;
+//     }
 
-    if (currentSec > start && currentSec < start + 3) {
-        controlData.saFinalShoot = true;
-    }
-}
+//     if (currentSec > start && currentSec < start + 3) {
+//         controlData.saFinalShoot = true;
+//     }
+// }
