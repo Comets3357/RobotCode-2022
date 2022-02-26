@@ -11,6 +11,7 @@ void Indexer::RobotInit()
 
 // init in auton with an alliance ball preloaded
 void Indexer::AutonomousInit(IndexerData &indexerData) {
+    indexerData.indexerContents.clear();
     indexerData.indexerContents.push_back(Cargo::cargo_Alliance);
 }
 
