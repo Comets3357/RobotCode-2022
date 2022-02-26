@@ -58,7 +58,7 @@ private:
 
 
     // secondary control helper functions:
-    void setShootTime(const RobotData &robotData, ControlData &controlData, double start);
+    // void setShootTime(const RobotData &robotData, ControlData &controlData, double start, double end);
 
     // secondary control variables:
     bool doneTogglingShoot = false;
