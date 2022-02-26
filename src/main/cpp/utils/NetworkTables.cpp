@@ -10,13 +10,13 @@ void NetworkTables::RobotInit()
     mode = table->GetEntry("mode");
     indexerTop = table->GetEntry("indexerTop");
     indexerBottom = table->GetEntry("indexerBottom");
+    eBallCountZero = table->GetEntry("eBallCountZero");
 
     // primary only
     dbInverted = table->GetEntry("dbInverted");
     odometryX = table->GetEntry("odometryX");
     odometryY = table->GetEntry("odometryY");
     odometryYaw = table->GetEntry("odometryYaw");
-    doneShooting = table->GetEntry("doneShooting");
 
     // secondary only
     shootMode = table->GetEntry("shootMode");
@@ -24,7 +24,7 @@ void NetworkTables::RobotInit()
     upperHubShot = table->GetEntry("upperHubShot");
     climbSequence = table->GetEntry("climbSequence");
     climbAmperage = table->GetEntry("climbAmperage");
-    flywheelUpToSpeed = table->GetEntry("flywheelUpToSpeed");
+    readyShoot = table->GetEntry("readyShoot");
     driveMode = table->GetEntry("driveMode");
     autonSelect = table->GetEntry("autonSelect");
 }
@@ -36,13 +36,13 @@ void NetworkTables::TeleopPeriodic(const RobotData &robotData)
     mode.SetDouble(robotData.controlData.mode);
     indexerTop.SetDouble(0);
     indexerBottom.SetDouble(0);
+    // eBallCountZero.SetBoolean(robotData.indexerData.eBallCountZero);
 
     // primary only
     dbInverted.SetBoolean(robotData.controlData.dbInverted);
     odometryX.SetDouble(robotData.drivebaseData.currentPose.X().to<double>());
     odometryY.SetDouble(robotData.drivebaseData.currentPose.Y().to<double>());
     odometryYaw.SetDouble(robotData.drivebaseData.currentPose.Rotation().Radians().to<double>());
-    doneShooting.SetBoolean(robotData.shooterData.doneShooting);
     
     // secondary only
     shootMode.SetDouble(robotData.controlData.shootMode);
@@ -50,6 +50,6 @@ void NetworkTables::TeleopPeriodic(const RobotData &robotData)
     // upperHubShot.SetBoolean();
     // climbSequence.SetBoolean();
     // climbAmperage.SetBoolean();
-    // flywheelUpToSpeed.SetBoolean();
+    readyShoot.SetBoolean(robotData.shooterData.readyShoot);
     driveMode.SetBoolean(robotData.drivebaseData.driveMode);
 }

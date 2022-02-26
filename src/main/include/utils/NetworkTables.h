@@ -8,13 +8,13 @@ public:
     nt::NetworkTableEntry mode;
     nt::NetworkTableEntry indexerTop;
     nt::NetworkTableEntry indexerBottom;
+    nt::NetworkTableEntry eBallCountZero;
 
     // primary only
     nt::NetworkTableEntry dbInverted;
     nt::NetworkTableEntry odometryX;
     nt::NetworkTableEntry odometryY;
     nt::NetworkTableEntry odometryYaw;
-    nt::NetworkTableEntry doneShooting;
 
     // secondary only
     nt::NetworkTableEntry shootMode;
@@ -22,7 +22,7 @@ public:
     nt::NetworkTableEntry upperHubShot;
     nt::NetworkTableEntry climbSequence;
     nt::NetworkTableEntry climbAmperage;
-    nt::NetworkTableEntry flywheelUpToSpeed;
+    nt::NetworkTableEntry readyShoot;
     nt::NetworkTableEntry driveMode;
     nt::NetworkTableEntry autonSelect;
 
