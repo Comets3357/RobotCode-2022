@@ -14,10 +14,13 @@ static const int
     intakeSingulatorID = 13;
 
 static const double
+    //practice bot
     // absOut = 0.485,
     // absIn = 0.616,
     // revOut = 6.4,
     // revIn = 0;
+
+    //comp bot intake pivot positions
     absOut = 0.465,
     absIn = 0.605,
     revOut = 6.14,
@@ -35,6 +38,7 @@ static const int
     shooterTurretID = 34;
 
 static const double
+    //comp bot shooter hood positions
     hoodabsOut = 0.028,
     hoodabsIn = 0.933,
     hoodrevOut = -38,
@@ -47,17 +51,18 @@ static const int
     climbElevatorID = 41,
     climbArmsID = 43;
     
-const float climbArmsZero = 0.811;
+const float 
+    climbArmsZero = 0.811;
 
 //limelight:
 static const double
     pi = 3.141592653589793238463,
     hubHeight = 104,
-    limelightMount = 36.5,
-    limelightAngle = 36.2,
-    xcameraDistanceFromBot = 3.0625,
-    ycameraDistanceFromBot = 9.5,
-    shooterDistanceFromCenterOfBot = 2,
+    limelightMount = 36.5, //height of mount
+    limelightAngle = 36.2, //angle of limelight on mount
+    xcameraDistanceFromBot = 3.0625, //offset from center of shooter X
+    ycameraDistanceFromBot = 9.5, //offset from center of shooter Y
+    shooterDistanceFromCenterOfBot = 2, 
     crosshairOffset = 0;
 
 // DIO

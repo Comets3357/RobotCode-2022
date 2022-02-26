@@ -89,7 +89,7 @@ private:
 
     const double indexerWheelSpeed = 0.3;
     const double indexerBeltSpeed = 0.6;
-;
+
 
     // ColorSensor colorSensor{}; //rev v3, for detecting ball color
 

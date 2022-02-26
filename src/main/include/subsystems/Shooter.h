@@ -18,10 +18,12 @@ struct ShooterData
 {
     bool readyShoot;
     bool shootUnassignedAsOpponent;
-    float benchTestShooterHoodSpeed = 0;
-    float benchTestFlyWheelSpeed = 0;
+    
+    //Bench test
     bool topDeadStop = false;
     bool bottomDeadStop = false;
+    float benchTestShooterHoodSpeed = 0;
+    float benchTestFlyWheelSpeed = 0;
 };
 
 class Shooter{
@@ -39,16 +41,22 @@ class Shooter{
         void manual(const RobotData &robotData, ShooterData &shooterData);
         void semiAuto(const RobotData &robotData, ShooterData &shooterData);
 
+        //converting
         double convertFromAngleToAbs(double angle);
         double convertFromAbsToAngle(double abs);
         double absoluteToREV(double value);
-        void checkReadyShoot(ShooterData &shooterData);
         
+        //init 
         void flyWheelInit();
         void shooterHoodInit();
-
+        
+        //gets and sets
         double getWheelVel();
         void setShooterWheel(double speed);
+
+        //checks
+        void checkReadyShoot(ShooterData &shooterData);
+        bool encoderPluggedIn(const ShooterData &shooterData);
 
         //FIXED SHOTS
         void outerLaunch(const RobotData &robotData);
@@ -58,11 +66,12 @@ class Shooter{
         void endOfTarmac(const RobotData &robotData);
 
         //bench test
-        bool encoderPluggedIn(const ShooterData &shooterData);
         bool encoderInRange(const ShooterData &shooterData);
         void checkDeadStop(ShooterData &shooterData);
 
+        //shooter velocity min threshold
         int readyShootLimit;
+        //used to update rev encoder with abs encoder
         int tickCount;
     
         //FLywheel Lead
@@ -70,11 +79,12 @@ class Shooter{
         rev::SparkMaxRelativeEncoder flyWheelLeadEncoder = flyWheelLead.GetEncoder();
         rev::SparkMaxPIDController flyWheelLead_pidController = flyWheelLead.GetPIDController();
 
-        //flywheel hood, rev encoder, abs encoder, and pid
+        //flywheel hood, rev encoder, pid
         rev::CANSparkMax shooterHood = rev::CANSparkMax(shooterHoodID, rev::CANSparkMax::MotorType::kBrushless);
         rev::SparkMaxRelativeEncoder shooterHoodEncoderRev = shooterHood.GetEncoder();
         rev::SparkMaxPIDController shooterHood_pidController = shooterHood.GetPIDController();
         
+        //flywheel abs encoder
         frc::DigitalInput m_input{HoodAbsoluteEncoderPort};
         frc::DutyCycle shooterHoodEncoderAbs = frc::DutyCycle{m_input};
 

@@ -13,14 +13,14 @@
 #include <frc/DutyCycle.h>
 #include <frc/DigitalSource.h>
 
-#include <frc/shuffleboard/Shuffleboard.h>
-
 struct RobotData;
 
 struct IntakeData
 {
     bool intakeIdle;
     bool absEncoderInRange = true;
+
+    //bench test
     float intakeBenchTestSpeed = 0;
     float benchTestIntakePivotSpeed = 0;
     float benchTestIntakeRollersSpeed = 0;
@@ -40,16 +40,18 @@ public:
     void DisabledPeriodic(const RobotData &robotData, IntakeData &intakeData);
     void updateData(const RobotData &robotData, IntakeData &intakeData);
 
-
 private:
     void manual(const RobotData &robotData, IntakeData &intakeData);
     void semiAuto(const RobotData &robotData, IntakeData &intakeData);
 
+    //inits
     void rollersInit();
     void pivotInit();
     void singulatorInit();
-    void mecanumInit();
+
+    //converting
     double absoluteToREV(double value);
+
     bool intakeIdle(const RobotData &robotData, IntakeData &intakeData);
 
     //bench test
@@ -57,30 +59,31 @@ private:
     bool encoderInRange(const IntakeData &intakeData);
     void checkDeadStop(IntakeData &intakeData);
 
+    //speeds
     double intakePivotSpeed = 0.1;
     double intakeRollerSpeed = 0.9;
-    double intakeMecanumSpeed = 0.2;
     double intakesingulatorSpeed = -0.6;
     double intakeRollersEjectSpeed = 0.5;
-    double armDownPosition = 0.428;
-    int tickCount = 0;
-    bool zeroedIntake = true;
 
     int idleCount = 0;
+    //used to update rev encoder with abs encoder
+    int tickCount = 0;
 
 
-    //CHANGE MOTOr ID STUFF  (just outline )
+    //rollers
     rev::CANSparkMax intakeRollers = rev::CANSparkMax(intakeRollerID, rev::CANSparkMax::MotorType::kBrushless);
     rev::SparkMaxRelativeEncoder intakeRollersEncoder = intakeRollers.GetEncoder();
 
+    //pivot
     rev::CANSparkMax intakePivot = rev::CANSparkMax(intakePivotID, rev::CANSparkMax::MotorType::kBrushless);
-    //THIS IS THE REV ENCODER
     rev::SparkMaxRelativeEncoder intakePivotEncoderRev = intakePivot.GetEncoder();
     rev::SparkMaxPIDController intakePivot_pidController = intakePivot.GetPIDController();
 
+    //singulator
     rev::CANSparkMax intakeSingulator = rev::CANSparkMax(intakeSingulatorID, rev::CANSparkMax::MotorType::kBrushless);
     rev::SparkMaxRelativeEncoder intakeSingulatorEncoder = intakeSingulator.GetEncoder();
 
+    //abs pivot encoder
     frc::DigitalInput m_input{intakeAbsoluteEncoderPort};
     //THIS IS THE ABSOLUTE ENCODER
     frc::DutyCycle intakePivotEncoderAbs = frc::DutyCycle{m_input};

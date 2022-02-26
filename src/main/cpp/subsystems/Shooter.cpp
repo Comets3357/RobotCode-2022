@@ -14,7 +14,7 @@ void Shooter::RobotInit()
 
     //FOR TESTING
     //used for reading flywheel speeds from the dashboard
-    frc::SmartDashboard::PutNumber("wheel speed", 0);
+    //frc::SmartDashboard::PutNumber("wheel speed", 0);
 
 }
 
@@ -91,26 +91,26 @@ void Shooter::RobotPeriodic(const RobotData &robotData, ShooterData &shooterData
         {
             semiAuto(robotData, shooterData);
         }
-
     }
-    
-
 }
 
 void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
 
+    //updates rev encoder if abs encoder is working
     encoderPluggedIn(shooterData);
 
     //SHOOTING LOGIC
     if(robotData.controlData.shootMode == shootMode_vision){ // Aiming with limelight
+
         //set the hood and flywheel using pids to the desired values based off the limelight code
+        //checks battery voltage and increases velocity if it doesn't have enough power
         if(frc::DriverStation::GetBatteryVoltage() > 12.6){
             flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
         }else{
             flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel+20, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
         }
-        //flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel+20, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
 
+        //flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel+20, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
         shooterHood_pidController.SetReference(absoluteToREV(convertFromAngleToAbs(robotData.limelightData.desiredHoodPos)), rev::CANSparkMaxLowLevel::ControlType::kPosition);
         
         //FOR TESTING PURPOSES
@@ -165,9 +165,7 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
         }else{
             shooterHood.Set(0);
         }
-
     }
-    
 }
 
 void Shooter::manual(const RobotData &robotData, ShooterData &shooterData)
@@ -176,11 +174,10 @@ void Shooter::manual(const RobotData &robotData, ShooterData &shooterData)
     //manual wheel forward
     if(robotData.controlData.mShooterWheelForward){
         flyWheelLead_pidController.SetReference(2000, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
-    }else if(robotData.controlData.mShooterWheelBackward){
+    }else if(robotData.controlData.mShooterWheelBackward){ //wheel backwards
         flyWheelLead_pidController.SetReference(-2000, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
-
     }else{
-        flyWheelLead.Set(0); //starts the shooting wheel slowing down
+        flyWheelLead.Set(0); //stops flywheel
     }
 
     //hood to joystick controls
@@ -204,18 +201,14 @@ void Shooter::updateData(const RobotData &robotData, ShooterData &shooterData)
 {
     frc::SmartDashboard::PutNumber("shooter Hood ABS", shooterHoodEncoderAbs.GetOutput());
     frc::SmartDashboard::PutNumber("shooter Hood REV", shooterHoodEncoderRev.GetPosition());
-    // frc::SmartDashboard::PutNumber("shooter changed", absoluteToREV(shooterHoodEncoderAbs.GetOutput()));
-    // frc::SmartDashboard::PutNumber("desired hood to rev", robotData.limelightData.desiredHoodPos);
-    // frc::SmartDashboard::PutNumber("high or no", robotData.controlData.upperHubShot);
 
     frc::SmartDashboard::PutBoolean("shooter ready shoot", shooterData.readyShoot);
     frc::SmartDashboard::PutNumber("HOOD ANGLE", convertFromAbsToAngle(shooterHoodEncoderAbs.GetOutput()));
     frc::SmartDashboard::PutNumber("flywheel vel", flyWheelLeadEncoder.GetVelocity());
-    frc::SmartDashboard::PutNumber("DESIRED VEL", robotData.limelightData.desiredVel);
+    frc::SmartDashboard::PutNumber("desired flywheel vel", robotData.limelightData.desiredVel);
 
-    frc::SmartDashboard::PutNumber("shootMode", robotData.controlData.shootMode);
-    frc::SmartDashboard::PutBoolean("saShooting", robotData.controlData.saShooting);
-    frc::SmartDashboard::PutBoolean("saFinalShoot", robotData.controlData.saFinalShoot);
+    // frc::SmartDashboard::PutNumber("desired hood pos", robotData.limelightData.desiredHoodPos);
+    // frc::SmartDashboard::PutNumber("upper hub shot", robotData.controlData.upperHubShot);
 }
 
 /**
@@ -308,7 +301,7 @@ void Shooter::wall(const RobotData &robotData)
         shooterHood_pidController.SetReference(-31.5, rev::CANSparkMaxLowLevel::ControlType::kPosition);
         setShooterWheel(2000);
 
-        readyShootLimit = 1950;
+        readyShootLimit = 1970;
     }
     else if (!robotData.controlData.upperHubShot)
     {
@@ -333,7 +326,7 @@ void Shooter::fender(const RobotData &robotData)
         shooterHood_pidController.SetReference(hoodrevIn-0.25, rev::CANSparkMaxLowLevel::ControlType::kPosition);
         setShooterWheel(1240);
         
-        readyShootLimit = 2110;
+        readyShootLimit = 1220;
     }
 }
 

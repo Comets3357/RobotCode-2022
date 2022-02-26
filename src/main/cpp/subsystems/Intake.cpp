@@ -53,18 +53,8 @@ void Intake::RobotPeriodic(const RobotData &robotData, IntakeData &intakeData)
 
     }else{
         if (robotData.controlData.mode == mode_teleop_manual)
-        {
-            //checks to see if the intake is down when switched to manual mode, and if it is bring it up before manual functionality 
-            // if(!zeroedIntake){
-            //     intakePivot_pidController.SetReference(0.1, rev::CANSparkMaxLowLevel::ControlType::kPosition, 0);
-            //     if(intakePivotEncoderRev.GetPosition() < 0.3){
-            //         zeroedIntake = true;
-            //     }
-            // }else{ 
-
-            // }          
+        {        
             manual(robotData, intakeData);
-            
         }
         else if (robotData.controlData.mode == mode_teleop_sa)
         {
@@ -85,15 +75,12 @@ void Intake::RobotPeriodic(const RobotData &robotData, IntakeData &intakeData)
 }
 
 void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
-    //used to check if the intake is up or down
-    if(intakePivotEncoderRev.GetPosition() > 0.5){
-        zeroedIntake = false;
-    }
-
+    
+    //updates rev encoder if abs encoder is working
     encoderPluggedIn(intakeData);
 
 //INTAKE FUNCTIONALITY
-    if (robotData.controlData.saIntake) //you are intaking
+    if (robotData.controlData.saIntake) //intaking
     {
         // pivot down
         intakePivot_pidController.SetReference(revOut - 0.5, rev::CANSparkMaxLowLevel::ControlType::kPosition,0);
@@ -123,11 +110,6 @@ void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
             intakeSingulator.Set(intakesingulatorSpeed);
         }else{
             intakeSingulator.Set(0);
-        }
-
-        //encoderPluggedIn(intakeData); 
-        if(intakePivotEncoderAbs.GetOutput() == absIn){
-            intakePivotEncoderRev.SetPosition(0);
         }
 
         //bring up the intake
@@ -162,10 +144,13 @@ void Intake::manual(const RobotData &robotData, IntakeData &intakeData){
         intakeRollers.Set(0);
     }
 
+    //side wheel running
     if(robotData.controlData.mSideWheelForward){
         intakeSingulator.Set(intakesingulatorSpeed);
     }else if(robotData.controlData.mSideWheelBackward){
         intakeSingulator.Set(-intakesingulatorSpeed);
+    }else{
+        intakeSingulator.Set(0);
     }
 
 }
