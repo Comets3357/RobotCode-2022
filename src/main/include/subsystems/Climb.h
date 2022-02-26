@@ -54,6 +54,8 @@ private:
     bool armsEncoderInRange(const ClimbData &climbData);
     void elevatorLimitSwitchWorking(ClimbData &climbData);
     bool elevatorEncoderInRange(const ClimbData &climbData);
+    bool encoderPluggedIn(const ClimbData &climbData);
+    bool encoderInRange(const ClimbData &climbData);
 
     int stage = 0;
 
