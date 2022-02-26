@@ -247,18 +247,22 @@ void Climb::runSequence(const RobotData &robotData, ClimbData &climbData)
         else if (stage == 2) RunElevatorToPos(0,1,1);
         else if (stage == 3) ChangeElevatorSpeed(elevatorSpeed, 1);
         else if (stage == 4) ZeroElevator(0.8,1);
-        else if (stage == 5) RunArmsToPos(70,1,0); //Elevator goes up to latch the arms onto the bar with the elevator a little above
-        else if (stage == 6) RunElevatorToPos(30,1,0); //Outer Arms pivot the robot so the elevator is facing the next bar
-        else if (stage == 7) ChangeElevatorSpeed(1,1);
-        else if (stage == 8) RunArmsAndElevatorToPos(110,0,200,1,1);
-        else if (stage == 9) WaitUntilGyro(-1, -40, 1);
-        else if (stage == 10) RunElevatorToPos(144.5,1,1);
-        else if (stage == 11) ChangeElevatorSpeed(elevatorSpeed,1);
-        else if (stage == 12) RunArmsToPos(130,1,1);
-        else if (stage == 13) ChangeElevatorSpeed(0.5, 1);
-        else if (stage == 14) RunElevatorToPos(110,1,1);
-        else if (stage == 15) ChangeElevatorSpeed(elevatorSpeed, 1);
-        else if (stage == 16)
+        else if (stage == 5) RunArmsToPos(0,1,0); //Elevator goes up to latch the arms onto the bar with the elevator a little above
+        else if (stage == 6) RunArmsToPos(70,1,0); //Elevator goes up to latch the arms onto the bar with the elevator a little above
+        else if (stage == 7) CheckArms();
+        //else if (stage == 8) CheckAngleForTransfer();
+        //else if (stage == 8) ChangeElevatorSpeed(0.4,1);
+        else if (stage == 8) RunElevatorToPos(30,1,0); //Outer Arms pivot the robot so the elevator is facing the next bar
+        else if (stage == 9) ChangeElevatorSpeed(1,1);
+        else if (stage == 10) RunArmsAndElevatorToPos(110,0,200,1,1);
+        else if (stage == 11) WaitUntilGyro(-1, -45, 1);
+        else if (stage == 12) RunElevatorToPos(144.5,1,1);
+        else if (stage == 13) ChangeElevatorSpeed(elevatorSpeed,1);
+        else if (stage == 14) RunArmsToPos(130,1,1);
+        else if (stage == 15) ChangeElevatorSpeed(0.5, 1);
+        else if (stage == 16) RunElevatorToPos(110,1,1);
+        else if (stage == 17) ChangeElevatorSpeed(elevatorSpeed, 1);
+        else if (stage == 18)
         { //do it again if the bot isnt on the top bar
             //resets everything
             stage = 0;
@@ -293,6 +297,25 @@ void Climb::updateData(const RobotData &robotData, ClimbData &climbData)
     frc::SmartDashboard::PutNumber("armEncoder", climbArmsEncoder.GetPosition());
     frc::SmartDashboard::PutNumber("armsAbs", climbArmsAbs.GetOutput());
     frc::SmartDashboard::PutNumber("bar", climbData.bar);
+}
+
+void Climb::CheckArms()
+{
+    if (climbArmsAbs.GetOutput() < 0.8)
+    {
+        stage += 1;
+    } else 
+    {
+        stage -= 3;
+    }
+}
+
+void Climb::CheckAngleForTransfer()
+{
+    if (abs(angle) < 20)
+    {
+        stage += 1;
+    }
 }
 
 void Climb::ChangeElevatorSpeedOnBar(float speed, bool run, int stageAdd)
@@ -397,14 +420,14 @@ void Climb::WaitUntilGyro(int cmp, float gyroValue, int stageAdd)
 {
     if (cmp == 1)
     {
-        if (gyroValue < angle && angularRate > 10)
+        if (gyroValue < angle)
         {
             stage += stageAdd;
         }
     }
     else if (cmp == -1)
     {
-        if (gyroValue > angle && angularRate > 10)
+        if (gyroValue > angle)
         {
             stage += stageAdd;
         }
@@ -520,6 +543,16 @@ void Climb::ZeroElevator(float power, int stageAdd)
         elevatorRunning = false;
         stage += stageAdd;
         zeroingTimer = 0;
+    }
+}
+
+void Climb::delay(int time, int stageAdd)
+{
+    delayTimer += 1;
+    if (delayTimer > time)
+    {
+        delayTimer = 0;
+        stage += stageAdd;
     }
 }
 
