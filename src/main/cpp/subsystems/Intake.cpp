@@ -194,9 +194,12 @@ void Intake::updateData(const RobotData &robotData, IntakeData &intakeData)
 }
 
 bool Intake::intakeIdle(const RobotData &robotData, IntakeData &intakeData){
-    if (robotData.controlData.saIntake || robotData.controlData.saIntakeBackward){
+    if (robotData.controlData.saIntakeIdle) {
+        return true;
+    }
+    else if (robotData.controlData.saIntake || robotData.controlData.saIntakeBackward){
         // if something is commanding the intake then idle count is 25
-        idleCount = 50;
+        idleCount = 100;
         return false; // hasn't 
     } else if(idleCount > 0){ // nothing is commanding the intake, and the idle count is counting down
         idleCount--;

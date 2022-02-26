@@ -63,8 +63,9 @@ void Shooter::DisabledInit()
     flyWheelLead.Set(0);
 }
 
-void Shooter::EnabledInit(ShooterData &shooterData)
+void Shooter::EnabledInit(ControlData &controlData, ShooterData &shooterData)
 {
+    controlData.shootMode = shootMode_none;
     shooterData.shootUnassignedAsOpponent = false;
 }
 

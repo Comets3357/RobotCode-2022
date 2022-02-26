@@ -54,6 +54,13 @@ void Indexer::DisabledPeriodic(const RobotData &robotData, IndexerData &indexerD
 
 void Indexer::updateData(const RobotData &robotData, IndexerData &indexerData)
 {
+    if (indexerData.indexerContents.size() == 0 && lastTickBallCount > 0) {
+        indexerData.eBallCountZero = true;
+    } else {
+        indexerData.eBallCountZero = false;
+    }
+    lastTickBallCount = indexerData.indexerContents.size();
+
     debuggingStuff(robotData, indexerData);
 }
 

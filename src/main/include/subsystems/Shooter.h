@@ -31,7 +31,7 @@ class Shooter{
         void RobotPeriodic(const RobotData &robotData, ShooterData &shooterData);
         void DisabledInit();
         void DisabledPeriodic(const RobotData &robotData, ShooterData &shooterData);
-        void EnabledInit(ShooterData &shooterData);
+        void EnabledInit(ControlData &controlData, ShooterData &shooterData);
         void updateData(const RobotData &robotData, ShooterData &shooterData);
         void TestPeriodic(const RobotData &robotData, ShooterData &shooterData);
     
