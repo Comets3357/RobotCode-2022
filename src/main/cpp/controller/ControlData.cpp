@@ -89,8 +89,10 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
     // semi-auto:
 
     
-    controlData.saIntake = controllerData.sRTrigger > 0.5/*  && (controlData.mode == mode_teleop_sa) */;
+    controlData.saIntake = (controllerData.sRTrigger > 0.5) && !controlData.shift;/*  && (controlData.mode == mode_teleop_sa) */;
     controlData.saIntakeBackward = controllerData.sLTrigger > 0.5 /* && (controlData.mode == mode_teleop_sa) */;
+    controlData.saIntakeIdle = (controllerData.sRTrigger > 0.5) && controlData.shift;
+    frc::SmartDashboard::PutBoolean("saIntakeIdle", controlData.saIntakeIdle);
 
     controlData.saEjectBalls = controllerData.sABtn && !controlData.shift/*  && (controlData.mode == mode_teleop_sa) */;
 
@@ -105,6 +107,7 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
     if (controllerData.sBBtnToggled) {
         controlData.shootUnassignedAsOpponent = !controlData.shootUnassignedAsOpponent;
     }
+    
     controlData.fenderShot = controllerData.sABtnToggled && controlData.shift /* && (controlData.mode == mode_teleop_sa) */;
     controlData.sideWallShot = controllerData.sBBtnToggled && controlData.shift/*  && (controlData.mode == mode_teleop_sa) */;
     controlData.wallLaunchPadShot = controllerData.sXBtnToggled && controlData.shift/*  && (controlData.mode == mode_teleop_sa) */;
@@ -122,16 +125,35 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
     //controlData.finalShoot;
   
     //CLIMB
-    controlData.sacancelSequence = controllerData.sLStickBtn;
-    controlData.saclimbTraversalSequence = controllerData.sRCenterBtn;
-    controlData.saclimbHeightSequence = controllerData.sLCenterBtn;
+    controlData.sapauseSequence = controllerData.sLStickBtn;
+    controlData.sacancelSequence = controllerData.sRStickBtn;
+    controlData.saclimbTraversalSequence = controllerData.sLCenterBtn;
+    controlData.saclimbHeightSequence = controllerData.sRCenterBtn;
     controlData.saclimbInit = controllerData.sBBtn;
     controlData.climbZeroing = controllerData.sABtnToggled;
-    
+
+    //toggle buttons, part of index 2 (third controller - aka test controller) on drivers station
+    //we're not making it in the normal structure because that would be a lot of work - tananya
+    controlData.startBenchTestToggle = controllerData.testAButton; // a: starts and stops (in case of emergency) the bench tests
+    controlData.incrementMotorToggle = controllerData.testBButton; // b: increments what motor/encoder/thing that you're testing
+    controlData.incrementSpeedToggle = controllerData.testXButton; // x: increases the speed
+    controlData.PIDModeToggle = controllerData.testYButton; //toggles pid mode (if we want to test pids)
+    controlData.incrementSubsystemToggle = controllerData.testRBumper;
+
+    //sets the value of the variables used in robot.cppbased upon the toggle button variables
+    if (controlData.startBenchTestToggle) controlData.startBenchTest = !controlData.startBenchTest;
+    controlData.incrementMotor = controlData.incrementMotorToggle;
+    controlData.incrementSpeed = controlData.incrementSpeedToggle;
+    controlData.incrementSubsystem = controlData.incrementSubsystemToggle;
 }
 
 void Controller::updateShootMode(const RobotData &robotData, ControlData &controlData) {
     // pressing a shoot button will set the robot to be in the associated shooting mode. if you press the button again, it will toggle that shoot mode off.
+
+    if (controlData.mode != mode_teleop_sa) {
+        controlData.shootMode = shootMode_none;
+        return;
+    }
 
     if (robotData.controlData.saShooting) {
         if (controlData.shootMode == shootMode_vision) {
@@ -170,8 +192,7 @@ void Controller::updateShootMode(const RobotData &robotData, ControlData &contro
 
 
     // shut off shooting if all balls have exited (happens once upon ball count going to zero)
-    // if (robotData.indexerData.indexerContents.size() == 0 && lastTickBallCount > 0 && shooterData.shootMode != shootMode_none /* probably redundant */) {
-    //     shooterData.shootMode = shootMode_none;
-    // }
-    // lastTickBallCount = robotData.indexerData.indexerContents.size();
+    if (robotData.indexerData.eBallCountZero) {
+        controlData.shootMode = shootMode_none;
+    }
 }

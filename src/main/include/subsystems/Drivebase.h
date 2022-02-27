@@ -56,6 +56,7 @@ public:
     void TeleopInit(const RobotData &robotData);
     void AutonomousInit(const RobotData &robotData, DrivebaseData &drivebaseData, AutonData &autonData);
     void RobotPeriodic(const RobotData &robotData, DrivebaseData &drivebaseData, AutonData &autonData);
+    void TestPeriodic(const RobotData &robotData, DrivebaseData &drivebaseData);
     void DisabledInit();
 
 private:
@@ -100,7 +101,7 @@ private:
     frc::Trajectory trajectory{};
     frc::RamseteController ramseteController{};
 
-    // frc::Field2d field;
+    frc::Field2d field;
 
     double trajectorySecOffset = 0;
     

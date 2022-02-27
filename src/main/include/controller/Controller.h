@@ -48,6 +48,7 @@ struct ControlData
     bool mZeroTurret; //set the turret encoder to zero MANUAL
     bool saIntake; //runs the intake rollers and brings intake down and the indexer to intake balls SEMIAUTO
     bool saIntakeBackward; //runs the intake backwards SEMIAUTO
+    bool saIntakeIdle; // turns intakeIdle true while held
 
     //indexer:
     bool mSideWheelForward;
@@ -83,9 +84,23 @@ struct ControlData
     bool sacancelSequence;
     bool saclimbInit;
     bool climbZeroing;
+    bool sapauseSequence;
     
     double mElevatorExtension;
     double mArmPivot;
+
+    //benchTest:
+
+    bool startBenchTest = false;
+    bool incrementMotor;
+    bool incrementSpeed;
+    bool incrementSubsystem;
+
+    bool startBenchTestToggle;
+    bool incrementMotorToggle;
+    bool incrementSpeedToggle;
+    bool PIDModeToggle = false;
+    bool incrementSubsystemToggle;
 };
 
 struct ControllerData
@@ -140,6 +155,12 @@ struct ControllerData
     bool sRTriggerToggled = false;
 
     int sDPad = -1;
+
+    bool testAButton = false;
+    bool testBButton = false;
+    bool testXButton = false;
+    bool testYButton = false;
+    bool testRBumper = false;
 };
 
 class Controller
@@ -147,7 +168,7 @@ class Controller
 
     public:
         void TeleopPeriodic(const RobotData &robotData, ControllerData &controllerData, ControlData &controlData);
-
+        void TestPeriodic(const RobotData &robotData, ControllerData &controllerData, ControlData &controlData);
     private:
         /**
          * Don't touch "Controller.cpp" that is for the direct access to joystick buttons
@@ -167,6 +188,6 @@ class Controller
 
         frc::Joystick primary{0};
         frc::Joystick secondary{1};
-
+        frc::Joystick testControl{2};
 };
 

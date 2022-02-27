@@ -23,9 +23,9 @@ enum Cargo
 struct IndexerData
 {
     std::deque<Cargo> indexerContents;
-    bool wrongBall = false;
     bool topBeamToggledOn; // sensed a ball
     bool topBeamToggledOff; // stopped sensing a ball
+    bool eBallCountZero; // event boolean for when ball count goes from 1 to 0
   
     //0 = no ball, 1 = unassigned, 2 = red, 3 = blue
     int topIndexer = 0;
@@ -42,16 +42,15 @@ public:
     void AutonomousInit(IndexerData &indexerData);
     void RobotPeriodic(const RobotData &robotData, IndexerData &indexerData);
     void DisabledInit();
-    void updateData(const RobotData &robotData, IndexerData &indexerData);
+    void DisabledPeriodic(const RobotData &robotData, IndexerData &indexerData);
+    void TestPeriodic(const RobotData &robotData, IndexerData &indexerData);
 
 private:
+    void updateData(const RobotData &robotData, IndexerData &indexerData);
     void manual(const RobotData &robotData, IndexerData &indexerData);
     void semiAuto(const RobotData &robotData, IndexerData &indexerData);
-    void testControl(const RobotData &robotData);
-    void debuggingStuff(const RobotData &robotData, IndexerData &indexerData);
 
-    void indexerBeltInit();
-    void indexerWheelInit();
+    void debuggingStuff(const RobotData &robotData, IndexerData &indexerData);
 
     void incrementCount(const RobotData &robotData, IndexerData &indexerData);
     void newCargo(const RobotData &robotData, IndexerData &indexerData);
@@ -64,15 +63,18 @@ private:
     void saWheelControl(const RobotData &robotData, IndexerData &indexerData);
     bool pauseBelt(const RobotData &robotData, IndexerData &indexerData);
 
+
     bool getBottomBeam();
     bool getMidBeam();
     bool getTopBeam();
 
     // get if it was toggled to state specified in bool broken
     bool getBottomBeamToggled(bool broken);
-    bool getTopBeamToggled(bool broken);
-
+    bool getTopBeamToggled(bool broken); // not in use
     void updateTopBeamToggled(IndexerData &indexerData);
+
+    void indexerBeltInit();
+    void indexerWheelInit();
 
     
     
@@ -81,7 +83,6 @@ private:
     frc::DigitalInput topBeamBreak{topBeamBreakPort};
 
     bool prevBottomBeam = false;
-    // bool prevMidBeam = false;
     bool prevTopBeam = false;
 
     // debounce counters to time debounce
@@ -92,11 +93,12 @@ private:
     bool runWheel = false; // checks if one ball has left shooter so that you can run the wheel and get the other ball out
 
     const double indexerWheelSpeed = 0.3;
-    const double indexerBeltSpeed = 0.8;
-    const double saIndexerWheelIntakeSpeed = 0.3;
-    const double saIndexerBeltIntakeSpeed = 0.8;
+    const double indexerBeltSpeed = 0.6;
+
 
     // ColorSensor colorSensor{}; //rev v3, for detecting ball color
+
+    int lastTickBallCount;
 
     rev::CANSparkMax indexerBelt = rev::CANSparkMax(indexerBeltsID, rev::CANSparkMax::MotorType::kBrushless);
     rev::SparkMaxRelativeEncoder indexerBeltEncoder = indexerBelt.GetEncoder();
