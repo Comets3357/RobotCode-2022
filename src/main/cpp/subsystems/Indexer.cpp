@@ -97,7 +97,7 @@ void Indexer::updateData(const RobotData &robotData, IndexerData &indexerData)
                 indexerData.topIndexer = 2;
             }
 
-        }else if(indexerData.indexerContents.front() == Cargo::cargo_Unassigned){
+        }else{
             indexerData.topIndexer = 1;
         }
 
@@ -121,7 +121,7 @@ void Indexer::updateData(const RobotData &robotData, IndexerData &indexerData)
                 indexerData.bottomIndexer = 2;
             }
 
-        }else if(indexerData.indexerContents.back() == Cargo::cargo_Unassigned){
+        }else{
             indexerData.bottomIndexer = 1;
         }
 
