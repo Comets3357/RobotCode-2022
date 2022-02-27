@@ -27,6 +27,10 @@ struct IndexerData
     bool topBeamToggledOn; // sensed a ball
     bool topBeamToggledOff; // stopped sensing a ball
   
+    //0 = no ball, 1 = unassigned, 2 = red, 3 = blue
+    int topIndexer = 0;
+    int bottomIndexer = 0;
+
 };
 
 

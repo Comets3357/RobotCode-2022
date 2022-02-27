@@ -34,8 +34,8 @@ void NetworkTables::TeleopPeriodic(const RobotData &robotData)
     // both
     secRemaining.SetDouble(robotData.timerData.secRemaining);
     mode.SetDouble(robotData.controlData.mode);
-    indexerTop.SetDouble(0);
-    indexerBottom.SetDouble(0);
+    indexerTop.SetDouble(robotData.indexerData.topIndexer);
+    indexerBottom.SetDouble(robotData.indexerData.bottomIndexer);
     // eBallCountZero.SetBoolean(robotData.indexerData.eBallCountZero);
 
     // primary only

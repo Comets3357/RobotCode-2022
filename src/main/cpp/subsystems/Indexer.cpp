@@ -80,6 +80,54 @@ void Indexer::updateData(const RobotData &robotData, IndexerData &indexerData)
     //     indexerData.wrongBall = true; 
     // }
     debuggingStuff(robotData, indexerData);
+
+    //assigns values for if there is a cargo in the top indexer spot and what color it is
+    if(indexerData.indexerContents.size() > 0){
+        if(frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed){
+            if(indexerData.indexerContents.front() == Cargo::cargo_Alliance){
+                indexerData.topIndexer = 2;
+            }else if(indexerData.indexerContents.front() == Cargo::cargo_Opponent){
+                indexerData.topIndexer = 3;
+            }
+
+        }else if(frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue){
+            if(indexerData.indexerContents.front() == Cargo::cargo_Alliance){
+                indexerData.topIndexer = 3;
+            }else if(indexerData.indexerContents.front() == Cargo::cargo_Opponent){
+                indexerData.topIndexer = 2;
+            }
+
+        }else if(indexerData.indexerContents.front() == Cargo::cargo_Unassigned){
+            indexerData.topIndexer = 1;
+        }
+
+    }else{
+        indexerData.topIndexer = 0;
+    }
+
+    //assigns values for if there is a cargo in the bottom indexer spot and what color it is
+    if(indexerData.indexerContents.size() > 0){
+        if(frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed){
+            if(indexerData.indexerContents.back() == Cargo::cargo_Alliance){
+                indexerData.bottomIndexer = 2;
+            }else if(indexerData.indexerContents.back() == Cargo::cargo_Opponent){
+                indexerData.bottomIndexer = 3;
+            }
+
+        }else if(frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue){
+            if(indexerData.indexerContents.back() == Cargo::cargo_Alliance){
+                indexerData.bottomIndexer = 3;
+            }else if(indexerData.indexerContents.back() == Cargo::cargo_Opponent){
+                indexerData.bottomIndexer = 2;
+            }
+
+        }else if(indexerData.indexerContents.back() == Cargo::cargo_Unassigned){
+            indexerData.bottomIndexer = 1;
+        }
+
+    }else{
+        indexerData.bottomIndexer = 0;
+    }
     
 }
 
