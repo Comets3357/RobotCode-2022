@@ -1,7 +1,7 @@
 #include "RobotData.h"
 
 void BenchTest::TestPeriodic(const RobotData &robotData, BenchTestData &benchTestData){
-
+    frc::SmartDashboard::PutBoolean("Start bench test", robotData.controlData.startBenchTest);
     frc::SmartDashboard::PutNumber("MotorStage", robotData.benchTestData.stage); //prints the motor stage
     frc::SmartDashboard::PutNumber("BenchTestStage", robotData.benchTestData.testStage); //prints the subsystem we're currently on
     frc::SmartDashboard::PutNumber("Power", robotData.benchTestData.currentSpeed); //prints the current testing speed

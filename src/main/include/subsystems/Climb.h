@@ -40,8 +40,11 @@ public:
 
 private:
 
-    float elevatorSpeed = 0.8;
+    float elevatorSpeed = 0.7;
     float armsSpeed = 1;
+    int zeroingTimer = 0;
+
+    int delayTimer = 0;
 
     void climbInit(const RobotData &robotData, ClimbData &climbData);
     void cancelSequence(const RobotData &robotData, ClimbData &climbData);
@@ -53,6 +56,8 @@ private:
     bool armsEncoderInRange(const ClimbData &climbData);
     void elevatorLimitSwitchWorking(ClimbData &climbData);
     bool elevatorEncoderInRange(const ClimbData &climbData);
+    bool encoderPluggedIn(const ClimbData &climbData);
+    bool encoderInRange(const ClimbData &climbData);
 
     int stage = 0;
 
@@ -80,6 +85,7 @@ private:
     void ZeroElevator(float power, int stageAdd);
 
     void ChangeElevatorSpeed(float speed, int stageAdd);
+    void ChangeElevatorSpeedOnBar(float speed, bool run, int stageAdd);
 
     void WaitUntilGyro(int cmp, float gyroValue, int stageAdd);
     void CheckGyroPosition(int cmp, float gyroValue, int failAdd, int successAdd);
@@ -87,6 +93,10 @@ private:
     void PullBotOff(int position, float gyro, int stageAdd, int onBar);
     void waitTillDirection(int direction, float value, int stageAdd, int bar);
 
+    void delay(int time, int stageAdd);
+
+    void CheckArms();
+    void CheckAngleForTransfer();
 
     //CHANGE MOTOr ID STUFF  (just outline lol don't take your life too seriously:))
     //initualizes climb elevator motor

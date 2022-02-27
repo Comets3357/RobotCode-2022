@@ -7,20 +7,20 @@ void LEDs::RobotPeriodic(const RobotData &robotData){
     //writes the value of colorCode to device address 1 (the left arduino), which then color codes the LEDs based upon the value
     //if the write is successful, success = true
     if (robotData.shooterData.readyShoot){
-        leftColorCode = 5;
-        success = !leftArduino.Write(1, leftColorCode);
+        colorCode = 5;
+        success = !arduino.Write(1, colorCode);
     } else if (robotData.controlData.mode == mode_teleop_manual){
-        leftColorCode = 4; //teleop manual mode
-        success = !leftArduino.Write(1, leftColorCode);
+        colorCode = 4; //teleop manual mode
+        success = !arduino.Write(1, colorCode);
     } else if (robotData.controlData.mode == mode_climb_sa){
-        leftColorCode = 3; //climb semiauto mode
-        success = !leftArduino.Write(1, leftColorCode);
+        colorCode = 3; //climb semiauto mode
+        success = !arduino.Write(1, colorCode);
     } else if (robotData.controlData.mode == mode_climb_manual){
-        leftColorCode = 2; //climb manual mode
-        success = !leftArduino.Write(1, leftColorCode);
+        colorCode = 2; //climb manual mode
+        success = !arduino.Write(1, colorCode);
     } else if (robotData.controlData.mode == mode_teleop_sa){
-        leftColorCode = 1; //teleop semiauto mode
-        success = !leftArduino.Write(1, leftColorCode);
+        colorCode = 1; //teleop semiauto mode
+        success = !arduino.Write(1, colorCode);
     }
 
     //Writes to the right arduino/LED strip; should display indexer contents

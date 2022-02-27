@@ -11,6 +11,7 @@ void Indexer::RobotInit()
 
 // init in auton with an alliance ball preloaded
 void Indexer::AutonomousInit(IndexerData &indexerData) {
+    indexerData.indexerContents.clear();
     indexerData.indexerContents.push_back(Cargo::cargo_Alliance);
 }
 
@@ -54,6 +55,13 @@ void Indexer::DisabledPeriodic(const RobotData &robotData, IndexerData &indexerD
 
 void Indexer::updateData(const RobotData &robotData, IndexerData &indexerData)
 {
+    if (indexerData.indexerContents.size() == 0 && lastTickBallCount > 0) {
+        indexerData.eBallCountZero = true;
+    } else {
+        indexerData.eBallCountZero = false;
+    }
+    lastTickBallCount = indexerData.indexerContents.size();
+
     debuggingStuff(robotData, indexerData);
 }
 
@@ -316,7 +324,7 @@ bool Indexer::pauseBelt(const RobotData &robotData, IndexerData &indexerData){
 
     if(indexerData.topBeamToggledOn){   // the top sensor was just toggled on
                                         // concern: if it was toggled on due to belt slippage?
-        pauseBeltCount = 2;             // set pause belt count for .1s
+        pauseBeltCount = 5;             // set pause belt count for .1s
         return true;
     } else if (pauseBeltCount > 0){
         pauseBeltCount--;
@@ -437,7 +445,7 @@ void Indexer::indexerBeltInit(){
     indexerBelt.RestoreFactoryDefaults();
     indexerBelt.SetInverted(true);
     indexerBelt.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-    indexerBelt.SetSmartCurrentLimit(15);
+    indexerBelt.SetSmartCurrentLimit(25);
 }
 
 void Indexer::indexerWheelInit(){

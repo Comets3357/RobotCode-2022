@@ -25,7 +25,7 @@ struct IndexerData
     std::deque<Cargo> indexerContents;
     bool topBeamToggledOn; // sensed a ball
     bool topBeamToggledOff; // stopped sensing a ball
-  
+    bool eBallCountZero; // event boolean for when ball count goes from 1 to 0
 };
 
 
@@ -91,7 +91,10 @@ private:
     const double indexerBeltSpeed = 0.8;
     const double indexerIntakingBeltSpeed = 0.6;
 
+
     // ColorSensor colorSensor{}; //rev v3, for detecting ball color
+
+    int lastTickBallCount;
 
     rev::CANSparkMax indexerBelt = rev::CANSparkMax(indexerBeltsID, rev::CANSparkMax::MotorType::kBrushless);
     rev::SparkMaxRelativeEncoder indexerBeltEncoder = indexerBelt.GetEncoder();

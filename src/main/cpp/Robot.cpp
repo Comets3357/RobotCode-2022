@@ -44,7 +44,7 @@ void Robot::AutonomousInit()
     auton.AutonomousInit(robotData.autonData);
     drivebase.AutonomousInit(robotData, robotData.drivebaseData, robotData.autonData);
     indexer.AutonomousInit(robotData.indexerData);
-    shooter.EnabledInit(robotData.shooterData);
+    shooter.EnabledInit(robotData.controlData, robotData.shooterData);
 }
 
 void Robot::AutonomousPeriodic()
@@ -57,7 +57,7 @@ void Robot::TeleopInit()
 {
     gyro.TeleopInit(robotData.gyroData);
     drivebase.TeleopInit(robotData);
-    shooter.EnabledInit(robotData.shooterData);
+    shooter.EnabledInit(robotData.controlData, robotData.shooterData);
 }
 
 void Robot::TeleopPeriodic()
@@ -77,15 +77,14 @@ void Robot::DisabledInit()
 
 void Robot::DisabledPeriodic() 
 {
-    shooter.updateData(robotData, robotData.shooterData);
-    intake.updateData(robotData, robotData.intakeData);
+    shooter.DisabledPeriodic(robotData, robotData.shooterData);
+    intake.DisabledPeriodic(robotData, robotData.intakeData);
     indexer.DisabledPeriodic(robotData, robotData.indexerData);
 }
 
 
 void Robot::TestInit(){
     frc::LiveWindow::SetEnabled(false); // to block their weird dashboard thing
-    frc::SmartDashboard::PutBoolean("Does this even reach this test function", true);
 
     gyro.RobotInit();
 
@@ -99,8 +98,6 @@ void Robot::TestInit(){
 
 //BENCH TEST CODE
 void Robot::TestPeriodic(){
-    frc::SmartDashboard::PutBoolean("Does this even reach this test function x2", true);
-
     //runs all of the test functions (and one controller function) so things actually run
     controller.TestPeriodic(robotData, robotData.controllerData, robotData.controlData);
     benchTest.TestPeriodic(robotData, robotData.benchTestData);
