@@ -1,34 +1,46 @@
 #include "robotData.h"
+#include <frc/PowerDistribution.h>
 
 class NetworkTables
 {
 public:
-    // both
-    nt::NetworkTableEntry secRemaining;
-    nt::NetworkTableEntry mode;
-    nt::NetworkTableEntry indexerTop;
-    nt::NetworkTableEntry indexerBottom;
-    nt::NetworkTableEntry eBallCountZero;
-
-    // primary only
-    nt::NetworkTableEntry dbInverted;
+    /*
+    * @brief Defines entries for dashboard data
+    */
+    // Match
+    nt::NetworkTableEntry autonSelect;
+    nt::NetworkTableEntry timeLeft;
+    // Robot
+    nt::NetworkTableEntry controlMode;
+    nt::NetworkTableEntry driveMode;
+    nt::NetworkTableEntry robotSpeed;
+    nt::NetworkTableEntry batteryVoltage;
+    nt::NetworkTableEntry totalCurrent;
+    // Gyro
     nt::NetworkTableEntry odometryX;
     nt::NetworkTableEntry odometryY;
     nt::NetworkTableEntry odometryYaw;
-
-    // secondary only
+    // Drivebase
+    nt::NetworkTableEntry dbInverted;
+    nt::NetworkTableEntry turnResponsive;
+    // Indexer
+    nt::NetworkTableEntry indexerTop;
+    nt::NetworkTableEntry indexerBottom;
+    nt::NetworkTableEntry eBallCountZero;
+    // Shooter
+    nt::NetworkTableEntry readyShoot;
     nt::NetworkTableEntry shootMode;
-    nt::NetworkTableEntry shootUnassignedAsOpponent;
-    nt::NetworkTableEntry upperHubShot;
+    nt::NetworkTableEntry targetHub;
+    nt::NetworkTableEntry shootUBAO;
+    // Climb
     nt::NetworkTableEntry climbSequence;
     nt::NetworkTableEntry climbAmperage;
-    nt::NetworkTableEntry readyShoot;
-    nt::NetworkTableEntry driveMode;
-    nt::NetworkTableEntry autonSelect;
 
+    /*
+    * @brief Defines events where dashboard entries will be updated
+    */
     void RobotInit();
     void TeleopPeriodic(const RobotData &robotData);
 
-    double x = 0;
-    double y = 0;
+    frc::PowerDistribution PD{};
 };

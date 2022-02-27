@@ -141,6 +141,8 @@ void Indexer::semiAuto(const RobotData &robotData, IndexerData &indexerData)
     }else{
         indexerData.bottomIndexer = 0;
     }
+
+    
     
 }
 
