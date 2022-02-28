@@ -69,6 +69,10 @@ private:
     bool executeSequence = false;
     int targetBar = 0;
 
+    float elevatorAmperage;
+    float armsAmperage;
+    float armsTemp, elevatorTemp;
+
     bool elevatorDirection; //True is positive, False is negative
     bool elevatorRunning = false;
 
