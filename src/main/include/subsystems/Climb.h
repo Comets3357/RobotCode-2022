@@ -45,7 +45,7 @@ public:
 
 private:
 
-    float elevatorSpeed = 0.7;
+    float elevatorSpeed = 1;
     float armsSpeed = 1;
     int zeroingTimer = 0;
 
