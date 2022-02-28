@@ -21,7 +21,8 @@ struct ClimbData {
     bool zeroing = false;
     int stage;
     float armsAmp, elevatorAmp, armsTemp, elevatorTemp, elevatorPos, armsPos, armsAbsPos;
-
+    int angle, angularRate;
+    bool elevatorLimit;
     float benchTestClimbArmsSpeed = 0;
     float benchTestClimbElevatorSpeed = 0;
     bool limitSwitchWorking = false;
@@ -45,7 +46,7 @@ public:
 
 private:
 
-    float elevatorSpeed = 0.7;
+    float elevatorSpeed = 1;
     float armsSpeed = 1;
     int zeroingTimer = 0;
 

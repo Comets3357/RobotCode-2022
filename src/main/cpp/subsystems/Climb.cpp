@@ -287,10 +287,17 @@ void Climb::updateData(const RobotData &robotData, ClimbData &climbData)
 {
     angularRate = robotData.gyroData.angularMomentum;
     angle = robotData.gyroData.rawRoll;
-    elevatorAmperage = climbElevator.GetOutputCurrent();
-    armsAmperage = climbArms.GetOutputCurrent();
-    elevatorTemp = climbElevator.GetMotorTemperature();
-    armsTemp = climbArms.GetMotorTemperature();
+    climbData.elevatorAmp = climbElevator.GetOutputCurrent();
+    climbData.armsAmp = climbArms.GetOutputCurrent();
+    climbData.elevatorTemp = climbElevator.GetMotorTemperature();
+    climbData.armsTemp = climbArms.GetMotorTemperature();
+    climbData.elevatorPos = climbElevatorEncoder.GetPosition();
+    climbData.armsPos = climbArmsEncoder.GetPosition();
+    climbData.armsAbsPos = climbArmsAbs.GetOutput();
+    climbData.stage = stage;
+    climbData.angle = angle;
+    climbData.angularRate = angularRate;
+    climbData.elevatorLimit = elevatorLimit.Get();
     
     frc::SmartDashboard::PutNumber("elevator encoder value", climbElevatorEncoder.GetPosition());
     frc::SmartDashboard::PutBoolean("limit Climb", elevatorLimit.Get());
@@ -304,6 +311,7 @@ void Climb::updateData(const RobotData &robotData, ClimbData &climbData)
     frc::SmartDashboard::PutBoolean("zeroing", climbData.zeroing);
     frc::SmartDashboard::PutNumber("elevator motor temp", elevatorTemp);
     frc::SmartDashboard::PutNumber("arms temp", armsTemp);
+    frc::SmartDashboard::PutNumber("climb angle", angle);
 }
 
 void Climb::CheckArms()
