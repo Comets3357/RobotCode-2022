@@ -19,6 +19,9 @@ struct ClimbData {
     int bar = 2;
     bool climbing = false;
     bool zeroing = false;
+    int stage;
+    float armsAmp, elevatorAmp, armsTemp, elevatorTemp, elevatorPos, armsPos, armsAbsPos;
+
     float benchTestClimbArmsSpeed = 0;
     float benchTestClimbElevatorSpeed = 0;
     bool limitSwitchWorking = false;
@@ -26,6 +29,8 @@ struct ClimbData {
     bool lowerLimit = false;
     bool armsUpperLimit = false;
     bool armsLowerLimit = false;
+
+    
 };
 
 class Climb {

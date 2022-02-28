@@ -134,7 +134,7 @@ void Climb::manual(const RobotData &robotData, ClimbData &climbData)
         if (robotData.controllerData.sLYStick < -0.08 || robotData.controllerData.sLYStick > 0.08)
         {
             //sets the motor power to joystick when joystick is outside of the deadzone
-            climbElevator.Set(robotData.controllerData.sLYStick*0.4); //control elevator with left stick); //sets the power to 0 so the elevator stops moving
+            climbElevator.Set(robotData.controllerData.sLYStick); //control elevator with left stick); //sets the power to 0 so the elevator stops moving
         }
         else
         {
