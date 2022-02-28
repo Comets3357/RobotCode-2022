@@ -187,12 +187,12 @@ void Drivebase::autonControl(const RobotData &robotData, DrivebaseData &drivebas
     {
         if (robotData.controlData.shootMode == shootMode_vision) {
             turnInPlaceAuton(-robotData.limelightData.angleOffset, robotData, drivebaseData, autonData);
-            frc::SmartDashboard::PutNumber("angleOffsetLimelight", robotData.limelightData.angleOffset);
+            // frc::SmartDashboard::PutNumber("angleOffsetLimelight", robotData.limelightData.angleOffset);
         } else {
             setVelocity(0, 0);
         }
         // frc::SmartDashboard::PutNumber("breakEndSec", breakEndSec);
-        if (robotData.timerData.secSinceEnabled > breakEndSec && robotData.controlData.shootMode == shootMode_none) {
+        if (robotData.timerData.secSinceEnabled > breakEndSec || robotData.indexerData.eBallCountZero) {
             frc::SmartDashboard::PutNumber("secSinceEnabled", robotData.timerData.secSinceEnabled);
             frc::SmartDashboard::PutNumber("breakEndSec", breakEndSec);
             getNextAutonStep(robotData, drivebaseData, autonData);

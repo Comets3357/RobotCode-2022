@@ -56,16 +56,13 @@ void Auton::AutonomousInit(AutonData &autonData)
 void Auton::sendAutonSelectionChooser() {
     autonChooser.AddOption("potato", "potato");
 
-    autonChooser.AddOption("exitShootA", "exitShootA");
-    autonChooser.AddOption("exitShootB", "exitShootB");
-    autonChooser.AddOption("exitShootC", "exitShootC");
+    autonChooser.AddOption("taxiShootA", "taxiShootA");
+    autonChooser.AddOption("taxiShootB", "taxiShootB");
+    autonChooser.AddOption("taxiShootC", "taxiShootC");
 
-    autonChooser.AddOption("threeBallA", "threeBallA");
     autonChooser.AddOption("threeBallB", "threeBallB");
     autonChooser.AddOption("threeBallC", "threeBallC");
 
-    autonChooser.AddOption("fourBallA", "fourBallA");
-    autonChooser.AddOption("fourBallB", "fourBallB");
     autonChooser.AddOption("fourBallC", "fourBallC");
 
     autonChooser.AddOption("sixBallC", "sixBallC");
@@ -73,16 +70,6 @@ void Auton::sendAutonSelectionChooser() {
     autonChooser.AddOption("test", "test");
 
     frc::SmartDashboard::PutData("Select Auton:", &autonChooser);
-}
-
-frc::Pose2d Auton::getPose(double x, double y, double deg) {
-    units::meter_t meterX{x};
-    units::meter_t meterY{y};
-
-    const units::radian_t radianYaw{deg / 180 * M_PI};
-    const frc::Rotation2d rotation{radianYaw};
-    frc::Pose2d pose{meterX, meterY, rotation};
-    return pose;
 }
 
 void Auton::AutonomousPeriodic(const RobotData &robotData, AutonData &autonData, ControlData &controlData)
@@ -93,17 +80,20 @@ void Auton::AutonomousPeriodic(const RobotData &robotData, AutonData &autonData,
     {
         potato(robotData, controlData);
     }
-    else if (autonData.autonRoutineName == "exitShootA") {
-        exitShoot(robotData, controlData);
+    else if (autonData.autonRoutineName == "taxiShootA") {
+        taxiShoot(robotData, controlData);
     }
-    else if (autonData.autonRoutineName == "exitShootB") {
-        exitShoot(robotData, controlData);
+    else if (autonData.autonRoutineName == "taxiShootB") {
+        taxiShoot(robotData, controlData);
     }
-    else if (autonData.autonRoutineName == "exitShootC") {
-        exitShoot(robotData, controlData);
+    else if (autonData.autonRoutineName == "taxiShootC") {
+        taxiShoot(robotData, controlData);
     }
     else if (autonData.autonRoutineName == "threeBallB") {
         threeBallB(robotData, controlData);
+    }
+    else if (autonData.autonRoutineName == "threeBallC") {
+        threeBallC(robotData, controlData);
     }
     else if (autonData.autonRoutineName == "fourBallC") {
         fourBallC(robotData, controlData);
@@ -116,10 +106,11 @@ void Auton::AutonomousPeriodic(const RobotData &robotData, AutonData &autonData,
 
 void Auton::potato(const RobotData &robotData, ControlData &controlData)
 {
+    controlData.saIntake = false;
 }
 
 
-void Auton::exitShoot(const RobotData &robotData, ControlData &controlData) {
+void Auton::taxiShoot(const RobotData &robotData, ControlData &controlData) {
     double currentSec = robotData.timerData.secSinceEnabled;
 
     // intake
@@ -143,38 +134,55 @@ void Auton::exitShoot(const RobotData &robotData, ControlData &controlData) {
     }
 }
 
-void Auton::threeBallA(const RobotData &robotData, ControlData &controlData) {}
-
 void Auton::threeBallB(const RobotData &robotData, ControlData &controlData) {
     double currentSec = robotData.timerData.secSinceEnabled;
 
     // intake
-    controlData.saIntake= true;
+    controlData.saIntake = true;
 
-    // shooting
-    if (currentSec > 2 && currentSec < 7) {
+    // run flywheel and aim
+    if (currentSec > 1 && currentSec < 6) {
         controlData.shootMode = shootMode_vision;
-    } else if (currentSec > 10) {
+    } else if (currentSec > 10 && currentSec < 15) {
         controlData.shootMode = shootMode_vision;
     } else {
         controlData.shootMode = shootMode_none;
     }
 
-    if (currentSec > 4) {
+    // final shoot
+    if (currentSec > 3 && currentSec < 6) {
         controlData.saFinalShoot = true;
-    } else if (currentSec > 12) {
+    } else if (currentSec > 13 && currentSec < 15) {
         controlData.saFinalShoot = true;
     } else {
         controlData.saFinalShoot = false;
     }
 }
 
-void Auton::threeBallC(const RobotData &robotData, ControlData &controlData) {}
+void Auton::threeBallC(const RobotData &robotData, ControlData &controlData) {
+    double currentSec = robotData.timerData.secSinceEnabled;
 
+    // intake
+    controlData.saIntake = true;
 
-void Auton::fourBallA(const RobotData &robotData, ControlData &controlData) {}
+    // run flywheel and aim
+    if (currentSec > 1 && currentSec < 6) {
+        controlData.shootMode = shootMode_vision;
+    } else if (currentSec > 10 && currentSec < 15) {
+        controlData.shootMode = shootMode_vision;
+    } else {
+        controlData.shootMode = shootMode_none;
+    }
 
-void Auton::fourBallB(const RobotData &robotData, ControlData &controlData) {}
+    // final shoot
+    if (currentSec > 3 && currentSec < 6) {
+        controlData.saFinalShoot = true;
+    } else if (currentSec > 13 && currentSec < 15) {
+        controlData.saFinalShoot = true;
+    } else {
+        controlData.saFinalShoot = false;
+    }
+}
 
 void Auton::fourBallC(const RobotData &robotData, ControlData &controlData) {
     double currentSec = robotData.timerData.secSinceEnabled;
@@ -187,8 +195,7 @@ void Auton::fourBallC(const RobotData &robotData, ControlData &controlData) {
         controlData.shootMode = shootMode_vision;
     } else if (currentSec > 10 && currentSec < 15) {
         controlData.shootMode = shootMode_vision;
-    }
-    else {
+    } else {
         controlData.shootMode = shootMode_none;
     }
 
@@ -197,24 +204,9 @@ void Auton::fourBallC(const RobotData &robotData, ControlData &controlData) {
         controlData.saFinalShoot = true;
     } else if (currentSec > 13 && currentSec < 15) {
         controlData.saFinalShoot = true;
-    }else {
+    } else {
         controlData.saFinalShoot = false;
     }
 }
 
 void Auton::sixBallC(const RobotData &robotData, ControlData &controlData) {}
-
-
-// can only handle times to the 0.1 second precision
-// void Auton::setShootTime(const RobotData &robotData, ControlData &controlData, double start, double end) {
-        
-//     double currentSec = robotData.timerData.secSinceEnabled;
-
-//     if (currentSec > start - 2 && currentSec < end) {
-//         controlData.shootMode = shootMode_vision;
-//     }
-
-//     if (currentSec > start && currentSec < start + 3) {
-//         controlData.saFinalShoot = true;
-//     }
-// }

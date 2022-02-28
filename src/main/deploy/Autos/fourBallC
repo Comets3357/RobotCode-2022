@@ -1,6 +1,7 @@
 fourBallC1
 turnInPlace 180
 break 2
+turnInPlace 160
 fourBallC2
 fourBallC3
-turnInPlace -150
+turnInPlace -180
