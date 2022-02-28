@@ -19,6 +19,10 @@ struct ClimbData {
     int bar = 2;
     bool climbing = false;
     bool zeroing = false;
+    int stage;
+    float armsAmp, elevatorAmp, armsTemp, elevatorTemp, elevatorPos, armsPos, armsAbsPos;
+    int angle, angularRate;
+    bool elevatorLimit;
     float benchTestClimbArmsSpeed = 0;
     float benchTestClimbElevatorSpeed = 0;
     bool limitSwitchWorking = false;
@@ -26,6 +30,8 @@ struct ClimbData {
     bool lowerLimit = false;
     bool armsUpperLimit = false;
     bool armsLowerLimit = false;
+
+    
 };
 
 class Climb {
@@ -68,6 +74,10 @@ private:
     bool climbUp = false;
     bool executeSequence = false;
     int targetBar = 0;
+
+    float elevatorAmperage;
+    float armsAmperage;
+    float armsTemp, elevatorTemp;
 
     bool elevatorDirection; //True is positive, False is negative
     bool elevatorRunning = false;

@@ -459,8 +459,8 @@ void Drivebase::turnInPlaceAuton(double degrees, const RobotData &robotData, Dri
         // frc::SmartDashboard::PutString("AUTON", "TURN IN PLACE");
     } else {
         // profile that adjusts aggressiveness of turn based on the amount of degrees left to turn. has been tuned for speed & accuracy on both small and large turns
-        leftOutput = std::pow(std::abs(degrees / 400), 1.3) + 0.1;
-        rightOutput = std::pow(std::abs(degrees / 400), 1.3) + 0.1;
+        leftOutput = std::pow(std::abs(degrees / 400), 1.3) + 0.11;
+        rightOutput = std::pow(std::abs(degrees / 400), 1.3) + 0.11;
     }
     
 
@@ -486,12 +486,12 @@ void Drivebase::turnInPlaceTeleop(double degrees, const RobotData &robotData) {
         directionFactor = -1;
     }
 
-    if (allValuesWithin(lastDegrees, 3)) {
+    if (allValuesWithin(lastDegrees, 4)) {
         setPercentOutput(0, 0);
         // frc::SmartDashboard::PutString("TELEOP", "TURN IN PLACE");
     } else {
-        leftOutput = std::pow(std::abs(degrees / 400), 1.3) + 0.1;
-        rightOutput = std::pow(std::abs(degrees / 400), 1.3) + 0.1;
+        leftOutput = std::pow(std::abs(degrees / 400), 1.3) + 0.11;
+        rightOutput = std::pow(std::abs(degrees / 400), 1.3) + 0.11;
     }
     
 

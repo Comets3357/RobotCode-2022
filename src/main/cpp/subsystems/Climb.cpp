@@ -134,7 +134,7 @@ void Climb::manual(const RobotData &robotData, ClimbData &climbData)
         if (robotData.controllerData.sLYStick < -0.08 || robotData.controllerData.sLYStick > 0.08)
         {
             //sets the motor power to joystick when joystick is outside of the deadzone
-            climbElevator.Set(robotData.controllerData.sLYStick*0.4); //control elevator with left stick); //sets the power to 0 so the elevator stops moving
+            climbElevator.Set(robotData.controllerData.sLYStick); //control elevator with left stick); //sets the power to 0 so the elevator stops moving
         }
         else
         {
@@ -287,16 +287,31 @@ void Climb::updateData(const RobotData &robotData, ClimbData &climbData)
 {
     angularRate = robotData.gyroData.angularMomentum;
     angle = robotData.gyroData.rawRoll;
+    climbData.elevatorAmp = climbElevator.GetOutputCurrent();
+    climbData.armsAmp = climbArms.GetOutputCurrent();
+    climbData.elevatorTemp = climbElevator.GetMotorTemperature();
+    climbData.armsTemp = climbArms.GetMotorTemperature();
+    climbData.elevatorPos = climbElevatorEncoder.GetPosition();
+    climbData.armsPos = climbArmsEncoder.GetPosition();
+    climbData.armsAbsPos = climbArmsAbs.GetOutput();
+    climbData.stage = stage;
+    climbData.angle = angle;
+    climbData.angularRate = angularRate;
+    climbData.elevatorLimit = elevatorLimit.Get();
     
-    frc::SmartDashboard::PutNumber("encoder value", climbElevatorEncoder.GetPosition());
-    frc::SmartDashboard::PutBoolean("limitClimb", elevatorLimit.Get());
-    frc::SmartDashboard::PutNumber("climb value", climbElevator.Get());
-    frc::SmartDashboard::PutNumber("climb stage", angularRate);
-    frc::SmartDashboard::PutBoolean("climbInitiationg", climbInitiating);
-    frc::SmartDashboard::PutBoolean("executeSequence", executeSequence);
-    frc::SmartDashboard::PutNumber("armEncoder", climbArmsEncoder.GetPosition());
-    frc::SmartDashboard::PutNumber("armsAbs", climbArmsAbs.GetOutput());
-    frc::SmartDashboard::PutNumber("bar", climbData.bar);
+    frc::SmartDashboard::PutNumber("elevator encoder value", climbElevatorEncoder.GetPosition());
+    frc::SmartDashboard::PutBoolean("limit Climb", elevatorLimit.Get());
+    frc::SmartDashboard::PutNumber("elevator amps", elevatorAmperage);
+    frc::SmartDashboard::PutNumber("Arms amps", armsAmperage);
+    frc::SmartDashboard::PutNumber("climb stage", stage);
+    frc::SmartDashboard::PutBoolean("running sequence", executeSequence);
+    frc::SmartDashboard::PutNumber("climbarms encoder", climbArmsEncoder.GetPosition());
+    frc::SmartDashboard::PutNumber("climbarms abs encoder", climbArmsAbs.GetOutput());
+    frc::SmartDashboard::PutNumber("which bar is bot on bar", climbData.bar);
+    frc::SmartDashboard::PutBoolean("zeroing", climbData.zeroing);
+    frc::SmartDashboard::PutNumber("elevator motor temp", elevatorTemp);
+    frc::SmartDashboard::PutNumber("arms temp", armsTemp);
+    frc::SmartDashboard::PutNumber("climb angle", angle);
 }
 
 void Climb::CheckArms()
