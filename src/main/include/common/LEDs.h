@@ -13,9 +13,7 @@ public:
 
 private:
     //in constructor port, deviceaddress
-    frc::I2C leftArduino = frc::I2C(frc::I2C::Port::kOnboard, 1);
-    frc::I2C rightArduino = frc::I2C(frc::I2C::Port::kOnboard, 2);
+    frc::I2C arduino = frc::I2C(frc::I2C::Port::kMXP, 1); //initializes arduino to device 1
     bool success = false;
-    int leftColorCode = 5;
-    int rightColorCode = 6;
+    int colorCode = 6;
 };
