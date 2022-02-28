@@ -88,8 +88,8 @@ private:
     bool runWheel = false; // checks if one ball has left shooter so that you can run the wheel and get the other ball out
 
     const double indexerWheelSpeed = 0.6;
-    const double indexerBeltSpeed = 0.8;
-    const double indexerIntakingBeltSpeed = 0.6;
+    const double indexerShootingBeltSpeed = 0.6;
+    const double indexerIntakingBeltSpeed = 0.4;
 
 
     // ColorSensor colorSensor{}; //rev v3, for detecting ball color
