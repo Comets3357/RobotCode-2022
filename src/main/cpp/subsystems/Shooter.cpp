@@ -368,13 +368,22 @@ void Shooter::setShooterWheel(double speed){
     }
 }
 
-
+void Shooter::DisabledPeriodic(const RobotData &robotData, ShooterData &shooterData){
+    updateData(robotData, shooterData);
+}
 
 /**
  * ---------------------------------------------------------------------------------------------------------------------------------------------------
  * BENCH TEST CODE
  * ---------------------------------------------------------------------------------------------------------------------------------------------------
- * */
+ **/
+
+void Shooter::TestInit(){
+    //sets pid stuff for bench test
+    shooterHood_pidController.SetP(0.378, 0);
+    shooterHood_pidController.SetOutputRange(-0.5, 0.5, 0);
+}
+
 void Shooter::TestPeriodic(const RobotData &robotData, ShooterData &shooterData){
     frc::SmartDashboard::PutBoolean("Shooter abs encoder working", encoderPluggedIn(shooterData));
     frc::SmartDashboard::PutBoolean("Shooter abs encoder reading in correct range", encoderInRange(shooterData));
@@ -400,28 +409,28 @@ void Shooter::TestPeriodic(const RobotData &robotData, ShooterData &shooterData)
                 shooterData.benchTestShooterHoodSpeed = .07;
                 shooterData.benchTestFlyWheelSpeed = 0;
             } else if (robotData.benchTestData.stage == 2){
-                //zero everything - probably should be a function
-                shooterData.benchTestShooterHoodSpeed = 0;
-                shooterData.benchTestFlyWheelSpeed = 0;
-                shooterHoodEncoderRev.SetPosition(0);
-            } else if (robotData.benchTestData.stage == 3){
                 //run fly wheel
                 shooterData.benchTestShooterHoodSpeed = 0;
                 shooterData.benchTestFlyWheelSpeed = .25;
-            } else if (robotData.benchTestData.PIDMode){ //tests in pid mode
-                if (robotData.benchTestData.stage == 4){
-                    shooterData.benchTestFlyWheelSpeed = 0;
+            } else if (robotData.benchTestData.PIDMode && robotData.benchTestData.stage > 2){ //tests in pid mode
+                if (robotData.benchTestData.stage == 3){
                     // bring hood out
-                    shooterHood_pidController.SetReference(hoodrevOut, rev::CANSparkMaxLowLevel::ControlType::kPosition);
-                } else if (robotData.benchTestData.stage == 5){
                     shooterData.benchTestFlyWheelSpeed = 0;
+                    shooterHood_pidController.SetReference(hoodrevOut, rev::CANSparkMaxLowLevel::ControlType::kPosition, 0); //runs the hood out
+                } else if (robotData.benchTestData.stage == 4){
                     // bring hood in
-                    shooterHood_pidController.SetReference(hoodrevIn, rev::CANSparkMaxLowLevel::ControlType::kPosition);
+                    shooterData.benchTestFlyWheelSpeed = 0;
+                    shooterHood_pidController.SetReference(hoodrevIn, rev::CANSparkMaxLowLevel::ControlType::kPosition, 0); //runs the hood in
                 } else {
                     shooterData.benchTestShooterHoodSpeed = 0;
                     shooterData.benchTestFlyWheelSpeed = 0;
                 }
             }
+        } else {
+            shooterData.benchTestShooterHoodSpeed = 0; //if encoders don't work, then set the speeds to 0
+            shooterData.benchTestFlyWheelSpeed = 0;
+            shooterHood.Set(0);
+            flyWheelLead.Set(0);
         }
 
         //sets the speed of the motors according to the variables set in the above if statement ^ (unless the hood hit a dead stop)
@@ -435,6 +444,8 @@ void Shooter::TestPeriodic(const RobotData &robotData, ShooterData &shooterData)
     } else {
         shooterData.benchTestShooterHoodSpeed = 0; //if not testing shooter, then the speed of the motors is set to 0
         shooterData.benchTestFlyWheelSpeed = 0;
+        shooterHood.Set(0);
+        flyWheelLead.Set(0);
     }
 }
 
@@ -478,8 +489,4 @@ void Shooter::checkDeadStop(ShooterData &shooterData){
         shooterData.topDeadStop = false;
         shooterData.bottomDeadStop = false;
     }
-}
-
-void Shooter::DisabledPeriodic(const RobotData &robotData, ShooterData &shooterData){
-    updateData(robotData, shooterData);
 }

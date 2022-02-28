@@ -94,6 +94,8 @@ void Robot::TestInit(){
     shooter.RobotInit();
     climb.RobotInit();
     climb.TestInit(robotData.climbData);
+    intake.TestInit();
+    shooter.TestInit();
 }
 
 //BENCH TEST CODE

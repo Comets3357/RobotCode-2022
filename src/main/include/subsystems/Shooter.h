@@ -36,6 +36,7 @@ class Shooter{
         void EnabledInit(ControlData &controlData, ShooterData &shooterData);
         void updateData(const RobotData &robotData, ShooterData &shooterData);
         void TestPeriodic(const RobotData &robotData, ShooterData &shooterData);
+        void TestInit();
     
     private:
         void manual(const RobotData &robotData, ShooterData &shooterData);

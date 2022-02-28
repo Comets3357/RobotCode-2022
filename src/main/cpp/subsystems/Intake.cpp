@@ -202,7 +202,22 @@ double Intake::absoluteToREV(double value){
     return ((value*slope) + b);
 }
 
-//BENCH TEST CODE
+void Intake::DisabledPeriodic(const RobotData &robotData, IntakeData &intakeData){
+    updateData(robotData, intakeData);
+}
+
+/**
+ * ---------------------------------------------------------------------------------------------------------------------------------------------------
+ * BENCH TEST CODE
+ * ---------------------------------------------------------------------------------------------------------------------------------------------------
+ **/
+
+void Intake::TestInit(){
+    //sets pid stuff for bench test
+    intakePivot_pidController.SetP(0.23, 0);
+    intakePivot_pidController.SetOutputRange(-0.3, 0.2, 0);
+}
+
 void Intake::TestPeriodic(const RobotData &robotData, IntakeData &intakeData){
     frc::SmartDashboard::PutBoolean("Intake abs encoder working", encoderPluggedIn(intakeData));
     frc::SmartDashboard::PutBoolean("Intake abs encoder reading in correct range", encoderInRange(intakeData));
@@ -230,55 +245,49 @@ void Intake::TestPeriodic(const RobotData &robotData, IntakeData &intakeData){
                 intakeData.benchTestIntakeRollersSpeed = 0;
                 intakeData.benchTestSingulatorSpeed = 0;
             } else if (robotData.benchTestData.stage == 2){
-                //zero everything - probably should be function
-                intakeData.benchTestIntakePivotSpeed = 0;
-                intakeData.benchTestIntakeRollersSpeed = 0;
-                intakeData.benchTestSingulatorSpeed = 0;
-                intakePivotEncoderRev.SetPosition(0);
-            } else if (robotData.benchTestData.stage == 3){
                 //run rollers fowards
                 intakeData.benchTestIntakePivotSpeed = 0;
                 intakeData.benchTestIntakeRollersSpeed = robotData.benchTestData.currentSpeed;
                 intakeData.benchTestSingulatorSpeed = 0;
-                intakePivotEncoderRev.SetPosition(0);
-            } else if (robotData.benchTestData.stage == 4){
+            } else if (robotData.benchTestData.stage == 3){
                 //run rollers backwards
                 intakeData.benchTestIntakePivotSpeed = 0;
                 intakeData.benchTestIntakeRollersSpeed = -robotData.benchTestData.currentSpeed;
                 intakeData.benchTestSingulatorSpeed = 0;
-            } else if (robotData.benchTestData.stage == 5){
+            } else if (robotData.benchTestData.stage == 4){
                 //run singulator forwards
                 intakeData.benchTestIntakePivotSpeed = 0;
                 intakeData.benchTestIntakeRollersSpeed = 0;
                 intakeData.benchTestSingulatorSpeed = robotData.benchTestData.currentSpeed; 
-            } else if (robotData.benchTestData.stage == 6){
+            } else if (robotData.benchTestData.stage == 5){
                 //run singulator backwards
                 intakeData.benchTestIntakePivotSpeed = 0;
                 intakeData.benchTestIntakeRollersSpeed = 0;
                 intakeData.benchTestSingulatorSpeed = -robotData.benchTestData.currentSpeed;
             } else if (robotData.benchTestData.PIDMode && robotData.benchTestData.stage > 6){ //starts testing in pid mode
-                if (robotData.benchTestData.stage == 7){
+                if (robotData.benchTestData.stage == 6){
                     // bring pivot down
-                    intakeData.benchTestIntakePivotSpeed = 0;
                     intakeData.benchTestIntakeRollersSpeed = 0;
                     intakeData.benchTestSingulatorSpeed = 0;
-                    intakePivot_pidController.SetReference(revOut, rev::CANSparkMaxLowLevel::ControlType::kPosition, 0);
-                } else if (robotData.benchTestData.stage == 8){
+                    intakePivot_pidController.SetReference(revOut, rev::CANSparkMaxLowLevel::ControlType::kPosition, 0); //runs the intake out with PIDs
+                } else if (robotData.benchTestData.stage == 7){
                     // bring pivot up
-                    intakeData.benchTestIntakePivotSpeed = 0;
                     intakeData.benchTestIntakeRollersSpeed = 0;
                     intakeData.benchTestSingulatorSpeed = 0;
-                    intakePivot_pidController.SetReference(revIn, rev::CANSparkMaxLowLevel::ControlType::kPosition, 0);
+                    intakePivot_pidController.SetReference(revIn, rev::CANSparkMaxLowLevel::ControlType::kPosition, 0); //runs the intake in with PIDs
                 } else {
                     intakeData.benchTestIntakePivotSpeed = 0;
                     intakeData.benchTestIntakeRollersSpeed = 0;
                     intakeData.benchTestSingulatorSpeed = 0;
                 }
-            } else {
-                intakeData.benchTestIntakePivotSpeed = 0;
-                intakeData.benchTestIntakeRollersSpeed = 0;
-                intakeData.benchTestSingulatorSpeed = 0;
             }
+        } else {
+            intakeData.benchTestIntakePivotSpeed = 0;
+            intakeData.benchTestIntakeRollersSpeed = 0;
+            intakeData.benchTestSingulatorSpeed = 0;
+            intakePivot.Set(0);
+            intakeRollers.Set(0);
+            intakeSingulator.Set(0);
         }
 
         //sets the speed of the motors (unless the pivot hit a dead stop)
@@ -294,6 +303,9 @@ void Intake::TestPeriodic(const RobotData &robotData, IntakeData &intakeData){
         intakeData.benchTestIntakePivotSpeed = 0; //if not testing intake, then the speed of the motors is set to 0
         intakeData.benchTestIntakeRollersSpeed = 0;
         intakeData.benchTestSingulatorSpeed = 0;
+        intakePivot.Set(0);
+        intakeRollers.Set(0);
+        intakeSingulator.Set(0);
     }
 }
 
@@ -339,8 +351,4 @@ void Intake::checkDeadStop(IntakeData &intakeData){
         intakeData.topDeadStop = false;
         intakeData.bottomDeadStop = false;
     }
-}
-
-void Intake::DisabledPeriodic(const RobotData &robotData, IntakeData &intakeData){
-    updateData(robotData, intakeData);
 }

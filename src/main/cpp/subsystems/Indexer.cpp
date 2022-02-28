@@ -451,7 +451,12 @@ void Indexer::indexerWheelInit(){
     indexerWheel.SetSmartCurrentLimit(25);
 }
 
-//BENCH TEST CODE
+/**
+ * ---------------------------------------------------------------------------------------------------------------------------------------------------
+ * BENCH TEST CODE
+ * ---------------------------------------------------------------------------------------------------------------------------------------------------
+ **/
+
 void Indexer::TestPeriodic(const RobotData &robotData, IndexerData &indexerData){
     frc::SmartDashboard::PutNumber("Color sensor number", robotData.colorSensorData.colorValue);
     frc::SmartDashboard::PutNumber("First indexer encoder", indexerBeltEncoder.GetPosition());
@@ -476,7 +481,7 @@ void Indexer::TestPeriodic(const RobotData &robotData, IndexerData &indexerData)
             indexerWheel.Set(0);
         }
     } else {
-        indexerWheel.Set(0);
+        indexerWheel.Set(0); //if not testing indexer, then speeds get set to 0
         indexerBelt.Set(0);
     }
 }
