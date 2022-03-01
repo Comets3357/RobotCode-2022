@@ -23,7 +23,7 @@ void Auton::AutonomousInit(AutonData &autonData)
     autonData.pathGroup.clear();
 
     if (inFile.fail()) {
-       frc::SmartDashboard::PutString("fail", "failed");
+    //    frc::SmartDashboard::PutString("fail", "failed");
     } else {
         std::string str;
         while (getline(inFile, str)) {
@@ -46,7 +46,7 @@ void Auton::AutonomousInit(AutonData &autonData)
         
         autonData.pathGroup[i] = correctPathName;
 
-        frc::SmartDashboard::PutString(std::to_string(i), autonData.pathGroup[i]);
+        // frc::SmartDashboard::PutString(std::to_string(i), autonData.pathGroup[i]);
         
         
         // frc::SmartDashboard::PutString(std::to_string(i), autonData.pathGroup[i]);        
@@ -87,7 +87,7 @@ frc::Pose2d Auton::getPose(double x, double y, double deg) {
 
 void Auton::AutonomousPeriodic(const RobotData &robotData, AutonData &autonData, ControlData &controlData)
 {
-    frc::SmartDashboard::PutString("autonRoutineName", autonData.autonRoutineName);
+    // frc::smartDashboard::PutString("autonRoutineName", autonData.autonRoutineName);
 
     if (autonData.autonRoutineName == "potato")
     {

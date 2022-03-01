@@ -167,8 +167,8 @@ void Intake::DisabledInit()
 void Intake::updateData(const RobotData &robotData, IntakeData &intakeData)
 {
     intakeData.intakeIdle = intakeIdle(robotData, intakeData);
-    frc::SmartDashboard::PutNumber("Pivot built in Pos", intakePivotEncoderRev.GetPosition());
-    frc::SmartDashboard::PutNumber("Pivot absolute Pos", intakePivotEncoderAbs.GetOutput());
+    // frc::smartDashboard::PutNumber("Pivot built in Pos", intakePivotEncoderRev.GetPosition());
+    // frc::smartDashboard::PutNumber("Pivot absolute Pos", intakePivotEncoderAbs.GetOutput());
     //frc::SmartDashboard::PutNumber("Changed pos", absoluteToREV(intakePivotEncoder2.GetOutput()));
 
     //frc::SmartDashboard::PutBoolean("idle?", intakeData.intakeIdle);

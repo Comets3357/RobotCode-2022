@@ -24,8 +24,8 @@ void LEDs::RobotPeriodic(const RobotData &robotData){
     }
 
     //prints the corresponding number of the color for the LEDs
-    frc::SmartDashboard::PutNumber("ColorCode for LEDs", colorCode);
+    // frc::smartDashboard::PutNumber("ColorCode for LEDs", colorCode);
 
     //prints true if the write was successful, and false if it aborted
-    frc::SmartDashboard::PutBoolean("Arduino write successful?", success);
+    // frc::smartDashboard::PutBoolean("Arduino write successful?", success);
 }

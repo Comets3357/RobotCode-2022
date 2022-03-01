@@ -21,7 +21,7 @@ void Robot::RobotPeriodic()
     visionLookup.RobotPeriodic(robotData, robotData.visionLookupData);
     LED.RobotPeriodic(robotData);
 
-    frc::SmartDashboard::PutNumber("mode", robotData.controlData.mode);
+    // frc::SmartDashboard::PutNumber("mode", robotData.controlData.mode);
 
     //frc::SmartDashboard::PutNumber("mode", robotData.controlData.mode);
 

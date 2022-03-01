@@ -36,32 +36,32 @@ void ColorSensor::RobotPeriodic(RobotData &robotData){
     if (detectedColor.blue >= detectedColor.red + .15) {
       colorString = "Blue";
       robotData.colorSensorData.colorValue = CargoColor::cargo_Blue;
-      frc::SmartDashboard::PutBoolean("sensed Blue?", true);
-      frc::SmartDashboard::PutBoolean("sensed Red?", false);
+      // // frc::smartDashboard::PutBoolean("sensed Blue?", true);
+      // frc::smartDashboard::PutBoolean("sensed Red?", false);
     } else if (detectedColor.red >= detectedColor.blue + .15) {
       colorString = "Red";
       robotData.colorSensorData.colorValue = CargoColor::cargo_Red;
-      frc::SmartDashboard::PutBoolean("sensed Blue?", false);
-      frc::SmartDashboard::PutBoolean("sensed Red?", true);
+      // frc::smartDashboard::PutBoolean("sensed Blue?", false);
+      // frc::smartDashboard::PutBoolean("sensed Red?", true);
     } else {
       colorString = "Unknown";
       robotData.colorSensorData.colorValue = CargoColor::cargo_Unknown;
-      frc::SmartDashboard::PutBoolean("sensed Blue?", false);
-      frc::SmartDashboard::PutBoolean("sensed Red?", false);
+      // frc::smartDashboard::PutBoolean("sensed Blue?", false);
+      // frc::smartDashboard::PutBoolean("sensed Red?", false);
     }
 
     //Open Smart Dashboard or Shuffleboard to see the color detected by the sensor.
-    frc::SmartDashboard::PutNumber("Red", detectedColor.red);
-    frc::SmartDashboard::PutNumber("Green", detectedColor.green);
-    frc::SmartDashboard::PutNumber("Blue", detectedColor.blue);
-    frc::SmartDashboard::PutNumber("IR", IR);
+    // frc::smartDashboard::PutNumber("Red", detectedColor.red);
+    // frc::smartDashboard::PutNumber("Green", detectedColor.green);
+    // frc::smartDashboard::PutNumber("Blue", detectedColor.blue);
+    // frc::smartDashboard::PutNumber("IR", IR);
     
     //gets distance from object
     proximity = m_colorSensor.GetProximity();
 
     //displays proximity and color values to the smart dashboard
-    frc::SmartDashboard::PutNumber("Proximity", proximity);
-    frc::SmartDashboard::PutString("colorString", colorString);
+    // frc::smartDashboard::PutNumber("Proximity", proximity);
+    // frc::smartDashboard::PutString("colorString", colorString);
 }
 
 void ColorSensor::Disabled(){

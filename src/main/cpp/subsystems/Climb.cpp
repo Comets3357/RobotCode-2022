@@ -1,4 +1,4 @@
-#include "subsystems/Climb.h"
+    #include "subsystems/Climb.h"
 #include "RobotData.h"
 
 // 1 overtild the bot so that there cannot be any bounceback
@@ -302,19 +302,19 @@ void Climb::updateData(const RobotData &robotData, ClimbData &climbData)
     climbData.angularRate = angularRate;
     climbData.elevatorLimit = elevatorLimit.Get();
     
-    frc::SmartDashboard::PutNumber("elevator encoder value", climbElevatorEncoder.GetPosition());
-    frc::SmartDashboard::PutBoolean("limit Climb", elevatorLimit.Get());
-    frc::SmartDashboard::PutNumber("elevator amps", elevatorAmperage);
-    frc::SmartDashboard::PutNumber("Arms amps", armsAmperage);
-    frc::SmartDashboard::PutNumber("climb stage", stage);
-    frc::SmartDashboard::PutBoolean("running sequence", executeSequence);
-    frc::SmartDashboard::PutNumber("climbarms encoder", climbArmsEncoder.GetPosition());
-    frc::SmartDashboard::PutNumber("climbarms abs encoder", climbArmsAbs.GetOutput());
-    frc::SmartDashboard::PutNumber("which bar is bot on bar", climbData.bar);
-    frc::SmartDashboard::PutBoolean("zeroing", climbData.zeroing);
-    frc::SmartDashboard::PutNumber("elevator motor temp", elevatorTemp);
-    frc::SmartDashboard::PutNumber("arms temp", armsTemp);
-    frc::SmartDashboard::PutNumber("climb angle", angle);
+    // frc::smartDashboard::PutNumber("elevator encoder value", climbElevatorEncoder.GetPosition());
+    // frc::smartDashboard::PutBoolean("limit Climb", elevatorLimit.Get());
+    // frc::smartDashboard::PutNumber("elevator amps", elevatorAmperage);
+    // frc::smartDashboard::PutNumber("Arms amps", armsAmperage);
+    // frc::smartDashboard::PutNumber("climb stage", stage);
+    // frc::smartDashboard::PutBoolean("running sequence", executeSequence);
+    // frc::smartDashboard::PutNumber("climbarms encoder", climbArmsEncoder.GetPosition());
+    // frc::smartDashboard::PutNumber("climbarms abs encoder", climbArmsAbs.GetOutput());
+    // frc::smartDashboard::PutNumber("which bar is bot on bar", climbData.bar);
+    // frc::smartDashboard::PutBoolean("zeroing", climbData.zeroing);
+    // frc::smartDashboard::PutNumber("elevator motor temp", elevatorTemp);
+    // frc::smartDashboard::PutNumber("arms temp", armsTemp);
+    // frc::smartDashboard::PutNumber("climb angle", angle);
 }
 
 void Climb::CheckArms()

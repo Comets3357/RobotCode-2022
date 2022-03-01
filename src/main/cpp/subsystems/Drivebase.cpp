@@ -181,20 +181,20 @@ void Drivebase::autonControl(const RobotData &robotData, DrivebaseData &drivebas
     // feed wheel speeds to PID
     // check if done with current path by either checking TotalTime() or checking in vicinity of final target point
 
-    frc::SmartDashboard::PutNumber("secSinceEnabled", robotData.timerData.secSinceEnabled);
+    // frc::smartDashboard::PutNumber("secSinceEnabled", robotData.timerData.secSinceEnabled);
 
     if (drivebaseData.driveMode == driveMode_break)
     {
         if (robotData.controlData.shootMode == shootMode_vision) {
             turnInPlaceAuton(-robotData.limelightData.angleOffset, robotData, drivebaseData, autonData);
-            frc::SmartDashboard::PutNumber("angleOffsetLimelight", robotData.limelightData.angleOffset);
+            // frc::smartDashboard::PutNumber("angleOffsetLimelight", robotData.limelightData.angleOffset);
         } else {
             setVelocity(0, 0);
         }
         // frc::SmartDashboard::PutNumber("breakEndSec", breakEndSec);
         if (robotData.timerData.secSinceEnabled > breakEndSec && robotData.controlData.shootMode == shootMode_none) {
-            frc::SmartDashboard::PutNumber("secSinceEnabled", robotData.timerData.secSinceEnabled);
-            frc::SmartDashboard::PutNumber("breakEndSec", breakEndSec);
+            // frc::smartDashboard::PutNumber("secSinceEnabled", robotData.timerData.secSinceEnabled);
+            // frc::smartDashboard::PutNumber("breakEndSec", breakEndSec);
             getNextAutonStep(robotData, drivebaseData, autonData);
         }
     }
@@ -255,9 +255,9 @@ void Drivebase::updateOdometry(const RobotData &robotData, DrivebaseData &driveb
 
 
     drivebaseData.currentPose = odometry.GetPose();
-    frc::SmartDashboard::PutNumber("currentPoseX", drivebaseData.currentPose.Translation().X().to<double>());
-    frc::SmartDashboard::PutNumber("currentPoseY", drivebaseData.currentPose.Translation().Y().to<double>());
-    frc::SmartDashboard::PutNumber("currentRadians", odometry.GetPose().Rotation().Radians().to<double>());
+    // frc::smartDashboard::PutNumber("currentPoseX", drivebaseData.currentPose.Translation().X().to<double>());
+    // frc::smartDashboard::PutNumber("currentPoseY", drivebaseData.currentPose.Translation().Y().to<double>());
+    // frc::smartDashboard::PutNumber("currentRadians", odometry.GetPose().Rotation().Radians().to<double>());
 }
 
 /**
@@ -290,45 +290,6 @@ void Drivebase::resetOdometry(double x, double y, double radians, const RobotDat
 
     zeroEncoders();
 }
-
-// deprecated: my own odometry (currently using wpilib odometry)
-/* // reset odometry to any double x, y, tanX, tanY
-void Drivebase::resetOdometry(double x, double y, double tanX, double tanY, const RobotData &robotData) {
-    const units::meter_t meterX{x};
-    const units::meter_t meterY{y};
-
-    const double pi = 2 * std::acos(0.0);
-
-    frc::SmartDashboard::PutNumber("std::tan (tanY / tanX)", (tanY / tanX));
-    frc::SmartDashboard::PutNumber("std::tan (tanY / tanX)", std::tan(tanY / tanX));
-    frc::SmartDashboard::PutString("what the", "heck");
-
-    units::radian_t radianYaw{M_PI / 2};
-    if (tanX != 0) {
-        units::radian_t blockScopeAngle{std::atan(tanY / tanX)};
-        radianYaw = blockScopeAngle;
-        frc::SmartDashboard::PutString("calculation", "happened");
-    } else if (tanY < 0) {
-        units::radian_t blockScopeAngle{ 3 * M_PI / 2 };
-        radianYaw = blockScopeAngle;
-        frc::SmartDashboard::PutString("neg tanY", "happened");
-    }
-    // frc::SmartDashboard::PutNumber("Pi", pi);
-    // frc::SmartDashboard::PutNumber("radian yaw", robotData.gyroData.rawYaw / 180 * pi);
-
-    // units::radian_t radianYaw{0};
-
-    frc::SmartDashboard::PutNumber("radianYaw", radianYaw.to<double>());
-
-    const units::radian_t gyroRadians{robotData.gyroData.rawYaw / 180 * pi};
-    frc::SmartDashboard::PutNumber("RORaw Yaw", robotData.gyroData.rawYaw);
-
-    const frc::Rotation2d gyroRotation{gyroRadians};
-    const frc::Pose2d resetPose{meterX, meterY, radianYaw};
-    odometry.ResetPosition(resetPose, gyroRotation);
-
-    zeroEncoders();
-} */
 
 
 // sets the drive base velocity for auton
@@ -417,12 +378,12 @@ void Drivebase::getNextAutonStep(const RobotData &robotData, DrivebaseData &driv
                 // frc::SmartDashboard::PutNumber("firstRadians", firstRadians);
 
                 resetOdometry(firstX, firstY, firstRadians, robotData);
-                frc::SmartDashboard::PutNumber("autonStep OdoInit", autonData.autonStep);
+                // frc::smartDashboard::PutNumber("autonStep OdoInit", autonData.autonStep);
 
                 odometryInitialized = true;
             }
 
-            frc::SmartDashboard::PutBoolean("odometryInitialized", odometryInitialized);
+            // frc::smartDashboard::PutBoolean("odometryInitialized", odometryInitialized);
         }
 
         frc::SmartDashboard::PutNumber("autonStep", autonData.autonStep);
@@ -449,7 +410,7 @@ void Drivebase::turnInPlaceAuton(double degrees, const RobotData &robotData, Dri
         directionFactor = -1;
     }
 
-    frc::SmartDashboard::PutBoolean("allValuesWithin", allValuesWithin(lastDegrees, 1));
+    // frc::smartDashboard::PutBoolean("allValuesWithin", allValuesWithin(lastDegrees, 1));
     if (allValuesWithin(lastDegrees, 5)) {
         setPercentOutput(0, 0);
         // only advance auton step if it's not shooting
