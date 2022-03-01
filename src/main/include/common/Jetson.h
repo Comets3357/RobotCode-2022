@@ -13,5 +13,4 @@ public:
     void RobotPeriodic();
 private:
     int currentAlliance;
-    frc::DriverStation driverStation;
 };
