@@ -1,13 +1,28 @@
 #include "RobotData.h"
 
-void BenchTest::TestPeriodic(const RobotData &robotData, BenchTestData &benchTestData){
+void BenchTest::TestPeriodic(const RobotData &robotData, BenchTestData &benchTestData, const ControlData &controlData){
     frc::SmartDashboard::PutBoolean("Start bench test", robotData.controlData.startBenchTest);
     frc::SmartDashboard::PutNumber("MotorStage", robotData.benchTestData.stage); //prints the motor stage
     frc::SmartDashboard::PutNumber("BenchTestStage", robotData.benchTestData.testStage); //prints the subsystem we're currently on
     frc::SmartDashboard::PutNumber("Power", robotData.benchTestData.currentSpeed); //prints the current testing speed
 
-    if (robotData.controlData.startBenchTest){  //starts testing to see if the robot is mechanically sound (toggle with A button on/off)
-        if (robotData.controlData.incrementSpeed){ //if the button is pressed, then speed goes up by .1
+    //increments motor every 4 seconds (unless the motor has limits/dead stops)
+    //this could all be on one line but I tried that and it made my brain hurt so I broke it up into 3 separate if statements
+    if (controlData.autoBenchTest && benchTestData.testStage != BenchTestStage::BenchTestStage_Climb){
+        if (benchTestData.testStage != BenchTestStage::BenchTestStage_Intake && benchTestData.testStage != BenchTestStage::BenchTestStage_Shooter){
+            increment += .005; //if it's not climb, intake, or shooter, then the automatic bench test increments based on time
+        } else if (benchTestData.stage != 0 && benchTestData.stage != 1 && (benchTestData.testStage == BenchTestStage::BenchTestStage_Intake && benchTestData.stage != 6 && benchTestData.stage != 7) && (benchTestData.testStage == BenchTestStage::BenchTestStage_Shooter && benchTestData.stage != 3 && benchTestData.stage != 4)){
+            increment += .005; //if it's intake or shooter but it isn't pivoting the intake or moving the hood in or out, then the automatic bench tests increments based on time
+        }
+    }
+
+    if (increment == 1){
+        increment = 0;
+        benchTestData.stage++;
+    }
+
+    if (controlData.startBenchTest){  //starts testing to see if the robot is mechanically sound (toggle with A button on/off)
+        if (controlData.incrementSpeed){ //if the button is pressed, then speed goes up by .1
             if (benchTestData.currentSpeed >= .7){ //caps the speed so it doesn't just infinitely go up
                 benchTestData.currentSpeed = 0;
             } else {
@@ -19,12 +34,12 @@ void BenchTest::TestPeriodic(const RobotData &robotData, BenchTestData &benchTes
     }
 
     //toggles the testing of PIDs, which will run the robot to its limits
-    if (robotData.controlData.PIDModeToggle){
+    if (controlData.PIDModeToggle){
         benchTestData.PIDMode = !benchTestData.PIDMode;
     }
 
     //changes the motor that's currently being tested
-    if (robotData.controlData.incrementMotor){
+    if (controlData.incrementMotor){
         benchTestData.currentSpeed = 0; //sets the speed to 0 when incrementing motors
         benchTestData.stage++; //if the subsystem doesn't need to be incremented, then the motor stage is instead
 
@@ -48,7 +63,7 @@ void BenchTest::TestPeriodic(const RobotData &robotData, BenchTestData &benchTes
         }
     }
 
-    if (robotData.controlData.incrementSubsystem){ //increments the subsystem with B button
+    if (controlData.incrementSubsystem){ //increments the subsystem with B button
         if (benchTestData.testStage == BenchTestStage::BenchTestStage_Drivebase){
             benchTestData.testStage = BenchTestStage::BenchTestStage_Indexer; //increments subsystem
             benchTestData.stage = 0;  //sets the motor stage to 0 (so no motors are skipped)
@@ -75,5 +90,10 @@ void BenchTest::TestPeriodic(const RobotData &robotData, BenchTestData &benchTes
             benchTestData.currentSpeed = 0;
             benchTestData.PIDMode = false;
         }
+    }
+
+    //if the bench test hits a dead stop, then increment the stage
+    if (controlData.autoBenchTest && (robotData.climbData.armsLowerLimit || robotData.climbData.armsUpperLimit || robotData.climbData.lowerLimit || robotData.climbData.upperLimit || robotData.intakeData.topDeadStop || robotData.intakeData.bottomDeadStop || robotData.shooterData.topDeadStop || robotData.shooterData.bottomDeadStop)){
+        benchTestData.stage++;
     }
 }

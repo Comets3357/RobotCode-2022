@@ -102,7 +102,7 @@ void Robot::TestInit(){
 void Robot::TestPeriodic(){
     //runs all of the test functions (and one controller function) so things actually run
     controller.TestPeriodic(robotData, robotData.controllerData, robotData.controlData);
-    benchTest.TestPeriodic(robotData, robotData.benchTestData);
+    benchTest.TestPeriodic(robotData, robotData.benchTestData, robotData.controlData);
 
     climb.TestPeriodic(robotData, robotData.climbData);
     drivebase.TestPeriodic(robotData, robotData.drivebaseData);

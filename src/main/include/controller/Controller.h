@@ -99,8 +99,9 @@ struct ControlData
     bool startBenchTestToggle;
     bool incrementMotorToggle;
     bool incrementSpeedToggle;
-    bool PIDModeToggle = false;
+    bool PIDModeToggle;
     bool incrementSubsystemToggle;
+    bool autoBenchTest;
 };
 
 struct ControllerData
@@ -161,6 +162,7 @@ struct ControllerData
     bool testXButton = false;
     bool testYButton = false;
     bool testRBumper = false;
+    bool testLBumper = false;
 };
 
 class Controller

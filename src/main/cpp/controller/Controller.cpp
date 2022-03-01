@@ -136,4 +136,5 @@ void Controller::updateBtnData(ControllerData &controllerData)
     controllerData.testXButton = getBtnToggled(2, 3);
     controllerData.testYButton = getBtnToggled(2, 4);
     controllerData.testRBumper = getBtnToggled(2, 6);
+    controllerData.testLBumper = getBtnToggled(2, 5);
 }
