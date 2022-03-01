@@ -173,7 +173,10 @@ void Climb::semiAuto(const RobotData &robotData, ClimbData &climbData)
     //listens for climb initiation button and does somthing if it needs to
     climbInit(robotData, climbData);
     //this is the climb sequence where the bot will climb autonomously
-    runSequence(robotData, climbData);
+    if (climbUp)
+    {
+        runSequence(robotData, climbData);
+    }
     //this will cancel the sequence or pause it
     cancelSequence(robotData, climbData);
     
