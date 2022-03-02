@@ -97,7 +97,7 @@ void Shooter::RobotPeriodic(const RobotData &robotData, ShooterData &shooterData
 void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
 
     //updates rev encoder if abs encoder is working
-    encoderPluggedIn(shooterData);
+    encoderPluggedIn();
 
     //SHOOTING LOGIC
     if(robotData.controlData.shootMode == shootMode_vision){ // Aiming with limelight
@@ -385,7 +385,7 @@ void Shooter::TestInit(){
 }
 
 void Shooter::TestPeriodic(const RobotData &robotData, ShooterData &shooterData){
-    frc::SmartDashboard::PutBoolean("Shooter abs encoder working", encoderPluggedIn(shooterData));
+    frc::SmartDashboard::PutBoolean("Shooter abs encoder working", encoderPluggedIn());
     frc::SmartDashboard::PutBoolean("Shooter abs encoder reading in correct range", encoderInRange(shooterData));
     frc::SmartDashboard::PutBoolean("Shooter hit bottom dead stop?", shooterData.bottomDeadStop);
     frc::SmartDashboard::PutBoolean("Shooter hit top dead stop?", shooterData.topDeadStop);
@@ -398,8 +398,8 @@ void Shooter::TestPeriodic(const RobotData &robotData, ShooterData &shooterData)
     checkDeadStop(shooterData);
 
     //runs the bench test sequence
-    if (robotData.benchTestData.testStage == BenchTestStage::BenchTestStage_Shooter && robotData.controlData.startBenchTest){ //checks if we're testing shooter
-        if (encoderPluggedIn(shooterData) && encoderInRange(shooterData)){ //checks if the encoder is working
+    if (robotData.benchTestData.testStage == BenchTestStage::BenchTestStage_Shooter && (robotData.controlData.startBenchTest || robotData.controlData.autoBenchTest)){ //checks if we're testing shooter
+        if (encoderPluggedIn() && encoderInRange(shooterData)){ //checks if the encoder is working
             if (robotData.benchTestData.stage == 0){
                 //run hood forwards
                 shooterData.benchTestShooterHoodSpeed = -.07; //sets the speed of the hood
@@ -441,7 +441,9 @@ void Shooter::TestPeriodic(const RobotData &robotData, ShooterData &shooterData)
         }
 
         flyWheelLead.Set(shooterData.benchTestFlyWheelSpeed);
-    } else {
+    }
+
+    if (!robotData.controlData.startBenchTest && !robotData.controlData.autoBenchTest){
         shooterData.benchTestShooterHoodSpeed = 0; //if not testing shooter, then the speed of the motors is set to 0
         shooterData.benchTestFlyWheelSpeed = 0;
         shooterHood.Set(0);
@@ -450,7 +452,7 @@ void Shooter::TestPeriodic(const RobotData &robotData, ShooterData &shooterData)
 }
 
 //checks if the encoder is plugged in and giving an output
-bool Shooter::encoderPluggedIn(const ShooterData &shooterData){
+bool Shooter::encoderPluggedIn(){
     if (shooterHoodEncoderAbs.GetOutput() > 0.01) { //checks if the output of the abs encoder is actually reading a signal
         //updates encoder values
         if (tickCount > 40){

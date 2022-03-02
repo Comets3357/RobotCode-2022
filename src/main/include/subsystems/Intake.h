@@ -56,8 +56,8 @@ private:
     bool intakeIdle(const RobotData &robotData, IntakeData &intakeData);
 
     //bench test
-    bool encoderPluggedIn(const IntakeData &intakeData);
-    bool encoderInRange(const IntakeData &intakeData);
+    bool encoderPluggedIn();
+    bool encoderInRange();
     void checkDeadStop(IntakeData &intakeData);
 
     //speeds

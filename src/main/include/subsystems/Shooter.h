@@ -57,7 +57,7 @@ class Shooter{
 
         //checks
         void checkReadyShoot(ShooterData &shooterData);
-        bool encoderPluggedIn(const ShooterData &shooterData);
+        bool encoderPluggedIn();
 
         //FIXED SHOTS
         void outerLaunch(const RobotData &robotData);

@@ -61,9 +61,7 @@ private:
     //bench test
     void checkElevatorDeadStop(ClimbData &climbData);
     void checkArmsDeadStop(ClimbData &climbData);
-    bool armsEncoderInRange(const ClimbData &climbData);
     void elevatorLimitSwitchWorking(ClimbData &climbData);
-    bool elevatorEncoderInRange(const ClimbData &climbData);
     bool encoderPluggedIn(const ClimbData &climbData);
     bool encoderInRange(const ClimbData &climbData);
 
