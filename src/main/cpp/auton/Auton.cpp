@@ -75,15 +75,6 @@ void Auton::sendAutonSelectionChooser() {
     frc::SmartDashboard::PutData("Select Auton:", &autonChooser);
 }
 
-frc::Pose2d Auton::getPose(double x, double y, double deg) {
-    units::meter_t meterX{x};
-    units::meter_t meterY{y};
-
-    const units::radian_t radianYaw{deg / 180 * M_PI};
-    const frc::Rotation2d rotation{radianYaw};
-    frc::Pose2d pose{meterX, meterY, rotation};
-    return pose;
-}
 
 void Auton::AutonomousPeriodic(const RobotData &robotData, AutonData &autonData, ControlData &controlData)
 {

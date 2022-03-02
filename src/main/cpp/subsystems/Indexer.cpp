@@ -61,8 +61,6 @@ void Indexer::updateData(const RobotData &robotData, IndexerData &indexerData)
         indexerData.eBallCountZero = false;
     }
     lastTickBallCount = indexerData.indexerContents.size();
-
-    debuggingStuff(robotData, indexerData);
 }
 
 void Indexer::manual(const RobotData &robotData, IndexerData &indexerData)
@@ -70,9 +68,9 @@ void Indexer::manual(const RobotData &robotData, IndexerData &indexerData)
 
     if(robotData.controlData.mIndexerDown){ //run belt and wheel backwards  (B)
         indexerWheel.Set(-indexerWheelSpeed);
-        indexerBelt.Set(-indexerBeltSpeed);
+        indexerBelt.Set(-indexerShootingBeltSpeed);
     }else if(robotData.controlData.mIndexerUp){ //run belt and wheel forwards (X)
-        indexerBelt.Set(indexerBeltSpeed);
+        indexerBelt.Set(indexerShootingBeltSpeed);
         indexerWheel.Set(indexerWheelSpeed);    
     }else{
         indexerBelt.Set(0);
@@ -87,75 +85,7 @@ void Indexer::semiAuto(const RobotData &robotData, IndexerData &indexerData)
     saWheelControl(robotData, indexerData);
 }
 
-void Indexer::debuggingStuff(const RobotData &robotData, IndexerData &indexerData){
-    // TESTING STUFF
-    frc::SmartDashboard::PutNumber("cargo count", indexerData.indexerContents.size());
-    frc::SmartDashboard::PutNumber("wrong ball?", robotData.controlData.wrongBall);
 
-    if (indexerData.indexerContents.size() == 0){
-
-        frc::SmartDashboard::PutString("top", "empty");
-        frc::SmartDashboard::PutString("bottom", "empty");
-
-    } else if (indexerData.indexerContents.size() == 1){
-
-        if(indexerData.indexerContents.front() == Cargo::cargo_Alliance){
-            frc::SmartDashboard::PutString("top", "alliance");
-            frc::SmartDashboard::PutString("bottom", "empty");
-        } else if (indexerData.indexerContents.front() == Cargo::cargo_Opponent){
-            frc::SmartDashboard::PutString("top", "opponent");
-            frc::SmartDashboard::PutString("bottom", "empty");
-        } else {
-            frc::SmartDashboard::PutString("top", "unassigned");
-            frc::SmartDashboard::PutString("bottom", "empty");
-        }
-
-    } else if (indexerData.indexerContents.size() == 2){
-
-        if(indexerData.indexerContents.front() == Cargo::cargo_Alliance){
-
-            if(indexerData.indexerContents.back() == Cargo::cargo_Alliance){
-                frc::SmartDashboard::PutString("top", "alliance");
-                frc::SmartDashboard::PutString("bottom", "alliance");
-            } else if(indexerData.indexerContents.back() == Cargo::cargo_Opponent){
-                frc::SmartDashboard::PutString("top", "alliance");
-                frc::SmartDashboard::PutString("bottom", "opponent");
-            } else {
-                frc::SmartDashboard::PutString("top", "alliance");
-                frc::SmartDashboard::PutString("bottom", "unassigned");
-            }
-
-        } else if (indexerData.indexerContents.front() == Cargo::cargo_Opponent){
-
-            if(indexerData.indexerContents.back() == Cargo::cargo_Alliance){
-                frc::SmartDashboard::PutString("top", "opponent");
-                frc::SmartDashboard::PutString("bottom", "alliance");
-            } else if(indexerData.indexerContents.back() == Cargo::cargo_Opponent){
-                frc::SmartDashboard::PutString("top", "opponent");
-                frc::SmartDashboard::PutString("bottom", "opponent");
-            } else {
-                frc::SmartDashboard::PutString("top", "opponent");
-                frc::SmartDashboard::PutString("bottom", "unassigned");
-            }
-
-        } else {
-            if(indexerData.indexerContents.back() == Cargo::cargo_Alliance){
-                frc::SmartDashboard::PutString("top", "unassigned");
-                frc::SmartDashboard::PutString("bottom", "alliance");
-            } else if(indexerData.indexerContents.back() == Cargo::cargo_Opponent){
-                frc::SmartDashboard::PutString("top", "unassigned");
-                frc::SmartDashboard::PutString("bottom", "opponent");
-            } else {
-                frc::SmartDashboard::PutString("top", "unassigned");
-                frc::SmartDashboard::PutString("bottom", "unassigned");
-            }
-            
-        }
-    } else {
-        frc::SmartDashboard::PutString("top", "overload");
-        frc::SmartDashboard::PutString("bottom", "overload");
-    }
-}
 
 
 
@@ -287,9 +217,13 @@ void Indexer::count(const RobotData &robotData, IndexerData &indexerData){
 void Indexer::saBeltControl(const RobotData &robotData, IndexerData &indexerData){
 
     if(robotData.controlData.saEjectBalls){ // if indexer is REVERSING (saEject or manual indexer backwards)
-        indexerBelt.Set(-indexerBeltSpeed);
+        indexerBelt.Set(-indexerShootingBeltSpeed);
     } else if ((!pauseBelt(robotData, indexerData) && robotData.shooterData.readyShoot && robotData.controlData.saFinalShoot)|| (!getTopBeam() && !robotData.intakeData.intakeIdle)){ // if you're shooting or (BB3 is not  and the intake isn't idle)
-        indexerBelt.Set(indexerBeltSpeed);
+        if(robotData.controlData.saFinalShoot){
+            indexerBelt.Set(indexerShootingBeltSpeed);
+        } else {
+            indexerBelt.Set(indexerIntakingBeltSpeed);
+        }
     }  else {
         indexerBelt.Set(0);
     }
