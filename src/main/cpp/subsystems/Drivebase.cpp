@@ -101,10 +101,10 @@ void Drivebase::DisabledInit()
 {
     
     setPercentOutput(0, 0);
-    dbL.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
-    dbLF.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
-    dbR.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
-    dbRF.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
+    dbL.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
+    dbLF.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
+    dbR.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
+    dbRF.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
     odometryInitialized = false;
 }
 
@@ -510,7 +510,7 @@ void Drivebase::setPercentOutput(double leftVBus, double rightVBus) {
 // checks deque contents to see if all values are within the given tolerance (true)
 bool Drivebase::allValuesWithin(std::deque<double> deque, double tolerance) {
     bool hasOutlier = false;
-    for (int i = 0; i < deque.size(); i++) {
+    for (size_t i = 0; i < deque.size(); i++) {
         if (std::abs(deque[i]) > tolerance) {
             hasOutlier = true;
         }

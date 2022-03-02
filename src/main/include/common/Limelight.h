@@ -53,7 +53,7 @@ public:
 private:
     double distanceToTarget();
     void shooterOffset(const RobotData &robotData, LimelightData &limelightData);
-    double correctDistance(double angleOffset, double originalDistance);
+    //double correctDistance(double angleOffset, double originalDistance);
 
     double getHoodPOS(VisionLookup &visionLookup, LimelightData &limelightData, const RobotData &robotData);
     double getWheelVelocity(VisionLookup &visionLookup, LimelightData &limelightData, const RobotData &robotData);
