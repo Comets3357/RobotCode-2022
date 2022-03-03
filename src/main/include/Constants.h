@@ -4,33 +4,75 @@
 static const int
     leftLeadDeviceID = 1,
     leftFollowDeviceID = 2,
-    rightLeadDeviceID = 3,
-    rightFollowDeviceID = 4;
+    rightLeadDeviceID = 4,
+    rightFollowDeviceID = 5;
 
 //intake:
 static const int
-    intakeRollerID = 10,
-    intakePivotID = 11;
-    
+    intakeRollerID = 12,
+    intakePivotID = 11,
+    intakeSingulatorID = 13;
+
 static const double
-    wkP = 1, wkI = 0, wkD = 0, wkIz = 0, wkFF = 0, wkMaxOutput = 1, wkMinOutput = -1;
+    //practice bot
+    // absOut = 0.485,
+    // absIn = 0.616,
+    // revOut = 6.4,
+    // revIn = 0;
+
+    //comp bot intake pivot positions
+    absOut = 0.465,
+    absIn = 0.605,
+    revOut = 6.14,
+    revIn = 0;
 
 //indexer
 static const int
-    indexerBeltsID = 15;
+    indexerBeltsID = 22,
+    indexerWheelID = 21;
 
 // shooter
 static const int
-    shooterWheelMID = 21,
-    shooterWheelSID = 22,
-    shooterHoodID = 23,
-    shooterKickID = 24,
-    shooterTurretID = 25;
+    shooterWheelLeadID = 31,
+    shooterHoodID = 33,
+    shooterTurretID = 34;
+
+static const double
+    //comp bot shooter hood positions
+    hoodabsOut = 0.028,
+    hoodabsIn = 0.933,
+    hoodrevOut = -38,
+    hoodrevIn = 0,
+    hoodAngleOut = 43,
+    hoodAngleIn = 21;
 
 // climb
 static const int
-    climbLiftID = 32;
+    climbElevatorID = 41,
+    climbArmsID = 43;
+    
+const float 
+    climbArmsZero = 0.811;
 
+//limelight:
+static const double
+    pi = 3.141592653589793238463,
+    hubHeight = 104,
+    limelightMount = 36.5, //height of mount
+    limelightAngle = 36.2, //angle of limelight on mount
+    xcameraDistanceFromBot = 3.0625, //offset from center of shooter X
+    ycameraDistanceFromBot = 9.5, //offset from center of shooter Y
+    shooterDistanceFromCenterOfBot = 2, 
+    crosshairOffset = 0;
+
+// DIO
+static const int
+    intakeAbsoluteEncoderPort = 8,
+    climbArmsAbsID = 4,
+    HoodAbsoluteEncoderPort = 1,
+    bottomBeamBreakPort = 3,
+    midBeamBreakPort = 9,
+    topBeamBreakPort = 5;
 
 
 

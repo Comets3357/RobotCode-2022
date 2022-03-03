@@ -11,7 +11,13 @@
 void Controller::TeleopPeriodic(const RobotData &robotData, ControllerData &controllerData, ControlData &controlData)
 {
     updateBtnData(controllerData);
-    updateControlData(controllerData, controlData);
+    updateControlData(robotData, controllerData, controlData);
+    updateShootMode(robotData, controlData);
+}
+
+void Controller::TestPeriodic(const RobotData &robotData, ControllerData &controllerData, ControlData &controlData){
+    updateBtnData(controllerData);
+    updateControlData(robotData, controllerData, controlData);
 }
 
 bool Controller::getBtn(int js, int index)
@@ -32,9 +38,13 @@ bool Controller::getBtnToggled(int js, int index)
     {
         return secondary.GetRawButtonPressed(index);
     }
-    else
+    else if (js == 0)
     {
         return primary.GetRawButtonPressed(index);
+    }
+    else
+    {
+        return testControl.GetRawButtonPressed(index);
     }
 }
 
@@ -66,7 +76,6 @@ double Controller::getAxis(int js, int index)
 void Controller::updateBtnData(ControllerData &controllerData)
 {
     // primary controls:
-
     if (frc::DriverStation::GetJoystickName(0) == "FrSky Taranis Joystick")
     {
         // if using the flight stick, axises are inverted compared to xbox
@@ -95,7 +104,9 @@ void Controller::updateBtnData(ControllerData &controllerData)
     controllerData.sLTrigger = getAxis(1, 2);
     controllerData.sRTrigger = getAxis(1, 3);
     controllerData.sLBumper = getBtn(1, 5);
+    controllerData.sLBumperToggled = getBtnToggled(1, 5);
     controllerData.sRBumper = getBtn(1, 6);
+    controllerData.sRBumperToggled = getBtnToggled(1, 6);
 
     controllerData.sABtn = getBtn(1, 1);
     controllerData.sBBtn = getBtn(1, 2);
@@ -114,4 +125,15 @@ void Controller::updateBtnData(ControllerData &controllerData)
     controllerData.sRCenterBtnToggled = getBtnToggled(1, 8);
 
     controllerData.sDPad = getPOV(1, 0);
+
+    controllerData.sRTriggerToggled = getBtnToggled(1,3);
+    controllerData.sLTriggerToggled = getBtnToggled(1,3);
+
+    //bench test controls
+
+    controllerData.testAButton = getBtnToggled(2, 1);
+    controllerData.testBButton = getBtnToggled(2, 2);
+    controllerData.testXButton = getBtnToggled(2, 3);
+    controllerData.testYButton = getBtnToggled(2, 4);
+    controllerData.testRBumper = getBtnToggled(2, 6);
 }

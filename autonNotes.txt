@@ -1,0 +1,4 @@
+odometry object - meters
+trajectoryState - meters
+wheel speeds - mps
+setting velocity to motor needs tpds
