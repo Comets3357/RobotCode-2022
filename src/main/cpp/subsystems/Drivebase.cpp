@@ -45,16 +45,18 @@ void Drivebase::RobotInit()
     dbR.Config_kD(0, 0); */
 
     // PIDs for 2022
-    dbL.Config_kF(0, 0.072659);
-    dbL.Config_kP(0, 0.67606);
+    // last updated 03.01.22 for Calvin
+    dbL.Config_kF(0, 0.074314);
+    dbL.Config_kP(0, 0.67243);
     dbL.Config_kD(0, 0);
 
-    dbR.Config_kF(0, 0.072659);
-    dbR.Config_kP(0, 0.67606);
+    dbR.Config_kF(0, 0.074314);
+    dbR.Config_kP(0, 0.67243);
     dbR.Config_kD(0, 0);
 
     setPercentOutput(0, 0);
 
+    zeroEncoders();
 
     odometryInitialized = false;
 }
@@ -74,6 +76,7 @@ void Drivebase::AutonomousInit(const RobotData &robotData, DrivebaseData &driveb
 
     // get trajectory from auton's pointer
     getNextAutonStep(robotData, drivebaseData, autonData);
+    zeroEncoders();
 }
 
 void Drivebase::RobotPeriodic(const RobotData &robotData, DrivebaseData &drivebaseData, AutonData &autonData)
@@ -172,6 +175,7 @@ void Drivebase::teleopControl(const RobotData &robotData, DrivebaseData &driveba
     else if (drivebaseData.driveMode == driveMode_turnInPlace) {
         turnInPlaceTeleop(-robotData.limelightData.angleOffset, robotData);
     }
+
 }
 
 void Drivebase::autonControl(const RobotData &robotData, DrivebaseData &drivebaseData, AutonData &autonData) {
@@ -398,7 +402,7 @@ void Drivebase::turnInPlaceAuton(double degrees, const RobotData &robotData, Dri
     frc::SmartDashboard::PutNumber("degree diff", degrees);
     
     lastDegrees.push_back(degrees);
-    if (lastDegrees.size() > 5) {
+    if (lastDegrees.size() > 2) {
         lastDegrees.pop_front();
     }
 
@@ -420,8 +424,8 @@ void Drivebase::turnInPlaceAuton(double degrees, const RobotData &robotData, Dri
         // frc::SmartDashboard::PutString("AUTON", "TURN IN PLACE");
     } else {
         // profile that adjusts aggressiveness of turn based on the amount of degrees left to turn. has been tuned for speed & accuracy on both small and large turns
-        leftOutput = std::pow(std::abs(degrees / 400), 1.3) + 0.11;
-        rightOutput = std::pow(std::abs(degrees / 400), 1.3) + 0.11;
+        leftOutput = std::pow(std::abs(degrees / 400), 1.3) + 0.1;
+        rightOutput = std::pow(std::abs(degrees / 400), 1.3) + 0.1;
     }
     
 

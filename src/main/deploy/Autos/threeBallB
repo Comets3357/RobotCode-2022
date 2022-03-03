@@ -1,6 +1,7 @@
 threeBallB1
-turnInPlace 180
-break 2
+turnInPlace -170
+break 3
+turnInPlace 160
 threeBallB2
 turnInPlace -180
-break2
+threeBallB3
