@@ -141,7 +141,7 @@ void Auton::threeBallB(const RobotData &robotData, ControlData &controlData) {
     controlData.saIntake = true;
 
     // run flywheel and aim
-    if (currentSec > 1 && currentSec < 6) {
+    if (currentSec > 3 && currentSec < 8) {
         controlData.shootMode = shootMode_vision;
     } else if (currentSec > 10 && currentSec < 15) {
         controlData.shootMode = shootMode_vision;
@@ -150,9 +150,9 @@ void Auton::threeBallB(const RobotData &robotData, ControlData &controlData) {
     }
 
     // final shoot
-    if (currentSec > 3 && currentSec < 6) {
+    if (currentSec > 5 && currentSec < 8) {
         controlData.saFinalShoot = true;
-    } else if (currentSec > 13 && currentSec < 15) {
+    } else if (currentSec > 12 && currentSec < 15) {
         controlData.saFinalShoot = true;
     } else {
         controlData.saFinalShoot = false;
@@ -166,7 +166,7 @@ void Auton::threeBallC(const RobotData &robotData, ControlData &controlData) {
     controlData.saIntake = true;
 
     // run flywheel and aim
-    if (currentSec > 1 && currentSec < 6) {
+    if (currentSec > 3 && currentSec < 8) {
         controlData.shootMode = shootMode_vision;
     } else if (currentSec > 10 && currentSec < 15) {
         controlData.shootMode = shootMode_vision;
@@ -175,9 +175,9 @@ void Auton::threeBallC(const RobotData &robotData, ControlData &controlData) {
     }
 
     // final shoot
-    if (currentSec > 3 && currentSec < 6) {
+    if (currentSec > 5 && currentSec < 8) {
         controlData.saFinalShoot = true;
-    } else if (currentSec > 13 && currentSec < 15) {
+    } else if (currentSec > 12 && currentSec < 15) {
         controlData.saFinalShoot = true;
     } else {
         controlData.saFinalShoot = false;
@@ -188,21 +188,26 @@ void Auton::fourBallC(const RobotData &robotData, ControlData &controlData) {
     double currentSec = robotData.timerData.secSinceEnabled;
 
     // intake
-    controlData.saIntake = true;
+    if (currentSec < 11) {
+        controlData.saIntake = true;
+    } else {
+        controlData.saIntake = false;
+    }
 
     // run flywheel and aim
-    if (currentSec > 1 && currentSec < 6) {
+    if (currentSec > 1 && currentSec < 4.5) {
         controlData.shootMode = shootMode_vision;
-    } else if (currentSec > 10 && currentSec < 15) {
+    } else if (currentSec > 12 && currentSec < 15) {
         controlData.shootMode = shootMode_vision;
     } else {
         controlData.shootMode = shootMode_none;
     }
 
+
     // final shoot
-    if (currentSec > 3 && currentSec < 6) {
+    if (currentSec > 3.2 && currentSec < 4.5) {
         controlData.saFinalShoot = true;
-    } else if (currentSec > 13 && currentSec < 15) {
+    } else if (currentSec > 13.5 && currentSec < 15) {
         controlData.saFinalShoot = true;
     } else {
         controlData.saFinalShoot = false;
