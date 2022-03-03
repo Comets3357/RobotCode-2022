@@ -8,7 +8,6 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     limelightData.xOffset =  table->GetNumber("tx", 0.0) * (pi/180); //RADIANS
     limelightData.yOffset =  table->GetNumber("ty", 0.0);
     limelightData.distanceToTarget = distanceToTarget(); //the distance
-    limelightData.angleOffset = robotData.limelightData.angleOffset; //Degrees
 
     //turns off limelight if not shooting
     if(robotData.controlData.shootMode == shootMode_none){
@@ -34,7 +33,7 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     limelightData.desiredVel = getWheelVelocity(visionLookup, limelightData, robotData); //returns rpm
     
     //printing data to the dashboard
-    frc::SmartDashboard::PutNumber("distance offset", robotData.limelightData.distanceOffset/12);
+    // frc::smartDashboard::PutNumber("distance offset", robotData.limelightData.distanceOffset/12);
     //frc::SmartDashboard::PutNumber("angleOffset", limelightData.angleOffset);
     //frc::SmartDashboard::PutNumber("desired hood", robotData.limelightData.desiredHoodPos);
     //frc::SmartDashboard::PutNumber("final correct distance", robotData.limelightData.correctDistance);
@@ -85,10 +84,10 @@ void Limelight::shooterOffset(const RobotData &robotData, LimelightData &limelig
  * @returns finds the corrected distance for when we turn the robot
  * NOT USED
  */
-double Limelight::correctDistance(double angleOffset, double originalDistance)
-{
-    return (originalDistance + (shooterDistanceFromCenterOfBot - (std::cos(angleOffset)))*shooterDistanceFromCenterOfBot);
-}
+// double Limelight::correctDistance(double angleOffset, double originalDistance)
+// {
+//     return (originalDistance + (shooterDistanceFromCenterOfBot - (std::cos(angleOffset)))*shooterDistanceFromCenterOfBot);
+// }
 
 /**
  * @return the desired hood position using lookup table

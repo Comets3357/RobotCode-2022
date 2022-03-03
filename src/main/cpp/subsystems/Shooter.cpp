@@ -66,7 +66,6 @@ void Shooter::DisabledInit()
 void Shooter::EnabledInit(ControlData &controlData, ShooterData &shooterData)
 {
     controlData.shootMode = shootMode_none;
-    shooterData.shootUnassignedAsOpponent = false;
 }
 
 /**
@@ -400,20 +399,15 @@ void Shooter::TestPeriodic(const RobotData &robotData, ShooterData &shooterData)
                 shooterData.benchTestShooterHoodSpeed = .07;
                 shooterData.benchTestFlyWheelSpeed = 0;
             } else if (robotData.benchTestData.stage == 2){
-                //zero everything - probably should be a function
-                shooterData.benchTestShooterHoodSpeed = 0;
-                shooterData.benchTestFlyWheelSpeed = 0;
-                shooterHoodEncoderRev.SetPosition(0);
-            } else if (robotData.benchTestData.stage == 3){
                 //run fly wheel
                 shooterData.benchTestShooterHoodSpeed = 0;
                 shooterData.benchTestFlyWheelSpeed = .25;
             } else if (robotData.benchTestData.PIDMode){ //tests in pid mode
-                if (robotData.benchTestData.stage == 4){
+                if (robotData.benchTestData.stage == 3){
                     shooterData.benchTestFlyWheelSpeed = 0;
                     // bring hood out
                     shooterHood_pidController.SetReference(hoodrevOut, rev::CANSparkMaxLowLevel::ControlType::kPosition);
-                } else if (robotData.benchTestData.stage == 5){
+                } else if (robotData.benchTestData.stage == 4){
                     shooterData.benchTestFlyWheelSpeed = 0;
                     // bring hood in
                     shooterHood_pidController.SetReference(hoodrevIn, rev::CANSparkMaxLowLevel::ControlType::kPosition);

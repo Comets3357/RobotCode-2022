@@ -4,6 +4,7 @@
 void Robot::RobotInit()
 {
     gyro.RobotInit();
+    jetson.RobotInit();
 
     auton.RobotInit(robotData.autonData);
     drivebase.RobotInit();
@@ -20,8 +21,9 @@ void Robot::RobotPeriodic()
     colorSensor.RobotPeriodic(robotData);
     visionLookup.RobotPeriodic(robotData, robotData.visionLookupData);
     LED.RobotPeriodic(robotData);
+    jetson.RobotPeriodic();
 
-    frc::SmartDashboard::PutNumber("mode", robotData.controlData.mode);
+    // frc::SmartDashboard::PutNumber("mode", robotData.controlData.mode);
 
     //frc::SmartDashboard::PutNumber("mode", robotData.controlData.mode);
 

@@ -5,7 +5,7 @@
   "gearing denominator": 44.0,
   "gearing numerator": 9.0,
   "gyro": "NavX",
-  "gyro ctor": "SPI.kMXP",
+  "gyro ctor": "SPI (MXP)",
   "is drivetrain": true,
   "motor controllers": [
     "TalonFX",

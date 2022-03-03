@@ -23,6 +23,7 @@ struct ClimbData {
     float armsAmp, elevatorAmp, armsTemp, elevatorTemp, elevatorPos, armsPos, armsAbsPos;
     int angle, angularRate;
     bool elevatorLimit;
+
     float benchTestClimbArmsSpeed = 0;
     float benchTestClimbElevatorSpeed = 0;
     bool limitSwitchWorking = false;
@@ -49,8 +50,6 @@ private:
     float elevatorSpeed = 0.7;
     float armsSpeed = 1;
     int zeroingTimer = 0;
-
-    int delayTimer = 0;
 
     void climbInit(const RobotData &robotData, ClimbData &climbData);
     void cancelSequence(const RobotData &robotData, ClimbData &climbData);
@@ -100,10 +99,7 @@ private:
     void WaitUntilGyro(int cmp, float gyroValue, int stageAdd);
     void CheckGyroPosition(int cmp, float gyroValue, int failAdd, int successAdd);
 
-    void PullBotOff(int position, float gyro, int stageAdd, int onBar);
     void waitTillDirection(int direction, float value, int stageAdd, int bar);
-
-    void delay(int time, int stageAdd);
 
     void CheckArms();
     void CheckAngleForTransfer();
