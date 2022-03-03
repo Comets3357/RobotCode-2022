@@ -45,13 +45,22 @@ void Drivebase::RobotInit()
     dbR.Config_kD(0, 0); */
 
     // PIDs for 2022
-    // last updated 03.01.22 for Calvin
-    dbL.Config_kF(0, 0.074314);
-    dbL.Config_kP(0, 0.67243);
+    // last updated 03.01.22
+    // dbL.Config_kF(0, 0.074314);
+    // dbL.Config_kP(0, 0.67243);
+    // dbL.Config_kD(0, 0);
+
+    // dbR.Config_kF(0, 0.074314);
+    // dbR.Config_kP(0, 0.67243);
+    // dbR.Config_kD(0, 0);
+
+    // PIDs for 2022 Calvin University
+    dbL.Config_kF(0, 0.081029);
+    dbL.Config_kP(0, 0.10436);
     dbL.Config_kD(0, 0);
 
-    dbR.Config_kF(0, 0.074314);
-    dbR.Config_kP(0, 0.67243);
+    dbR.Config_kF(0, 0.081029);
+    dbR.Config_kP(0, 0.10436);
     dbR.Config_kD(0, 0);
 
     setPercentOutput(0, 0);
