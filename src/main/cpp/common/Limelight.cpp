@@ -172,7 +172,7 @@ double Limelight::getWheelVelocity(VisionLookup &visionLookup, LimelightData &li
 
     //multiply the difference in the distance and floored value by the slope to get desired velocity for that small distance 
     //then add that to the desired position of the lower floored value
-    return (desiredSlope*(orignalDistance - limelightData.lowerVal*12)+limelightData.lowerValVel);
+    return (desiredSlope*(orignalDistance - limelightData.lowerVal*12)+limelightData.lowerValVel) - 8;
 
 }
 

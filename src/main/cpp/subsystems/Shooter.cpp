@@ -280,16 +280,16 @@ void Shooter::innerLaunch(const RobotData &robotData)
     if (robotData.controlData.upperHubShot)
     {
         shooterHood_pidController.SetReference(hoodrevOut, rev::CANSparkMaxLowLevel::ControlType::kPosition);
-        setShooterWheel(2040);
+        setShooterWheel(2040 - 8);
 
-        readyShootLimit = 1960;
+        readyShootLimit = 1960  - 8;
     }
     else if (!robotData.controlData.upperHubShot)
     {
         shooterHood_pidController.SetReference(hoodrevOut, rev::CANSparkMaxLowLevel::ControlType::kPosition);
-        setShooterWheel(2040);
+        setShooterWheel(2040 - 8);
 
-        readyShootLimit = 1960;
+        readyShootLimit = 1960 - 8;;
     }
 }
 
@@ -298,16 +298,16 @@ void Shooter::wall(const RobotData &robotData)
     if (robotData.controlData.upperHubShot)
     {
         shooterHood_pidController.SetReference(-32.33, rev::CANSparkMaxLowLevel::ControlType::kPosition);
-        setShooterWheel(1860);
+        setShooterWheel(1860 - 8);
 
-        readyShootLimit = 1830;
+        readyShootLimit = 1830 - 8;;
     }
     else if (!robotData.controlData.upperHubShot)
     {
         shooterHood_pidController.SetReference(-32.33, rev::CANSparkMaxLowLevel::ControlType::kPosition);
-        setShooterWheel(1860);
+        setShooterWheel(1860 - 8);
 
-        readyShootLimit = 1800;
+        readyShootLimit = 1800 - 8;
     }
 }
 
@@ -316,16 +316,16 @@ void Shooter::fender(const RobotData &robotData)
     if (robotData.controlData.upperHubShot)
     {
         shooterHood_pidController.SetReference(hoodrevIn-0.25, rev::CANSparkMaxLowLevel::ControlType::kPosition);
-        setShooterWheel(1690);
+        setShooterWheel(1690 - 8);
 
-        readyShootLimit = 1670;
+        readyShootLimit = 1670 - 8;
     }
     else if (!robotData.controlData.upperHubShot)
     {
         shooterHood_pidController.SetReference(hoodrevIn-0.25, rev::CANSparkMaxLowLevel::ControlType::kPosition);
-        setShooterWheel(1240);
+        setShooterWheel(1240 - 8);
         
-        readyShootLimit = 1220;
+        readyShootLimit = 1220 - 8;
     }
 }
 

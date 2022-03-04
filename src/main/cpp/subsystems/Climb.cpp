@@ -256,8 +256,8 @@ void Climb::runSequence(const RobotData &robotData, ClimbData &climbData)
         else if (stage == 8) RunElevatorToPos(30,1,0); //Outer Arms pivot the robot so the elevator is facing the next bar
         else if (stage == 9) ChangeElevatorSpeed(1,1);
         else if (stage == 10) RunArmsAndElevatorToPos(110,0,200,1,1);
-        else if (stage == 11) WaitUntilGyro(-1, -45, 1);
-        else if (stage == 12) RunElevatorToPos(144.5,1,1);
+        else if (stage == 11) WaitUntilGyro(-1, -43, 1);
+        else if (stage == 12) RunElevatorToPos(150,1,1);
         else if (stage == 13) ChangeElevatorSpeed(elevatorSpeed,1);
         else if (stage == 14) RunArmsToPos(130,1,1);
         else if (stage == 15) ChangeElevatorSpeed(0.5, 1);
