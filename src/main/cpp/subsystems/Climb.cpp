@@ -164,7 +164,7 @@ void Climb::manual(const RobotData &robotData, ClimbData &climbData)
             //sets power to 0 when nothing is supposed to happen
             climbArms.Set(0);
         }
-    }
+}
 }
 
 void Climb::semiAuto(const RobotData &robotData, ClimbData &climbData)
@@ -173,10 +173,10 @@ void Climb::semiAuto(const RobotData &robotData, ClimbData &climbData)
     //listens for climb initiation button and does somthing if it needs to
     climbInit(robotData, climbData);
     //this is the climb sequence where the bot will climb autonomously
-    if (climbUp)
-    {
+    // if (climbUp)
+    // {
         runSequence(robotData, climbData);
-    }
+    // }
     //this will cancel the sequence or pause it
     cancelSequence(robotData, climbData);
     
