@@ -462,7 +462,7 @@ void Indexer::TestPeriodic(const RobotData &robotData, IndexerData &indexerData)
     frc::SmartDashboard::PutNumber("First indexer encoder", indexerBeltEncoder.GetPosition());
     frc::SmartDashboard::PutNumber("Second indexer encoder", indexerWheelEncoder.GetPosition());
 
-    if (robotData.benchTestData.testStage == BenchTestStage::BenchTestStage_Indexer && (robotData.controlData.startBenchTest || robotData.controlData.autoBenchTest)){ //checks if we're testing indexer
+    if (robotData.benchTestData.testStage == BenchTestStage::BenchTestStage_Indexer && (robotData.controlData.manualBenchTest || robotData.controlData.autoBenchTest)){ //checks if we're testing indexer
         if (robotData.benchTestData.stage == 0){
             //run wheel forwards
             indexerWheel.Set(robotData.benchTestData.currentSpeed); //sets the wheel speed
@@ -482,7 +482,7 @@ void Indexer::TestPeriodic(const RobotData &robotData, IndexerData &indexerData)
         }
     }
 
-    if (!robotData.controlData.startBenchTest && !robotData.controlData.autoBenchTest){
+    if (!robotData.controlData.manualBenchTest && !robotData.controlData.autoBenchTest){
         indexerWheel.Set(0); //if not testing indexer, then speeds get set to 0
         indexerBelt.Set(0);
     }

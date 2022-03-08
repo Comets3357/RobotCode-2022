@@ -398,7 +398,7 @@ void Shooter::TestPeriodic(const RobotData &robotData, ShooterData &shooterData)
     checkDeadStop(shooterData);
 
     //runs the bench test sequence
-    if (robotData.benchTestData.testStage == BenchTestStage::BenchTestStage_Shooter && (robotData.controlData.startBenchTest || robotData.controlData.autoBenchTest)){ //checks if we're testing shooter
+    if (robotData.benchTestData.testStage == BenchTestStage::BenchTestStage_Shooter && (robotData.controlData.manualBenchTest || robotData.controlData.autoBenchTest)){ //checks if we're testing shooter
         if (encoderPluggedIn() && encoderInRange(shooterData)){ //checks if the encoder is working
             if (robotData.benchTestData.stage == 0){
                 //run hood forwards
@@ -443,7 +443,7 @@ void Shooter::TestPeriodic(const RobotData &robotData, ShooterData &shooterData)
         flyWheelLead.Set(shooterData.benchTestFlyWheelSpeed);
     }
 
-    if (!robotData.controlData.startBenchTest && !robotData.controlData.autoBenchTest){
+    if (!robotData.controlData.manualBenchTest && !robotData.controlData.autoBenchTest){
         shooterData.benchTestShooterHoodSpeed = 0; //if not testing shooter, then the speed of the motors is set to 0
         shooterData.benchTestFlyWheelSpeed = 0;
         shooterHood.Set(0);

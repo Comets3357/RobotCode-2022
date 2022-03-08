@@ -232,7 +232,7 @@ void Intake::TestPeriodic(const RobotData &robotData, IntakeData &intakeData){
     checkDeadStop(intakeData);
 
     //runs the bench test sequence
-    if (robotData.benchTestData.testStage == BenchTestStage::BenchTestStage_Intake && (robotData.controlData.startBenchTest || robotData.controlData.autoBenchTest)){ //checks if we're testing intake
+    if (robotData.benchTestData.testStage == BenchTestStage::BenchTestStage_Intake && (robotData.controlData.manualBenchTest || robotData.controlData.autoBenchTest)){ //checks if we're testing intake
         if (encoderPluggedIn() && encoderInRange()){ //checks if the encoder is working
             if (robotData.benchTestData.stage == 0){
                 //pivot down
@@ -301,7 +301,7 @@ void Intake::TestPeriodic(const RobotData &robotData, IntakeData &intakeData){
         intakeSingulator.Set(intakeData.benchTestSingulatorSpeed);
     }
 
-    if (!robotData.controlData.startBenchTest && !robotData.controlData.autoBenchTest){
+    if (!robotData.controlData.manualBenchTest && !robotData.controlData.autoBenchTest){
         intakeData.benchTestIntakePivotSpeed = 0; //if not testing intake, then the speed of the motors is set to 0
         intakeData.benchTestIntakeRollersSpeed = 0;
         intakeData.benchTestSingulatorSpeed = 0;

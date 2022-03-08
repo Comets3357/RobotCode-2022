@@ -605,7 +605,7 @@ void Climb::TestPeriodic(const RobotData &robotData, ClimbData &climbData){
     checkElevatorDeadStop(climbData);
     checkArmsDeadStop(climbData);
 
-    if (robotData.benchTestData.testStage == BenchTestStage::BenchTestStage_Climb && (robotData.controlData.startBenchTest || robotData.controlData.autoBenchTest)){ //checks if we're testing climb
+    if (robotData.benchTestData.testStage == BenchTestStage::BenchTestStage_Climb && (robotData.controlData.manualBenchTest || robotData.controlData.autoBenchTest)){ //checks if we're testing climb
         if (climbData.limitSwitchWorking && encoderPluggedIn(climbData) && encoderInRange(climbData)){ //checks if the limit switch is working
             if (robotData.benchTestData.stage == 0){
                 //move climb arms forwards
@@ -666,7 +666,7 @@ void Climb::TestPeriodic(const RobotData &robotData, ClimbData &climbData){
         }
     }
 
-    if (!robotData.controlData.startBenchTest && !robotData.controlData.autoBenchTest){ //if not testing climb, then speeds get set to 0
+    if (!robotData.controlData.manualBenchTest && !robotData.controlData.autoBenchTest){ //if not testing climb, then speeds get set to 0
         climbData.benchTestClimbArmsSpeed = 0;
         climbData.benchTestClimbElevatorSpeed = 0;
         climbArms.Set(0);
