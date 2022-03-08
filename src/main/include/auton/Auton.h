@@ -36,27 +36,18 @@ private:
     frc::SendableChooser<std::string> autonChooser;
 
 
+    // secondary controls:
     void potato(const RobotData &robotData, ControlData &controlData);
+
     // exit tarmac, collect 1, turn, shoot 2:
-    void exitShoot(const RobotData &robotData, ControlData &controlData);
-    // three ball autons (exitShoot + terminal shoot):
-    void threeBallA(const RobotData &robotData, ControlData &controlData);
+    void taxiShoot(const RobotData &robotData, ControlData &controlData);
+
+    // three ball autons (taxiShoot + terminal shoot):
     void threeBallB(const RobotData &robotData, ControlData &controlData);
     void threeBallC(const RobotData &robotData, ControlData &controlData);
-    // four ball autons (exitShoot, neighboring ball, termincal shoot):
-    void fourBallA(const RobotData &robotData, ControlData &controlData);
-    void fourBallB(const RobotData &robotData, ControlData &controlData);
+
+    // four ball autons (taxiShoot, neighboring ball, termincal shoot):
     void fourBallC(const RobotData &robotData, ControlData &controlData);
 
     void sixBallC(const RobotData &robotData, ControlData &controlData);
-
-
-    frc::Pose2d getPose(double x, double y, double deg);
-
-
-    // secondary control helper functions:
-    // void setShootTime(const RobotData &robotData, ControlData &controlData, double start, double end);
-
-    // secondary control variables:
-    bool doneTogglingShoot = false;
 };

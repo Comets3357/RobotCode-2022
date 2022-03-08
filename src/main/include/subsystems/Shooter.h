@@ -17,7 +17,6 @@ struct RobotData;
 struct ShooterData
 {
     bool readyShoot;
-    bool shootUnassignedAsOpponent;
     
     //Bench test
     bool topDeadStop = false;
@@ -34,12 +33,13 @@ class Shooter{
         void DisabledInit();
         void DisabledPeriodic(const RobotData &robotData, ShooterData &shooterData);
         void EnabledInit(ControlData &controlData, ShooterData &shooterData);
-        void updateData(const RobotData &robotData, ShooterData &shooterData);
         void TestPeriodic(const RobotData &robotData, ShooterData &shooterData);
     
     private:
         void manual(const RobotData &robotData, ShooterData &shooterData);
         void semiAuto(const RobotData &robotData, ShooterData &shooterData);
+        void updateData(const RobotData &robotData, ShooterData &shooterData);
+
 
         //converting hood
         double HoodconvertFromAngleToAbs(double angle);

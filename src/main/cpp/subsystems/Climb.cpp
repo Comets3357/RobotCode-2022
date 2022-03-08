@@ -1,4 +1,4 @@
-#include "subsystems/Climb.h"
+    #include "subsystems/Climb.h"
 #include "RobotData.h"
 
 // 1 overtild the bot so that there cannot be any bounceback
@@ -123,7 +123,7 @@ void Climb::RobotPeriodic(const RobotData &robotData, ClimbData &climbData)
 void Climb::manual(const RobotData &robotData, ClimbData &climbData)
 {
     //manualy sets the elevator with limit. I use the limit switch as the bottom limit
-    if (climbElevatorEncoder.GetPosition() >= 144 && robotData.controllerData.sLYStick > 0)
+    if (climbElevatorEncoder.GetPosition() >= 145 && robotData.controllerData.sLYStick > 0)
     {
         //sets power to 0 if it is outside of its deadzone
         climbElevator.Set(0); //control elevator with left stick
@@ -173,7 +173,10 @@ void Climb::semiAuto(const RobotData &robotData, ClimbData &climbData)
     //listens for climb initiation button and does somthing if it needs to
     climbInit(robotData, climbData);
     //this is the climb sequence where the bot will climb autonomously
-    runSequence(robotData, climbData);
+    if (climbUp)
+    {
+        runSequence(robotData, climbData);
+    }
     //this will cancel the sequence or pause it
     cancelSequence(robotData, climbData);
     
@@ -250,8 +253,6 @@ void Climb::runSequence(const RobotData &robotData, ClimbData &climbData)
         else if (stage == 5) RunArmsToPos(0,1,0); //Elevator goes up to latch the arms onto the bar with the elevator a little above
         else if (stage == 6) RunArmsToPos(70,1,0); //Elevator goes up to latch the arms onto the bar with the elevator a little above
         else if (stage == 7) CheckArms();
-        //else if (stage == 8) CheckAngleForTransfer();
-        //else if (stage == 8) ChangeElevatorSpeed(0.4,1);
         else if (stage == 8) RunElevatorToPos(30,1,0); //Outer Arms pivot the robot so the elevator is facing the next bar
         else if (stage == 9) ChangeElevatorSpeed(1,1);
         else if (stage == 10) RunArmsAndElevatorToPos(110,0,200,1,1);
@@ -299,19 +300,19 @@ void Climb::updateData(const RobotData &robotData, ClimbData &climbData)
     climbData.angularRate = angularRate;
     climbData.elevatorLimit = elevatorLimit.Get();
     
-    frc::SmartDashboard::PutNumber("elevator encoder value", climbElevatorEncoder.GetPosition());
-    frc::SmartDashboard::PutBoolean("limit Climb", elevatorLimit.Get());
-    frc::SmartDashboard::PutNumber("elevator amps", elevatorAmperage);
-    frc::SmartDashboard::PutNumber("Arms amps", armsAmperage);
-    frc::SmartDashboard::PutNumber("climb stage", stage);
-    frc::SmartDashboard::PutBoolean("running sequence", executeSequence);
-    frc::SmartDashboard::PutNumber("climbarms encoder", climbArmsEncoder.GetPosition());
-    frc::SmartDashboard::PutNumber("climbarms abs encoder", climbArmsAbs.GetOutput());
-    frc::SmartDashboard::PutNumber("which bar is bot on bar", climbData.bar);
-    frc::SmartDashboard::PutBoolean("zeroing", climbData.zeroing);
-    frc::SmartDashboard::PutNumber("elevator motor temp", elevatorTemp);
-    frc::SmartDashboard::PutNumber("arms temp", armsTemp);
-    frc::SmartDashboard::PutNumber("climb angle", angle);
+    // frc::smartDashboard::PutNumber("elevator encoder value", climbElevatorEncoder.GetPosition());
+    // frc::smartDashboard::PutBoolean("limit Climb", elevatorLimit.Get());
+    // frc::smartDashboard::PutNumber("elevator amps", elevatorAmperage);
+    // frc::smartDashboard::PutNumber("Arms amps", armsAmperage);
+    // frc::smartDashboard::PutNumber("climb stage", stage);
+    // frc::smartDashboard::PutBoolean("running sequence", executeSequence);
+    // frc::smartDashboard::PutNumber("climbarms encoder", climbArmsEncoder.GetPosition());
+    // frc::smartDashboard::PutNumber("climbarms abs encoder", climbArmsAbs.GetOutput());
+    // frc::smartDashboard::PutNumber("which bar is bot on bar", climbData.bar);
+    // frc::smartDashboard::PutBoolean("zeroing", climbData.zeroing);
+    // frc::smartDashboard::PutNumber("elevator motor temp", elevatorTemp);
+    // frc::smartDashboard::PutNumber("arms temp", armsTemp);
+    // frc::smartDashboard::PutNumber("climb angle", angle);
 }
 
 void Climb::CheckArms()
@@ -325,13 +326,6 @@ void Climb::CheckArms()
     }
 }
 
-void Climb::CheckAngleForTransfer()
-{
-    if (abs(angle) < 20)
-    {
-        stage += 1;
-    }
-}
 
 void Climb::ChangeElevatorSpeedOnBar(float speed, bool run, int stageAdd)
 {
@@ -343,93 +337,6 @@ void Climb::ChangeElevatorSpeedOnBar(float speed, bool run, int stageAdd)
     }
 }
 
-void Climb::waitTillDirection(int direction, float value, int stageAdd, int bar)
-{
-    if (direction == 1)
-    {
-        if (angularRate > value)
-        {
-            stage += stageAdd;
-        }
-    } else if (direction == -1)
-    {
-        if (angularRate < value)
-        {
-            stage += stageAdd;
-        }
-    }
-    if (bar != 3)
-    {
-        stage += stageAdd;
-    }
-}
-
-void Climb::PullBotOff(int position, float gyro, int stageAdd, int onBar)
-{
-    // if (climbElevatorEncoder.GetPosition() > position + 1 || climbElevatorEncoder.GetPosition() < position - 1)
-    // {
-
-        
-    // }
-    if (onBar){
-        if (angle > gyro)
-        {
-            climbElevator_pidController.SetReference(position, rev::CANSparkMax::ControlType::kPosition, onBar);
-        }
-        else
-        {
-            climbElevator.Set(0);
-            
-        }
-    } else{
-        climbElevator_pidController.SetReference(position, rev::CANSparkMax::ControlType::kPosition, onBar);
-    }
-    elevatorRunning = true;
-    if (angle > -20)
-    {
-        climbElevator.Set(0);
-        elevatorRunning = false;
-        climbInitiating = false;
-        stage += stageAdd;
-    }
-}
-
-void Climb::CheckGyroPosition(int cmp, float gyroValue, int failAdd, int successAdd)
-{
-    if (cmp == 1)
-    {
-        if (gyroValue < angle)
-        {
-            stage += successAdd;
-        }
-        else 
-        {
-            stage += failAdd;
-        }
-    }
-    else if (cmp == -1)
-    {
-        if (gyroValue > angle)
-        {
-            stage += successAdd;
-        }
-        else 
-        {
-            stage += failAdd;
-        }
-    }
-    else if (cmp == 0){
-        if (gyroValue == angle)
-        {
-            stage += successAdd;
-        }
-        else 
-        {
-            stage += failAdd;
-        }
-
-    }
-}
 
 void Climb::WaitUntilGyro(int cmp, float gyroValue, int stageAdd)
 {
@@ -561,15 +468,6 @@ void Climb::ZeroElevator(float power, int stageAdd)
     }
 }
 
-void Climb::delay(int time, int stageAdd)
-{
-    delayTimer += 1;
-    if (delayTimer > time)
-    {
-        delayTimer = 0;
-        stage += stageAdd;
-    }
-}
 
 
 void Climb::TestInit(ClimbData &climbData){

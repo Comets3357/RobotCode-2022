@@ -21,6 +21,7 @@
 #include "common/OtherComponents.h"
 #include "common/ColorSensor.h"
 #include "common/LEDs.h"
+#include "common/Jetson.h"
 
 //Robot class inherits from TimedRobot
 class Robot : public frc::TimedRobot
@@ -52,6 +53,7 @@ private:
     Auton auton{};
     LEDs LED{};
     BenchTest benchTest{};
+    Jetson jetson{};
     
 
     // subsystems

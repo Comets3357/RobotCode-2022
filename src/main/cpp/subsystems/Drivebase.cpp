@@ -45,16 +45,18 @@ void Drivebase::RobotInit()
     dbR.Config_kD(0, 0); */
 
     // PIDs for 2022
-    dbL.Config_kF(0, 0.072659);
-    dbL.Config_kP(0, 0.67606);
+    // last updated 03.01.22 for Calvin
+    dbL.Config_kF(0, 0.074314);
+    dbL.Config_kP(0, 0.67243);
     dbL.Config_kD(0, 0);
 
-    dbR.Config_kF(0, 0.072659);
-    dbR.Config_kP(0, 0.67606);
+    dbR.Config_kF(0, 0.074314);
+    dbR.Config_kP(0, 0.67243);
     dbR.Config_kD(0, 0);
 
     setPercentOutput(0, 0);
 
+    zeroEncoders();
 
     odometryInitialized = false;
 }
@@ -74,6 +76,7 @@ void Drivebase::AutonomousInit(const RobotData &robotData, DrivebaseData &driveb
 
     // get trajectory from auton's pointer
     getNextAutonStep(robotData, drivebaseData, autonData);
+    zeroEncoders();
 }
 
 void Drivebase::RobotPeriodic(const RobotData &robotData, DrivebaseData &drivebaseData, AutonData &autonData)
@@ -101,10 +104,10 @@ void Drivebase::DisabledInit()
 {
     
     setPercentOutput(0, 0);
-    dbL.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
-    dbLF.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
-    dbR.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
-    dbRF.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
+    dbL.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
+    dbLF.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
+    dbR.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
+    dbRF.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
     odometryInitialized = false;
 }
 
@@ -172,6 +175,7 @@ void Drivebase::teleopControl(const RobotData &robotData, DrivebaseData &driveba
     else if (drivebaseData.driveMode == driveMode_turnInPlace) {
         turnInPlaceTeleop(-robotData.limelightData.angleOffset, robotData);
     }
+
 }
 
 void Drivebase::autonControl(const RobotData &robotData, DrivebaseData &drivebaseData, AutonData &autonData) {
@@ -181,20 +185,20 @@ void Drivebase::autonControl(const RobotData &robotData, DrivebaseData &drivebas
     // feed wheel speeds to PID
     // check if done with current path by either checking TotalTime() or checking in vicinity of final target point
 
-    frc::SmartDashboard::PutNumber("secSinceEnabled", robotData.timerData.secSinceEnabled);
+    // frc::smartDashboard::PutNumber("secSinceEnabled", robotData.timerData.secSinceEnabled);
 
     if (drivebaseData.driveMode == driveMode_break)
     {
         if (robotData.controlData.shootMode == shootMode_vision) {
             turnInPlaceAuton(-robotData.limelightData.angleOffset, robotData, drivebaseData, autonData);
-            frc::SmartDashboard::PutNumber("angleOffsetLimelight", robotData.limelightData.angleOffset);
+            // frc::smartDashboard::PutNumber("angleOffsetLimelight", robotData.limelightData.angleOffset);
         } else {
             setVelocity(0, 0);
         }
         // frc::SmartDashboard::PutNumber("breakEndSec", breakEndSec);
         if (robotData.timerData.secSinceEnabled > breakEndSec && robotData.controlData.shootMode == shootMode_none) {
-            frc::SmartDashboard::PutNumber("secSinceEnabled", robotData.timerData.secSinceEnabled);
-            frc::SmartDashboard::PutNumber("breakEndSec", breakEndSec);
+            // frc::smartDashboard::PutNumber("secSinceEnabled", robotData.timerData.secSinceEnabled);
+            // frc::smartDashboard::PutNumber("breakEndSec", breakEndSec);
             getNextAutonStep(robotData, drivebaseData, autonData);
         }
     }
@@ -255,9 +259,9 @@ void Drivebase::updateOdometry(const RobotData &robotData, DrivebaseData &driveb
 
 
     drivebaseData.currentPose = odometry.GetPose();
-    frc::SmartDashboard::PutNumber("currentPoseX", drivebaseData.currentPose.Translation().X().to<double>());
-    frc::SmartDashboard::PutNumber("currentPoseY", drivebaseData.currentPose.Translation().Y().to<double>());
-    frc::SmartDashboard::PutNumber("currentRadians", odometry.GetPose().Rotation().Radians().to<double>());
+    // frc::smartDashboard::PutNumber("currentPoseX", drivebaseData.currentPose.Translation().X().to<double>());
+    // frc::smartDashboard::PutNumber("currentPoseY", drivebaseData.currentPose.Translation().Y().to<double>());
+    // frc::smartDashboard::PutNumber("currentRadians", odometry.GetPose().Rotation().Radians().to<double>());
 }
 
 /**
@@ -290,45 +294,6 @@ void Drivebase::resetOdometry(double x, double y, double radians, const RobotDat
 
     zeroEncoders();
 }
-
-// deprecated: my own odometry (currently using wpilib odometry)
-/* // reset odometry to any double x, y, tanX, tanY
-void Drivebase::resetOdometry(double x, double y, double tanX, double tanY, const RobotData &robotData) {
-    const units::meter_t meterX{x};
-    const units::meter_t meterY{y};
-
-    const double pi = 2 * std::acos(0.0);
-
-    frc::SmartDashboard::PutNumber("std::tan (tanY / tanX)", (tanY / tanX));
-    frc::SmartDashboard::PutNumber("std::tan (tanY / tanX)", std::tan(tanY / tanX));
-    frc::SmartDashboard::PutString("what the", "heck");
-
-    units::radian_t radianYaw{M_PI / 2};
-    if (tanX != 0) {
-        units::radian_t blockScopeAngle{std::atan(tanY / tanX)};
-        radianYaw = blockScopeAngle;
-        frc::SmartDashboard::PutString("calculation", "happened");
-    } else if (tanY < 0) {
-        units::radian_t blockScopeAngle{ 3 * M_PI / 2 };
-        radianYaw = blockScopeAngle;
-        frc::SmartDashboard::PutString("neg tanY", "happened");
-    }
-    // frc::SmartDashboard::PutNumber("Pi", pi);
-    // frc::SmartDashboard::PutNumber("radian yaw", robotData.gyroData.rawYaw / 180 * pi);
-
-    // units::radian_t radianYaw{0};
-
-    frc::SmartDashboard::PutNumber("radianYaw", radianYaw.to<double>());
-
-    const units::radian_t gyroRadians{robotData.gyroData.rawYaw / 180 * pi};
-    frc::SmartDashboard::PutNumber("RORaw Yaw", robotData.gyroData.rawYaw);
-
-    const frc::Rotation2d gyroRotation{gyroRadians};
-    const frc::Pose2d resetPose{meterX, meterY, radianYaw};
-    odometry.ResetPosition(resetPose, gyroRotation);
-
-    zeroEncoders();
-} */
 
 
 // sets the drive base velocity for auton
@@ -417,12 +382,12 @@ void Drivebase::getNextAutonStep(const RobotData &robotData, DrivebaseData &driv
                 // frc::SmartDashboard::PutNumber("firstRadians", firstRadians);
 
                 resetOdometry(firstX, firstY, firstRadians, robotData);
-                frc::SmartDashboard::PutNumber("autonStep OdoInit", autonData.autonStep);
+                // frc::smartDashboard::PutNumber("autonStep OdoInit", autonData.autonStep);
 
                 odometryInitialized = true;
             }
 
-            frc::SmartDashboard::PutBoolean("odometryInitialized", odometryInitialized);
+            // frc::smartDashboard::PutBoolean("odometryInitialized", odometryInitialized);
         }
 
         frc::SmartDashboard::PutNumber("autonStep", autonData.autonStep);
@@ -437,7 +402,7 @@ void Drivebase::turnInPlaceAuton(double degrees, const RobotData &robotData, Dri
     frc::SmartDashboard::PutNumber("degree diff", degrees);
     
     lastDegrees.push_back(degrees);
-    if (lastDegrees.size() > 5) {
+    if (lastDegrees.size() > 2) {
         lastDegrees.pop_front();
     }
 
@@ -449,7 +414,7 @@ void Drivebase::turnInPlaceAuton(double degrees, const RobotData &robotData, Dri
         directionFactor = -1;
     }
 
-    frc::SmartDashboard::PutBoolean("allValuesWithin", allValuesWithin(lastDegrees, 1));
+    // frc::smartDashboard::PutBoolean("allValuesWithin", allValuesWithin(lastDegrees, 1));
     if (allValuesWithin(lastDegrees, 5)) {
         setPercentOutput(0, 0);
         // only advance auton step if it's not shooting
@@ -459,8 +424,8 @@ void Drivebase::turnInPlaceAuton(double degrees, const RobotData &robotData, Dri
         // frc::SmartDashboard::PutString("AUTON", "TURN IN PLACE");
     } else {
         // profile that adjusts aggressiveness of turn based on the amount of degrees left to turn. has been tuned for speed & accuracy on both small and large turns
-        leftOutput = std::pow(std::abs(degrees / 400), 1.3) + 0.11;
-        rightOutput = std::pow(std::abs(degrees / 400), 1.3) + 0.11;
+        leftOutput = std::pow(std::abs(degrees / 400), 1.3) + 0.1;
+        rightOutput = std::pow(std::abs(degrees / 400), 1.3) + 0.1;
     }
     
 
@@ -510,7 +475,7 @@ void Drivebase::setPercentOutput(double leftVBus, double rightVBus) {
 // checks deque contents to see if all values are within the given tolerance (true)
 bool Drivebase::allValuesWithin(std::deque<double> deque, double tolerance) {
     bool hasOutlier = false;
-    for (int i = 0; i < deque.size(); i++) {
+    for (size_t i = 0; i < deque.size(); i++) {
         if (std::abs(deque[i]) > tolerance) {
             hasOutlier = true;
         }

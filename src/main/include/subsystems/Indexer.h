@@ -13,6 +13,7 @@
 
 struct RobotData;
 
+// when you're having the deque show what's in the indexer
 enum Cargo
 {
     cargo_Alliance,
@@ -22,7 +23,7 @@ enum Cargo
 
 struct IndexerData
 {
-    std::deque<Cargo> indexerContents;
+    std::deque<Cargo> indexerContents; // what's in the indexer
     bool topBeamToggledOn; // sensed a ball
     bool topBeamToggledOff; // stopped sensing a ball
     bool eBallCountZero; // event boolean for when ball count goes from 1 to 0
@@ -45,7 +46,7 @@ private:
     void manual(const RobotData &robotData, IndexerData &indexerData);
     void semiAuto(const RobotData &robotData, IndexerData &indexerData);
 
-    void debuggingStuff(const RobotData &robotData, IndexerData &indexerData);
+    // void debuggingStuff(const RobotData &robotData, IndexerData &indexerData);
 
     void incrementCount(const RobotData &robotData, IndexerData &indexerData);
     void newCargo(const RobotData &robotData, IndexerData &indexerData);
@@ -56,9 +57,9 @@ private:
 
     void saBeltControl(const RobotData &robotData, IndexerData &indexerData);
     void saWheelControl(const RobotData &robotData, IndexerData &indexerData);
-    bool pauseBelt(const RobotData &robotData, IndexerData &indexerData);
+    bool pauseBelt(const RobotData &robotData, IndexerData &indexerData); // checks if the belt should be paused to stop ball at top of indexer
 
-
+    // basic sensors
     bool getBottomBeam();
     bool getMidBeam();
     bool getTopBeam();
@@ -87,8 +88,9 @@ private:
 
     bool runWheel = false; // checks if one ball has left shooter so that you can run the wheel and get the other ball out
 
-    const double indexerWheelSpeed = 0.3;
-    const double indexerBeltSpeed = 0.6;
+    const double indexerWheelSpeed = 0.6;
+    const double indexerShootingBeltSpeed = 0.6;
+    const double indexerIntakingBeltSpeed = 0.4;
 
 
     // ColorSensor colorSensor{}; //rev v3, for detecting ball color
