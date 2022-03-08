@@ -98,12 +98,6 @@ private:
     void ChangeElevatorSpeedOnBar(float speed, bool run, int stageAdd);
 
     void WaitUntilGyro(int cmp, float gyroValue, int stageAdd);
-    void CheckGyroPosition(int cmp, float gyroValue, int failAdd, int successAdd);
-
-    void PullBotOff(int position, float gyro, int stageAdd, int onBar);
-    void waitTillDirection(int direction, float value, int stageAdd, int bar);
-
-    void delay(int time, int stageAdd);
 
     void CheckArms();
     void CheckAngleForTransfer();
