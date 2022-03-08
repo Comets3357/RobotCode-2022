@@ -57,6 +57,29 @@ void Shooter::flyWheelInit()
     flyWheelLead.BurnFlash();           
 }
 
+void Shooter::shooterTurretInit(){
+    // fly wheel LEAD motor init
+    shooterTurret.RestoreFactoryDefaults();
+    shooterTurret.SetInverted(true);
+    shooterTurret.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+    shooterTurret.SetSmartCurrentLimit(15);
+
+
+    //PIDS
+    shooterTurret_pidController.SetP(0.0005); 
+    shooterTurret_pidController.SetI(0);
+    shooterTurret_pidController.SetD(0);
+    shooterTurret_pidController.SetIZone(0);
+    shooterTurret_pidController.SetFF(0.00023);
+    shooterTurret_pidController.SetOutputRange(-1,1);
+
+    shooterTurret.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward, turretZeroRev);
+    shooterTurret.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse, turretFullRotationRev);
+
+    shooterTurret.BurnFlash(); 
+
+}
+
 void Shooter::DisabledInit()
 {
     shooterHood.Set(0);
@@ -111,7 +134,7 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
         }
 
         //flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel+20, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
-        shooterHood_pidController.SetReference(absoluteToREV(convertFromAngleToAbs(robotData.limelightData.desiredHoodPos)), rev::CANSparkMaxLowLevel::ControlType::kPosition);
+        shooterHood_pidController.SetReference(HoodabsoluteToREV(HoodconvertFromAngleToAbs(robotData.limelightData.desiredHoodPos)), rev::CANSparkMaxLowLevel::ControlType::kPosition);
         
         //FOR TESTING PURPOSES
         //retrieves flywheel speeds from the dashboard
@@ -203,7 +226,7 @@ void Shooter::updateData(const RobotData &robotData, ShooterData &shooterData)
     frc::SmartDashboard::PutNumber("shooter Hood REV", shooterHoodEncoderRev.GetPosition());
 
     frc::SmartDashboard::PutBoolean("shooter ready shoot", shooterData.readyShoot);
-    frc::SmartDashboard::PutNumber("HOOD ANGLE", convertFromAbsToAngle(shooterHoodEncoderAbs.GetOutput()));
+    frc::SmartDashboard::PutNumber("HOOD ANGLE", HoodconvertFromAbsToAngle(shooterHoodEncoderAbs.GetOutput()));
     frc::SmartDashboard::PutNumber("flywheel vel", flyWheelLeadEncoder.GetVelocity());
     frc::SmartDashboard::PutNumber("desired flywheel vel", robotData.limelightData.desiredVel);
 
@@ -222,8 +245,9 @@ double Shooter::getWheelVel(){
 
 /**
  * @return converts shooter hood encoder values from angles (degrees) to the values of the absolute encoder
+ * HOOD
  **/
-double Shooter::convertFromAngleToAbs(double angle)
+double Shooter::HoodconvertFromAngleToAbs(double angle)
 {
     double slope = (hoodabsOut - hoodabsIn)/(hoodAngleOut - hoodAngleIn);
     double b = hoodabsIn - (slope*hoodAngleIn);
@@ -232,8 +256,9 @@ double Shooter::convertFromAngleToAbs(double angle)
 
 /**
  * @return converts from the absolute encoder values to angles (degrees)
+ * HOOD
  **/
-double Shooter::convertFromAbsToAngle(double abs)
+double Shooter::HoodconvertFromAbsToAngle(double abs)
 {
     double slope = (hoodAngleOut - hoodAngleIn)/(hoodabsOut - hoodabsIn);
     double b = hoodAngleIn - (slope*hoodabsIn);
@@ -243,10 +268,44 @@ double Shooter::convertFromAbsToAngle(double abs)
 /**
  * @return converts from the absolute encoder values to ones the rev motor can read
  * constantly updates the rev position in periodic 
+ * HOOD
  **/
-double Shooter::absoluteToREV(double value){
+double Shooter::HoodabsoluteToREV(double value){
     double slope = (hoodrevOut - hoodrevIn)/(hoodabsOut - hoodabsIn);
     double b = hoodrevIn - (slope*hoodabsIn);
+    return ((value*slope) + b);
+}
+
+/**
+ * @return converts shooter hood encoder values from angles (degrees) to the values of the absolute encoder
+ * TURRET
+ **/
+double Shooter::turretConvertFromAngleToAbs(double angle)
+{
+    double slope = (turretFullRotationAbs - turretZeroAbs)/(turretFullRotationDegrees - turretZeroDegrees);
+    double b = turretZeroAbs - (slope*turretZeroDegrees);
+    return ((angle*slope) + b);
+}
+
+/**
+ * @return converts from the absolute encoder values to angles (degrees)
+ * TURRET
+ **/
+double Shooter::turretConvertFromAbsToAngle(double abs)
+{
+    double slope = (turretFullRotationDegrees - turretZeroDegrees)/(turretFullRotationAbs - turretZeroAbs);
+    double b = turretZeroDegrees - (slope*turretZeroAbs);
+    return ((abs*slope) + b);
+}
+
+/**
+ * @return converts from the absolute encoder values to ones the rev motor can read
+ * constantly updates the rev position in periodic 
+ * TURRET
+ **/
+double Shooter::turretAbsoluteToREV(double value){
+    double slope = (turretFullRotationRev - turretZeroRev)/(turretFullRotationAbs - turretZeroAbs);
+    double b = turretZeroRev - (slope*turretZeroAbs);
     return ((value*slope) + b);
 }
 
@@ -443,7 +502,7 @@ bool Shooter::encoderPluggedIn(const ShooterData &shooterData){
     if (shooterHoodEncoderAbs.GetOutput() > 0.01) { //checks if the output of the abs encoder is actually reading a signal
         //updates encoder values
         if (tickCount > 40){
-            shooterHoodEncoderRev.SetPosition(absoluteToREV(shooterHoodEncoderAbs.GetOutput()));
+            shooterHoodEncoderRev.SetPosition(HoodabsoluteToREV(shooterHoodEncoderAbs.GetOutput()));
             tickCount = (tickCount + 1) % 50;
         } else {
             tickCount = (tickCount + 1) % 50;

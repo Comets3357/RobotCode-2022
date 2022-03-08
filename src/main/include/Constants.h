@@ -35,7 +35,8 @@ static const int
 static const int
     shooterWheelLeadID = 31,
     shooterHoodID = 33,
-    shooterTurretID = 34;
+    shooterTurretID = 34,
+    hoodRollerID = 32;
 
 static const double
     //comp bot shooter hood positions
@@ -44,7 +45,17 @@ static const double
     hoodrevOut = -38,
     hoodrevIn = 0,
     hoodAngleOut = 43,
-    hoodAngleIn = 21;
+    hoodAngleIn = 21,
+
+    //turret positions
+    turretZeroDegrees = 0,
+    turretFullRotationDegrees = 0,
+    turretZeroRev = 0,
+    turretFullRotationRev = 0,
+    turretZeroAbs = 0,
+    turretFullRotationAbs = 0,
+
+    hoodFlywheelRatio = 0;
 
 // climb
 static const int
@@ -70,6 +81,7 @@ static const int
     intakeAbsoluteEncoderPort = 8,
     climbArmsAbsID = 4,
     HoodAbsoluteEncoderPort = 1,
+    TurretAbsoluteEncoderPort = 0,
     bottomBeamBreakPort = 3,
     midBeamBreakPort = 9,
     topBeamBreakPort = 5;

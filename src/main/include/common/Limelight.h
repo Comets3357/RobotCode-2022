@@ -57,6 +57,8 @@ private:
 
     double getHoodPOS(VisionLookup &visionLookup, LimelightData &limelightData, const RobotData &robotData);
     double getWheelVelocity(VisionLookup &visionLookup, LimelightData &limelightData, const RobotData &robotData);
+    double getTurretPOS(VisionLookup &visionLookup, LimelightData &limelightData, const RobotData &robotData);
+    double getHoodRollerVel(LimelightData &limelightData, const RobotData &robotData);
 
     //void averageDistance(const RobotData &robotData, LimelightData &limelightData);
 

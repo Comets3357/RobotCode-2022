@@ -178,6 +178,14 @@ double Limelight::getWheelVelocity(VisionLookup &visionLookup, LimelightData &li
 }
 
 /**
+ * @return the desired hood roller velocity based off of the desired flywheel velocity
+ */
+double Limelight::getHoodRollerVel(LimelightData &limelightData, const RobotData &robotData){
+    double flywheelVel = robotData.limelightData.desiredVel;
+    return flywheelVel*hoodFlywheelRatio;
+}
+
+/**
  * Returns the avg distance of the last 5 cycles to make the data smoother while shooting
  */
 // void Limelight::averageDistance(const RobotData &robotData, LimelightData &limelightData){
