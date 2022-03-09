@@ -10,6 +10,7 @@
 #include "common/LEDs.h"
 #include "common/ColorSensor.h"
 #include "common/BenchTest.h"
+#include "common/Jetson.h"
 
 #include "auton/Auton.h"
 
@@ -32,6 +33,7 @@ struct RobotData
     TimerData timerData;
     ColorSensorData colorSensorData;
     BenchTestData benchTestData;
+    JetsonData jetsonData;
 
     AutonData autonData;
 

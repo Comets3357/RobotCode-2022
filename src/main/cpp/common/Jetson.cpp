@@ -1,14 +1,12 @@
 #include "common/Jetson.h"
+#include "RobotData.h"
 
 void Jetson::RobotInit()
 {
-    currentAlliance = 0;
-}
-
-void Jetson::RobotPeriodic()
-{
     auto inst = nt::NetworkTableInstance::GetDefault();
     auto table = inst.GetTable("default");
+
+    currentAlliance = 0;
 
     if (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed)
     {
@@ -45,4 +43,74 @@ void Jetson::RobotPeriodic()
     table->PutNumber("red dilation", 8); // THIS CHANGES AT COMPS
     table->PutNumber("blue erosion", 3); // THIS CHANGES AT COMPS
     table->PutNumber("blue dilation", 5); // THIS CHANGES AT COMPS
+
+    distanceFromBall = 0;
+    angleOffBall = 0;
+}
+
+void Jetson::RobotPeriodic(const RobotData &robotData, JetsonData &jetsonData)
+{
+    auto inst = nt::NetworkTableInstance::GetDefault();
+    auto table = inst.GetTable("default");
+
+    double currentAlliance = 0;
+    double leftCurrent = robotData.controlData.lDrive;
+    double rightCurrent = robotData.controlData.rDrive;
+    double maxCurrent = 0;
+        
+    distanceFromBall = table->GetNumber("Distance To Closest Ball", 0);
+    angleOffBall = table->GetNumber("Angle To Closest Ball", 0);
+
+        
+    if (leftCurrent > rightCurrent)
+    {
+        maxCurrent = leftCurrent;
+    }
+    else
+    {
+        maxCurrent = rightCurrent;
+    }
+
+    maxCurrent = 0.8 * maxCurrent;
+
+    if (angleOffBall > 1)
+    {
+        jetsonData.leftSkew = getSkew(distanceFromBall) + maxCurrent;
+        jetsonData.rightSkew = (- getSkew(distanceFromBall)) + maxCurrent;
+    }
+    else if (angleOffBall < -1)
+    {
+        jetsonData.leftSkew = (- getSkew(distanceFromBall)) + maxCurrent;
+        jetsonData.rightSkew = getSkew(distanceFromBall) + maxCurrent;
+    }
+    else
+    {
+        jetsonData.leftSkew = getSkew(distanceFromBall) + maxCurrent;
+        jetsonData.rightSkew = getSkew(distanceFromBall) + maxCurrent;
+    }
+
+    if (jetsonData.leftSkew < 0)
+    {
+        jetsonData.leftSkew = 0;
+    }
+
+    if (jetsonData.rightSkew < 0)
+    {
+        jetsonData.rightSkew = 0;
+    }
+}
+
+double Jetson::getDistanceFromBall()
+{
+    return distanceFromBall;
+}
+
+double Jetson::getAngleOffBall()
+{
+    return angleOffBall;
+}
+
+double Jetson::getSkew(double distance)
+{
+    return (-0.001667 * (distance)) + 0.2;
 }
