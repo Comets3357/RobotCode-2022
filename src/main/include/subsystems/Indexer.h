@@ -25,8 +25,8 @@ struct IndexerData
 {
     std::deque<Cargo> indexerContents; // what's in the indexer
 
-    bool topBeamToggledOn; // sensed a ball
-    bool topBeamToggledOff; // stopped sensing a ball
+    bool autoRejectTop;     // true if we are auto ejecting an opponent ball out the top of the indexer
+    bool autoRejectBottom;  // true if we are auto ejecting an opponent ball out the bottom of the indexer
     
     bool eBallCountZero; // event boolean for when ball count goes from 1 to 0
 };
@@ -57,9 +57,12 @@ private:
     void mDecrement(const RobotData &robotData, IndexerData &indexerData);
     void count(const RobotData &robotData, IndexerData &indexerData);
 
+    bool pauseBelt(const RobotData &robotData, IndexerData &indexerData); 
     void saBeltControl(const RobotData &robotData, IndexerData &indexerData);
     void saWheelControl(const RobotData &robotData, IndexerData &indexerData);
-    bool pauseBelt(const RobotData &robotData, IndexerData &indexerData); // checks if the belt should be paused to stop ball at top of indexer
+    
+
+    void rejectDetection(const RobotData &robotData, IndexerData &indexerData);
 
     // basic sensor getters
     bool getBottomBeam();
@@ -84,6 +87,10 @@ private:
     bool currentBottomBeam = false;
     bool prevTopBeam = false;
     bool currentTopBeam = false;
+
+    // variables for auto rejection of opponent balls
+    bool ejectTop = false;
+    bool ejectBottom = false;
 
     // debounce counters to time debounce
     int bottomDebounceCount = 0;

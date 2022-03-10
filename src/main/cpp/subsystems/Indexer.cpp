@@ -240,7 +240,7 @@ void Indexer::saBeltControl(const RobotData &robotData, IndexerData &indexerData
 
     if(robotData.controlData.saEjectBalls){             // if indexer is REVERSING (saEject curently is the only case where it runs backwards)
         indexerBelt.Set(-indexerShootingBeltSpeed);     // run the belt backwards fast
-    } else if ((!pauseBelt(robotData, indexerData) && robotData.shooterData.readyShoot && robotData.controlData.saFinalShoot)|| (!getTopBeam() && !robotData.intakeData.intakeIdle)){ 
+    } else if ((!pauseBelt(robotData, indexerData) && robotData.shooterData.readyShoot && robotData.controlData.saFinalShoot) || indexerData.autoRejectTop && robotData.shooterData.readyEject|| (!getTopBeam() && !robotData.intakeData.intakeIdle)){ 
         // there are two main cases when you run the indexer forward: when you shoot, and when you're intaking
         // when shooting, you check that you're done pausing (see pauseBelt) to make sure every ball pauses before going into the shooter, 
         // and you also check readyShoot to make sure the flywheel is up to speed, along with saFinalShoot to make sure secondary is commanding it to shoot
@@ -248,6 +248,9 @@ void Indexer::saBeltControl(const RobotData &robotData, IndexerData &indexerData
         // you also check that the intake has been given a command in the past second (see intakeIdle function in intake class) to make sure the indexer isn't running for no reason
         // even though this is the intaking mode it doesn't actually look at "if saIntake" directly or anything because no matter when we're intaking or just running a second cargo through,
         // we want to run it until it hits the top sensor, then stop it, no matter if the robot is shooting, intaking, or whatever
+        // actually, new code
+        // currently not stopping it if in ejecting mode because I don't want to think about that right now
+        // anyways, we have to get the signal that the shooter is ready to eject AND that the top ball in the indexer is the opponent color to run it in that case
         if(robotData.controlData.saFinalShoot){
             indexerBelt.Set(indexerShootingBeltSpeed);  // robot shoots at a higher speed than it intakes
         } else {
@@ -282,6 +285,18 @@ void Indexer::saWheelControl(const RobotData &robotData, IndexerData &indexerDat
     
 }
 
+/**
+ * checks if there are opponent cargo in the indexer, and if to reject
+ **/
+void Indexer::rejectDetection(const RobotData &robotData, IndexerData &indexerData){
+    if(indexerData.indexerContents.size() > 0){
+        if(indexerData.indexerContents.front() == Cargo::cargo_Opponent){
+            indexerData.autoRejectTop = true;
+        }  else {
+            indexerData.autoRejectTop = false;
+        }
+    }
+}
 
 // basic getter, init functions below
 // usually these sensors return false for when they're tripped, these functions return opposite to match intuitive logic

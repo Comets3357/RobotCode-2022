@@ -132,8 +132,13 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
         }
         
 
+
+    } 
+    else if (robotData.indexerData.autoRejectTop){ // ejecting opponent ball from top
+        eject(robotData, shooterData);
+    }
 //FIXED SHOTS 
-    }else if(robotData.controlData.shootMode == shootMode_cornerLaunchPad){ //FROM THE CLOSER LAUNCH PAD
+    else if(robotData.controlData.shootMode == shootMode_cornerLaunchPad){ //FROM THE CLOSER LAUNCH PAD
         innerLaunch(robotData);
         checkReadyShoot(shooterData);
     }
@@ -249,6 +254,16 @@ double Shooter::absoluteToREV(double value){
     return ((value*slope) + b);
 }
 
+/**
+ * eject ball shot
+ **/
+void Shooter::eject(const RobotData &robotData, ShooterData &shooterData){
+    shooterHood_pidController.SetReference(hoodrevOut , rev::CANSparkMaxLowLevel::ControlType::kPosition);
+    setShooterWheel(1000);
+    if(getWheelVel() > 950){
+        shooterData.readyEject = true;
+    }
+}
 
 /**
  * ---------------------------------------------------------------------------------------------------------------------------------------------------

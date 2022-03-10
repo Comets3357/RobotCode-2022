@@ -17,6 +17,7 @@ struct RobotData;
 struct ShooterData
 {
     bool readyShoot;
+    bool readyEject;
     
     //Bench test
     bool topDeadStop = false;
@@ -57,6 +58,9 @@ class Shooter{
         //checks
         void checkReadyShoot(ShooterData &shooterData);
         bool encoderPluggedIn(const ShooterData &shooterData);
+
+        // rejection
+        void eject(const RobotData &robotData, ShooterData &shooterData);
 
         //FIXED SHOTS
         void outerLaunch(const RobotData &robotData);
