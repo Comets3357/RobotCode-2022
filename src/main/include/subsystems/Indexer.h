@@ -24,8 +24,10 @@ enum Cargo
 struct IndexerData
 {
     std::deque<Cargo> indexerContents; // what's in the indexer
+
     bool topBeamToggledOn; // sensed a ball
     bool topBeamToggledOff; // stopped sensing a ball
+    
     bool eBallCountZero; // event boolean for when ball count goes from 1 to 0
 };
 
@@ -59,41 +61,38 @@ private:
     void saWheelControl(const RobotData &robotData, IndexerData &indexerData);
     bool pauseBelt(const RobotData &robotData, IndexerData &indexerData); // checks if the belt should be paused to stop ball at top of indexer
 
-    // basic sensors
+    // basic sensor getters
     bool getBottomBeam();
     bool getMidBeam();
     bool getTopBeam();
 
-    // get if it was toggled to state specified in bool broken
-    bool getBottomBeamToggled(bool broken);
-    bool getTopBeamToggled(bool broken); // not in use
-    void updateTopBeamToggled(IndexerData &indexerData);
+    // for sensor toggles
+    void updateSensors();
+    bool getTopBeamToggledOff();
+    bool getTopBeamToggledOn();
+    bool getBottomBeamToggledOff();
+    bool getBottomBeamToggledOn();
 
     void indexerBeltInit();
     void indexerWheelInit();
-
-    
     
     frc::DigitalInput bottomBeamBreak{bottomBeamBreakPort};
     frc::DigitalInput midBeamBreak{midBeamBreakPort};
     frc::DigitalInput topBeamBreak{topBeamBreakPort};
 
     bool prevBottomBeam = false;
+    bool currentBottomBeam = false;
     bool prevTopBeam = false;
+    bool currentTopBeam = false;
 
     // debounce counters to time debounce
     int bottomDebounceCount = 0;
     int topDebounceCount = 0;
     int pauseBeltCount = 0;
 
-    bool runWheel = false; // checks if one ball has left shooter so that you can run the wheel and get the other ball out
-
     const double indexerWheelSpeed = 0.6;
-    const double indexerShootingBeltSpeed = 0.6;
+    const double indexerShootingBeltSpeed = 0.6; 
     const double indexerIntakingBeltSpeed = 0.4;
-
-
-    // ColorSensor colorSensor{}; //rev v3, for detecting ball color
 
     int lastTickBallCount;
 
