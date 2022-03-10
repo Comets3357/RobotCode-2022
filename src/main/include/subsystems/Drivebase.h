@@ -27,7 +27,8 @@ enum DriveMode {
     driveMode_joystick,
     driveMode_turnInPlace,
     driveMode_break,
-    driveMode_trajectory
+    driveMode_trajectory,
+    driveMode_vector
 };
 
 struct DrivebaseData

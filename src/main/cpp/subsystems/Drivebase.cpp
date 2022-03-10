@@ -175,6 +175,10 @@ void Drivebase::teleopControl(const RobotData &robotData, DrivebaseData &driveba
     else if (drivebaseData.driveMode == driveMode_turnInPlace) {
         turnInPlaceTeleop(-robotData.limelightData.angleOffset, robotData);
     }
+    else if (drivebaseData.driveMode == driveMode_vector)
+    {
+        
+    }
 
 }
 

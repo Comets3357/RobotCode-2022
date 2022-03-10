@@ -8,16 +8,6 @@ void Jetson::RobotInit()
 
     currentAlliance = 0;
 
-    if (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed)
-    {
-       currentAlliance = 1;
-    }
-    else if (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue)
-    {
-        currentAlliance = 0;
-    }
-
-    table->PutNumber("Alliance Jetson", currentAlliance);
     table->PutNumber("blue h min", 90); // THIS CHANGES AT COMPS
     table->PutNumber("blue h max", 110); // THIS CHANGES AT COMPS
     table->PutNumber("blue s min", 180); // THIS CHANGES AT COMPS
@@ -50,10 +40,21 @@ void Jetson::RobotInit()
 
 void Jetson::RobotPeriodic(const RobotData &robotData, JetsonData &jetsonData)
 {
+
     auto inst = nt::NetworkTableInstance::GetDefault();
     auto table = inst.GetTable("default");
 
-    double currentAlliance = 0;
+    if (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed)
+    {
+       currentAlliance = 1;
+    }
+    else if (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue)
+    {
+        currentAlliance = 0;
+    }
+
+    table->PutNumber("Alliance Jetson", currentAlliance);
+
     double leftCurrent = robotData.controlData.lDrive;
     double rightCurrent = robotData.controlData.rDrive;
     double maxCurrent = 0;
@@ -61,7 +62,6 @@ void Jetson::RobotPeriodic(const RobotData &robotData, JetsonData &jetsonData)
     distanceFromBall = table->GetNumber("Distance To Closest Ball", 0);
     angleOffBall = table->GetNumber("Angle To Closest Ball", 0);
 
-        
     if (leftCurrent > rightCurrent)
     {
         maxCurrent = leftCurrent;
@@ -89,14 +89,14 @@ void Jetson::RobotPeriodic(const RobotData &robotData, JetsonData &jetsonData)
         jetsonData.rightSkew = getSkew(distanceFromBall) + maxCurrent;
     }
 
-    if (jetsonData.leftSkew < 0)
+    if (jetsonData.leftSkew <= 0)
     {
-        jetsonData.leftSkew = 0;
+        jetsonData.leftSkew = 0.05;
     }
 
-    if (jetsonData.rightSkew < 0)
+    if (jetsonData.rightSkew <= 0)
     {
-        jetsonData.rightSkew = 0;
+        jetsonData.rightSkew = 0.05;
     }
 }
 
