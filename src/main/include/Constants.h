@@ -15,16 +15,16 @@ static const int
 
 static const double
     //practice bot
-    // absOut = 0.485,
-    // absIn = 0.616,
-    // revOut = 6.4,
-    // revIn = 0;
+    absOut = 0.485,
+    absIn = 0.616,
+    revOut = 6.4,
+    revIn = 0;
 
     //comp bot intake pivot positions
-    absOut = 0.465,
-    absIn = 0.605,
-    revOut = 6.14,
-    revIn = 0;
+    // absOut = 0.465,
+    // absIn = 0.605,
+    // revOut = 6.14,
+    // revIn = 0;
 
 //indexer
 static const int
@@ -34,17 +34,21 @@ static const int
 // shooter
 static const int
     shooterWheelLeadID = 31,
-    shooterHoodID = 33,
-    shooterTurretID = 34;
+    shooterHoodID = 32,
+    shooterTurretID = 34,
+    hoodRollerID = 33;
 
 static const double
     //comp bot shooter hood positions
     hoodabsOut = 0.028,
-    hoodabsIn = 0.933,
-    hoodrevOut = -38,
+    hoodabsIn = 0.90,
+    hoodrevOut = -37,
     hoodrevIn = 0,
     hoodAngleOut = 43,
-    hoodAngleIn = 21;
+    hoodAngleIn = 21, 
+
+    turretZeroRev = 0,
+    turretFullRotationRev = 400;
 
 // climb
 static const int
@@ -70,6 +74,7 @@ static const int
     intakeAbsoluteEncoderPort = 8,
     climbArmsAbsID = 4,
     HoodAbsoluteEncoderPort = 1,
+    TurretAbsoluteEncoderPort = 0,
     bottomBeamBreakPort = 3,
     midBeamBreakPort = 9,
     topBeamBreakPort = 5;
