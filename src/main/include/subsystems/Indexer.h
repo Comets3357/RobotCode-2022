@@ -78,6 +78,8 @@ private:
 
     void indexerBeltInit();
     void indexerWheelInit();
+
+    void debuggingStuff(const RobotData &robotData, IndexerData &indexerData);
     
     frc::DigitalInput bottomBeamBreak{bottomBeamBreakPort};
     frc::DigitalInput midBeamBreak{midBeamBreakPort};

@@ -290,12 +290,18 @@ void Indexer::saWheelControl(const RobotData &robotData, IndexerData &indexerDat
  **/
 void Indexer::rejectDetection(const RobotData &robotData, IndexerData &indexerData){
     if(indexerData.indexerContents.size() > 0){
+
         if(indexerData.indexerContents.front() == Cargo::cargo_Opponent){
             indexerData.autoRejectTop = true;
-        }  else {
+        } else {
             indexerData.autoRejectTop = false;
         }
-    }
+
+        if((frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed && robotData.colorSensorData.colorValue == CargoColor::cargo_Blue) || (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue && robotData.colorSensorData.colorValue == CargoColor::cargo_Red)){        // alliance and color sensing do not match
+            indexerData.autoRejectBottom = true;
+        } 
+
+    } 
 }
 
 // basic getter, init functions below
@@ -464,5 +470,75 @@ void Indexer::TestPeriodic(const RobotData &robotData, IndexerData &indexerData)
     } else {
         indexerWheel.Set(0);
         indexerBelt.Set(0);
+    }
+}
+
+void Indexer::debuggingStuff(const RobotData &robotData, IndexerData &indexerData){
+    // TESTING STUFF
+    frc::SmartDashboard::PutNumber("cargo count", indexerData.indexerContents.size());
+    frc::SmartDashboard::PutNumber("wrong ball?", robotData.controlData.wrongBall);
+
+    if (indexerData.indexerContents.size() == 0){
+
+        frc::SmartDashboard::PutString("top", "empty");
+        frc::SmartDashboard::PutString("bottom", "empty");
+
+    } else if (indexerData.indexerContents.size() == 1){
+
+        if(indexerData.indexerContents.front() == Cargo::cargo_Alliance){
+            frc::SmartDashboard::PutString("top", "alliance");
+            frc::SmartDashboard::PutString("bottom", "empty");
+        } else if (indexerData.indexerContents.front() == Cargo::cargo_Opponent){
+            frc::SmartDashboard::PutString("top", "opponent");
+            frc::SmartDashboard::PutString("bottom", "empty");
+        } else {
+            frc::SmartDashboard::PutString("top", "unassigned");
+            frc::SmartDashboard::PutString("bottom", "empty");
+        }
+
+    } else if (indexerData.indexerContents.size() == 2){
+
+        if(indexerData.indexerContents.front() == Cargo::cargo_Alliance){
+
+            if(indexerData.indexerContents.back() == Cargo::cargo_Alliance){
+                frc::SmartDashboard::PutString("top", "alliance");
+                frc::SmartDashboard::PutString("bottom", "alliance");
+            } else if(indexerData.indexerContents.back() == Cargo::cargo_Opponent){
+                frc::SmartDashboard::PutString("top", "alliance");
+                frc::SmartDashboard::PutString("bottom", "opponent");
+            } else {
+                frc::SmartDashboard::PutString("top", "alliance");
+                frc::SmartDashboard::PutString("bottom", "unassigned");
+            }
+
+        } else if (indexerData.indexerContents.front() == Cargo::cargo_Opponent){
+
+            if(indexerData.indexerContents.back() == Cargo::cargo_Alliance){
+                frc::SmartDashboard::PutString("top", "opponent");
+                frc::SmartDashboard::PutString("bottom", "alliance");
+            } else if(indexerData.indexerContents.back() == Cargo::cargo_Opponent){
+                frc::SmartDashboard::PutString("top", "opponent");
+                frc::SmartDashboard::PutString("bottom", "opponent");
+            } else {
+                frc::SmartDashboard::PutString("top", "opponent");
+                frc::SmartDashboard::PutString("bottom", "unassigned");
+            }
+
+        } else {
+            if(indexerData.indexerContents.back() == Cargo::cargo_Alliance){
+                frc::SmartDashboard::PutString("top", "unassigned");
+                frc::SmartDashboard::PutString("bottom", "alliance");
+            } else if(indexerData.indexerContents.back() == Cargo::cargo_Opponent){
+                frc::SmartDashboard::PutString("top", "unassigned");
+                frc::SmartDashboard::PutString("bottom", "opponent");
+            } else {
+                frc::SmartDashboard::PutString("top", "unassigned");
+                frc::SmartDashboard::PutString("bottom", "unassigned");
+            }
+            
+        }
+    } else {
+        frc::SmartDashboard::PutString("top", "overload");
+        frc::SmartDashboard::PutString("bottom", "overload");
     }
 }
