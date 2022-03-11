@@ -31,6 +31,11 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     //the desired hood and velocity for shooting from anywhere
     limelightData.desiredHoodPos = getHoodPOS(visionLookup, limelightData, robotData); //returns an angle
     limelightData.desiredVel = getWheelVelocity(visionLookup, limelightData, robotData); //returns rpm
+    limelightData.desiredHoodRollerVel = getHoodRollerVel(limelightData, robotData);
+
+    //TURRET 
+    limelightData.turretDifference = getTurretTurnAngle(limelightData, robotData); //constantly updating the degrees needed to turn to target
+    limelightData.desiredTurretAngle = robotData.shooterData.currentTurretAngle + robotData.limelightData.turretDifference; //position to go to to shoot
     
     //printing data to the dashboard
     // frc::smartDashboard::PutNumber("distance offset", robotData.limelightData.distanceOffset/12);
@@ -183,6 +188,24 @@ double Limelight::getHoodRollerVel(LimelightData &limelightData, const RobotData
     double flywheelVel = robotData.limelightData.desiredVel;
     return flywheelVel*hoodFlywheelRatio;
 }
+
+/**
+ * @return how much the turret needs to turn in order to get to the target 
+ * is constantly updating based on the current Turret Angle and the angle offset from the limelight
+ */
+double Limelight::getTurretTurnAngle(LimelightData &limelightData, const RobotData &robotData){
+    float angleDifference = robotData.shooterData.currentTurretAngle + robotData.limelightData.angleOffset;
+    if(angleDifference < 0){
+        angleDifference += 360;
+    }else if(angleDifference > turretFullRotationDegrees){
+        angleDifference -=360;
+    }
+    //returns how much the turret needs to turn in order to get to the target
+    return angleDifference; 
+
+}
+
+
 
 /**
  * Returns the avg distance of the last 5 cycles to make the data smoother while shooting

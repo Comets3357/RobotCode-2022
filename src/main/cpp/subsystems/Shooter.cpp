@@ -14,7 +14,7 @@ void Shooter::RobotInit()
 
     //FOR TESTING
     //used for reading flywheel speeds from the dashboard
-    //frc::SmartDashboard::PutNumber("wheel speed", 0);
+    frc::SmartDashboard::PutNumber("hood speed", 0);
 
 }
 
@@ -55,6 +55,24 @@ void Shooter::flyWheelInit()
     flyWheelLead_pidController.SetFF(0.00023); //0.0002
     flyWheelLead_pidController.SetOutputRange(-1,1);
     flyWheelLead.BurnFlash();           
+}
+
+void Shooter::hoodRollerInit()
+{
+    // fly wheel LEAD motor init
+    hoodRoller.RestoreFactoryDefaults();
+    hoodRoller.SetInverted(true);
+    hoodRoller.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
+    hoodRoller.SetSmartCurrentLimit(45);
+
+    // //PIDS
+    // flyWheelLead_pidController.SetP(0.0005); //0.002
+    // flyWheelLead_pidController.SetI(0);
+    // flyWheelLead_pidController.SetD(0); //0.005
+    // flyWheelLead_pidController.SetIZone(0);
+    // flyWheelLead_pidController.SetFF(0.00023); //0.0002
+    // flyWheelLead_pidController.SetOutputRange(-1,1);
+    hoodRoller.BurnFlash();           
 }
 
 void Shooter::shooterTurretInit(){
@@ -126,14 +144,22 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
 
         //set the hood and flywheel using pids to the desired values based off the limelight code
         //checks battery voltage and increases velocity if it doesn't have enough power
+
+        double wheelSpeed = frc::SmartDashboard::GetNumber("wheel speed", 0);
+
         if(frc::DriverStation::GetBatteryVoltage() > 12.6){
             flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
+            //hoodRoller.Set(wheelSpeed);
+            //hoodRoller_pidController.SetReference(robotData.limelightData.desiredHoodRollerVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
         }else{
             flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel+20, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
+            //hoodRoller.Set(wheelSpeed);
+            //hoodRoller_pidController.SetReference(robotData.limelightData.desiredHoodRollerVel + 20, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
         }
 
-        //flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel+20, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
+        hoodRoller.Set(wheelSpeed);
         shooterHood_pidController.SetReference(HoodabsoluteToREV(HoodconvertFromAngleToAbs(robotData.limelightData.desiredHoodPos)), rev::CANSparkMaxLowLevel::ControlType::kPosition);
+        //setTurret_Pos(robotData.limelightData.desiredTurretAngle, shooterData);
         
         //FOR TESTING PURPOSES
         //retrieves flywheel speeds from the dashboard
@@ -180,6 +206,7 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
         shooterData.readyShoot = false;
 
         flyWheelLead.Set(0);
+        hoodRoller.Set(0);
 
         //if the hood is too far out bring it in then stop the hood from running 
         if(shooterHoodEncoderRev.GetPosition() < -3){
@@ -195,11 +222,15 @@ void Shooter::manual(const RobotData &robotData, ShooterData &shooterData)
     
     //manual wheel forward
     if(robotData.controlData.mShooterWheelForward){
-        flyWheelLead_pidController.SetReference(2000, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
+        //flyWheelLead_pidController.SetReference(2000, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
+        flyWheelLead.Set(0.7);
+        hoodRoller.Set(-0.8);
     }else if(robotData.controlData.mShooterWheelBackward){ //wheel backwards
-        flyWheelLead_pidController.SetReference(-2000, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
+        //flyWheelLead_pidController.SetReference(-2000, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
+        //setTurret_Pos(robotData.limelightData.desiredTurretAngle, shooterData);
     }else{
         flyWheelLead.Set(0); //stops flywheel
+        hoodRoller.Set(0);
     }
 
     //hood to joystick controls
@@ -228,6 +259,8 @@ void Shooter::updateData(const RobotData &robotData, ShooterData &shooterData)
     frc::SmartDashboard::PutNumber("HOOD ANGLE", HoodconvertFromAbsToAngle(shooterHoodEncoderAbs.GetOutput()));
     frc::SmartDashboard::PutNumber("flywheel vel", flyWheelLeadEncoder.GetVelocity());
     frc::SmartDashboard::PutNumber("desired flywheel vel", robotData.limelightData.desiredVel);
+
+    shooterData.currentTurretAngle = turretConvertFromAbsToAngle(shooterTurretEncoderAbs.GetOutput());
 
     // frc::SmartDashboard::PutNumber("desired hood pos", robotData.limelightData.desiredHoodPos);
     // frc::SmartDashboard::PutNumber("upper hub shot", robotData.controlData.upperHubShot);
@@ -308,6 +341,14 @@ double Shooter::turretAbsoluteToREV(double value){
     return ((value*slope) + b);
 }
 
+/**
+ * @return sets the turret to turn to face the target when shooting USING POSITIONS
+ * @param pos is the desired angle position we want to turn to IN DEGREES
+ * TURRET
+ **/
+void Shooter::setTurret_Pos(double pos, ShooterData &shooterData){
+    shooterTurret_pidController.SetReference(turretConvertFromAngleToAbs(pos), rev::ControlType::kPosition);
+}
 
 /**
  * ---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -318,18 +359,18 @@ void Shooter::outerLaunch(const RobotData &robotData)
 {
     if (robotData.controlData.upperHubShot)
     {
-        shooterHood_pidController.SetReference(hoodrevOut , rev::CANSparkMaxLowLevel::ControlType::kPosition);
+        shooterHood_pidController.SetReference(outerLaunchHood, rev::CANSparkMaxLowLevel::ControlType::kPosition);
         //checks battery voltage and adjusts the pid accordingly
-        setShooterWheel(1990);
+        setShooterWheel(outerLaunchVel);
 
-        readyShootLimit = 1960;
+        readyShootLimit = outerLaunchVel - 30;
     }
     else if (!robotData.controlData.upperHubShot)
     {
-        shooterHood_pidController.SetReference(hoodrevOut , rev::CANSparkMaxLowLevel::ControlType::kPosition);
-        setShooterWheel(1990);
+        shooterHood_pidController.SetReference(outerLaunchHood_Low, rev::CANSparkMaxLowLevel::ControlType::kPosition);
+        setShooterWheel(outerLaunchVel_Low);
 
-        readyShootLimit = 1960;
+        readyShootLimit = outerLaunchVel_Low - 30;
 
     }
 }
@@ -338,17 +379,17 @@ void Shooter::innerLaunch(const RobotData &robotData)
 {
     if (robotData.controlData.upperHubShot)
     {
-        shooterHood_pidController.SetReference(hoodrevOut, rev::CANSparkMaxLowLevel::ControlType::kPosition);
-        setShooterWheel(2040);
+        shooterHood_pidController.SetReference(innerLaunchHood, rev::CANSparkMaxLowLevel::ControlType::kPosition);
+        setShooterWheel(innerLaunchVel);
 
-        readyShootLimit = 1960;
+        readyShootLimit = innerLaunchVel - 30;
     }
     else if (!robotData.controlData.upperHubShot)
     {
-        shooterHood_pidController.SetReference(hoodrevOut, rev::CANSparkMaxLowLevel::ControlType::kPosition);
-        setShooterWheel(2040);
+        shooterHood_pidController.SetReference(innerLaunchHood_Low, rev::CANSparkMaxLowLevel::ControlType::kPosition);
+        setShooterWheel(innerLaunchVel_Low);
 
-        readyShootLimit = 1960;
+        readyShootLimit = innerLaunchVel_Low - 30;
     }
 }
 
@@ -356,17 +397,17 @@ void Shooter::wall(const RobotData &robotData)
 {
     if (robotData.controlData.upperHubShot)
     {
-        shooterHood_pidController.SetReference(-32.33, rev::CANSparkMaxLowLevel::ControlType::kPosition);
-        setShooterWheel(1860);
+        shooterHood_pidController.SetReference(wallHood, rev::CANSparkMaxLowLevel::ControlType::kPosition);
+        setShooterWheel(wallVel);
 
-        readyShootLimit = 1830;
+        readyShootLimit = wallVel - 30;
     }
     else if (!robotData.controlData.upperHubShot)
     {
-        shooterHood_pidController.SetReference(-32.33, rev::CANSparkMaxLowLevel::ControlType::kPosition);
-        setShooterWheel(1860);
+        shooterHood_pidController.SetReference(wallHood_Low, rev::CANSparkMaxLowLevel::ControlType::kPosition);
+        setShooterWheel(wallVel_Low);
 
-        readyShootLimit = 1800;
+        readyShootLimit = wallVel_Low - 30;
     }
 }
 
@@ -374,34 +415,17 @@ void Shooter::fender(const RobotData &robotData)
 {
     if (robotData.controlData.upperHubShot)
     {
-        shooterHood_pidController.SetReference(hoodrevIn-0.25, rev::CANSparkMaxLowLevel::ControlType::kPosition);
-        setShooterWheel(1690);
+        shooterHood_pidController.SetReference(fenderHood, rev::CANSparkMaxLowLevel::ControlType::kPosition);
+        setShooterWheel(fenderVel);
 
-        readyShootLimit = 1670;
+        readyShootLimit = fenderVel - 30;
     }
     else if (!robotData.controlData.upperHubShot)
     {
-        shooterHood_pidController.SetReference(hoodrevIn-0.25, rev::CANSparkMaxLowLevel::ControlType::kPosition);
-        setShooterWheel(1240);
+        shooterHood_pidController.SetReference(fenderHood_Low, rev::CANSparkMaxLowLevel::ControlType::kPosition);
+        setShooterWheel(fenderVel_Low);
         
-        readyShootLimit = 1220;
-    }
-}
-
-//currently not integrated into controller data
-void Shooter::endOfTarmac(const RobotData &robotData)
-{
-    if (robotData.controlData.upperHubShot)
-    {
-        shooterHood_pidController.SetReference(hoodrevIn -22, rev::CANSparkMaxLowLevel::ControlType::kPosition);
-        setShooterWheel(1500);
-        readyShootLimit = 1450;
-    }
-    else if (!robotData.controlData.upperHubShot)
-    {
-        shooterHood_pidController.SetReference(hoodrevIn -22, rev::CANSparkMaxLowLevel::ControlType::kPosition);
-        setShooterWheel(1500);
-        readyShootLimit = 1450;
+        readyShootLimit = fenderVel_Low - 30;
     }
 }
 

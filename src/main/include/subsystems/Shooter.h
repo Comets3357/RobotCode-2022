@@ -17,6 +17,7 @@ struct RobotData;
 struct ShooterData
 {
     bool readyShoot;
+    float currentTurretAngle;
     
     //Bench test
     bool topDeadStop = false;
@@ -53,12 +54,15 @@ class Shooter{
         
         //init 
         void flyWheelInit();
+        void hoodRollerInit();
         void shooterHoodInit();
         void shooterTurretInit();
         
         //gets and sets
         double getWheelVel();
         void setShooterWheel(double speed);
+        void setTurret_Pos(double pos, ShooterData &shooterData);
+
 
         //checks
         void checkReadyShoot(ShooterData &shooterData);
@@ -69,7 +73,6 @@ class Shooter{
         void innerLaunch(const RobotData &robotData);
         void wall(const RobotData &robotData);
         void fender(const RobotData &robotData);
-        void endOfTarmac(const RobotData &robotData);
 
         //bench test
         bool encoderInRange(const ShooterData &shooterData);

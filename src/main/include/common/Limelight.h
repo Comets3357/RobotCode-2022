@@ -32,6 +32,11 @@ struct LimelightData
 
     double desiredHoodPos;
     double desiredVel;
+    double desiredHoodRollerVel;
+
+    //how many degrees the turret needs to move in order to hit the target
+    double turretDifference;
+    double desiredTurretAngle;
     double distanceToTarget;
     double correctDistance;
 
@@ -59,6 +64,7 @@ private:
     double getWheelVelocity(VisionLookup &visionLookup, LimelightData &limelightData, const RobotData &robotData);
     double getTurretPOS(VisionLookup &visionLookup, LimelightData &limelightData, const RobotData &robotData);
     double getHoodRollerVel(LimelightData &limelightData, const RobotData &robotData);
+    double getTurretTurnAngle(LimelightData &limelightData, const RobotData &robotData);
 
     //void averageDistance(const RobotData &robotData, LimelightData &limelightData);
 
