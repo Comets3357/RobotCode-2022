@@ -98,6 +98,7 @@ private:
     int bottomDebounceCount = 0;
     int topDebounceCount = 0;
     int pauseBeltCount = 0;
+    int autoRejectBottomCount = 0;
 
     const double indexerWheelSpeed = 0.6;
     const double indexerShootingBeltSpeed = 0.6; 

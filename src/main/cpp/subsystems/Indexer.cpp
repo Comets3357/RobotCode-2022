@@ -240,7 +240,7 @@ void Indexer::saBeltControl(const RobotData &robotData, IndexerData &indexerData
 
     if(robotData.controlData.saEjectBalls){             // if indexer is REVERSING (saEject curently is the only case where it runs backwards)
         indexerBelt.Set(-indexerShootingBeltSpeed);     // run the belt backwards fast
-    } else if ((!pauseBelt(robotData, indexerData) && robotData.shooterData.readyShoot && robotData.controlData.saFinalShoot) || indexerData.autoRejectTop && robotData.shooterData.readyEject|| (!getTopBeam() && !robotData.intakeData.intakeIdle)){ 
+    } else if ((!pauseBelt(robotData, indexerData) && robotData.shooterData.readyShoot && robotData.controlData.saFinalShoot) || (indexerData.autoRejectTop && robotData.shooterData.readyEject)|| (!getTopBeam() && !robotData.intakeData.intakeIdle)){ 
         // there are two main cases when you run the indexer forward: when you shoot, and when you're intaking
         // when shooting, you check that you're done pausing (see pauseBelt) to make sure every ball pauses before going into the shooter, 
         // and you also check readyShoot to make sure the flywheel is up to speed, along with saFinalShoot to make sure secondary is commanding it to shoot
