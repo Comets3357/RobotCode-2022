@@ -139,7 +139,10 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
     controlData.incrementSpeedToggle = controllerData.testXButton; // x: increases the speed
     controlData.PIDModeToggle = controllerData.testYButton; //toggles pid mode (if we want to test pids)
     controlData.incrementSubsystemToggle = controllerData.testRBumper;
-    controlData.autoBenchTest = controllerData.testLBumper;
+
+    if (controllerData.testLBumper){
+        controlData.autoBenchTest = !controlData.autoBenchTest;
+    }
 
     //sets the value of the variables used in robot.cppbased upon the toggle button variables
     if (controlData.manualBenchTestToggle) controlData.manualBenchTest = !controlData.manualBenchTest;

@@ -479,11 +479,12 @@ void Indexer::TestPeriodic(const RobotData &robotData, IndexerData &indexerData)
             //run belt backwards
             indexerBelt.Set(-robotData.benchTestData.currentSpeed);
             indexerWheel.Set(0);
+        } else {
+            indexerBelt.Set(0);
+            indexerWheel.Set(0);
         }
-    }
-
-    if (!robotData.controlData.manualBenchTest && !robotData.controlData.autoBenchTest){
-        indexerWheel.Set(0); //if not testing indexer, then speeds get set to 0
+    } else {
         indexerBelt.Set(0);
+        indexerWheel.Set(0);
     }
 }

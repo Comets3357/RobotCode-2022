@@ -23,6 +23,7 @@ struct BenchTestData {
 class BenchTest {
 
     public:
+        bool doesntwork = false;
         void RobotInit();
         void RobotPeriodic(const RobotData &robotData);
         void DisabledInit();

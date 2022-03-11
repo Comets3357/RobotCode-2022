@@ -264,7 +264,7 @@ void Intake::TestPeriodic(const RobotData &robotData, IntakeData &intakeData){
                 intakeData.benchTestIntakePivotSpeed = 0;
                 intakeData.benchTestIntakeRollersSpeed = 0;
                 intakeData.benchTestSingulatorSpeed = -robotData.benchTestData.currentSpeed;
-            } else if (robotData.benchTestData.PIDMode && robotData.benchTestData.stage > 6){ //starts testing in pid mode
+            } else if (robotData.benchTestData.PIDMode && robotData.benchTestData.stage > 5){ //starts testing in pid mode
                 if (robotData.benchTestData.stage == 6){
                     // bring pivot down
                     intakeData.benchTestIntakeRollersSpeed = 0;
@@ -280,6 +280,13 @@ void Intake::TestPeriodic(const RobotData &robotData, IntakeData &intakeData){
                     intakeData.benchTestIntakeRollersSpeed = 0;
                     intakeData.benchTestSingulatorSpeed = 0;
                 }
+            } else {
+                intakeData.benchTestIntakePivotSpeed = 0;
+                intakeData.benchTestIntakeRollersSpeed = 0;
+                intakeData.benchTestSingulatorSpeed = 0;
+                intakePivot.Set(0);
+                intakeRollers.Set(0);
+                intakeSingulator.Set(0);
             }
         } else {
             intakeData.benchTestIntakePivotSpeed = 0;
@@ -299,10 +306,8 @@ void Intake::TestPeriodic(const RobotData &robotData, IntakeData &intakeData){
 
         intakeRollers.Set(intakeData.benchTestIntakeRollersSpeed);
         intakeSingulator.Set(intakeData.benchTestSingulatorSpeed);
-    }
-
-    if (!robotData.controlData.manualBenchTest && !robotData.controlData.autoBenchTest){
-        intakeData.benchTestIntakePivotSpeed = 0; //if not testing intake, then the speed of the motors is set to 0
+    } else {
+        intakeData.benchTestIntakePivotSpeed = 0;
         intakeData.benchTestIntakeRollersSpeed = 0;
         intakeData.benchTestSingulatorSpeed = 0;
         intakePivot.Set(0);

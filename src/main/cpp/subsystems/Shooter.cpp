@@ -411,7 +411,7 @@ void Shooter::TestPeriodic(const RobotData &robotData, ShooterData &shooterData)
             } else if (robotData.benchTestData.stage == 2){
                 //run fly wheel
                 shooterData.benchTestShooterHoodSpeed = 0;
-                shooterData.benchTestFlyWheelSpeed = .25;
+                shooterData.benchTestFlyWheelSpeed = .1; //change back to .25 when done testing
             } else if (robotData.benchTestData.PIDMode && robotData.benchTestData.stage > 2){ //tests in pid mode
                 if (robotData.benchTestData.stage == 3){
                     // bring hood out
@@ -425,6 +425,11 @@ void Shooter::TestPeriodic(const RobotData &robotData, ShooterData &shooterData)
                     shooterData.benchTestShooterHoodSpeed = 0;
                     shooterData.benchTestFlyWheelSpeed = 0;
                 }
+            } else {
+                shooterData.benchTestShooterHoodSpeed = 0;
+                shooterData.benchTestFlyWheelSpeed = 0;
+                shooterHood.Set(0);
+                flyWheelLead.Set(0);
             }
         } else {
             shooterData.benchTestShooterHoodSpeed = 0; //if encoders don't work, then set the speeds to 0
@@ -441,10 +446,8 @@ void Shooter::TestPeriodic(const RobotData &robotData, ShooterData &shooterData)
         }
 
         flyWheelLead.Set(shooterData.benchTestFlyWheelSpeed);
-    }
-
-    if (!robotData.controlData.manualBenchTest && !robotData.controlData.autoBenchTest){
-        shooterData.benchTestShooterHoodSpeed = 0; //if not testing shooter, then the speed of the motors is set to 0
+    } else {
+        shooterData.benchTestShooterHoodSpeed = 0; //if encoders don't work, then set the speeds to 0
         shooterData.benchTestFlyWheelSpeed = 0;
         shooterHood.Set(0);
         flyWheelLead.Set(0);
@@ -481,10 +484,10 @@ bool Shooter::encoderInRange(const ShooterData &shooterData){
 
 //checks if the motor has hit a dead stop
 void Shooter::checkDeadStop(ShooterData &shooterData){
-    if (shooterData.benchTestShooterHoodSpeed < 0 && shooterHoodEncoderAbs.GetOutput() < hoodabsOut + .005){
+    if (shooterData.benchTestShooterHoodSpeed < 0 && shooterHoodEncoderAbs.GetOutput() < hoodabsOut + .01){
         shooterData.topDeadStop = true;
         shooterData.bottomDeadStop = false;
-    } else if (shooterData.benchTestShooterHoodSpeed > 0 && shooterHoodEncoderAbs.GetOutput() > hoodabsIn - .005){
+    } else if (shooterData.benchTestShooterHoodSpeed > 0 && shooterHoodEncoderAbs.GetOutput() > hoodabsIn - .01){
         shooterData.topDeadStop = false;
         shooterData.bottomDeadStop = true;
     } else {

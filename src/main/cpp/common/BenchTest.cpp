@@ -4,12 +4,14 @@ void BenchTest::TestPeriodic(const RobotData &robotData, BenchTestData &benchTes
     frc::SmartDashboard::PutNumber("Auto bench test increment", increment);
     frc::SmartDashboard::PutBoolean("Start bench test", robotData.controlData.manualBenchTest);
     frc::SmartDashboard::PutBoolean("Auto bench test", robotData.controlData.autoBenchTest);
-    frc::SmartDashboard::PutNumber("MotorStage", robotData.benchTestData.stage); //prints the motor stage
-    frc::SmartDashboard::PutNumber("BenchTestStage", robotData.benchTestData.testStage); //prints the subsystem we're currently on
+    frc::SmartDashboard::PutNumber("Motor stage", robotData.benchTestData.stage); //prints the motor stage
+    frc::SmartDashboard::PutNumber("Bench test subsystem stage", benchTestData.testStage); //prints the subsystem we're currently on
     frc::SmartDashboard::PutNumber("Power", robotData.benchTestData.currentSpeed); //prints the current testing speed
-
-
-    //AUTO BENCH TEST
+  
+    if (benchTestData.stage < 0)
+    {
+        benchTestData.stage = 0;
+    }
 
     if (controlData.autoBenchTest){
         //increments motor every 4 seconds (unless the motor has limits/dead stops)
@@ -17,40 +19,116 @@ void BenchTest::TestPeriodic(const RobotData &robotData, BenchTestData &benchTes
         if (benchTestData.testStage != BenchTestStage::BenchTestStage_Climb){
             if (benchTestData.testStage != BenchTestStage::BenchTestStage_Intake && benchTestData.testStage != BenchTestStage::BenchTestStage_Shooter){
                 increment += .005; //if it's not climb, intake, or shooter, then the automatic bench test increments based on time
-            } else if (benchTestData.stage != 0 && benchTestData.stage != 1 && (benchTestData.testStage == BenchTestStage::BenchTestStage_Intake && benchTestData.stage != 6 && benchTestData.stage != 7) && (benchTestData.testStage == BenchTestStage::BenchTestStage_Shooter && benchTestData.stage != 3 && benchTestData.stage != 4)){
+            } else if (!benchTestData.PIDMode && benchTestData.stage != 0 && benchTestData.stage != 1){
                 increment += .005; //if it's intake or shooter but it isn't pivoting the intake or moving the hood in or out, then the automatic bench tests increments based on time
             }
         }
 
-        if (increment == 1){
+        if (benchTestData.testStage != BenchTestStage::BenchTestStage_Indexer){
+            if (increment <= .25){
+                benchTestData.currentSpeed = .1;
+            } else if (increment <= .5){
+                benchTestData.currentSpeed = .2;
+            } else if (increment <= .75){
+                benchTestData.currentSpeed = .3;
+            } else if (increment <= 1){
+                benchTestData.currentSpeed = .4;
+            }
+        } else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Indexer){
+            if (increment <= .5){
+                benchTestData.currentSpeed = .1;
+            } else if (increment <= 1){
+                benchTestData.currentSpeed = .2;
+            }
+        }
+
+        //resets the time increment when moving between motors
+        if (increment > 1){
             increment = 0;
             benchTestData.stage++;
         }
 
+        if (robotData.climbData.armsLowerLimit){
+            benchTestData.stage = 1;
+        } else if (robotData.climbData.armsUpperLimit){
+            benchTestData.stage = 2;
+        } else if (robotData.climbData.upperLimit){
+            benchTestData.stage = 3;
+        } else if (robotData.climbData.lowerLimit){
+            benchTestData.stage = -1;
+        } else if (robotData.intakeData.bottomDeadStop){
+            benchTestData.stage = 1;
+        } else if (robotData.intakeData.topDeadStop){
+            benchTestData.stage = 2;
+        } else if (robotData.shooterData.topDeadStop){
+            benchTestData.stage = 1;
+        } else if (robotData.shooterData.bottomDeadStop){
+            benchTestData.stage = 2;
+        }
+        // if (benchTestData.testStage == BenchTestStage::BenchTestStage_Drivebase && benchTestData.stage == 4)
+        // {
+        //     benchTestData.stage = 0;
+        // }
+
         //if the final motor in a subsystem is reached, and the bench test is in auto mode, then the subsystem increments
         //additionally, if it reaches the end of shooter, instead of looping back to climb like manual, it makes it an arbitrary number to stop running bench test
-        if (benchTestData.testStage == BenchTestStage::BenchTestStage_Climb && benchTestData.stage >= 8){
-            benchTestData.testStage = BenchTestStage::BenchTestStage_Drivebase;
-        } else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Shooter && benchTestData.stage >= 5){
-            benchTestData.testStage = 6;
-        } else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Intake && benchTestData.stage >= 8){
-            benchTestData.testStage = BenchTestStage::BenchTestStage_Shooter;
-        } else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Indexer && benchTestData.stage >= 4){
-            benchTestData.testStage = BenchTestStage::BenchTestStage_Intake;
-        } else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Drivebase && benchTestData.stage >= 4){
-            benchTestData.testStage = BenchTestStage::BenchTestStage_Indexer;
-        } else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Intake && !robotData.benchTestData.PIDMode && robotData.benchTestData.stage >= 5){
-            benchTestData.testStage = BenchTestStage::BenchTestStage_Shooter;
-        } else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Shooter && !robotData.benchTestData.PIDMode && robotData.benchTestData.stage >= 3){
-            benchTestData.testStage = 6;
-        } else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Climb && !robotData.benchTestData.PIDMode && robotData.benchTestData.stage >= 4){
-            benchTestData.testStage = BenchTestStage::BenchTestStage_Drivebase;
+        if (!benchTestData.PIDMode){
+            if (benchTestData.testStage == BenchTestStage::BenchTestStage_Climb && benchTestData.stage == -1){
+                benchTestData.stage = 0;
+                benchTestData.testStage = BenchTestStage::BenchTestStage_Drivebase;
+            } else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Shooter && benchTestData.stage >= 3){
+                benchTestData.stage = 0;
+                benchTestData.testStage = 6;
+            } else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Intake && benchTestData.stage >= 6){
+                benchTestData.stage = 0;
+                benchTestData.testStage = BenchTestStage::BenchTestStage_Shooter;
+            } else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Indexer && benchTestData.stage >= 4){
+                benchTestData.stage = 0;
+                benchTestData.testStage = BenchTestStage::BenchTestStage_Intake;
+            } else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Drivebase && benchTestData.stage >= 4){
+                benchTestData.stage = 0;
+                benchTestData.testStage = BenchTestStage::BenchTestStage_Indexer;
+            }
+        } else if (benchTestData.PIDMode){
+            if (benchTestData.testStage == BenchTestStage::BenchTestStage_Climb && benchTestData.stage >= 8){
+                benchTestData.stage = 0;
+                benchTestData.testStage = BenchTestStage::BenchTestStage_Drivebase;
+            } else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Shooter && benchTestData.stage >= 5){
+                benchTestData.stage = 0;
+                benchTestData.testStage = 6;
+            } else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Intake && benchTestData.stage >= 8){
+                benchTestData.stage = 0;
+                benchTestData.testStage = BenchTestStage::BenchTestStage_Shooter;
+            } else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Indexer && benchTestData.stage >= 4){
+                benchTestData.stage = 0;
+                benchTestData.testStage = BenchTestStage::BenchTestStage_Intake;
+            } else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Drivebase && benchTestData.stage >= 4){
+                benchTestData.stage = 0;
+                benchTestData.testStage = BenchTestStage::BenchTestStage_Indexer;
+            }
         }
 
-        //if the bench test hits a dead stop, then increment the stage
-        if (controlData.autoBenchTest && (robotData.climbData.armsLowerLimit || robotData.climbData.armsUpperLimit || robotData.climbData.lowerLimit || robotData.climbData.upperLimit || robotData.intakeData.topDeadStop || robotData.intakeData.bottomDeadStop || robotData.shooterData.topDeadStop || robotData.shooterData.bottomDeadStop)){
-            benchTestData.stage++;
-        }
+        //increments the motor when it reaches a dead stop
+        // if (robotData.climbData.armsLowerLimit){
+        //     benchTestData.stage++;
+        // } else if (robotData.climbData.armsUpperLimit){
+        //     benchTestData.stage++;
+        // } else if (robotData.climbData.upperLimit){
+        //     benchTestData.stage++;
+        // } else if (robotData.climbData.lowerLimit){
+        //     benchTestData.stage++;
+        // } else if (robotData.intakeData.bottomDeadStop){
+        //     benchTestData.stage++;
+        // } else if (robotData.intakeData.topDeadStop){
+        //     benchTestData.stage++;
+        // } else if (robotData.shooterData.topDeadStop){
+        //     benchTestData.stage++;
+        // } else if (robotData.shooterData.bottomDeadStop){
+        //     benchTestData.stage++;
+        // }
+
+        
+        
     }
 
 

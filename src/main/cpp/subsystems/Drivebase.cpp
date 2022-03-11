@@ -548,11 +548,12 @@ void Drivebase::TestPeriodic(const RobotData &robotData, DrivebaseData &drivebas
             //move left motors backwards
             dbR.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
             dbL.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, -robotData.benchTestData.currentSpeed);
+        } else {
+            dbR.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
+            dbL.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
         }
-    }
-
-    if (!robotData.controlData.manualBenchTest && !robotData.controlData.autoBenchTest){
-        dbR.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0); //if not testing drivebase, then speeds get set to 0
+    } else {
+        dbR.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
         dbL.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
     }
 }
