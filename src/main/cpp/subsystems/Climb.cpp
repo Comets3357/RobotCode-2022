@@ -609,40 +609,39 @@ void Climb::TestPeriodic(const RobotData &robotData, ClimbData &climbData){
         if (climbData.limitSwitchWorking && encoderPluggedIn(climbData) && encoderInRange(climbData)){ //checks if the limit switch is working
             if (robotData.benchTestData.stage == 0){
                 //move climb arms forwards
-                climbData.benchTestClimbArmsSpeed = .2; //sets the arms speed
-                climbData.benchTestClimbElevatorSpeed = 0; //sets the elevator speed
-            } else if (robotData.benchTestData.stage == 1){
-                //move climb arms backwards
-                climbData.benchTestClimbArmsSpeed = -.2;
-                climbData.benchTestClimbElevatorSpeed = 0;
-            } else if (robotData.benchTestData.stage == 2){
-                //move climb elevator up
-                climbData.benchTestClimbArmsSpeed = 0;
-                climbData.benchTestClimbElevatorSpeed = .2;
-            } else if (robotData.benchTestData.stage == 3){
-                //move climb elevator down
-                climbData.benchTestClimbArmsSpeed = 0;
-                climbData.benchTestClimbElevatorSpeed = -.2;
-            } else if (robotData.benchTestData.PIDMode && robotData.benchTestData.stage > 3){ //starts testing in pid mode
-                if (robotData.benchTestData.stage == 4){
-                    //run arms forwards
+                if (!robotData.benchTestData.PIDMode){
+                    climbData.benchTestClimbArmsSpeed = .2; //sets the arms speed
+                    climbData.benchTestClimbElevatorSpeed = 0; //sets the elevator speed
+                } else {
                     climbData.benchTestClimbElevatorSpeed = 0;
                     climbArms_pidController.SetReference(250, rev::CANSparkMax::ControlType::kPosition, 0);
-                } else if (robotData.benchTestData.stage == 5){
-                    //run arms backwards
+                }
+            } else if (robotData.benchTestData.stage == 1){
+                //move climb arms backwards
+                if (!robotData.benchTestData.PIDMode){
+                    climbData.benchTestClimbArmsSpeed = -.2;
+                    climbData.benchTestClimbElevatorSpeed = 0;
+                } else {
                     climbData.benchTestClimbElevatorSpeed = 0;
                     climbArms_pidController.SetReference(0, rev::CANSparkMax::ControlType::kPosition, 0);
-                } else if (robotData.benchTestData.stage == 6){
-                    //run elevator up
+                }
+            } else if (robotData.benchTestData.stage == 2){
+                //move climb elevator up
+                if (!robotData.benchTestData.PIDMode){
                     climbData.benchTestClimbArmsSpeed = 0;
-                    climbElevator_pidController.SetReference(144, rev::CANSparkMax::ControlType::kPosition, 0);
-                } else if (robotData.benchTestData.stage == 7){
-                    //run elevator down
-                    climbData.benchTestClimbArmsSpeed = 0;
-                    climbElevator_pidController.SetReference(0, rev::CANSparkMax::ControlType::kPosition, 0);
+                    climbData.benchTestClimbElevatorSpeed = .2;
                 } else {
                     climbData.benchTestClimbArmsSpeed = 0;
-                    climbData.benchTestClimbElevatorSpeed = 0;
+                    climbElevator_pidController.SetReference(144, rev::CANSparkMax::ControlType::kPosition, 0);
+                }
+            } else if (robotData.benchTestData.stage == 3){
+                //move climb elevator down
+                if (!robotData.benchTestData.PIDMode){
+                    climbData.benchTestClimbArmsSpeed = 0;
+                    climbData.benchTestClimbElevatorSpeed = -.2;
+                } else {
+                    climbData.benchTestClimbArmsSpeed = 0;
+                    climbElevator_pidController.SetReference(0, rev::CANSparkMax::ControlType::kPosition, 0);
                 }
             } else {
                 climbData.benchTestClimbArmsSpeed = 0;

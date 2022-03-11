@@ -402,29 +402,26 @@ void Shooter::TestPeriodic(const RobotData &robotData, ShooterData &shooterData)
         if (encoderPluggedIn() && encoderInRange(shooterData)){ //checks if the encoder is working
             if (robotData.benchTestData.stage == 0){
                 //run hood forwards
-                shooterData.benchTestShooterHoodSpeed = -.07; //sets the speed of the hood
-                shooterData.benchTestFlyWheelSpeed = 0; //sets the speed of the fly wheel
+                if (!robotData.benchTestData.PIDMode){
+                    shooterData.benchTestShooterHoodSpeed = -.07; //sets the speed of the hood
+                    shooterData.benchTestFlyWheelSpeed = 0; //sets the speed of the fly wheel
+                } else {
+                    shooterData.benchTestFlyWheelSpeed = 0;
+                    shooterHood_pidController.SetReference(hoodrevOut, rev::CANSparkMaxLowLevel::ControlType::kPosition, 0); //runs the hood out
+                }
             } else if (robotData.benchTestData.stage == 1){
                 //run hoods backwards
-                shooterData.benchTestShooterHoodSpeed = .07;
-                shooterData.benchTestFlyWheelSpeed = 0;
+                if (!robotData.benchTestData.PIDMode){
+                    shooterData.benchTestShooterHoodSpeed = .07;
+                    shooterData.benchTestFlyWheelSpeed = 0;
+                } else {
+                    shooterData.benchTestFlyWheelSpeed = 0;
+                    shooterHood_pidController.SetReference(hoodrevIn, rev::CANSparkMaxLowLevel::ControlType::kPosition, 0); //runs the hood in
+                }
             } else if (robotData.benchTestData.stage == 2){
                 //run fly wheel
                 shooterData.benchTestShooterHoodSpeed = 0;
                 shooterData.benchTestFlyWheelSpeed = .1; //change back to .25 when done testing
-            } else if (robotData.benchTestData.PIDMode && robotData.benchTestData.stage > 2){ //tests in pid mode
-                if (robotData.benchTestData.stage == 3){
-                    // bring hood out
-                    shooterData.benchTestFlyWheelSpeed = 0;
-                    shooterHood_pidController.SetReference(hoodrevOut, rev::CANSparkMaxLowLevel::ControlType::kPosition, 0); //runs the hood out
-                } else if (robotData.benchTestData.stage == 4){
-                    // bring hood in
-                    shooterData.benchTestFlyWheelSpeed = 0;
-                    shooterHood_pidController.SetReference(hoodrevIn, rev::CANSparkMaxLowLevel::ControlType::kPosition, 0); //runs the hood in
-                } else {
-                    shooterData.benchTestShooterHoodSpeed = 0;
-                    shooterData.benchTestFlyWheelSpeed = 0;
-                }
             } else {
                 shooterData.benchTestShooterHoodSpeed = 0;
                 shooterData.benchTestFlyWheelSpeed = 0;
