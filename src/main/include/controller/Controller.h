@@ -97,10 +97,7 @@ struct ControlData
     bool incrementSubsystem;
 
     bool manualBenchTestToggle;
-    bool incrementMotorToggle;
-    bool incrementSpeedToggle;
     bool PIDModeToggle;
-    bool incrementSubsystemToggle;
     bool autoBenchTest;
 };
 
