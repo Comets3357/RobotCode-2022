@@ -12,6 +12,8 @@
 #include <frc/DutyCycle.h>
 #include <frc/DigitalSource.h>
 
+#include <ctre/Phoenix.h>
+
 struct RobotData;
 
 struct ShooterData
@@ -84,9 +86,11 @@ class Shooter{
         int tickCount;
     
         //Flywheel Lead
-        rev::CANSparkMax flyWheelLead = rev::CANSparkMax(shooterWheelLeadID, rev::CANSparkMax::MotorType::kBrushless);
-        rev::SparkMaxRelativeEncoder flyWheelLeadEncoder = flyWheelLead.GetEncoder();
-        rev::SparkMaxPIDController flyWheelLead_pidController = flyWheelLead.GetPIDController();
+        ctre::phoenix::motorcontrol::can::TalonFX flyWheelLead{shooterWheelLeadID};
+
+       // rev::CANSparkMax flyWheelLead = rev::CANSparkMax(shooterWheelLeadID, rev::CANSparkMax::MotorType::kBrushless);
+        //rev::SparkMaxRelativeEncoder flyWheelLeadEncoder = flyWheelLead.GetEncoder();
+        //rev::SparkMaxPIDController flyWheelLead_pidController = flyWheelLead.GetPIDController();
 
         //lip roller
         rev::CANSparkMax hoodRoller = rev::CANSparkMax(hoodRollerID, rev::CANSparkMax::MotorType::kBrushless);
