@@ -123,7 +123,7 @@ void Climb::RobotPeriodic(const RobotData &robotData, ClimbData &climbData)
 void Climb::manual(const RobotData &robotData, ClimbData &climbData)
 {
     //manualy sets the elevator with limit. I use the limit switch as the bottom limit
-    if (climbElevatorEncoder.GetPosition() >= 145 && robotData.controllerData.sLYStick > 0)
+    if ((climbElevatorEncoder.GetPosition() >= 145 && climbElevator.Get() > 0) || (!elevatorLimit.Get() && climbElevator.Get() < 0))
     {
         //sets power to 0 if it is outside of its deadzone
         climbElevator.Set(0); //control elevator with left stick
@@ -146,7 +146,7 @@ void Climb::manual(const RobotData &robotData, ClimbData &climbData)
     
 
     //manualy sets the arms with limit. The bottom limit is gon because an absolute encode will be there eventually
-    if ((climbArmsEncoder.GetPosition() >= 250 && robotData.controllerData.sRYStick > 0))
+    if ((climbArmsEncoder.GetPosition() >= 250 && climbArms.Get() > 0))
     {    
         //sets climbarms to zero when outside of limit
         climbArms.Set(0); //control arms with right stick
@@ -173,10 +173,8 @@ void Climb::semiAuto(const RobotData &robotData, ClimbData &climbData)
     //listens for climb initiation button and does somthing if it needs to
     climbInit(robotData, climbData);
     //this is the climb sequence where the bot will climb autonomously
-    // if (climbUp)
-    // {
-        runSequence(robotData, climbData);
-    // }
+    
+    runSequence(robotData, climbData);
     //this will cancel the sequence or pause it
     cancelSequence(robotData, climbData);
     
@@ -255,15 +253,30 @@ void Climb::runSequence(const RobotData &robotData, ClimbData &climbData)
         else if (stage == 7) CheckArms();
         else if (stage == 8) RunElevatorToPos(30,1,0); //Outer Arms pivot the robot so the elevator is facing the next bar
         else if (stage == 9) ChangeElevatorSpeed(1,1);
-        else if (stage == 10) RunArmsAndElevatorToPos(110,0,200,1,1);
-        else if (stage == 11) WaitUntilGyro(-1, -43, 1);
-        else if (stage == 12) RunElevatorToPos(150,1,1);
-        else if (stage == 13) ChangeElevatorSpeed(elevatorSpeed,1);
-        else if (stage == 14) RunArmsToPos(130,1,1);
-        else if (stage == 15) ChangeElevatorSpeed(0.5, 1);
-        else if (stage == 16) RunElevatorToPos(110,1,1);
-        else if (stage == 17) ChangeElevatorSpeed(elevatorSpeed, 1);
-        else if (stage == 18)
+        if (climbData.bar == targetBar-1)
+        {
+            if (stage == 10) RunArmsAndElevatorToPos(120,0,110,1,1);
+            else if (stage == 11) WaitUntilGyro(1, -38, 1);
+            else if (stage == 12) RunElevatorToPos(148,1,1);
+            else if (stage == 13) ChangeElevatorSpeed(elevatorSpeed,1);
+            else if (stage == 14) ChangeArmSpeed(0.5,1);
+            else if (stage == 15) RunArmsToPos(185,1,1);
+            else if (stage == 16) ChangeElevatorSpeed(0.6, 1);
+            else if (stage == 17) RunElevatorToPos(80,1,1);
+            else if (stage == 18) ChangeElevatorSpeed(elevatorSpeed, 1);
+        }
+        else 
+        {
+            if (stage == 10) RunArmsAndElevatorToPos(110,0,200,1,1);
+            else if (stage == 11) WaitUntilGyro(-1, -42, 1);
+            else if (stage == 12) RunElevatorToPos(148,1,1);
+            else if (stage == 13) ChangeElevatorSpeed(elevatorSpeed,1);
+            else if (stage == 14) RunArmsToPos(130,1,1);
+            else if (stage == 15) ChangeElevatorSpeed(0.6, 1);
+            else if (stage == 16) RunElevatorToPos(110,1,1);
+            else if (stage == 17) ChangeElevatorSpeed(elevatorSpeed, 1);
+        }
+        if (stage == 18)
         { //do it again if the bot isnt on the top bar
             //resets everything
             stage = 0;
@@ -367,6 +380,13 @@ void Climb::ChangeElevatorSpeed(float speed, int stageAdd)
 {
     climbElevator_pidController.SetOutputRange(-speed, speed, 0);
     climbElevator_pidController.SetOutputRange(-speed, speed, 1);
+    stage += stageAdd;
+}
+
+void Climb::ChangeArmSpeed(float speed, int stageAdd)
+{
+    climbArms_pidController.SetOutputRange(-speed, speed, 0);
+    climbArms_pidController.SetOutputRange(-speed, speed, 1);
     stage += stageAdd;
 }
 
