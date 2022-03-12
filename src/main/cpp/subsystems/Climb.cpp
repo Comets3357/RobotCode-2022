@@ -255,20 +255,21 @@ void Climb::runSequence(const RobotData &robotData, ClimbData &climbData)
         else if (stage == 9) ChangeElevatorSpeed(1,1);
         if (climbData.bar == targetBar-1)
         {
-            if (stage == 10) RunArmsAndElevatorToPos(110,0,90,1,1);
-            else if (stage == 11) WaitUntilGyro(1, 38, 1);
-            else if (stage == 12) RunElevatorToPos(150,1,1);
+            if (stage == 10) RunArmsAndElevatorToPos(120,0,110,1,1);
+            else if (stage == 11) WaitUntilGyro(1, -38, 1);
+            else if (stage == 12) RunElevatorToPos(148,1,1);
             else if (stage == 13) ChangeElevatorSpeed(elevatorSpeed,1);
-            else if (stage == 14) RunArmsToPos(120,1,1);
-            else if (stage == 15) ChangeElevatorSpeed(0.6, 1);
-            else if (stage == 16) RunElevatorToPos(110,1,1);
-            else if (stage == 17) ChangeElevatorSpeed(elevatorSpeed, 1);
+            else if (stage == 14) ChangeArmSpeed(0.5,1);
+            else if (stage == 15) RunArmsToPos(185,1,1);
+            else if (stage == 16) ChangeElevatorSpeed(0.6, 1);
+            else if (stage == 17) RunElevatorToPos(80,1,1);
+            else if (stage == 18) ChangeElevatorSpeed(elevatorSpeed, 1);
         }
         else 
         {
             if (stage == 10) RunArmsAndElevatorToPos(110,0,200,1,1);
             else if (stage == 11) WaitUntilGyro(-1, -42, 1);
-            else if (stage == 12) RunElevatorToPos(150,1,1);
+            else if (stage == 12) RunElevatorToPos(148,1,1);
             else if (stage == 13) ChangeElevatorSpeed(elevatorSpeed,1);
             else if (stage == 14) RunArmsToPos(130,1,1);
             else if (stage == 15) ChangeElevatorSpeed(0.6, 1);
@@ -379,6 +380,13 @@ void Climb::ChangeElevatorSpeed(float speed, int stageAdd)
 {
     climbElevator_pidController.SetOutputRange(-speed, speed, 0);
     climbElevator_pidController.SetOutputRange(-speed, speed, 1);
+    stage += stageAdd;
+}
+
+void Climb::ChangeArmSpeed(float speed, int stageAdd)
+{
+    climbArms_pidController.SetOutputRange(-speed, speed, 0);
+    climbArms_pidController.SetOutputRange(-speed, speed, 1);
     stage += stageAdd;
 }
 

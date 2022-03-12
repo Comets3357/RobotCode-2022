@@ -11,6 +11,7 @@
 #include <rev/CANDigitalInput.h>
 #include <frc/DigitalInput.h>
 #include <frc/DutyCycle.h>
+#include <frc/smartdashboard/SmartDashboard.h>
 
 
 struct RobotData;
@@ -46,7 +47,7 @@ public:
 
 private:
 
-    float elevatorSpeed = 0.7;
+    float elevatorSpeed = 0.8;
     float armsSpeed = 1;
     int zeroingTimer = 0;
 
@@ -95,6 +96,7 @@ private:
     void ZeroElevator(float power, int stageAdd);
 
     void ChangeElevatorSpeed(float speed, int stageAdd);
+    void ChangeArmSpeed(float speed, int stageAdd);
     void ChangeElevatorSpeedOnBar(float speed, bool run, int stageAdd);
 
     void WaitUntilGyro(int cmp, float gyroValue, int stageAdd);
