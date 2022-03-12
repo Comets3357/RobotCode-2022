@@ -45,13 +45,22 @@ void Drivebase::RobotInit()
     dbR.Config_kD(0, 0); */
 
     // PIDs for 2022
-    // last updated 03.01.22 for Calvin
-    dbL.Config_kF(0, 0.074314);
-    dbL.Config_kP(0, 0.67243);
+    // last updated 03.01.22
+    // dbL.Config_kF(0, 0.074314);
+    // dbL.Config_kP(0, 0.67243);
+    // dbL.Config_kD(0, 0);
+
+    // dbR.Config_kF(0, 0.074314);
+    // dbR.Config_kP(0, 0.67243);
+    // dbR.Config_kD(0, 0);
+
+    // PIDs for 2022 Calvin University
+    dbL.Config_kF(0, 0.077626);
+    dbL.Config_kP(0, 0.10352);
     dbL.Config_kD(0, 0);
 
-    dbR.Config_kF(0, 0.074314);
-    dbR.Config_kP(0, 0.67243);
+    dbR.Config_kF(0, 0.077626);
+    dbR.Config_kP(0, 0.10352);
     dbR.Config_kD(0, 0);
 
     setPercentOutput(0, 0);
@@ -424,8 +433,8 @@ void Drivebase::turnInPlaceAuton(double degrees, const RobotData &robotData, Dri
         // frc::SmartDashboard::PutString("AUTON", "TURN IN PLACE");
     } else {
         // profile that adjusts aggressiveness of turn based on the amount of degrees left to turn. has been tuned for speed & accuracy on both small and large turns
-        leftOutput = std::pow(std::abs(degrees / 400), 1.3) + 0.1;
-        rightOutput = std::pow(std::abs(degrees / 400), 1.3) + 0.1;
+        leftOutput = std::pow(std::abs(degrees / 400), 1.3) + 0.09;
+        rightOutput = std::pow(std::abs(degrees / 400), 1.3) + 0.09;
     }
     
 
@@ -455,8 +464,8 @@ void Drivebase::turnInPlaceTeleop(double degrees, const RobotData &robotData) {
         setPercentOutput(0, 0);
         // frc::SmartDashboard::PutString("TELEOP", "TURN IN PLACE");
     } else {
-        leftOutput = std::pow(std::abs(degrees / 400), 1.3) + 0.11;
-        rightOutput = std::pow(std::abs(degrees / 400), 1.3) + 0.11;
+        leftOutput = std::pow(std::abs(degrees / 400), 1.3) + 0.09;
+        rightOutput = std::pow(std::abs(degrees / 400), 1.3) + 0.09;
     }
     
 

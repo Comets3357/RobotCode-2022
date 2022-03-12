@@ -164,7 +164,7 @@ void Climb::manual(const RobotData &robotData, ClimbData &climbData)
             //sets power to 0 when nothing is supposed to happen
             climbArms.Set(0);
         }
-    }
+}
 }
 
 void Climb::semiAuto(const RobotData &robotData, ClimbData &climbData)
@@ -173,10 +173,10 @@ void Climb::semiAuto(const RobotData &robotData, ClimbData &climbData)
     //listens for climb initiation button and does somthing if it needs to
     climbInit(robotData, climbData);
     //this is the climb sequence where the bot will climb autonomously
-    if (climbUp)
-    {
+    // if (climbUp)
+    // {
         runSequence(robotData, climbData);
-    }
+    // }
     //this will cancel the sequence or pause it
     cancelSequence(robotData, climbData);
     
@@ -256,8 +256,8 @@ void Climb::runSequence(const RobotData &robotData, ClimbData &climbData)
         else if (stage == 8) RunElevatorToPos(30,1,0); //Outer Arms pivot the robot so the elevator is facing the next bar
         else if (stage == 9) ChangeElevatorSpeed(1,1);
         else if (stage == 10) RunArmsAndElevatorToPos(110,0,200,1,1);
-        else if (stage == 11) WaitUntilGyro(-1, -45, 1);
-        else if (stage == 12) RunElevatorToPos(144.5,1,1);
+        else if (stage == 11) WaitUntilGyro(-1, -43, 1);
+        else if (stage == 12) RunElevatorToPos(150,1,1);
         else if (stage == 13) ChangeElevatorSpeed(elevatorSpeed,1);
         else if (stage == 14) RunArmsToPos(130,1,1);
         else if (stage == 15) ChangeElevatorSpeed(0.5, 1);
