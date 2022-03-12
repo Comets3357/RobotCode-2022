@@ -143,21 +143,23 @@ void Auton::threeBallB(const RobotData &robotData, ControlData &controlData) {
     double currentSec = robotData.timerData.secSinceEnabled;
 
     // intake
-    controlData.saIntake = true;
-
+    if (currentSec < 13) {
+        controlData.saIntake = true;
+    }
+    
     // run flywheel and aim
-    if (currentSec > 3 && currentSec < 8) {
+    if (currentSec > 1.3 && currentSec < 5.3) {
         controlData.shootMode = shootMode_vision;
-    } else if (currentSec > 10 && currentSec < 15) {
+    } else if (currentSec > 11.5 && currentSec < 15) {
         controlData.shootMode = shootMode_vision;
     } else {
         controlData.shootMode = shootMode_none;
     }
 
     // final shoot
-    if (currentSec > 5 && currentSec < 8) {
+    if (currentSec > 3.3 && currentSec < 5.3) {
         controlData.saFinalShoot = true;
-    } else if (currentSec > 14 && currentSec < 15) {
+    } else if (currentSec > 13.5 && currentSec < 15) {
         controlData.saFinalShoot = true;
     } else {
         controlData.saFinalShoot = false;

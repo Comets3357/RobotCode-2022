@@ -206,8 +206,8 @@ void Drivebase::autonControl(const RobotData &robotData, DrivebaseData &drivebas
         }
         // frc::SmartDashboard::PutNumber("breakEndSec", breakEndSec);
         if (robotData.timerData.secSinceEnabled > breakEndSec && robotData.controlData.shootMode == shootMode_none) {
-            // frc::smartDashboard::PutNumber("secSinceEnabled", robotData.timerData.secSinceEnabled);
-            // frc::smartDashboard::PutNumber("breakEndSec", breakEndSec);
+            // frc::SmartDashboard::PutNumber("secSinceEnabled", robotData.timerData.secSinceEnabled);
+            frc::SmartDashboard::PutNumber("breakEndSec", breakEndSec);
             getNextAutonStep(robotData, drivebaseData, autonData);
         }
     }
@@ -433,13 +433,8 @@ void Drivebase::turnInPlaceAuton(double degrees, const RobotData &robotData, Dri
         // frc::SmartDashboard::PutString("AUTON", "TURN IN PLACE");
     } else {
         // profile that adjusts aggressiveness of turn based on the amount of degrees left to turn. has been tuned for speed & accuracy on both small and large turns
-<<<<<<< HEAD
-        leftOutput = std::pow(std::abs(degrees / 400), 1.3) + 0.09;
-        rightOutput = std::pow(std::abs(degrees / 400), 1.3) + 0.09;
-=======
         leftOutput = std::pow(std::abs(degrees / 400), 1.3) + 0.11;
         rightOutput = std::pow(std::abs(degrees / 400), 1.3) + 0.11;
->>>>>>> optimize-autons
     }
     
 

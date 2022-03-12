@@ -61,6 +61,10 @@ void Indexer::updateData(const RobotData &robotData, IndexerData &indexerData)
         indexerData.eBallCountZero = false;
     }
     lastTickBallCount = indexerData.indexerContents.size();
+
+    frc::SmartDashboard::PutBoolean("beamTop", getTopBeam());
+    frc::SmartDashboard::PutBoolean("beamMid", getMidBeam());
+    frc::SmartDashboard::PutBoolean("beamBottom", getBottomBeam());
 }
 
 void Indexer::manual(const RobotData &robotData, IndexerData &indexerData)
