@@ -393,7 +393,7 @@ void Shooter::TestPeriodic(const RobotData &robotData, ShooterData &shooterData)
     frc::SmartDashboard::PutNumber("Shooter min extend expected encoder value", hoodabsIn);
     frc::SmartDashboard::PutNumber("Shooter max extend expected encoder value", hoodabsOut);
     frc::SmartDashboard::PutNumber("Shooter hood power", shooterData.benchTestShooterHoodSpeed);
-    frc::SmartDashboard::PutNumber("Fly Wheel Speed", shooterData.benchTestFlyWheelSpeed);
+    frc::SmartDashboard::PutNumber("Shooter Fly Wheel Speed", shooterData.benchTestFlyWheelSpeed);
 
     checkDeadStop(shooterData);
 
@@ -423,7 +423,7 @@ void Shooter::TestPeriodic(const RobotData &robotData, ShooterData &shooterData)
                 shooterData.benchTestShooterHoodSpeed = 0;
                 shooterData.benchTestFlyWheelSpeed = .1; //change back to .25 when done testing
             } else {
-                shooterData.benchTestShooterHoodSpeed = 0;
+                shooterData.benchTestShooterHoodSpeed = 0; //if the stage isn't within 0 to 2, then speeds get set to 0
                 shooterData.benchTestFlyWheelSpeed = 0;
                 shooterHood.Set(0);
                 flyWheelLead.Set(0);
@@ -444,7 +444,7 @@ void Shooter::TestPeriodic(const RobotData &robotData, ShooterData &shooterData)
 
         flyWheelLead.Set(shooterData.benchTestFlyWheelSpeed);
     } else {
-        shooterData.benchTestShooterHoodSpeed = 0; //if encoders don't work, then set the speeds to 0
+        shooterData.benchTestShooterHoodSpeed = 0; //if not testing shooter, then speeds get set to 0
         shooterData.benchTestFlyWheelSpeed = 0;
         shooterHood.Set(0);
         flyWheelLead.Set(0);

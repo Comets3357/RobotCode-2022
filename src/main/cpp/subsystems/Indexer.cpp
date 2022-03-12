@@ -458,9 +458,12 @@ void Indexer::indexerWheelInit(){
  **/
 
 void Indexer::TestPeriodic(const RobotData &robotData, IndexerData &indexerData){
-    frc::SmartDashboard::PutNumber("Color sensor number", robotData.colorSensorData.colorValue);
-    frc::SmartDashboard::PutNumber("First indexer encoder", indexerBeltEncoder.GetPosition());
-    frc::SmartDashboard::PutNumber("Second indexer encoder", indexerWheelEncoder.GetPosition());
+    frc::SmartDashboard::PutNumber("Indexer color sensor number", robotData.colorSensorData.colorValue);
+    frc::SmartDashboard::PutNumber("Indexer first encoder", indexerBeltEncoder.GetPosition());
+    frc::SmartDashboard::PutNumber("Indexer second encoder", indexerWheelEncoder.GetPosition());
+    frc::SmartDashboard::PutBoolean("Indexer top sensor", getTopBeam());
+    frc::SmartDashboard::PutBoolean("Indexer middle sensor", getMidBeam());
+    frc::SmartDashboard::PutBoolean("Indexer bottom sensor", getBottomBeam());
 
     if (robotData.benchTestData.testStage == BenchTestStage::BenchTestStage_Indexer && (robotData.controlData.manualBenchTest || robotData.controlData.autoBenchTest)){ //checks if we're testing indexer
         if (robotData.benchTestData.stage == 0){
@@ -484,7 +487,7 @@ void Indexer::TestPeriodic(const RobotData &robotData, IndexerData &indexerData)
             indexerWheel.Set(0);
         }
     } else {
-        indexerBelt.Set(0);
+        indexerBelt.Set(0); //if not testing indexer, then speeds get set to 0
         indexerWheel.Set(0);
     }
 }

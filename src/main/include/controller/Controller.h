@@ -92,13 +92,11 @@ struct ControlData
     //benchTest:
 
     bool manualBenchTest = false;
-    bool incrementMotor;
-    bool incrementSpeed;
-    bool incrementSubsystem;
-
-    bool manualBenchTestToggle;
-    bool PIDModeToggle;
-    bool autoBenchTest;
+    bool autoBenchTest = false;
+    bool incrementMotor = false;
+    bool incrementSpeed = false;
+    bool incrementSubsystem = false;
+    bool PIDModeToggle = false;
 };
 
 struct ControllerData

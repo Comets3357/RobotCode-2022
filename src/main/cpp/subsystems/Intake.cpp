@@ -277,7 +277,7 @@ void Intake::TestPeriodic(const RobotData &robotData, IntakeData &intakeData){
                 intakeData.benchTestIntakeRollersSpeed = 0;
                 intakeData.benchTestSingulatorSpeed = -robotData.benchTestData.currentSpeed;
             } else {
-                intakeData.benchTestIntakePivotSpeed = 0;
+                intakeData.benchTestIntakePivotSpeed = 0; //if the intake stage isn't within 0 to 5, then the speeds get set to 0
                 intakeData.benchTestIntakeRollersSpeed = 0;
                 intakeData.benchTestSingulatorSpeed = 0;
                 intakePivot.Set(0);
@@ -285,7 +285,7 @@ void Intake::TestPeriodic(const RobotData &robotData, IntakeData &intakeData){
                 intakeSingulator.Set(0);
             }
         } else {
-            intakeData.benchTestIntakePivotSpeed = 0;
+            intakeData.benchTestIntakePivotSpeed = 0; //if the sensors aren't working, then the speeds get set to 0
             intakeData.benchTestIntakeRollersSpeed = 0;
             intakeData.benchTestSingulatorSpeed = 0;
             intakePivot.Set(0);
@@ -303,7 +303,7 @@ void Intake::TestPeriodic(const RobotData &robotData, IntakeData &intakeData){
         intakeRollers.Set(intakeData.benchTestIntakeRollersSpeed);
         intakeSingulator.Set(intakeData.benchTestSingulatorSpeed);
     } else {
-        intakeData.benchTestIntakePivotSpeed = 0;
+        intakeData.benchTestIntakePivotSpeed = 0; //if not testing intake, then speeds get set to 0
         intakeData.benchTestIntakeRollersSpeed = 0;
         intakeData.benchTestSingulatorSpeed = 0;
         intakePivot.Set(0);

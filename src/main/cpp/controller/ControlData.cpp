@@ -142,11 +142,13 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
     controlData.incrementSubsystem = controllerData.testAButton; //increments the subsystem
 
     //sets the value of the variables used in robot.cpp based upon the toggle button variables
-    if (controllerData.testRBumper) controlData.manualBenchTest = !controlData.manualBenchTest; //a: starts and stops manual bench test
-    if (controllerData.testLBumper) controlData.autoBenchTest = !controlData.autoBenchTest; //left bumper: starts and stops automatic bench test
-
-    if (controlData.autoBenchTest) controlData.manualBenchTest = false; //can't do manual bench test in automatic bench test
-    if (controlData.manualBenchTest) controlData.autoBenchTest = false; //can't do automatic bench test in manual bench test
+    if (!controlData.autoBenchTest){ //can't do manual bench test in automatic bench test
+        if (controllerData.testRBumper) controlData.manualBenchTest = !controlData.manualBenchTest; //a: starts and stops manual bench test
+    }
+    
+    if (!controlData.manualBenchTest){ //can't do automatic bench test in manual bench test
+        if (controllerData.testLBumper) controlData.autoBenchTest = !controlData.autoBenchTest; //left bumper: starts and stops automatic bench test
+    }
 }
 
 void Controller::updateShootMode(const RobotData &robotData, ControlData &controlData) {

@@ -553,7 +553,7 @@ void Drivebase::TestPeriodic(const RobotData &robotData, DrivebaseData &drivebas
             dbL.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
         }
     } else {
-        dbR.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
+        dbR.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0); //if not testing drivebase, then speeds get set to 0
         dbL.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
     }
 }
