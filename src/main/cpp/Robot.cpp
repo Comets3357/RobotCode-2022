@@ -11,6 +11,7 @@ void Robot::RobotInit()
     indexer.RobotInit();
     shooter.RobotInit();
     climb.RobotInit();
+    networkTables.RobotInit();
 }
 
 void Robot::RobotPeriodic()
@@ -64,6 +65,7 @@ void Robot::TeleopPeriodic()
 {
     timer.EnabledPeriodic(robotData.timerData);
     controller.TeleopPeriodic(robotData, robotData.controllerData, robotData.controlData);
+    networkTables.TeleopPeriodic(robotData);
 }
 
 void Robot::DisabledInit()
