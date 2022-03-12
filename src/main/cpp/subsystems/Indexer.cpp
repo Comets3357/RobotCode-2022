@@ -290,17 +290,11 @@ void Indexer::saWheelControl(const RobotData &robotData, IndexerData &indexerDat
  **/
 void Indexer::rejectDetection(const RobotData &robotData, IndexerData &indexerData){
     if(indexerData.indexerContents.size() > 0){
-
         if(indexerData.indexerContents.front() == Cargo::cargo_Opponent){
             indexerData.autoRejectTop = true;
         } else {
             indexerData.autoRejectTop = false;
         }
-
-        if((frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed && robotData.colorSensorData.colorValue == CargoColor::cargo_Blue) || (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue && robotData.colorSensorData.colorValue == CargoColor::cargo_Red)){        // alliance and color sensing do not match
-            indexerData.autoRejectBottom = true;
-        } 
-
     } 
 }
 

@@ -300,8 +300,10 @@ double Shooter::absoluteToREV(double value){
 void Shooter::eject(const RobotData &robotData, ShooterData &shooterData){
     shooterHood_pidController.SetReference(hoodrevOut , rev::CANSparkMaxLowLevel::ControlType::kPosition);
     setShooterWheel(1000);
-    if(getWheelVel() > 950){
+    if(getWheelVel() > 950 && getWheelVel() < 1100){
         shooterData.readyEject = true;
+    } else {
+        shooterData.readyEject = false;
     }
 }
 

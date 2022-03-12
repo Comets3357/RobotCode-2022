@@ -92,7 +92,6 @@ private:
 
     // variables for auto rejection of opponent balls
     bool ejectTop = false;
-    bool ejectBottom = false;
 
     // debounce counters to time debounce
     int bottomDebounceCount = 0;
