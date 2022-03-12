@@ -190,7 +190,7 @@ void Drivebase::autonControl(const RobotData &robotData, DrivebaseData &drivebas
     if (drivebaseData.driveMode == driveMode_break)
     {
         if (robotData.controlData.shootMode == shootMode_vision) {
-            turnInPlaceAuton(-robotData.limelightData.angleOffset, robotData, drivebaseData, autonData);
+            turnInPlaceTeleop(-robotData.limelightData.angleOffset, robotData);
             // frc::smartDashboard::PutNumber("angleOffsetLimelight", robotData.limelightData.angleOffset);
         } else {
             setVelocity(0, 0);
@@ -424,8 +424,8 @@ void Drivebase::turnInPlaceAuton(double degrees, const RobotData &robotData, Dri
         // frc::SmartDashboard::PutString("AUTON", "TURN IN PLACE");
     } else {
         // profile that adjusts aggressiveness of turn based on the amount of degrees left to turn. has been tuned for speed & accuracy on both small and large turns
-        leftOutput = std::pow(std::abs(degrees / 400), 1.3) + 0.1;
-        rightOutput = std::pow(std::abs(degrees / 400), 1.3) + 0.1;
+        leftOutput = std::pow(std::abs(degrees / 400), 1.3) + 0.11;
+        rightOutput = std::pow(std::abs(degrees / 400), 1.3) + 0.11;
     }
     
 
