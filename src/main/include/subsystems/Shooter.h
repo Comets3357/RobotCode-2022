@@ -65,10 +65,10 @@ class Shooter{
         void setShooterWheel(double speed);
         void setTurret_Pos(double pos, ShooterData &shooterData);
 
-
         //checks
         void checkReadyShoot(ShooterData &shooterData);
-        bool encoderPluggedIn(const ShooterData &shooterData);
+        bool encoderPluggedInTurret(const ShooterData &shooterData);
+        bool encoderPluggedInHood(const ShooterData &shooterData);
 
         //FIXED SHOTS
         void outerLaunch(const RobotData &robotData);
@@ -84,13 +84,12 @@ class Shooter{
         int readyShootLimit;
         //used to update rev encoder with abs encoder
         int tickCount;
-    
-        //Flywheel Lead
-        ctre::phoenix::motorcontrol::can::TalonFX flyWheelLead{shooterWheelLeadID};
+        
+     //Flywheel Lead
+        rev::CANSparkMax flyWheelLead = rev::CANSparkMax(shooterWheelLeadID, rev::CANSparkMax::MotorType::kBrushless);
+        rev::SparkMaxRelativeEncoder flyWheelLeadEncoder = flyWheelLead.GetEncoder();
+        rev::SparkMaxPIDController flyWheelLead_pidController = flyWheelLead.GetPIDController();
 
-       // rev::CANSparkMax flyWheelLead = rev::CANSparkMax(shooterWheelLeadID, rev::CANSparkMax::MotorType::kBrushless);
-        //rev::SparkMaxRelativeEncoder flyWheelLeadEncoder = flyWheelLead.GetEncoder();
-        //rev::SparkMaxPIDController flyWheelLead_pidController = flyWheelLead.GetPIDController();
 
         //lip roller
         rev::CANSparkMax hoodRoller = rev::CANSparkMax(hoodRollerID, rev::CANSparkMax::MotorType::kBrushless);

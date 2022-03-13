@@ -254,7 +254,7 @@ bool Indexer::pauseBelt(const RobotData &robotData, IndexerData &indexerData){
 
     if(indexerData.topBeamToggledOn){   // the top sensor was just toggled on
                                         // concern: if it was toggled on due to belt slippage?
-        pauseBeltCount = 5;             // set pause belt count for .1s
+        pauseBeltCount = 60;             // set pause belt count for .1s
         return true;
     } else if (pauseBeltCount > 0){
         pauseBeltCount--;

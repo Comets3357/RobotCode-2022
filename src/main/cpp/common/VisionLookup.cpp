@@ -15,42 +15,42 @@ void VisionLookup::RobotPeriodic(const RobotData &robotData, VisionLookupData &v
     // hood angle map HIGH HUB
     // key is the distance in feet
     // assigned value is the hood position in angle measurment(degrees)
-    visionMap[4] = 26.22;
-    visionMap[5] = 26.75;
-    visionMap[6] = 32.46;
-    visionMap[7] = 35.02;
-    visionMap[8] = 40.24;
-    visionMap[9] = 39.72;
-    visionMap[10] = 39.72;
-    visionMap[11] = 40.33;
-    visionMap[12] = 41.76;
-    visionMap[13] = 43.13;
-    // visionMap[14] = ;
-    // visionMap[15] = 41.12;
-    // visionMap[16] = 42.54;
-    // visionMap[17] = 42.57;
-    // visionMap[18] = 42.58;
-    // visionMap[19] = 43;
+    visionMap[5] = 21;
+    visionMap[6] = 21; 
+    visionMap[7] = 21; 
+    visionMap[8] = 24.08; 
+    visionMap[9] = 24.1; 
+    visionMap[10] = 24.1; 
+    visionMap[11] = 26.04; 
+    visionMap[12] = 32.6; 
+    visionMap[13] = 32.6; 
+    visionMap[14] = 34.5; 
+    visionMap[15] = 35.66; 
+    visionMap[16] = 36.28; 
+    visionMap[17] = 36.29; 
+    visionMap[18] = 36.29; 
+    visionMap[19] = 37.62; 
+    visionMap[20] = 29.29; 
 
     // velocity map
     // key is the distance in feet
     // assigned value is the desired flywheel velocity in rpm
-    velocityMap[4] = 1700; 
-    velocityMap[5] = 1700; 
-    velocityMap[6] = 1740; 
-    velocityMap[7] = 1740; 
-    velocityMap[8] = 1830; 
-    velocityMap[9] = 1860; 
-    velocityMap[10] = 1860; 
-    velocityMap[11] = 1890; 
-    velocityMap[12] = 1970; 
-    velocityMap[13] = 1990; 
-    // velocityMap[14] = 2100; 
-    // velocityMap[15] = 2100;
-    // velocityMap[16] = 2150;
-    // velocityMap[17] = 2200;
-    // velocityMap[18] = 2300;
-    // velocityMap[19] = 2400;
+    velocityMap[5] = 1250; 
+    velocityMap[6] = 1350; 
+    velocityMap[7] = 1400; 
+    velocityMap[8] = 1400; 
+    velocityMap[9] = 1400; 
+    velocityMap[10] = 1450; 
+    velocityMap[11] = 1450; 
+    velocityMap[12] = 1500; 
+    velocityMap[13] = 1500; 
+    velocityMap[14] = 1575; 
+    velocityMap[15] = 1650;
+    velocityMap[16] = 1700;
+    velocityMap[17] = 1720;
+    velocityMap[18] = 1750;
+    velocityMap[19] = 1790;
+    velocityMap[20] = 1800;
 
     // hood angle map LOW HUB
     // lowVisionMap[4] = 25.3;

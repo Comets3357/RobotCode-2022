@@ -10,13 +10,13 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     limelightData.distanceToTarget = distanceToTarget(); //the distance
 
     //turns off limelight if not shooting
-    if(robotData.controlData.shootMode == shootMode_none){
-        table->PutNumber("ledMode", 1);
-    }else{
-        table->PutNumber("ledMode", 0);
-    }
+    // if(robotData.controlData.shootMode == shootMode_none){
+    //     table->PutNumber("ledMode", 1);
+    // }else{
+    //     table->PutNumber("ledMode", 0);
+    // }
     
-    //table->PutNumber("ledMode", 0);
+    table->PutNumber("ledMode", 0);
 
     //updates the angle to be in degrees rather than radians
     //the actual distance from the hub based on the turning of the drivebase
@@ -34,12 +34,15 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     limelightData.desiredHoodRollerVel = getHoodRollerVel(limelightData, robotData);
 
     //TURRET 
-    limelightData.turretDifference = getTurretTurnAngle(limelightData, robotData); //constantly updating the degrees needed to turn to target
-    limelightData.desiredTurretAngle = robotData.shooterData.currentTurretAngle + robotData.limelightData.turretDifference; //position to go to to shoot
+    limelightData.turretDifference = -robotData.limelightData.angleOffset;
+    limelightData.desiredTurretAngle = getTurretTurnAngle(limelightData, robotData); //position to go to to shoot
+    
+
     
     //printing data to the dashboard
-    // frc::smartDashboard::PutNumber("distance offset", robotData.limelightData.distanceOffset/12);
-    //frc::SmartDashboard::PutNumber("angleOffset", limelightData.angleOffset);
+    frc::SmartDashboard::PutNumber("distance offset", robotData.limelightData.distanceOffset/12);
+    frc::SmartDashboard::PutNumber("desired turret angle", limelightData.desiredTurretAngle);
+    frc::SmartDashboard::PutNumber("turret turn angle", limelightData.turretDifference);
     //frc::SmartDashboard::PutNumber("desired hood", robotData.limelightData.desiredHoodPos);
     //frc::SmartDashboard::PutNumber("final correct distance", robotData.limelightData.correctDistance);
 }
@@ -177,7 +180,7 @@ double Limelight::getWheelVelocity(VisionLookup &visionLookup, LimelightData &li
 
     //multiply the difference in the distance and floored value by the slope to get desired velocity for that small distance 
     //then add that to the desired position of the lower floored value
-    return (desiredSlope*(orignalDistance - limelightData.lowerVal*12)+limelightData.lowerValVel);
+    return (desiredSlope*(orignalDistance - limelightData.lowerVal*12)+limelightData.lowerValVel) - 100;
 
 }
 
@@ -194,14 +197,22 @@ double Limelight::getHoodRollerVel(LimelightData &limelightData, const RobotData
  * is constantly updating based on the current Turret Angle and the angle offset from the limelight
  */
 double Limelight::getTurretTurnAngle(LimelightData &limelightData, const RobotData &robotData){
-    float angleDifference = robotData.shooterData.currentTurretAngle + robotData.limelightData.angleOffset;
-    if(angleDifference < 0){
-        angleDifference += 360;
-    }else if(angleDifference > turretFullRotationDegrees){
-        angleDifference -=360;
+    float desired = robotData.limelightData.turretDifference + robotData.shooterData.currentTurretAngle;
+
+    if(desired >= 0 && desired <= turretFullRotationDegrees){
+        return desired; 
+    }else{
+        if(desired < 0){
+            desired += 360;
+        }else if(desired > turretFullRotationDegrees){
+            desired -=360;
+        }
+
+        return desired;
+        
     }
+    
     //returns how much the turret needs to turn in order to get to the target
-    return angleDifference; 
 
 }
 

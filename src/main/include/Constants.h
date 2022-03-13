@@ -15,16 +15,16 @@ static const int
 
 static const double
     //practice bot
-    // absOut = 0.485,
-    // absIn = 0.616,
-    // revOut = 6.4,
-    // revIn = 0;
+    absOut = 0.485,
+    absIn = 0.616,
+    revOut = 6.4,
+    revIn = 0;
 
     //comp bot intake pivot positions
-    absOut = 0.465,
-    absIn = 0.605,
-    revOut = 6.14,
-    revIn = 0;
+    // absOut = 0.465,
+    // absIn = 0.605,
+    // revOut = 6.14,
+    // revIn = 0;
 
 //indexer
 static const int
@@ -40,8 +40,8 @@ static const int
 
 static const double
     //comp bot shooter hood positions
-    hoodabsOut = 0.028,
-    hoodabsIn = 0.933,
+    hoodabsOut = 0.103,
+    hoodabsIn = 0.98,
     hoodrevOut = -38,
     hoodrevIn = 0,
     hoodAngleOut = 43,
@@ -49,13 +49,15 @@ static const double
 
     //turret positions
     turretZeroDegrees = 0,
-    turretFullRotationDegrees = 0,
-    turretZeroRev = 0,
-    turretFullRotationRev = 0,
-    turretZeroAbs = 0,
-    turretFullRotationAbs = 0,
+    turretFullRotationDegrees = 540,
+    turretZeroRev = 87.5, 
+    turretFullRotationRev_CCW = 174.85, 
+    turretFullRotationRev_C = 0,
+    turretZeroAbs = 0.479, 
+    turretFullRotationAbs_CCW = 0.91,
+    turretFullRotationAbs_C = 0.05,
 
-    hoodFlywheelRatio = 0.5;
+    hoodFlywheelRatio = 2.75;
 
 //Set shooting hood positions and velocity 
 static const float
@@ -96,6 +98,7 @@ static const double
     ycameraDistanceFromBot = 9.5, //offset from center of shooter Y
     shooterDistanceFromCenterOfBot = 2, 
     crosshairOffset = 0;
+
 
 // DIO
 static const int

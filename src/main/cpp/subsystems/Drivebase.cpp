@@ -136,7 +136,7 @@ void Drivebase::teleopControl(const RobotData &robotData, DrivebaseData &driveba
         drivebaseData.driveMode = driveMode_joystick;
     }
     else if (robotData.controlData.shootMode == shootMode_vision) {
-        drivebaseData.driveMode = driveMode_turnInPlace;
+        //drivebaseData.driveMode = driveMode_turnInPlace;
     } else {
         drivebaseData.driveMode = driveMode_joystick;
     }
