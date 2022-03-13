@@ -93,9 +93,9 @@ void Controller::updateBtnData(ControllerData &controllerData)
 
     //secondary controls:
 
-    controllerData.sLXStick = -getAxis(1, 1);
+    controllerData.sLXStick = -getAxis(1, 0);
     controllerData.sLYStick = -getAxis(1, 1);
-    controllerData.sRXStick = -getAxis(1, 5);
+    controllerData.sRXStick = -getAxis(1, 4);
     controllerData.sRYStick = -getAxis(1, 5);
 
     controllerData.sLStickBtn = getBtn(1, 9);

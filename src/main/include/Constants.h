@@ -48,14 +48,14 @@ static const double
     hoodAngleIn = 21,
 
     //turret positions
-    turretZeroDegrees = 0,
-    turretFullRotationDegrees = 540,
-    turretZeroRev = 87.5, 
-    turretFullRotationRev_CCW = 174.85, 
-    turretFullRotationRev_C = 0,
-    turretZeroAbs = 0.479, 
-    turretFullRotationAbs_CCW = 0.91,
-    turretFullRotationAbs_C = 0.05,
+    turretZeroDegrees = 15, //15
+    turretFullRotationDegrees = 540, //540
+    turretZeroRev = 87.5, //87.5
+    turretFullRotationRev_CCW = 174.85, //174.85
+    turretFullRotationRev_C = 0, //0
+    turretZeroAbs = 0.479, //0.479
+    turretFullRotationAbs_CCW = 0.91, //0.91
+    turretFullRotationAbs_C = 0.05, //0.05
 
     hoodFlywheelRatio = 2.75;
 

@@ -31,7 +31,7 @@ struct ShooterData
 class Shooter{
 
     public:
-        void RobotInit();
+        void RobotInit(ShooterData &shooterData);
         void RobotPeriodic(const RobotData &robotData, ShooterData &shooterData);
         void DisabledInit();
         void DisabledPeriodic(const RobotData &robotData, ShooterData &shooterData);
@@ -84,6 +84,7 @@ class Shooter{
         int readyShootLimit;
         //used to update rev encoder with abs encoder
         int tickCount;
+        double validTargetTurretPos;
         
      //Flywheel Lead
         rev::CANSparkMax flyWheelLead = rev::CANSparkMax(shooterWheelLeadID, rev::CANSparkMax::MotorType::kBrushless);
