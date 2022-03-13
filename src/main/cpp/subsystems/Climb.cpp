@@ -656,17 +656,19 @@ void Climb::TestPeriodic(const RobotData &robotData, ClimbData &climbData){
             climbElevator.Set(0);
         }
 
-        //uses the variables in the above ^ code to set the motor speeds (also checks if the motor has hit a dead stop, and if so, the motor stops)
-        if (!climbData.upperLimit && !climbData.lowerLimit){
-            climbElevator.Set(climbData.benchTestClimbElevatorSpeed);
-        } else {
-            climbElevator.Set(0);
-        }
+        if (!robotData.benchTestData.PIDMode){
+            //uses the variables in the above ^ code to set the motor speeds (also checks if the motor has hit a dead stop, and if so, the motor stops)
+            if (!climbData.upperLimit && !climbData.lowerLimit){
+                climbElevator.Set(climbData.benchTestClimbElevatorSpeed);
+            } else {
+                climbElevator.Set(0);
+            }
 
-        if (!climbData.armsUpperLimit && !climbData.armsLowerLimit){
-            climbArms.Set(climbData.benchTestClimbArmsSpeed);
-        } else {
-            climbArms.Set(0);
+            if (!climbData.armsUpperLimit && !climbData.armsLowerLimit){
+                climbArms.Set(climbData.benchTestClimbArmsSpeed);
+            } else {
+                climbArms.Set(0);
+            }
         }
     } else {
         climbData.benchTestClimbArmsSpeed = 0; //if not testing climb, then speeds get set to 0

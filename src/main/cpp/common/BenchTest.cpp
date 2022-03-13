@@ -7,15 +7,12 @@ void BenchTest::TestPeriodic(const RobotData &robotData, BenchTestData &benchTes
     frc::SmartDashboard::PutNumber("Bench test motor stage", robotData.benchTestData.stage); //prints the motor stage
     frc::SmartDashboard::PutNumber("Bench test subsystem stage", benchTestData.testStage); //prints the subsystem we're currently on
     frc::SmartDashboard::PutNumber("Bench test power", robotData.benchTestData.currentSpeed); //prints the current testing speed
-
+    frc::SmartDashboard::PutBoolean("Bench test PID mode", benchTestData.PIDMode);
 
     //toggles the testing of PIDs
     if (controlData.PIDModeToggle) benchTestData.PIDMode = !benchTestData.PIDMode;
 
-
     //AUTOMATIC BENCH TEST
-
-
     if (controlData.autoBenchTest){
 
         //janky solution to skipping drivebase; basically at the end of climb, stage gets set to -1, and then here to 0, which
@@ -32,16 +29,11 @@ void BenchTest::TestPeriodic(const RobotData &robotData, BenchTestData &benchTes
             }
         }
 
-        //sets the speed based on the time; starts slow, and speeds up every second (diff values for indexer)
-        if (benchTestData.testStage != BenchTestStage::BenchTestStage_Indexer){
-            if (increment <= .25) benchTestData.currentSpeed = .1;
-            else if (increment <= .5) benchTestData.currentSpeed = .2;
-            else if (increment <= .75) benchTestData.currentSpeed = .3;
-            else if (increment <= 1) benchTestData.currentSpeed = .4;
-        } else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Indexer){
-            if (increment <= .5) benchTestData.currentSpeed = .1;
-            else if (increment <= 1) benchTestData.currentSpeed = .2;
-        }
+        //sets the speed based on the time; starts slow, and speeds up every second
+        if (increment <= .25) benchTestData.currentSpeed = .1;
+        else if (increment <= .5) benchTestData.currentSpeed = .2;
+        else if (increment <= .75) benchTestData.currentSpeed = .3;
+        else if (increment <= 1) benchTestData.currentSpeed = .4;
 
         //resets the time increment when moving between motors
         if (increment > 1){
@@ -53,7 +45,7 @@ void BenchTest::TestPeriodic(const RobotData &robotData, BenchTestData &benchTes
         if (robotData.climbData.armsLowerLimit) benchTestData.stage = 1;
         else if (robotData.climbData.armsUpperLimit) benchTestData.stage = 2;
         else if (robotData.climbData.upperLimit) benchTestData.stage = 3;
-        else if (robotData.climbData.lowerLimit) benchTestData.stage = -1; //special case explained on lines 17-18
+        else if (robotData.climbData.lowerLimit) benchTestData.stage = -1; //special case explained on lines 21-22
         else if (robotData.intakeData.bottomDeadStop) benchTestData.stage = 1;
         else if (robotData.intakeData.topDeadStop) benchTestData.stage = 2;
         else if (robotData.shooterData.topDeadStop) benchTestData.stage = 1;
@@ -83,10 +75,7 @@ void BenchTest::TestPeriodic(const RobotData &robotData, BenchTestData &benchTes
         }
     }
 
-
     //MANUAL BENCH TEST
-
-
     if (controlData.manualBenchTest){  //starts testing to see if the robot is mechanically sound (toggle with A button on/off)
 
         //increments the speed of motors when testing

@@ -293,11 +293,13 @@ void Intake::TestPeriodic(const RobotData &robotData, IntakeData &intakeData){
             intakeSingulator.Set(0);
         }
 
-        //sets the speed of the motors (unless the pivot hit a dead stop)
-        if (!intakeData.topDeadStop && !intakeData.bottomDeadStop){
-            intakePivot.Set(intakeData.benchTestIntakePivotSpeed);
-        } else {
-            intakePivot.Set(0);
+        if (!robotData.benchTestData.PIDMode){
+            //sets the speed of the motors (unless the pivot hit a dead stop)
+            if (!intakeData.topDeadStop && !intakeData.bottomDeadStop){
+                intakePivot.Set(intakeData.benchTestIntakePivotSpeed);
+            } else {
+                intakePivot.Set(0);
+            }
         }
 
         intakeRollers.Set(intakeData.benchTestIntakeRollersSpeed);

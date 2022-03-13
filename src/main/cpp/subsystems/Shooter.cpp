@@ -435,11 +435,13 @@ void Shooter::TestPeriodic(const RobotData &robotData, ShooterData &shooterData)
             flyWheelLead.Set(0);
         }
 
-        //sets the speed of the motors according to the variables set in the above if statement ^ (unless the hood hit a dead stop)
-        if (!shooterData.topDeadStop && !shooterData.bottomDeadStop){
-            shooterHood.Set(shooterData.benchTestShooterHoodSpeed);
-        } else {
-            shooterHood.Set(0);
+        if (!robotData.benchTestData.PIDMode){
+            //sets the speed of the motors according to the variables set in the above if statement ^ (unless the hood hit a dead stop)
+            if (!shooterData.topDeadStop && !shooterData.bottomDeadStop){
+                shooterHood.Set(shooterData.benchTestShooterHoodSpeed);
+            } else {
+                shooterHood.Set(0);
+            }
         }
 
         flyWheelLead.Set(shooterData.benchTestFlyWheelSpeed);
