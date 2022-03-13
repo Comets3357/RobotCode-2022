@@ -293,6 +293,7 @@ void Intake::TestPeriodic(const RobotData &robotData, IntakeData &intakeData){
             intakeSingulator.Set(0);
         }
 
+        //if statement to make sure the speed doesn't interfere with PID mode
         if (!robotData.benchTestData.PIDMode){
             //sets the speed of the motors (unless the pivot hit a dead stop)
             if (!intakeData.topDeadStop && !intakeData.bottomDeadStop){

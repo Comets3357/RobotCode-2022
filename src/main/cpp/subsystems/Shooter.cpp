@@ -421,7 +421,7 @@ void Shooter::TestPeriodic(const RobotData &robotData, ShooterData &shooterData)
             } else if (robotData.benchTestData.stage == 2){
                 //run fly wheel
                 shooterData.benchTestShooterHoodSpeed = 0;
-                shooterData.benchTestFlyWheelSpeed = .1; //change back to .25 when done testing
+                shooterData.benchTestFlyWheelSpeed = .25; //change back to .25 when done testing
             } else {
                 shooterData.benchTestShooterHoodSpeed = 0; //if the stage isn't within 0 to 2, then speeds get set to 0
                 shooterData.benchTestFlyWheelSpeed = 0;
@@ -435,6 +435,7 @@ void Shooter::TestPeriodic(const RobotData &robotData, ShooterData &shooterData)
             flyWheelLead.Set(0);
         }
 
+        //if statement to make sure the speed doesn't interfere with PID mode
         if (!robotData.benchTestData.PIDMode){
             //sets the speed of the motors according to the variables set in the above if statement ^ (unless the hood hit a dead stop)
             if (!shooterData.topDeadStop && !shooterData.bottomDeadStop){

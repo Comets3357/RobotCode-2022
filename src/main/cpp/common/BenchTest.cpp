@@ -7,7 +7,7 @@ void BenchTest::TestPeriodic(const RobotData &robotData, BenchTestData &benchTes
     frc::SmartDashboard::PutNumber("Bench test motor stage", robotData.benchTestData.stage); //prints the motor stage
     frc::SmartDashboard::PutNumber("Bench test subsystem stage", benchTestData.testStage); //prints the subsystem we're currently on
     frc::SmartDashboard::PutNumber("Bench test power", robotData.benchTestData.currentSpeed); //prints the current testing speed
-    frc::SmartDashboard::PutBoolean("Bench test PID mode", benchTestData.PIDMode);
+    frc::SmartDashboard::PutBoolean("Bench test PID mode", benchTestData.PIDMode); //PID mode
 
     //toggles the testing of PIDs
     if (controlData.PIDModeToggle) benchTestData.PIDMode = !benchTestData.PIDMode;

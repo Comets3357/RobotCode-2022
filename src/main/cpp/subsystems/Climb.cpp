@@ -656,6 +656,7 @@ void Climb::TestPeriodic(const RobotData &robotData, ClimbData &climbData){
             climbElevator.Set(0);
         }
 
+        //if statement to make sure the speed doesn't interfere with PID mode
         if (!robotData.benchTestData.PIDMode){
             //uses the variables in the above ^ code to set the motor speeds (also checks if the motor has hit a dead stop, and if so, the motor stops)
             if (!climbData.upperLimit && !climbData.lowerLimit){
