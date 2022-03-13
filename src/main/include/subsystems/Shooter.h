@@ -11,6 +11,7 @@
 #include <frc/controller/PIDController.h>
 #include <frc/DutyCycle.h>
 #include <frc/DigitalSource.h>
+#include <ctre/Phoenix.h>
 
 struct RobotData;
 
@@ -23,6 +24,7 @@ struct ShooterData
     bool bottomDeadStop = false;
     float benchTestShooterHoodSpeed = 0;
     float benchTestFlyWheelSpeed = 0;
+    float benchTestTurretSpeed = 0;
 };
 
 class Shooter{
@@ -50,6 +52,8 @@ class Shooter{
         //init 
         void flyWheelInit();
         void shooterHoodInit();
+        void hoodRollerInit();
+        void shooterTurretInit();
         
         //gets and sets
         double getWheelVel();
@@ -64,7 +68,6 @@ class Shooter{
         void innerLaunch(const RobotData &robotData);
         void wall(const RobotData &robotData);
         void fender(const RobotData &robotData);
-        void endOfTarmac(const RobotData &robotData);
 
         //bench test
         bool encoderInRange(const ShooterData &shooterData);
@@ -76,14 +79,26 @@ class Shooter{
         int tickCount;
     
         //FLywheel Lead
-        rev::CANSparkMax flyWheelLead = rev::CANSparkMax(shooterWheelLeadID, rev::CANSparkMax::MotorType::kBrushless);
-        rev::SparkMaxRelativeEncoder flyWheelLeadEncoder = flyWheelLead.GetEncoder();
-        rev::SparkMaxPIDController flyWheelLead_pidController = flyWheelLead.GetPIDController();
+        ctre::phoenix::motorcontrol::can::TalonFX flyWheelLead{shooterWheelLeadID};
 
         //flywheel hood, rev encoder, pid
         rev::CANSparkMax shooterHood = rev::CANSparkMax(shooterHoodID, rev::CANSparkMax::MotorType::kBrushless);
         rev::SparkMaxRelativeEncoder shooterHoodEncoderRev = shooterHood.GetEncoder();
         rev::SparkMaxPIDController shooterHood_pidController = shooterHood.GetPIDController();
+
+        //lip roller
+        rev::CANSparkMax hoodRoller = rev::CANSparkMax(hoodRollerID, rev::CANSparkMax::MotorType::kBrushless);
+        rev::SparkMaxRelativeEncoder hoodRollerEncoderRev = hoodRoller.GetEncoder();
+        rev::SparkMaxPIDController hoodRoller_pidController = hoodRoller.GetPIDController();
+
+        //turret
+        rev::CANSparkMax shooterTurret = rev::CANSparkMax(shooterTurretID, rev::CANSparkMax::MotorType::kBrushless);
+        rev::SparkMaxRelativeEncoder shooterTurretEncoderRev = shooterTurret.GetEncoder();
+        rev::SparkMaxPIDController shooterTurret_pidController = shooterTurret.GetPIDController();
+        
+        //turret abs encoder
+        frc::DigitalInput m_inputTurret{TurretAbsoluteEncoderPort};
+        frc::DutyCycle shooterTurretEncoderAbs = frc::DutyCycle{m_inputTurret};
         
         //flywheel abs encoder
         frc::DigitalInput m_input{HoodAbsoluteEncoderPort};
