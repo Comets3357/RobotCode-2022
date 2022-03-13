@@ -90,9 +90,9 @@ void BenchTest::TestPeriodic(const RobotData &robotData, BenchTestData &benchTes
             benchTestData.stage++; //if the subsystem doesn't need to be incremented, then the motor stage is instead
 
             //if the final motor in a subsystem is reach, then the cycle resets to go through the motor sequence again
-            if (benchTestData.testStage == BenchTestStage::BenchTestStage_Climb && benchTestData.stage >= 8) benchTestData.stage = 0;
-            else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Shooter && benchTestData.stage >= 5) benchTestData.stage = 0;
-            else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Intake && benchTestData.stage >= 8) benchTestData.stage = 0;
+            if (benchTestData.testStage == BenchTestStage::BenchTestStage_Climb && benchTestData.stage >= 4) benchTestData.stage = 0;
+            else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Shooter && benchTestData.stage >= 3) benchTestData.stage = 0;
+            else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Intake && benchTestData.stage >= 6) benchTestData.stage = 0;
             else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Indexer && benchTestData.stage >= 4) benchTestData.stage = 0;
             else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Drivebase && benchTestData.stage >= 4) benchTestData.stage = 0;
         }
