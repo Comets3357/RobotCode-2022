@@ -21,6 +21,7 @@
 #include "common/OtherComponents.h"
 #include "common/ColorSensor.h"
 #include "common/LEDs.h"
+#include "common/BenchTest.h"
 #include "common/Jetson.h"
 
 //Robot class inherits from TimedRobot

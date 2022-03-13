@@ -436,14 +436,20 @@ void Indexer::indexerWheelInit(){
 }
 
 /**
- * runs the bench test
+ * ---------------------------------------------------------------------------------------------------------------------------------------------------
+ * BENCH TEST CODE
+ * ---------------------------------------------------------------------------------------------------------------------------------------------------
  **/
-void Indexer::TestPeriodic(const RobotData &robotData, IndexerData &indexerData){
-    frc::SmartDashboard::PutNumber("Color sensor number", robotData.colorSensorData.colorValue);
-    frc::SmartDashboard::PutNumber("First indexer encoder", indexerBeltEncoder.GetPosition());
-    frc::SmartDashboard::PutNumber("Second indexer encoder", indexerWheelEncoder.GetPosition());
 
-    if (robotData.benchTestData.testStage == BenchTestStage::BenchTestStage_Indexer && robotData.controlData.startBenchTest){ //checks if we're testing indexer
+void Indexer::TestPeriodic(const RobotData &robotData, IndexerData &indexerData){
+    frc::SmartDashboard::PutNumber("Indexer color sensor number", robotData.colorSensorData.colorValue);
+    frc::SmartDashboard::PutNumber("Indexer first encoder", indexerBeltEncoder.GetPosition());
+    frc::SmartDashboard::PutNumber("Indexer second encoder", indexerWheelEncoder.GetPosition());
+    frc::SmartDashboard::PutBoolean("Indexer top sensor", getTopBeam());
+    frc::SmartDashboard::PutBoolean("Indexer middle sensor", getMidBeam());
+    frc::SmartDashboard::PutBoolean("Indexer bottom sensor", getBottomBeam());
+
+    if (robotData.benchTestData.testStage == BenchTestStage::BenchTestStage_Indexer && (robotData.controlData.manualBenchTest || robotData.controlData.autoBenchTest)){ //checks if we're testing indexer
         if (robotData.benchTestData.stage == 0){
             //run wheel forwards
             indexerWheel.Set(robotData.benchTestData.currentSpeed); //sets the wheel speed
@@ -460,10 +466,13 @@ void Indexer::TestPeriodic(const RobotData &robotData, IndexerData &indexerData)
             //run belt backwards
             indexerBelt.Set(-robotData.benchTestData.currentSpeed);
             indexerWheel.Set(0);
+        } else {
+            indexerBelt.Set(0);
+            indexerWheel.Set(0);
         }
     } else {
+        indexerBelt.Set(0); //if not testing indexer, then speeds get set to 0
         indexerWheel.Set(0);
-        indexerBelt.Set(0);
     }
 }
 

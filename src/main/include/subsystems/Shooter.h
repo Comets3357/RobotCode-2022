@@ -34,6 +34,7 @@ class Shooter{
         void DisabledPeriodic(const RobotData &robotData, ShooterData &shooterData);
         void EnabledInit(ControlData &controlData, ShooterData &shooterData);
         void TestPeriodic(const RobotData &robotData, ShooterData &shooterData);
+        void TestInit();
     
     private:
         void manual(const RobotData &robotData, ShooterData &shooterData);
@@ -56,7 +57,7 @@ class Shooter{
 
         //checks
         void checkReadyShoot(ShooterData &shooterData);
-        bool encoderPluggedIn(const ShooterData &shooterData);
+        bool encoderPluggedIn();
 
         //FIXED SHOTS
         void outerLaunch(const RobotData &robotData);

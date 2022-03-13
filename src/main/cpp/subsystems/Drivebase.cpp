@@ -498,9 +498,14 @@ void Drivebase::sendStartPointChooser() {
     frc::SmartDashboard::PutData("Select Start Point:", &startPointChooser);
 }
 
-//BENCH TEST CODE
+/**
+ * ---------------------------------------------------------------------------------------------------------------------------------------------------
+ * BENCH TEST CODE
+ * ---------------------------------------------------------------------------------------------------------------------------------------------------
+ **/
+
 void Drivebase::TestPeriodic(const RobotData &robotData, DrivebaseData &drivebaseData){
-    if (robotData.benchTestData.testStage == BenchTestStage::BenchTestStage_Drivebase && robotData.controlData.startBenchTest){ //checks if we're testing drivebase
+    if (robotData.benchTestData.testStage == BenchTestStage::BenchTestStage_Drivebase && (robotData.controlData.manualBenchTest || robotData.controlData.autoBenchTest)){ //checks if we're testing drivebase
         if (robotData.benchTestData.stage == 0){
             //move right motors forwards
             dbR.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, robotData.benchTestData.currentSpeed); //sets the right side speed
@@ -517,9 +522,12 @@ void Drivebase::TestPeriodic(const RobotData &robotData, DrivebaseData &drivebas
             //move left motors backwards
             dbR.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
             dbL.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, -robotData.benchTestData.currentSpeed);
+        } else {
+            dbR.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
+            dbL.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
         }
     } else {
-        dbR.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
+        dbR.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0); //if not testing drivebase, then speeds get set to 0
         dbL.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
     }
 }

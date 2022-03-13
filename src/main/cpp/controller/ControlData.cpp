@@ -132,19 +132,23 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
     controlData.saclimbInit = controllerData.sBBtn;
     controlData.climbZeroing = controllerData.sABtnToggled;
 
+    //BENCH TEST
+
     //toggle buttons, part of index 2 (third controller - aka test controller) on drivers station
     //we're not making it in the normal structure because that would be a lot of work - tananya
-    controlData.startBenchTestToggle = controllerData.testAButton; // a: starts and stops (in case of emergency) the bench tests
-    controlData.incrementMotorToggle = controllerData.testBButton; // b: increments what motor/encoder/thing that you're testing
-    controlData.incrementSpeedToggle = controllerData.testXButton; // x: increases the speed
+    controlData.incrementMotor = controllerData.testBButton; // b: increments what motor/encoder/thing that you're testing
+    controlData.incrementSpeed = controllerData.testXButton; // x: increases the speed
     controlData.PIDModeToggle = controllerData.testYButton; //toggles pid mode (if we want to test pids)
-    controlData.incrementSubsystemToggle = controllerData.testRBumper;
+    controlData.incrementSubsystem = controllerData.testAButton; //increments the subsystem
 
-    //sets the value of the variables used in robot.cppbased upon the toggle button variables
-    if (controlData.startBenchTestToggle) controlData.startBenchTest = !controlData.startBenchTest;
-    controlData.incrementMotor = controlData.incrementMotorToggle;
-    controlData.incrementSpeed = controlData.incrementSpeedToggle;
-    controlData.incrementSubsystem = controlData.incrementSubsystemToggle;
+    //sets the value of the variables used in robot.cpp based upon the toggle button variables
+    if (!controlData.autoBenchTest){ //can't do manual bench test in automatic bench test
+        if (controllerData.testRBumper) controlData.manualBenchTest = !controlData.manualBenchTest; //a: starts and stops manual bench test
+    }
+    
+    if (!controlData.manualBenchTest){ //can't do automatic bench test in manual bench test
+        if (controllerData.testLBumper) controlData.autoBenchTest = !controlData.autoBenchTest; //left bumper: starts and stops automatic bench test
+    }
 }
 
 void Controller::updateShootMode(const RobotData &robotData, ControlData &controlData) {

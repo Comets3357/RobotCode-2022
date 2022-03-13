@@ -25,6 +25,7 @@ struct ClimbData {
     int angle, angularRate;
     bool elevatorLimit;
 
+    //bench test
     float benchTestClimbArmsSpeed = 0;
     float benchTestClimbElevatorSpeed = 0;
     bool limitSwitchWorking = false;
@@ -59,9 +60,7 @@ private:
     //bench test
     void checkElevatorDeadStop(ClimbData &climbData);
     void checkArmsDeadStop(ClimbData &climbData);
-    bool armsEncoderInRange(const ClimbData &climbData);
     void elevatorLimitSwitchWorking(ClimbData &climbData);
-    bool elevatorEncoderInRange(const ClimbData &climbData);
     bool encoderPluggedIn(const ClimbData &climbData);
     bool encoderInRange(const ClimbData &climbData);
 
