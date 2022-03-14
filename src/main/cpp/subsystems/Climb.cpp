@@ -18,12 +18,12 @@ void Climb::RobotInit()
     climbElevator.RestoreFactoryDefaults();
 
     //sets the inversion of the motors
-    climbArms.SetInverted(true);
-    climbElevator.SetInverted(true);
+    climbArms.SetInverted(false);
+    climbElevator.SetInverted(false);
     climbArms.SetSmartCurrentLimit(45);
     climbElevator.SetSmartCurrentLimit(80);
-    climbElevator.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward,140);
-    climbArms.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward,250);
+    //climbElevator.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward,140);
+    //climbArms.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward,250);
 
     //motor idlemode
     climbElevator.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
@@ -75,7 +75,7 @@ void Climb::RobotPeriodic(const RobotData &robotData, ClimbData &climbData)
     }
 
     //softlimit max for elevator
-    if (climbElevatorEncoder.GetPosition() >= 145 && climbElevator.Get() > 0)
+    if (climbElevatorEncoder.GetPosition() <= -145 && climbElevator.Get() < 0)
     {
         //sets the elevator power to 0 if it is above the max
         climbElevator.Set(0);
@@ -93,8 +93,8 @@ void Climb::RobotPeriodic(const RobotData &robotData, ClimbData &climbData)
     {
         if (climbArmsAbs.GetOutput() > 0.03) {
             //sets the elevator going down really slow
-            climbElevator.Set(-0.1);
-            climbArms.Set(-0.2);
+            climbElevator.Set(0.1);
+            climbArms.Set(0.2);
             //stops the motor and ends the zeroing when the limit switch changes
             if (!elevatorLimit.Get())
             {
@@ -116,7 +116,7 @@ void Climb::RobotPeriodic(const RobotData &robotData, ClimbData &climbData)
 
     }
 
-    if (climbArmsAbs.GetOutput() > 0.811 && climbArms.Get() < 0)
+    if (climbArmsAbs.GetOutput() > 0.811 && climbArms.Get() > 0)
     {
         climbArms.Set(0);
     }
@@ -126,7 +126,7 @@ void Climb::RobotPeriodic(const RobotData &robotData, ClimbData &climbData)
 void Climb::manual(const RobotData &robotData, ClimbData &climbData)
 {
     //manualy sets the elevator with limit. I use the limit switch as the bottom limit
-    if ((climbElevatorEncoder.GetPosition() >= 145 && climbElevator.Get() > 0) || (!elevatorLimit.Get() && climbElevator.Get() < 0))
+    if ((climbElevatorEncoder.GetPosition() <= -145 && climbElevator.Get() < 0) || (!elevatorLimit.Get() && climbElevator.Get() > 0))
     {
         //sets power to 0 if it is outside of its deadzone
         climbElevator.Set(0); //control elevator with left stick
@@ -137,7 +137,7 @@ void Climb::manual(const RobotData &robotData, ClimbData &climbData)
         if (robotData.controllerData.sLYStick < -0.08 || robotData.controllerData.sLYStick > 0.08)
         {
             //sets the motor power to joystick when joystick is outside of the deadzone
-            climbElevator.Set(robotData.controllerData.sLYStick); //control elevator with left stick); //sets the power to 0 so the elevator stops moving
+            climbElevator.Set(-robotData.controllerData.sLYStick); //control elevator with left stick); //sets the power to 0 so the elevator stops moving
         }
         else
         {
@@ -149,7 +149,7 @@ void Climb::manual(const RobotData &robotData, ClimbData &climbData)
     
 
     //manualy sets the arms with limit. The bottom limit is gon because an absolute encode will be there eventually
-    if ((climbArmsEncoder.GetPosition() >= 250 && climbArms.Get() > 0))
+    if ((climbArmsEncoder.GetPosition() <= -250 && climbArms.Get() < 0))
     {    
         //sets climbarms to zero when outside of limit
         climbArms.Set(0); //control arms with right stick
@@ -160,7 +160,7 @@ void Climb::manual(const RobotData &robotData, ClimbData &climbData)
         if (robotData.controllerData.sRYStick < -0.08 || robotData.controllerData.sRYStick > 0.08)
         {
             //sets arm power to joystick when joystick is outside of deadzone
-            climbArms.Set(robotData.controllerData.sRYStick); //sets the power to 0 so the arms stop moving
+            climbArms.Set(-robotData.controllerData.sRYStick); //sets the power to 0 so the arms stop moving
         }
         else
         {
@@ -246,14 +246,14 @@ void Climb::runSequence(const RobotData &robotData, ClimbData &climbData)
     //starts going up to bar
     if (executeSequence && climbData.bar < 4)
     { //checks if you want to run the sequence, and also if you're already at bar 4, then you can't run it
-        if (stage == 0) ChangeElevatorSpeedOnBar(1,climbData.bar==2,1);
+        if (stage == 0) ChangeElevatorSpeed(elevatorSpeed, 1);
         else if (stage == 1) RunArmsAndElevatorToPos(0,1,0,0,1); //Elevator goes down to latch on 2nd/3rd bar
         //else if (stage == 1) RunElevatorToPos(0,1,1);
         else if (stage == 2) ChangeElevatorSpeed(elevatorSpeed, 1);
         else if (stage == 3) ZeroElevator(0.8,1);
         //else if (stage == 4) RunElevatorToPos(0,1,1);
-        else if (stage == 4) RunArmsToPos(0,1,0); //Elevator goes up to latch the arms onto the bar with the elevator a little above
-        else if (stage == 5) RunArmsToPos(70,1,0); //Elevator goes up to latch the arms onto the bar with the elevator a little above
+        else if (stage == 4) {RunArmsToPos(0,1,0); climbElevator_pidController.SetReference(0, rev::CANSparkMax::ControlType::kPosition, 1);} //Elevator goes up to latch the arms onto the bar with the elevator a little above
+        else if (stage == 5) {RunArmsToPos(70,1,0); climbElevator_pidController.SetReference(0, rev::CANSparkMax::ControlType::kPosition, 1);}//Elevator goes up to latch the arms onto the bar with the elevator a little above
         else if (stage == 6) CheckArms();
         else if (stage == 7) RunElevatorToPos(30,1,0); //Outer Arms pivot the robot so the elevator is facing the next bar
         else if (stage == 8) ChangeElevatorSpeed(1,1);
@@ -412,13 +412,13 @@ void Climb::DisabledPeriodic(const RobotData &robotData, ClimbData &climbData)
 //Runs the elevator to a specific location, specified in semiAuto
 void Climb::RunElevatorToPos(int position, int stageAdd, int onBar)
 {
-    if (climbElevatorEncoder.GetPosition() > position + 1 || climbElevatorEncoder.GetPosition() < position - 1)
+    if (climbElevatorEncoder.GetPosition() > -position + 1 || climbElevatorEncoder.GetPosition() < -position - 1)
     {
         elevatorRunning = true;
         if (onBar){
             if (abs(angularRate) < 60)
             {
-                climbElevator_pidController.SetReference(position, rev::CANSparkMax::ControlType::kPosition, onBar);
+                climbElevator_pidController.SetReference(-position, rev::CANSparkMax::ControlType::kPosition, onBar);
             }
             else
             {
@@ -426,7 +426,7 @@ void Climb::RunElevatorToPos(int position, int stageAdd, int onBar)
                 
             }
         } else{
-            climbElevator_pidController.SetReference(position, rev::CANSparkMax::ControlType::kPosition, onBar);
+            climbElevator_pidController.SetReference(-position, rev::CANSparkMax::ControlType::kPosition, onBar);
         }
         elevatorRunning = true;
         
@@ -443,10 +443,10 @@ void Climb::RunElevatorToPos(int position, int stageAdd, int onBar)
 void Climb::RunArmsToPos(int position, int stageAdd, int onBar)
 {
 
-    if (climbArmsEncoder.GetPosition() > position + 1 || climbArmsEncoder.GetPosition() < position - 1)
+    if (climbArmsEncoder.GetPosition() > -position + 1 || climbArmsEncoder.GetPosition() < -position - 1)
     {
         armsRunning = true;
-        climbArms_pidController.SetReference(position, rev::CANSparkMax::ControlType::kPosition, onBar);
+        climbArms_pidController.SetReference(-position, rev::CANSparkMax::ControlType::kPosition, onBar);
     }
     else
     {
@@ -473,7 +473,7 @@ void Climb::ZeroElevator(float power, int stageAdd)
     if (elevatorLimit.Get())
     {
         elevatorRunning = true;
-        climbElevator.Set(-abs(power));
+        climbElevator.Set(abs(power));
         zeroingTimer += 1;
     }
     else 
