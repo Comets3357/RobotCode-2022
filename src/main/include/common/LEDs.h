@@ -1,6 +1,6 @@
 #pragma once
 
-#include <frc/I2C.h>
+#include <frc/SPI.h>
 #include "RobotData.h"
 
 struct LEDsData {
@@ -13,7 +13,7 @@ public:
 
 private:
     //in constructor port, deviceaddress
-    frc::I2C arduino = frc::I2C(frc::I2C::Port::kMXP, 1); //initializes arduino to device 1
+    frc::SPI arduino = frc::SPI(frc::SPI::Port::kOnboardCS0); //initializes arduino to device 1
     bool success = false;
     int colorCode = 6;
 };
