@@ -137,7 +137,11 @@ void Drivebase::teleopControl(const RobotData &robotData, DrivebaseData &driveba
     }
     else if (robotData.controlData.shootMode == shootMode_vision) {
         drivebaseData.driveMode = driveMode_turnInPlace;
-    } else {
+    }
+    else if (robotData.controlData.vectorDrive) {
+        drivebaseData.driveMode = driveMode_vector;
+    }  
+    else {
         drivebaseData.driveMode = driveMode_joystick;
     }
 
@@ -177,7 +181,7 @@ void Drivebase::teleopControl(const RobotData &robotData, DrivebaseData &driveba
     }
     else if (drivebaseData.driveMode == driveMode_vector)
     {
-        
+        setPercentOutput(robotData.jetsonData.leftSkew, robotData.jetsonData.rightSkew);
     }
 
 }
