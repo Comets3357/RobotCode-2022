@@ -58,45 +58,48 @@ void Jetson::RobotPeriodic(const RobotData &robotData, JetsonData &jetsonData)
     double leftCurrent = robotData.controlData.lDrive;
     double rightCurrent = robotData.controlData.rDrive;
     double maxCurrent = 0;
-        
-    distanceFromBall = table->GetNumber("Distance To Closest Ball", 0);
-    angleOffBall = table->GetNumber("Angle To Closest Ball", 0);
+    
+    if (robotData.controlData.vectorDrive)
+    {
+        distanceFromBall = table->GetNumber("Distance To Closest Ball", 0);
+        angleOffBall = table->GetNumber("Angle To Closest Ball", 0);
 
-    if (leftCurrent > rightCurrent)
-    {
-        maxCurrent = leftCurrent;
-    }
-    else
-    {
-        maxCurrent = rightCurrent;
-    }
+        if (leftCurrent > rightCurrent)
+        {
+            maxCurrent = leftCurrent;
+        }
+        else
+        {
+            maxCurrent = rightCurrent;
+        }
 
-    maxCurrent = 0.8 * maxCurrent;
+        maxCurrent = 0.8 * maxCurrent;
 
-    if (angleOffBall > 1)
-    {
-        jetsonData.leftSkew = getSkew(distanceFromBall) + maxCurrent;
-        jetsonData.rightSkew = (- getSkew(distanceFromBall)) + maxCurrent;
-    }
-    else if (angleOffBall < -1)
-    {
-        jetsonData.leftSkew = (- getSkew(distanceFromBall)) + maxCurrent;
-        jetsonData.rightSkew = getSkew(distanceFromBall) + maxCurrent;
-    }
-    else
-    {
-        jetsonData.leftSkew = getSkew(distanceFromBall) + maxCurrent;
-        jetsonData.rightSkew = getSkew(distanceFromBall) + maxCurrent;
-    }
+        if (angleOffBall > 1)
+        {
+            jetsonData.leftSkew = getSkew(distanceFromBall) + maxCurrent;
+            jetsonData.rightSkew = (- getSkew(distanceFromBall)) + maxCurrent;
+        }
+        else if (angleOffBall < -1)
+        {
+            jetsonData.leftSkew = (- getSkew(distanceFromBall)) + maxCurrent;
+            jetsonData.rightSkew = getSkew(distanceFromBall) + maxCurrent;
+        }
+        else
+        {
+            jetsonData.leftSkew = getSkew(distanceFromBall) + maxCurrent;
+            jetsonData.rightSkew = getSkew(distanceFromBall) + maxCurrent;
+        }
 
-    if (jetsonData.leftSkew <= 0)
-    {
-        jetsonData.leftSkew = 0.05;
-    }
+        if (jetsonData.leftSkew <= 0)
+        {
+            jetsonData.leftSkew = 0.05;
+        }
 
-    if (jetsonData.rightSkew <= 0)
-    {
-        jetsonData.rightSkew = 0.05;
+        if (jetsonData.rightSkew <= 0)
+        {
+            jetsonData.rightSkew = 0.05;
+        }
     }
 }
 
