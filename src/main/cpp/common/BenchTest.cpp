@@ -48,8 +48,10 @@ void BenchTest::TestPeriodic(const RobotData &robotData, BenchTestData &benchTes
         else if (robotData.climbData.lowerLimit) benchTestData.stage = -1; //special case explained on lines 21-22
         else if (robotData.intakeData.bottomDeadStop) benchTestData.stage = 1;
         else if (robotData.intakeData.topDeadStop) benchTestData.stage = 2;
-        else if (robotData.shooterData.topDeadStop) benchTestData.stage = 1;
-        else if (robotData.shooterData.bottomDeadStop) benchTestData.stage = 2;
+        else if (robotData.shooterData.hoodTopDeadStop) benchTestData.stage = 1;
+        else if (robotData.shooterData.hoodBottomDeadStop) benchTestData.stage = 2;
+        else if (robotData.shooterData.turretTopDeadStop) benchTestData.stage = 4;
+        else if (robotData.shooterData.turretBottomDeadStop) benchTestData.stage = 5;
 
         //if the final motor in a subsystem is reached, then the subsystem increments
         //additionally, if it reaches the end of shooter, instead of looping back to climb like manual,
