@@ -253,34 +253,35 @@ void Climb::runSequence(const RobotData &robotData, ClimbData &climbData)
         else if (stage == 3) ZeroElevator(0.8,1);
         //else if (stage == 4) RunElevatorToPos(0,1,1);
         else if (stage == 4) {RunArmsToPos(0,1,0); climbElevator_pidController.SetReference(0, rev::CANSparkMax::ControlType::kPosition, 1);} //Elevator goes up to latch the arms onto the bar with the elevator a little above
-        else if (stage == 5) {RunArmsToPos(80,1,0); climbElevator_pidController.SetReference(0, rev::CANSparkMax::ControlType::kPosition, 1);}//Elevator goes up to latch the arms onto the bar with the elevator a little above
-        else if (stage == 6) {CheckArms(); climbElevator_pidController.SetReference(0, rev::CANSparkMax::ControlType::kPosition, 1);}
-        else if (stage == 7) RunElevatorToPos(30,1,0); //Outer Arms pivot the robot so the elevator is facing the next bar
-        else if (stage == 8) ChangeElevatorSpeed(1,1);
+        else if (stage == 5) {RunArmsToPos(85,1,0); climbElevator_pidController.SetReference(0, rev::CANSparkMax::ControlType::kPosition, 1);}//Elevator goes up to latch the arms onto the bar with the elevator a little above
+        else if (stage == 6) CheckArms();
+        else if (stage == 7) ChangeElevatorSpeed(0.3,1);
+        else if (stage == 8) RunElevatorToPos(30,1,0); //Outer Arms pivot the robot so the elevator is facing the next bar
+        else if (stage == 9) ChangeElevatorSpeed(1,1);
         if (climbData.bar == targetBar-1)
         {
-            if (stage == 9) RunArmsAndElevatorToPos(120,0,110,1,1);
-            else if (stage == 10) WaitUntilGyro(1, -38, 1);
-            else if (stage == 11) RunElevatorToPos(148,1,1);
-            else if (stage == 12) ChangeElevatorSpeed(elevatorSpeed,1);
-            else if (stage == 13) ChangeArmSpeed(0.5,1);
-            else if (stage == 14) RunArmsToPos(185,1,1);
-            else if (stage == 15) ChangeElevatorSpeed(0.8, 1);
-            else if (stage == 16) RunElevatorToPos(80,1,1);
-            else if (stage == 17) ChangeElevatorSpeed(elevatorSpeed, 1);
+            if (stage == 10) RunArmsAndElevatorToPos(120,0,70,1,1);
+            else if (stage == 11) WaitUntilGyro(1, -38, 1);
+            else if (stage == 12) RunElevatorToPos(148,1,1);
+            else if (stage == 13) ChangeElevatorSpeed(elevatorSpeed,1);
+            else if (stage == 14) ChangeArmSpeed(0.5,1);
+            else if (stage == 15) RunArmsToPos(185,1,1);
+            else if (stage == 16) ChangeElevatorSpeed(0.6, 1);
+            else if (stage == 17) RunElevatorToPos(70,1,1);
+            else if (stage == 18) ChangeElevatorSpeed(elevatorSpeed, 1);
         }
         else 
         {
-            if (stage == 9) RunArmsAndElevatorToPos(110,0,200,1,1);
-            else if (stage == 10) WaitUntilGyro(-1, -42, 1);
-            else if (stage == 11) RunElevatorToPos(148,1,1);
-            else if (stage == 12) ChangeElevatorSpeed(elevatorSpeed,1);
-            else if (stage == 13) RunArmsToPos(130,1,1);
-            else if (stage == 14) ChangeElevatorSpeed(0.8, 1);
-            else if (stage == 15) RunElevatorToPos(110,1,1);
-            else if (stage == 16) ChangeElevatorSpeed(elevatorSpeed, 1);
+            if (stage == 10) RunArmsAndElevatorToPos(110,0,200,1,1);
+            else if (stage == 11) WaitUntilGyro(-1, -42, 1);
+            else if (stage == 12) RunElevatorToPos(148,1,1);
+            else if (stage == 13) ChangeElevatorSpeed(elevatorSpeed,1);
+            else if (stage == 14) RunArmsToPos(130,1,1);
+            else if (stage == 15) ChangeElevatorSpeed(0.6, 1);
+            else if (stage == 16) RunElevatorToPos(110,1,1);
+            else if (stage == 17) ChangeElevatorSpeed(elevatorSpeed, 1);
         }
-        if (stage == 17)
+        if (stage == 18)
         { //do it again if the bot isnt on the top bar
             //resets everything
             stage = 0;
@@ -334,7 +335,7 @@ void Climb::updateData(const RobotData &robotData, ClimbData &climbData)
 
 void Climb::CheckArms()
 {
-    if (climbArmsAbs.GetOutput() < 0.805)
+    if (climbArmsAbs.GetOutput() < 0.8)
     {
         stage += 1;
     } else 
