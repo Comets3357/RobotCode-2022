@@ -648,9 +648,9 @@ bool Shooter::encoderInRangeHood(const ShooterData &shooterData){
 
 //checks if the encoder is reading presumably correct values (i.e. values in the expected range)
 bool Shooter::encoderInRangeTurret(const ShooterData &shooterData){
-    if (shooterData.benchTestTurretSpeed > 0 && shooterTurretEncoderAbs.GetOutput() > turretFullRotationRev_CCW + .02){ //out of range
+    if (shooterData.benchTestTurretSpeed > 0 && shooterTurretEncoderAbs.GetOutput() > turretFullRotationAbs_CCW + .02){ //out of range
         return false;
-    } else if (shooterData.benchTestTurretSpeed < 0 && shooterTurretEncoderAbs.GetOutput() < turretFullRotationRev_C - .02){ //out of range
+    } else if (shooterData.benchTestTurretSpeed < 0 && shooterTurretEncoderAbs.GetOutput() < turretFullRotationAbs_C - .02){ //out of range
         return false;
     } else {
         return true; //everything else is within range, so return true
