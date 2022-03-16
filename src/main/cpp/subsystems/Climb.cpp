@@ -502,8 +502,6 @@ void Climb::ZeroElevator(float power, int stageAdd)
 void Climb::TestInit(ClimbData &climbData){
     elevatorLimitSwitchWorking(climbData); //checks if the limits switch starts in false, which it's supposed to; if it doesn't start in false, then the bench test won't run
     
-    climbArms.SetInverted(true);
-
     //sets pid stuff for bench test
     climbElevator_pidController.SetP(0.18, 0);
     climbElevator_pidController.SetOutputRange(-.7, .7, 0);
@@ -532,7 +530,7 @@ void Climb::TestPeriodic(const RobotData &robotData, ClimbData &climbData){
             if (robotData.benchTestData.stage == 0){
                 //move climb arms forwards
                 if (!robotData.benchTestData.PIDMode){
-                    climbData.benchTestClimbArmsSpeed = .2; //sets the arms speed
+                    climbData.benchTestClimbArmsSpeed = -.2; //sets the arms speed
                     climbData.benchTestClimbElevatorSpeed = 0; //sets the elevator speed
                 } else {
                     climbData.benchTestClimbElevatorSpeed = 0; //sets elevator speed to 0
@@ -541,7 +539,7 @@ void Climb::TestPeriodic(const RobotData &robotData, ClimbData &climbData){
             } else if (robotData.benchTestData.stage == 1){
                 //move climb arms backwards
                 if (!robotData.benchTestData.PIDMode){
-                    climbData.benchTestClimbArmsSpeed = -.2;
+                    climbData.benchTestClimbArmsSpeed = .2;
                     climbData.benchTestClimbElevatorSpeed = 0;
                 } else {
                     climbData.benchTestClimbElevatorSpeed = 0;
@@ -554,7 +552,7 @@ void Climb::TestPeriodic(const RobotData &robotData, ClimbData &climbData){
                     climbData.benchTestClimbElevatorSpeed = -.2;
                 } else {
                     climbData.benchTestClimbArmsSpeed = 0;
-                    climbElevator_pidController.SetReference(144, rev::CANSparkMax::ControlType::kPosition, 0);
+                    climbElevator_pidController.SetReference(140, rev::CANSparkMax::ControlType::kPosition, 0);
                 }
             } else if (robotData.benchTestData.stage == 3){
                 //move climb elevator down
