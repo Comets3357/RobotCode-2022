@@ -13,7 +13,7 @@ public:
 
 private:
     //in constructor port, deviceaddress
-    frc::SPI arduino = frc::SPI(frc::SPI::Port::kOnboardCS0); //initializes arduino to device 1
+    frc::SPI arduino = frc::SPI(frc::SPI::Port::kOnboardCS0);
     bool success = false;
     int colorCode = 6;
 };

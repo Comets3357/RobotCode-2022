@@ -8,19 +8,19 @@ void LEDs::RobotPeriodic(const RobotData &robotData){
     //if the write is successful, success = true
     if (robotData.shooterData.readyShoot){
         colorCode = 5; //ready to shoot
-        success = !arduino.Write((uint8_t *) colorCode, 4);
+        success = !arduino.Write((uint8_t *) colorCode, sizeof(uint8_t));
     } else if (robotData.controlData.mode == Mode::mode_teleop_manual){
         colorCode = 4; //teleop manual mode
-        success = !arduino.Write((uint8_t *) colorCode, 4);
+        success = !arduino.Write((uint8_t *) colorCode, sizeof(uint8_t));
     } else if (robotData.controlData.mode == Mode::mode_climb_sa){
         colorCode = 3; //climb semiauto mode
-        success = !arduino.Write((uint8_t *) colorCode, 4);
+        success = !arduino.Write((uint8_t *) colorCode, sizeof(uint8_t));
     } else if (robotData.controlData.mode == Mode::mode_climb_manual){
         colorCode = 2; //climb manual mode
-        success = !arduino.Write((uint8_t *) colorCode, 4);
+        success = !arduino.Write((uint8_t *) colorCode, sizeof(uint8_t));
     } else if (robotData.controlData.mode == Mode::mode_teleop_sa){
         colorCode = 1; //teleop semiauto mode
-        success = !arduino.Write((uint8_t *) colorCode, 4);
+        success = !arduino.Write((uint8_t *) colorCode, sizeof(uint8_t));
     }
 
     //prints the corresponding number of the color for the LEDs
