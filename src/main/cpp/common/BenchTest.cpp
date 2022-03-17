@@ -1,5 +1,12 @@
 #include "RobotData.h" //beep boop
 
+void BenchTest::TestInit(BenchTestData &benchTestData){
+    benchTestData.testStage = BenchTestStage::BenchTestStage_Climb; //sets the starting stage of the bench test
+    benchTestData.currentSpeed = 0; //sets the speed of the motor we're currently testing
+    benchTestData.stage = 0; //sets which motor we're currently testing
+    benchTestData.PIDMode = false; //toggles pid testing
+}
+
 void BenchTest::TestPeriodic(const RobotData &robotData, BenchTestData &benchTestData, const ControlData &controlData){
     frc::SmartDashboard::PutNumber("Bench test automatic increment", increment); //time-based increment for auto bench test
     frc::SmartDashboard::PutBoolean("Bench test manual mode", robotData.controlData.manualBenchTest); //manual bench test

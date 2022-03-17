@@ -26,6 +26,7 @@ class BenchTest {
         void RobotInit();
         void RobotPeriodic(const RobotData &robotData);
         void DisabledInit();
+        void TestInit(BenchTestData &benchTestData);
         void TestPeriodic(const RobotData &robotData, BenchTestData &benchTestData, const ControlData &controlData);
 
     private:
