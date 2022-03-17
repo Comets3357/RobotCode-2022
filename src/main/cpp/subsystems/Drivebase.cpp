@@ -122,10 +122,10 @@ void Drivebase::DisabledInit()
 {
     
     setPercentOutput(0, 0);
-    dbL.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
-    dbLF.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
-    dbR.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
-    dbRF.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
+    dbL.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
+    dbLF.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
+    dbR.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
+    dbRF.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
     odometryInitialized = false;
 }
 
