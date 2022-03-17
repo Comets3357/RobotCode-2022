@@ -63,6 +63,15 @@ void Drivebase::RobotInit()
     dbR.Config_kP(0, 0.10352);
     dbR.Config_kD(0, 0);
 
+    // PIDs for 2022 Muskegon
+    // dbL.Config_kF(0, 0.072381);
+    // dbL.Config_kP(0, 0.11063);
+    // dbL.Config_kD(0, 0);
+
+    // dbR.Config_kF(0, 0.072381);
+    // dbR.Config_kP(0, 0.11063);
+    // dbR.Config_kD(0, 0);
+
     setPercentOutput(0, 0);
 
     zeroEncoders();
@@ -113,10 +122,10 @@ void Drivebase::DisabledInit()
 {
     
     setPercentOutput(0, 0);
-    dbL.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
-    dbLF.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
-    dbR.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
-    dbRF.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
+    dbL.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
+    dbLF.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
+    dbR.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
+    dbRF.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
     odometryInitialized = false;
 }
 
@@ -184,6 +193,8 @@ void Drivebase::teleopControl(const RobotData &robotData, DrivebaseData &driveba
     else if (drivebaseData.driveMode == driveMode_turnInPlace) {
         turnInPlaceTeleop(-robotData.limelightData.angleOffset, robotData);
     }
+    frc::SmartDashboard::PutNumber("limelight angle diff", -robotData.limelightData.angleOffset);
+
 
 }
 
@@ -433,8 +444,8 @@ void Drivebase::turnInPlaceAuton(double degrees, const RobotData &robotData, Dri
         // frc::SmartDashboard::PutString("AUTON", "TURN IN PLACE");
     } else {
         // profile that adjusts aggressiveness of turn based on the amount of degrees left to turn. has been tuned for speed & accuracy on both small and large turns
-        leftOutput = std::pow(std::abs(degrees / 400), 1.3) + 0.12;
-        rightOutput = std::pow(std::abs(degrees / 400), 1.3) + 0.12;
+        leftOutput = std::pow(std::abs(degrees / 400), 1.3) + 0.09;
+        rightOutput = std::pow(std::abs(degrees / 400), 1.3) + 0.09;
     }
     
 

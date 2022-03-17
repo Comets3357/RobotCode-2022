@@ -78,6 +78,7 @@ void Limelight::shooterOffset(const RobotData &robotData, LimelightData &limelig
     //calculate the angle between the shooter since it is different from that given by the limelight
     limelightData.angleOffset = (std::asin(xValueOffset/limelightData.distanceOffset));
     limelightData.angleOffset *= (180/pi);
+    frc::SmartDashboard::PutNumber("limelight angle diff real", limelightData.angleOffset);
 }
 
 /**
