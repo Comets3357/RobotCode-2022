@@ -197,7 +197,8 @@ void Controller::updateShootMode(const RobotData &robotData, ControlData &contro
 
 
     // shut off shooting if all balls have exited (happens once upon ball count going to zero)
-    if (robotData.indexerData.eBallCountZero) {
-        controlData.shootMode = shootMode_none;
-    }
+    // if (robotData.indexerData.eBallCountZero) {
+        // controlData.shootMode = shootMode_none;
+    // }
+    // disabled at at muskegon, inconsistent ball counting
 }

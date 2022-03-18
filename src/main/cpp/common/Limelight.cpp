@@ -33,7 +33,7 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
 
     //the desired hood and velocity for shooting from anywhere
     limelightData.desiredHoodPos = getHoodPOS(visionLookup, limelightData, robotData); //returns an angle
-    limelightData.desiredVel = getWheelVelocity(visionLookup, limelightData, robotData); //returns rpm
+    limelightData.desiredVel = getWheelVelocity(visionLookup, limelightData, robotData) - 35; //returns rpm
     
     //printing data to the dashboard
     // frc::smartDashboard::PutNumber("distance offset", robotData.limelightData.distanceOffset/12);
