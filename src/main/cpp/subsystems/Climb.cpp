@@ -250,11 +250,11 @@ void Climb::runSequence(const RobotData &robotData, ClimbData &climbData)
         else if (stage == 1) RunArmsAndElevatorToPos(0,1,0,0,1); //Elevator goes down to latch on 2nd/3rd bar
         //else if (stage == 1) RunElevatorToPos(0,1,1);
         else if (stage == 2) ChangeElevatorSpeed(elevatorSpeed, 1);
-        else if (stage == 3) ZeroElevator(0.8,1);
+        else if (stage == 3) {climbElevator_pidController.SetReference(-2, rev::CANSparkMax::ControlType::kPosition, 1); stage++;}
         //else if (stage == 4) RunElevatorToPos(0,1,1);
-        else if (stage == 4) {RunArmsToPos(0,1,0); climbElevator_pidController.SetReference(0, rev::CANSparkMax::ControlType::kPosition, 1);} //Elevator goes up to latch the arms onto the bar with the elevator a little above
-        else if (stage == 5) {RunArmsToPos(85,1,0); climbElevator_pidController.SetReference(0, rev::CANSparkMax::ControlType::kPosition, 1);}//Elevator goes up to latch the arms onto the bar with the elevator a little above
-        else if (stage == 6) CheckArms();
+        else if (stage == 4) {RunArmsToPos(0,1,0); climbElevator_pidController.SetReference(-2, rev::CANSparkMax::ControlType::kPosition, 1);} //Elevator goes up to latch the arms onto the bar with the elevator a little above
+        else if (stage == 5) {RunArmsToPos(85,1,0); climbElevator_pidController.SetReference(-2, rev::CANSparkMax::ControlType::kPosition, 1);}//Elevator goes up to latch the arms onto the bar with the elevator a little above
+        else if (stage == 6) {CheckArms(); climbElevator_pidController.SetReference(-2, rev::CANSparkMax::ControlType::kPosition, 1);}
         else if (stage == 7) ChangeElevatorSpeed(0.3,1);
         else if (stage == 8) RunElevatorToPos(30,1,0); //Outer Arms pivot the robot so the elevator is facing the next bar
         else if (stage == 9) ChangeElevatorSpeed(1,1);
@@ -265,7 +265,7 @@ void Climb::runSequence(const RobotData &robotData, ClimbData &climbData)
             else if (stage == 12) RunElevatorToPos(148,1,1);
             else if (stage == 13) ChangeElevatorSpeed(elevatorSpeed,1);
             else if (stage == 14) ChangeArmSpeed(0.5,1);
-            else if (stage == 15) RunArmsToPos(185,1,1);
+            else if (stage == 15) RunArmsToPos(190,1,1);
             else if (stage == 16) ChangeElevatorSpeed(0.6, 1);
             else if (stage == 17) RunElevatorToPos(70,1,1);
             else if (stage == 18) ChangeElevatorSpeed(elevatorSpeed, 1);
@@ -318,14 +318,14 @@ void Climb::updateData(const RobotData &robotData, ClimbData &climbData)
     climbData.angularRate = angularRate;
     climbData.elevatorLimit = elevatorLimit.Get();
     
-    // frc::smartDashboard::PutNumber("elevator encoder value", climbElevatorEncoder.GetPosition());
+    frc::SmartDashboard::PutNumber("elevator encoder value", climbElevatorEncoder.GetPosition());
     // frc::smartDashboard::PutBoolean("limit Climb", elevatorLimit.Get());
     // frc::smartDashboard::PutNumber("elevator amps", elevatorAmperage);
     // frc::smartDashboard::PutNumber("Arms amps", armsAmperage);
     // frc::smartDashboard::PutNumber("climb stage", stage);
     // frc::smartDashboard::PutBoolean("running sequence", executeSequence);
-    // frc::smartDashboard::PutNumber("climbarms encoder", climbArmsEncoder.GetPosition());
-    // frc::smartDashboard::PutNumber("climbarms abs encoder", climbArmsAbs.GetOutput());
+    frc::SmartDashboard::PutNumber("climbarms encoder", climbArmsEncoder.GetPosition());
+    frc::SmartDashboard::PutNumber("climbarms abs encoder", climbArmsAbs.GetOutput());
     // frc::smartDashboard::PutNumber("which bar is bot on bar", climbData.bar);
     // frc::smartDashboard::PutBoolean("zeroing", climbData.zeroing);
     // frc::smartDashboard::PutNumber("elevator motor temp", elevatorTemp);
@@ -340,7 +340,7 @@ void Climb::CheckArms()
         stage += 1;
     } else 
     {
-        stage -= 3;
+        stage -= 2;
     }
 }
 
