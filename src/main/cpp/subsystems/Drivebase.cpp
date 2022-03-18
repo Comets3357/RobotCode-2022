@@ -63,6 +63,15 @@ void Drivebase::RobotInit()
     dbR.Config_kP(0, 0.10352);
     dbR.Config_kD(0, 0);
 
+    // PIDs for 2022 Muskegon
+    // dbL.Config_kF(0, 0.072381);
+    // dbL.Config_kP(0, 0.11063);
+    // dbL.Config_kD(0, 0);
+
+    // dbR.Config_kF(0, 0.072381);
+    // dbR.Config_kP(0, 0.11063);
+    // dbR.Config_kD(0, 0);
+
     setPercentOutput(0, 0);
 
     zeroEncoders();
@@ -184,6 +193,8 @@ void Drivebase::teleopControl(const RobotData &robotData, DrivebaseData &driveba
     else if (drivebaseData.driveMode == driveMode_turnInPlace) {
         turnInPlaceTeleop(-robotData.limelightData.angleOffset, robotData);
     }
+    frc::SmartDashboard::PutNumber("limelight angle diff", -robotData.limelightData.angleOffset);
+
 
 }
 
@@ -199,15 +210,15 @@ void Drivebase::autonControl(const RobotData &robotData, DrivebaseData &drivebas
     if (drivebaseData.driveMode == driveMode_break)
     {
         if (robotData.controlData.shootMode == shootMode_vision) {
-            turnInPlaceAuton(-robotData.limelightData.angleOffset, robotData, drivebaseData, autonData);
+            turnInPlaceTeleop(-robotData.limelightData.angleOffset, robotData);
             // frc::smartDashboard::PutNumber("angleOffsetLimelight", robotData.limelightData.angleOffset);
         } else {
             setVelocity(0, 0);
         }
         // frc::SmartDashboard::PutNumber("breakEndSec", breakEndSec);
         if (robotData.timerData.secSinceEnabled > breakEndSec && robotData.controlData.shootMode == shootMode_none) {
-            // frc::smartDashboard::PutNumber("secSinceEnabled", robotData.timerData.secSinceEnabled);
-            // frc::smartDashboard::PutNumber("breakEndSec", breakEndSec);
+            // frc::SmartDashboard::PutNumber("secSinceEnabled", robotData.timerData.secSinceEnabled);
+            frc::SmartDashboard::PutNumber("breakEndSec", breakEndSec);
             getNextAutonStep(robotData, drivebaseData, autonData);
         }
     }
@@ -498,9 +509,14 @@ void Drivebase::sendStartPointChooser() {
     frc::SmartDashboard::PutData("Select Start Point:", &startPointChooser);
 }
 
-//BENCH TEST CODE
+/**
+ * ---------------------------------------------------------------------------------------------------------------------------------------------------
+ * BENCH TEST CODE
+ * ---------------------------------------------------------------------------------------------------------------------------------------------------
+ **/
+
 void Drivebase::TestPeriodic(const RobotData &robotData, DrivebaseData &drivebaseData){
-    if (robotData.benchTestData.testStage == BenchTestStage::BenchTestStage_Drivebase && robotData.controlData.startBenchTest){ //checks if we're testing drivebase
+    if (robotData.benchTestData.testStage == BenchTestStage::BenchTestStage_Drivebase && (robotData.controlData.manualBenchTest || robotData.controlData.autoBenchTest)){ //checks if we're testing drivebase
         if (robotData.benchTestData.stage == 0){
             //move right motors forwards
             dbR.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, robotData.benchTestData.currentSpeed); //sets the right side speed
@@ -517,9 +533,12 @@ void Drivebase::TestPeriodic(const RobotData &robotData, DrivebaseData &drivebas
             //move left motors backwards
             dbR.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
             dbL.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, -robotData.benchTestData.currentSpeed);
+        } else {
+            dbR.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
+            dbL.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
         }
     } else {
-        dbR.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
+        dbR.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0); //if not testing drivebase, then speeds get set to 0
         dbL.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
     }
 }
