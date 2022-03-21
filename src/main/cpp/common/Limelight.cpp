@@ -4,7 +4,16 @@
 void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelightData, VisionLookup &visionLookup)
 {
     //updating data
+    // int x = 0;
+    // if(x > 40){
+    //     limelightData.validTarget = table->GetNumber("tv", 0.0); //valid target or not
+    //     x = (x+1)%50;
+    // }else{
+    //     x = (x+1)%50;
+    // }
+
     limelightData.validTarget = table->GetNumber("tv", 0.0); //valid target or not
+
     limelightData.xOffset =  table->GetNumber("tx", 0.0) * (pi/180); //RADIANS
     limelightData.yOffset =  table->GetNumber("ty", 0.0);
     limelightData.distanceToTarget = distanceToTarget(); //the distance
@@ -35,8 +44,12 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
 
     //TURRET 
     limelightData.turretDifference = -robotData.limelightData.angleOffset;
+
+    // if(std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) >= 5){
+    //     limelightData.desiredTurretAngle = getTurretTurnAngle(limelightData, robotData); //position to go to to shoot
+    // } 
     limelightData.desiredTurretAngle = getTurretTurnAngle(limelightData, robotData); //position to go to to shoot
-    
+
 
     
     //printing data to the dashboard
@@ -221,23 +234,23 @@ double Limelight::getTurretTurnAngle(LimelightData &limelightData, const RobotDa
 /**
  * Returns the avg distance of the last 5 cycles to make the data smoother while shooting
  */
-// void Limelight::averageDistance(const RobotData &robotData, LimelightData &limelightData){
-//     double distance = robotData.limelightData.distanceOffset;
-//     double total = 0;
+void Limelight::averageDistance(const RobotData &robotData, LimelightData &limelightData){
+    // double distance = robotData.limelightData.desiredTurretAngle;
+    // double total = 0;
 
-//     //if size is less then 6 keep adding updated distances until the deque is full
-//     // if(robotData.limelightData.distances.size() < 6){
-//     //     limelightData.distances.push_back(distance);
-//     // }else{ //once it's full run through the deque and add it to the total
-//     //     for(int i = 0; (unsigned)i < robotData.limelightData.distances.size(); i ++){
-//     //         total += robotData.limelightData.distances.at(i);
-//     //     }
+    // //if size is less then 6 keep adding updated distances until the deque is full
+    // if(robotData.limelightData.distances.size() < 6){
+    //     limelightData.distances.push_back(distance);
+    // }else{ //once it's full run through the deque and add it to the total
+    //     for(int i = 0; (unsigned)i < robotData.limelightData.distances.size(); i ++){
+    //         total += robotData.limelightData.distances.at(i);
+    //     }
 
-//     //     //make sure to remove the first value and add an updated distance to the end
-//     //     limelightData.distances.pop_front();
-//     //     limelightData.distances.push_back(distance);
-//     // }
+    //     //make sure to remove the first value and add an updated distance to the end
+    //     limelightData.distances.pop_front();
+    //     limelightData.distances.push_back(distance);
+    // }
 
-//     //return the average of those distances
-//     limelightData.avgDistance = distance;
-// }
+    // //return the average of those distances
+    // limelightData.avgDistance = distance;
+}

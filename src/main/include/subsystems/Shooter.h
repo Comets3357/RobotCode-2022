@@ -64,6 +64,7 @@ class Shooter{
         double getWheelVel();
         void setShooterWheel(double speed);
         void setTurret_Pos(double pos, ShooterData &shooterData);
+        void saTurret(const RobotData &robotData, ShooterData &shooterData);
 
         //checks
         void checkReadyShoot(ShooterData &shooterData);
@@ -79,12 +80,20 @@ class Shooter{
         //bench test
         bool encoderInRange(const ShooterData &shooterData);
         void checkDeadStop(ShooterData &shooterData);
+        void relocateTurretDirection(const RobotData &robotData);
 
         //shooter velocity min threshold
         int readyShootLimit;
         //used to update rev encoder with abs encoder
         int tickCount;
         double validTargetTurretPos;
+
+        bool snapshotGot;
+        bool isLinedUp;
+        double direction;
+        double current;
+
+        bool isTurretStatic;
         
      //Flywheel Lead
         rev::CANSparkMax flyWheelLead = rev::CANSparkMax(shooterWheelLeadID, rev::CANSparkMax::MotorType::kBrushless);

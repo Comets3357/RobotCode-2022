@@ -98,6 +98,10 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
 
     controlData.saShooting = controllerData.sXBtnToggled && !controlData.shift/* && (controlData.mode == mode_teleop_sa) */;
     controlData.saFinalShoot = controllerData.sYBtn && !controlData.shift/* && (controlData.mode == mode_teleop_sa); */;
+    
+    if(controllerData.sRCenterBtnToggled){
+        controlData.staticTurret = !controlData.staticTurret;
+    }
 
     // secondary y to set readyshoot to true in testing
 
