@@ -513,7 +513,6 @@ void Climb::TestPeriodic(const RobotData &robotData, ClimbData &climbData){
     //gets sensor values and prints them to the smart dashboard
     frc::SmartDashboard::PutNumber("Climb arms encoder value", climbArmsEncoder.GetPosition());
     frc::SmartDashboard::PutBoolean("Climb elevator limit switch state", elevatorLimit.Get());
-    frc::SmartDashboard::PutNumber("Climb arms absolute encoder value", climbArmsAbs.GetOutput());
     frc::SmartDashboard::PutBoolean("Climb limit switch working", climbData.limitSwitchWorking);
     frc::SmartDashboard::PutNumber("Climb arms speed", climbData.benchTestClimbArmsSpeed);
     frc::SmartDashboard::PutNumber("Climb elevator speed", climbData.benchTestClimbElevatorSpeed);
@@ -526,11 +525,11 @@ void Climb::TestPeriodic(const RobotData &robotData, ClimbData &climbData){
     checkArmsDeadStop(climbData);
 
     if (robotData.benchTestData.testStage == BenchTestStage::BenchTestStage_Climb && (robotData.controlData.manualBenchTest || robotData.controlData.autoBenchTest)){ //checks if we're testing climb
-        if (climbData.limitSwitchWorking && encoderPluggedIn(climbData) && encoderInRange(climbData)){ //checks if the limit switch is working
+        if (climbData.limitSwitchWorking){ //checks if the limit switch is working
             if (robotData.benchTestData.stage == 0){
                 //move climb arms forwards
                 if (!robotData.benchTestData.PIDMode){
-                    climbData.benchTestClimbArmsSpeed = -.1; //sets the arms speed
+                    climbData.benchTestClimbArmsSpeed = -.2; //sets the arms speed
                     climbData.benchTestClimbElevatorSpeed = 0; //sets the elevator speed
                 } else {
                     climbData.benchTestClimbElevatorSpeed = 0; //sets elevator speed to 0
@@ -539,7 +538,7 @@ void Climb::TestPeriodic(const RobotData &robotData, ClimbData &climbData){
             } else if (robotData.benchTestData.stage == 1){
                 //move climb arms backwards
                 if (!robotData.benchTestData.PIDMode){
-                    climbData.benchTestClimbArmsSpeed = .1;
+                    climbData.benchTestClimbArmsSpeed = .2;
                     climbData.benchTestClimbElevatorSpeed = 0;
                 } else {
                     climbData.benchTestClimbElevatorSpeed = 0;
@@ -549,7 +548,7 @@ void Climb::TestPeriodic(const RobotData &robotData, ClimbData &climbData){
                 //move climb elevator up
                 if (!robotData.benchTestData.PIDMode){
                     climbData.benchTestClimbArmsSpeed = 0;
-                    climbData.benchTestClimbElevatorSpeed = -.1;
+                    climbData.benchTestClimbElevatorSpeed = -.2;
                 } else {
                     climbData.benchTestClimbArmsSpeed = 0;
                     climbElevator_pidController.SetReference(-140, rev::CANSparkMax::ControlType::kPosition, 0);
@@ -558,7 +557,7 @@ void Climb::TestPeriodic(const RobotData &robotData, ClimbData &climbData){
                 //move climb elevator down
                 if (!robotData.benchTestData.PIDMode){
                     climbData.benchTestClimbArmsSpeed = 0;
-                    climbData.benchTestClimbElevatorSpeed = .1;
+                    climbData.benchTestClimbElevatorSpeed = .2;
                 } else {
                     climbData.benchTestClimbArmsSpeed = 0;
                     climbElevator_pidController.SetReference(0, rev::CANSparkMax::ControlType::kPosition, 0);
@@ -633,25 +632,5 @@ void Climb::elevatorLimitSwitchWorking(ClimbData &climbData){
         climbData.limitSwitchWorking = false; //false to indicate that the limit switch isn't functioning
     } else {
         climbData.limitSwitchWorking = true;
-    }
-}
-
-//checks to see if the encoder is reading zero because if it is that means the encoder was most likley unplugged and the current values are wrong and we don't want to run any motors
-bool Climb::encoderPluggedIn(const ClimbData &climbData){
-    if (climbArmsAbs.GetOutput() > 0.03){
-        return true; //returns true to indicate that the encoder is functioning
-    } else {
-        return false;
-    }
-}
-
-//checks if the encoder is reading values in the incorrect range, and if the values aren't reasonable, then the motors stop running in the bench test function
-bool Climb::encoderInRange(const ClimbData &climbData){
-    if (climbArmsAbs.GetOutput() < .727 - .01){
-        return false;
-    } else if (climbArmsAbs.GetOutput() > 0.811 + .01){
-        return false;
-    } else {
-        return true;
     }
 }
