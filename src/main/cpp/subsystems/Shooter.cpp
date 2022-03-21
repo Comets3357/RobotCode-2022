@@ -484,6 +484,9 @@ void Shooter::TestInit(){
     //sets pid stuff for bench test
     shooterHood_pidController.SetP(0.378, 0);
     shooterHood_pidController.SetOutputRange(-0.5, 0.5, 0);
+
+    shooterTurret_pidController.SetP(0.12, 0); 
+    shooterTurret_pidController.SetOutputRange(-1, 1, 0);
 }
 
 void Shooter::TestPeriodic(const RobotData &robotData, ShooterData &shooterData){
@@ -539,24 +542,24 @@ void Shooter::TestPeriodic(const RobotData &robotData, ShooterData &shooterData)
                 shooterData.benchTestFlyWheelSpeed = .25; //change back to .25 when done testing
                 shooterData.benchTestTurretSpeed = 0;
             } else if (robotData.benchTestData.stage == 3){
-                //run turret clockwise
+                //run turret counterclockwise
                 if (!robotData.benchTestData.PIDMode){
                     //run turret with PIDs
                     shooterData.benchTestShooterHoodSpeed = 0; //if the stage isn't within 0 to 2, then speeds get set to 0
                     shooterData.benchTestFlyWheelSpeed = 0;
-                    //PID STUFF GOES ON THIS LINE
+                    shooterTurret_pidController.SetReference(turretFullRotationRev_CCW, rev::CANSparkMax::ControlType::kPosition, 0);
                 } else {
                     shooterData.benchTestShooterHoodSpeed = 0; //if the stage isn't within 0 to 2, then speeds get set to 0
                     shooterData.benchTestFlyWheelSpeed = 0;
                     shooterData.benchTestTurretSpeed = .1;
                 }
             } else if (robotData.benchTestData.stage == 4){
-                //run turret counterclockwise
+                //run turret clockwise
                 if (!robotData.benchTestData.PIDMode){
                     //run turret with PIDs
                     shooterData.benchTestShooterHoodSpeed = 0; //if the stage isn't within 0 to 2, then speeds get set to 0
                     shooterData.benchTestFlyWheelSpeed = 0;
-                    //PID STUFF GOES ON THIS LINE
+                    shooterTurret_pidController.SetReference(turretFullRotationRev_C, rev::CANSparkMax::ControlType::kPosition, 0);
                 } else {
                     shooterData.benchTestShooterHoodSpeed = 0; //if the stage isn't within 0 to 2, then speeds get set to 0
                     shooterData.benchTestFlyWheelSpeed = 0;

@@ -18,8 +18,8 @@ void Climb::RobotInit()
     climbElevator.RestoreFactoryDefaults();
 
     //sets the inversion of the motors
-    climbArms.SetInverted(true);
-    climbElevator.SetInverted(true);
+    climbArms.SetInverted(false);
+    climbElevator.SetInverted(false);
     climbArms.SetSmartCurrentLimit(45);
     climbElevator.SetSmartCurrentLimit(80);
     climbElevator.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward,140);
@@ -502,8 +502,6 @@ void Climb::ZeroElevator(float power, int stageAdd)
 void Climb::TestInit(ClimbData &climbData){
     elevatorLimitSwitchWorking(climbData); //checks if the limits switch starts in false, which it's supposed to; if it doesn't start in false, then the bench test won't run
     
-    climbArms.SetInverted(true);
-
     //sets pid stuff for bench test
     climbElevator_pidController.SetP(0.18, 0);
     climbElevator_pidController.SetOutputRange(-.7, .7, 0);
@@ -532,16 +530,16 @@ void Climb::TestPeriodic(const RobotData &robotData, ClimbData &climbData){
             if (robotData.benchTestData.stage == 0){
                 //move climb arms forwards
                 if (!robotData.benchTestData.PIDMode){
-                    climbData.benchTestClimbArmsSpeed = .2; //sets the arms speed
+                    climbData.benchTestClimbArmsSpeed = -.1; //sets the arms speed
                     climbData.benchTestClimbElevatorSpeed = 0; //sets the elevator speed
                 } else {
                     climbData.benchTestClimbElevatorSpeed = 0; //sets elevator speed to 0
-                    climbArms_pidController.SetReference(250, rev::CANSparkMax::ControlType::kPosition, 0); //arms move according to pid
+                    climbArms_pidController.SetReference(-250, rev::CANSparkMax::ControlType::kPosition, 0); //arms move according to pid
                 }
             } else if (robotData.benchTestData.stage == 1){
                 //move climb arms backwards
                 if (!robotData.benchTestData.PIDMode){
-                    climbData.benchTestClimbArmsSpeed = -.2;
+                    climbData.benchTestClimbArmsSpeed = .1;
                     climbData.benchTestClimbElevatorSpeed = 0;
                 } else {
                     climbData.benchTestClimbElevatorSpeed = 0;
@@ -551,16 +549,16 @@ void Climb::TestPeriodic(const RobotData &robotData, ClimbData &climbData){
                 //move climb elevator up
                 if (!robotData.benchTestData.PIDMode){
                     climbData.benchTestClimbArmsSpeed = 0;
-                    climbData.benchTestClimbElevatorSpeed = .2;
+                    climbData.benchTestClimbElevatorSpeed = -.1;
                 } else {
                     climbData.benchTestClimbArmsSpeed = 0;
-                    climbElevator_pidController.SetReference(144, rev::CANSparkMax::ControlType::kPosition, 0);
+                    climbElevator_pidController.SetReference(-140, rev::CANSparkMax::ControlType::kPosition, 0);
                 }
             } else if (robotData.benchTestData.stage == 3){
                 //move climb elevator down
                 if (!robotData.benchTestData.PIDMode){
                     climbData.benchTestClimbArmsSpeed = 0;
-                    climbData.benchTestClimbElevatorSpeed = -.2;
+                    climbData.benchTestClimbElevatorSpeed = .1;
                 } else {
                     climbData.benchTestClimbArmsSpeed = 0;
                     climbElevator_pidController.SetReference(0, rev::CANSparkMax::ControlType::kPosition, 0);
@@ -603,10 +601,10 @@ void Climb::TestPeriodic(const RobotData &robotData, ClimbData &climbData){
 
 //sets the limits so the robot doesn't break while running this code
 void Climb::checkElevatorDeadStop(ClimbData &climbData){
-    if (climbElevatorEncoder.GetPosition() >= 140 && climbData.benchTestClimbElevatorSpeed > 0){
+    if (climbElevatorEncoder.GetPosition() <= -140 && climbData.benchTestClimbElevatorSpeed < 0){
         climbData.upperLimit = true;
         climbData.lowerLimit = false;
-    } else if (!elevatorLimit.Get() && climbData.benchTestClimbElevatorSpeed < 0){
+    } else if (!elevatorLimit.Get() && climbData.benchTestClimbElevatorSpeed > 0){
         climbData.upperLimit = false;
         climbData.lowerLimit = true;
     } else {
@@ -617,10 +615,10 @@ void Climb::checkElevatorDeadStop(ClimbData &climbData){
 
 //sets the limits so the robot doesn't break while running this code
 void Climb::checkArmsDeadStop(ClimbData &climbData){
-    if (climbArmsEncoder.GetPosition() >= 250 && climbData.benchTestClimbArmsSpeed > 0){
+    if (climbArmsEncoder.GetPosition() <= -250 && climbData.benchTestClimbArmsSpeed < 0){
         climbData.armsUpperLimit = false;
         climbData.armsLowerLimit = true;
-    } else if (climbArmsEncoder.GetPosition() <= 0 && climbData.benchTestClimbArmsSpeed < 0){
+    } else if (climbArmsEncoder.GetPosition() >= 0 && climbData.benchTestClimbArmsSpeed > 0){
         climbData.armsUpperLimit = true;
         climbData.armsLowerLimit = false;
     } else {
@@ -649,9 +647,9 @@ bool Climb::encoderPluggedIn(const ClimbData &climbData){
 
 //checks if the encoder is reading values in the incorrect range, and if the values aren't reasonable, then the motors stop running in the bench test function
 bool Climb::encoderInRange(const ClimbData &climbData){
-    if (climbArms.Get() > 0 && climbArmsAbs.GetOutput() < .727 - .01){
+    if (climbArmsAbs.GetOutput() < .727 - .01){
         return false;
-    } else if (climbArms.Get() < 0 && climbArmsAbs.GetOutput() > 0.811 + .01){
+    } else if (climbArmsAbs.GetOutput() > 0.811 + .01){
         return false;
     } else {
         return true;
