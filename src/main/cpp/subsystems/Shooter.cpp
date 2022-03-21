@@ -280,16 +280,16 @@ void Shooter::innerLaunch(const RobotData &robotData)
     if (robotData.controlData.upperHubShot)
     {
         shooterHood_pidController.SetReference(hoodrevOut, rev::CANSparkMaxLowLevel::ControlType::kPosition);
-        setShooterWheel(2040 - 15);
+        setShooterWheel(2040 + 15);
 
-        readyShootLimit = 1960  - 15;
+        readyShootLimit = 1990 + 15;
     }
     else if (!robotData.controlData.upperHubShot)
     {
         shooterHood_pidController.SetReference(hoodrevOut, rev::CANSparkMaxLowLevel::ControlType::kPosition);
-        setShooterWheel(2040 - 15);
+        setShooterWheel(2040 + 15);
 
-        readyShootLimit = 1960 - 15;;
+        readyShootLimit = 1990 + 15;
     }
 }
 

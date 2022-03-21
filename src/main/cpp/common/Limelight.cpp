@@ -15,7 +15,7 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     }else{
         table->PutNumber("ledMode", 0);
     }
-
+    //table->PutNumber("ledMode", 0);
     //table->PutNumber("ledMode", 0);
 
     
@@ -36,7 +36,7 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     limelightData.desiredVel = getWheelVelocity(visionLookup, limelightData, robotData) - 35; //returns rpm
     
     //printing data to the dashboard
-    // frc::smartDashboard::PutNumber("distance offset", robotData.limelightData.distanceOffset/12);
+    //frc::SmartDashboard::PutNumber("distance offset", robotData.limelightData.distanceOffset/12);
     //frc::SmartDashboard::PutNumber("angleOffset", limelightData.angleOffset);
     //frc::SmartDashboard::PutNumber("desired hood", robotData.limelightData.desiredHoodPos);
     //frc::SmartDashboard::PutNumber("final correct distance", robotData.limelightData.correctDistance);
