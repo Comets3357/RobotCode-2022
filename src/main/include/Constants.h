@@ -39,8 +39,8 @@ static const int
 
 static const double
     //comp bot shooter hood positions
-    hoodabsOut = 0.028,
-    hoodabsIn = 0.933,
+    hoodabsOut = 0.054,
+    hoodabsIn = 0.952,
     hoodrevOut = -38,
     hoodrevIn = 0,
     hoodAngleOut = 43,
