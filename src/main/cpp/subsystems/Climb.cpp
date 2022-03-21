@@ -535,7 +535,7 @@ void Climb::TestPeriodic(const RobotData &robotData, ClimbData &climbData){
                     climbData.benchTestClimbElevatorSpeed = 0; //sets the elevator speed
                 } else {
                     climbData.benchTestClimbElevatorSpeed = 0; //sets elevator speed to 0
-                    climbArms_pidController.SetReference(250, rev::CANSparkMax::ControlType::kPosition, 0); //arms move according to pid
+                    climbArms_pidController.SetReference(-250, rev::CANSparkMax::ControlType::kPosition, 0); //arms move according to pid
                 }
             } else if (robotData.benchTestData.stage == 1){
                 //move climb arms backwards
@@ -553,7 +553,7 @@ void Climb::TestPeriodic(const RobotData &robotData, ClimbData &climbData){
                     climbData.benchTestClimbElevatorSpeed = -.1;
                 } else {
                     climbData.benchTestClimbArmsSpeed = 0;
-                    climbElevator_pidController.SetReference(140, rev::CANSparkMax::ControlType::kPosition, 0);
+                    climbElevator_pidController.SetReference(-140, rev::CANSparkMax::ControlType::kPosition, 0);
                 }
             } else if (robotData.benchTestData.stage == 3){
                 //move climb elevator down
@@ -603,11 +603,11 @@ void Climb::TestPeriodic(const RobotData &robotData, ClimbData &climbData){
 //sets the limits so the robot doesn't break while running this code
 void Climb::checkElevatorDeadStop(ClimbData &climbData){
     if (climbElevatorEncoder.GetPosition() <= -140 && climbData.benchTestClimbElevatorSpeed < 0){
-        climbData.upperLimit = false;
-        climbData.lowerLimit = true;
-    } else if (!elevatorLimit.Get() && climbData.benchTestClimbElevatorSpeed > 0){
         climbData.upperLimit = true;
         climbData.lowerLimit = false;
+    } else if (!elevatorLimit.Get() && climbData.benchTestClimbElevatorSpeed > 0){
+        climbData.upperLimit = false;
+        climbData.lowerLimit = true;
     } else {
         climbData.upperLimit = false;
         climbData.lowerLimit = false;
