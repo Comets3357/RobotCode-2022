@@ -1,19 +1,18 @@
 #pragma once
 
-#include <frc/SPI.h>
 #include "RobotData.h"
+#include <frc/SerialPort.h>
 
 struct LEDsData {
     
 };
 
 class LEDs {
-public:
-    void RobotPeriodic(const RobotData &robotData);
+    public:
+        void RobotPeriodic(const RobotData &robotData);
 
-private:
-    //in constructor port, deviceaddress
-    frc::SPI arduino = frc::SPI(frc::SPI::Port::kOnboardCS0);
-    bool success = false;
-    int colorCode = 6;
+    private:
+        //in constructor port, deviceaddress
+        frc::SerialPort arduino = frc::SerialPort(frc::SerialPort::kOnboard);
+        int colorCode = 6;
 };
