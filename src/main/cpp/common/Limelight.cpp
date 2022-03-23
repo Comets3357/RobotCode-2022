@@ -10,13 +10,13 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     limelightData.distanceToTarget = distanceToTarget(); //the distance
 
     //turns off limelight if not shooting
-    // if(robotData.controlData.shootMode == shootMode_none){
-    //     table->PutNumber("ledMode", 1);
-    // }else{
-    //     table->PutNumber("ledMode", 0);
-    // }
+    if(robotData.controlData.shootMode == shootMode_none){
+        table->PutNumber("pipeline", 1);
+    }else{
+        table->PutNumber("pipeline", 0);
+    }
     
-    table->PutNumber("ledMode", 0);
+    
 
     //updates the angle to be in degrees rather than radians
     //the actual distance from the hub based on the turning of the drivebase
@@ -36,8 +36,6 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     //TURRET 
     limelightData.turretDifference = -robotData.limelightData.angleOffset;
     limelightData.desiredTurretAngle = getTurretTurnAngle(limelightData, robotData); //position to go to to shoot
-    
-
     
     //printing data to the dashboard
     frc::SmartDashboard::PutNumber("distance offset", robotData.limelightData.distanceOffset/12);

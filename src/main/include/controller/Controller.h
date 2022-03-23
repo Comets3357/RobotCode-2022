@@ -77,6 +77,10 @@ struct ControlData
     bool mShooterWheelBackward; //get flywheel running backward MANUAL
     double mHood; //moves hood up or down MANUAL (axis)
     double mTurret; // moves turret left or right MANUAL (axis)
+    float saTurretDirectionController; //move the turret in the direction of the joystick
+    bool usingTurretDirection;
+    bool staticTurret;
+
 
     //climb:
     bool saclimbTraversalSequence;

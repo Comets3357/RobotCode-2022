@@ -48,8 +48,9 @@ static const double
     hoodAngleIn = 21,
 
     //turret positions
-    turretZeroDegrees = 15, //15
-    turretFullRotationDegrees = 540, //540
+    turretZeroDegrees = 5, //15
+    turretFullRotationDegrees = 535, //540
+    turretMiddleDegrees = (turretFullRotationDegrees - turretZeroDegrees)/2,
     turretZeroRev = 87.5, //87.5
     turretFullRotationRev_CCW = 174.85, //174.85
     turretFullRotationRev_C = 0, //0
@@ -58,6 +59,16 @@ static const double
     turretFullRotationAbs_C = 0.05, //0.05
 
     hoodFlywheelRatio = 2.75;
+
+//turret gyro offset
+static const float
+    turretGyroOffsetMax = 10,
+    turretGyroOffsetMin = 0;
+    
+static const double 
+    rotationalRateMax = 100,
+    rotationalRateMin = 0;
+
 
 //Set shooting hood positions and velocity 
 static const float

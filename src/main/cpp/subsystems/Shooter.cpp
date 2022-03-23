@@ -14,6 +14,7 @@ void Shooter::RobotInit(ShooterData &shooterData)
     flyWheelLead.Set(0);
     shooterHood.Set(0);
 
+    isTurretStatic = false;
 
     //FOR TESTING
     //used for reading flywheel speeds from the dashboard
@@ -25,7 +26,7 @@ void Shooter::RobotInit(ShooterData &shooterData)
 void Shooter::shooterHoodInit()
 {
     shooterHood.RestoreFactoryDefaults();
-    shooterHood.SetInverted(true);
+    shooterHood.SetInverted(false);
     shooterHood.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
     shooterHood.SetSmartCurrentLimit(15);
 
@@ -40,8 +41,8 @@ void Shooter::shooterHoodInit()
     shooterHood.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse, true);
     shooterHood.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward, true);
 
-    shooterHood.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward, hoodrevIn +2);
-    shooterHood.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse, hoodrevOut -1);
+    shooterHood.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward, hoodrevIn -2);
+    shooterHood.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse, hoodrevOut +1);
 }
 
 void Shooter::flyWheelInit()
@@ -133,7 +134,7 @@ void Shooter::RobotPeriodic(const RobotData &robotData, ShooterData &shooterData
 
     if(robotData.controlData.mode == mode_climb_manual || robotData.controlData.mode == mode_climb_sa){
         flyWheelLead.Set(0);
-        shooterHood.Set(0);
+        //shooterHood.Set(0);
 
     }else{
         if (robotData.controlData.mode == mode_teleop_manual)
@@ -153,16 +154,22 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
     //updates rev encoder if abs encoder is working
     encoderPluggedInHood(shooterData);
 
+    saTurret(robotData, shooterData);
+    //if nothing is happening then update the isTurretStatic value based on the button control
+    //can this be outside the statement?
+    isTurretStatic = robotData.controlData.staticTurret;
+
+
     //SHOOTING LOGIC
     if(robotData.controlData.shootMode == shootMode_vision){ // Aiming with limelight
 
-        if(robotData.limelightData.validTarget == 1){ //valid target
-            validTargetTurretPos = robotData.limelightData.desiredTurretAngle;
-            setTurret_Pos(robotData.limelightData.desiredTurretAngle, shooterData);
+        // if(robotData.limelightData.validTarget == 1){ //valid target
+        //     validTargetTurretPos = robotData.limelightData.desiredTurretAngle;
+        //     setTurret_Pos(robotData.limelightData.desiredTurretAngle, shooterData);
 
-        }else{
-            setTurret_Pos(validTargetTurretPos, shooterData);
-        }
+        // }else{
+        //     setTurret_Pos(validTargetTurretPos, shooterData);
+        // }
 
         //set the hood and flywheel using pids to the desired values based off the limelight code
         //checks battery voltage and increases velocity if it doesn't have enough power
@@ -180,14 +187,14 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
 
         shooterHood_pidController.SetReference(HoodabsoluteToREV(HoodconvertFromAngleToAbs(robotData.limelightData.desiredHoodPos)), rev::CANSparkMaxLowLevel::ControlType::kPosition);
 
-        //once it's a high enough velocity its ready for indexer to run
-        if (shooterData.readyShoot == false && (getWheelVel() > (robotData.limelightData.desiredVel - 30)))
+        //once it's a high enough velocity and turret is in place its ready for indexer to run
+        if (shooterData.readyShoot == false && (getWheelVel() > (robotData.limelightData.desiredVel - 30)) && (std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 2))
         //if you're not in readyShoot yet and the wheel velocity is above 30 under the desire velocity, readyShoot will become true
         {
             shooterData.readyShoot = true;
         }
         //else
-        else if (shooterData.readyShoot == true && (getWheelVel() < (robotData.limelightData.desiredVel - 100)))
+        else if (shooterData.readyShoot == true && (getWheelVel() < (robotData.limelightData.desiredVel - 100)) && (std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 2))
         // if you're already in readyShoot, you'll only exit readyShoot if the wheel velocity drops below 100 below the desired velocity
         {
             shooterData.readyShoot = false;
@@ -197,21 +204,30 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
     }else if(robotData.controlData.shootMode == shootMode_cornerLaunchPad){ //FROM THE CLOSER LAUNCH PAD
         innerLaunch(robotData);
         checkReadyShoot(shooterData);
+
+        isTurretStatic = true;
+
     }
     else if (robotData.controlData.shootMode == shootMode_wallLaunchPad) //FROM THE FARTHER LAUNCH PAD
     {
         outerLaunch(robotData);
         checkReadyShoot(shooterData);
+
+        isTurretStatic = true;
     }
     else if(robotData.controlData.shootMode == shootMode_fender) //FROM THE FENDER FIXED SHOT
     {
         fender(robotData);
         checkReadyShoot(shooterData);
+
+        isTurretStatic = true;
     } 
     else if (robotData.controlData.shootMode == shootMode_sideWall) //FROM THE SIDE WALL FIXED SHOT
     {
         wall(robotData);
         checkReadyShoot(shooterData);
+
+        isTurretStatic = true;
     } 
     else //IF NO SHOOTING DON'T DO ANYTHING
     {
@@ -219,7 +235,6 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
 
         flyWheelLead.Set(0);
         hoodRoller.Set(0);
-        shooterTurret.Set(0);
 
         //if the hood is too far out bring it in then stop the hood from running 
         if(shooterHoodEncoderRev.GetPosition() < -3){
@@ -235,23 +250,32 @@ void Shooter::manual(const RobotData &robotData, ShooterData &shooterData)
     
     //manual wheel forward
     if(robotData.controlData.mShooterWheelForward){
-        // flyWheelLead_pidController.SetReference(2000, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
-        // hoodRoller.Set(0.8);
-        setTurret_Pos(robotData.limelightData.desiredTurretAngle, shooterData);
+        flyWheelLead_pidController.SetReference(2000, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
+        hoodRoller_pidController.SetReference(5500, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
+
 
     }else if(robotData.controlData.mShooterWheelBackward){ //wheel backwards
         flyWheelLead_pidController.SetReference(-2000, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
-        hoodRoller.Set(-0.8);
+        hoodRoller_pidController.SetReference(-5500, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
 
     }else{
         flyWheelLead.Set(0); //stops flywheel
         hoodRoller.Set(0);
-        shooterTurret.Set(robotData.controlData.mTurret*.5);
 
     }
 
+    //manual turret
+    if(robotData.controlData.mTurret >= 0.01 || robotData.controlData.mTurret <= -0.01){ //accounts for deadzone
+        shooterTurret.Set(robotData.controlData.mTurret*.5);
+    }else{
+        shooterTurret.Set(0);
+    }
     //hood to joystick controls
-    shooterHood.Set(robotData.controlData.mHood*.2);
+     if(robotData.controlData.mHood >= 0.01 || robotData.controlData.mHood <= -0.01){ //accounts for deadzone
+        shooterHood.Set(robotData.controlData.mHood*.2);
+    }else{
+        shooterHood.Set(0);
+    }
 
     //zeros hood pos
     if(robotData.controlData.mZeroHood)
@@ -283,8 +307,11 @@ void Shooter::updateData(const RobotData &robotData, ShooterData &shooterData)
     frc::SmartDashboard::PutNumber("desired flywheel vel", robotData.limelightData.desiredVel);
 
     shooterData.currentTurretAngle = turretConvertFromAbsToAngle(shooterTurretEncoderAbs.GetOutput());
+    
     frc::SmartDashboard::PutNumber("turret angle", shooterData.currentTurretAngle);
     frc::SmartDashboard::PutNumber("REEEEE", turretAbsoluteToREV(turretConvertFromAngleToAbs(robotData.limelightData.desiredTurretAngle)));
+
+    frc::SmartDashboard::PutNumber("Gyro angle", (robotData.drivebaseData.currentPose.Rotation().Radians().to<double>())*(180/pi));
 
     // frc::SmartDashboard::PutNumber("desired hood pos", robotData.limelightData.desiredHoodPos);
     // frc::SmartDashboard::PutNumber("upper hub shot", robotData.controlData.upperHubShot);
@@ -365,6 +392,12 @@ double Shooter::turretAbsoluteToREV(double value){
     return ((value*slope) + b);
 }
 
+double Shooter::turretGyroOffset(double value){
+    double slope = (turretGyroOffsetMax - turretGyroOffsetMin)/(rotationalRateMax - rotationalRateMin);
+    double b = turretGyroOffsetMin - (slope*rotationalRateMin);
+    return ((value*slope) + b);
+}
+
 /**
  * @return sets the turret to turn to face the target when shooting USING POSITIONS
  * @param pos is the desired angle position we want to turn to IN DEGREES
@@ -373,6 +406,8 @@ double Shooter::turretAbsoluteToREV(double value){
 void Shooter::setTurret_Pos(double pos, ShooterData &shooterData){
     shooterTurret_pidController.SetReference(turretAbsoluteToREV(turretConvertFromAngleToAbs(pos)), rev::CANSparkMax::ControlType::kPosition);
 }
+
+
 
 /**
  * ---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -595,3 +630,81 @@ void Shooter::DisabledPeriodic(const RobotData &robotData, ShooterData &shooterD
     encoderPluggedInTurret(shooterData);
 
 }
+
+void Shooter::saTurret(const RobotData &robotData, ShooterData &shooterData){
+
+    if(isTurretStatic){
+        //if static turret bring to front and dont move 
+        //NEED TO CHANGE TO FACING TOWARD CLIMB ARMS
+        setTurret_Pos(turretZeroRev, shooterData);
+
+    }else{ //ok cool we can move now
+
+        if(robotData.controlData.usingTurretDirection){
+            turretControlTurn(robotData.controlData.saTurretDirectionController, robotData, shooterData);
+        }else{
+            //if youre within 2 degrees of the target you can stop turning (mitigates jerky movement)
+            if(std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 2){
+                shooterTurret.Set(0);
+            }else{
+                //turn the turret to face the target
+                //accounts for if the robot is turning and adds more power
+                setTurret_Pos(robotData.limelightData.desiredTurretAngle+turretGyroOffset(robotData.gyroData.angularMomentum), shooterData);
+            }
+        }
+
+    }
+
+    //DECOMMISIONED CODE
+    //case: you're spinning in circles and you reach one of your limits but youre still spinning so you lose sight of the target
+    //turn the limelight to the last know position
+    //this code only really works if the robot itself isn't moving anywhere crazy and you're just spinning in a circle
+
+    // if(robotData.limelightData.validTarget == 1){ //valid target set the turret position to the desired one from limelight
+    //     validTargetTurretPos = robotData.limelightData.desiredTurretAngle;
+
+    //     setTurret_Pos(robotData.limelightData.desiredTurretAngle, shooterData);
+
+    // }else if(robotData.limelightData.validTarget == 0){ //if you dont see a target,
+    //     setTurret_Pos(validTargetTurretPos, shooterData);
+
+    // }
+    
+}
+
+/**
+ * turns the turret to a position dicated by the joystick control using field oriented location
+ * @param controlTurretDirection direction given by joystick control (gives 0-360 degrees)
+ */
+
+void Shooter::turretControlTurn(float controlTurretDirection, const RobotData &robotData, ShooterData &shooterData){
+    //THIS WILL CHANGE NEED BRIANS CODE FOR ROBOT DIRECTION
+    float robotDirection = (robotData.drivebaseData.currentPose.Rotation().Radians().to<double>())*(180/pi); //in degrees
+    float turretTurnPos;
+    float turretTurnPos2;
+
+    turretTurnPos = (controlTurretDirection - robotDirection) + turretMiddleDegrees; //calculates turret pos based on what we know to be the center of the bot
+    
+    //is this code necessary??? I don't think it should ever be over or under??????
+    if(turretTurnPos < 0 || turretTurnPos > turretFullRotationDegrees){
+        if(turretTurnPos < 0){
+            turretTurnPos += 360;
+        }else if(turretTurnPos > turretFullRotationDegrees){
+            turretTurnPos -=360;
+        }
+    }
+    
+    if(turretTurnPos > 360){
+        turretTurnPos2 = turretTurnPos - 360;
+    }
+
+    //checks to see which of the two values is closer to the current turret value and go to that position
+    if(std::abs(robotData.shooterData.currentTurretAngle-turretTurnPos) < std::abs(robotData.shooterData.currentTurretAngle-turretTurnPos2)){
+        setTurret_Pos(turretTurnPos, shooterData);
+    }else{
+        setTurret_Pos(turretTurnPos2, shooterData);
+    }
+}
+
+
+
