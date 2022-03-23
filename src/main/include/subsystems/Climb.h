@@ -100,7 +100,10 @@ private:
     void WaitUntilGyro(int cmp, float gyroValue, int stageAdd);
 
     void CheckArms();
+    void CheckArms2();
     void CheckAngleForTransfer();
+
+    void TopTransfer();
 
     //CHANGE MOTOr ID STUFF  (just outline lol don't take your life too seriously:))
     //initualizes climb elevator motor
