@@ -29,6 +29,13 @@ void LEDs::RobotPeriodic(const RobotData &robotData){
 
     //prints the corresponding number of the color for the LEDs
     frc::SmartDashboard::PutNumber("ColorCode for LEDs", colorCode);
+    char colors[3];
+    if (arduino.GetBytesReceived() >= 3)
+    {
+        arduino.Read(colors,3);
+    }
+
+    frc::SmartDashboard::PutRaw("colors", colors);
     
 }
 
