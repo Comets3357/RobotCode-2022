@@ -26,7 +26,7 @@ void Shooter::RobotInit(ShooterData &shooterData)
 void Shooter::shooterHoodInit()
 {
     shooterHood.RestoreFactoryDefaults();
-    shooterHood.SetInverted(false);
+    shooterHood.SetInverted(true);
     shooterHood.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
     shooterHood.SetSmartCurrentLimit(15);
 
@@ -114,6 +114,7 @@ void Shooter::DisabledInit()
     flyWheelLead.Set(0);
     hoodRoller.Set(0);
 
+    shooterHood.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
     shooterTurret.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
 
 }
@@ -145,6 +146,9 @@ void Shooter::RobotPeriodic(const RobotData &robotData, ShooterData &shooterData
         {
             semiAuto(robotData, shooterData);
         }
+
+        //manual(robotData, shooterData);
+
     }
 
 }
@@ -272,7 +276,7 @@ void Shooter::manual(const RobotData &robotData, ShooterData &shooterData)
     }
     //hood to joystick controls
      if(robotData.controlData.mHood >= 0.01 || robotData.controlData.mHood <= -0.01){ //accounts for deadzone
-        shooterHood.Set(robotData.controlData.mHood*.2);
+        shooterHood.Set(-robotData.controlData.mHood*.2);
     }else{
         shooterHood.Set(0);
     }
@@ -297,11 +301,11 @@ void Shooter::updateData(const RobotData &robotData, ShooterData &shooterData)
     frc::SmartDashboard::PutNumber("shooter Turret ABS", shooterTurretEncoderAbs.GetOutput());
     frc::SmartDashboard::PutNumber("shooter Turret REV", shooterTurretEncoderRev.GetPosition());
 
-    //frc::SmartDashboard::PutNumber("shooter hood abs", shooterHoodEncoderAbs.GetOutput());
-    //frc::SmartDashboard::PutNumber("shooter hood rev", shooterHoodEncoderRev.GetPosition());
+    frc::SmartDashboard::PutNumber("shooter hood abs", shooterHoodEncoderAbs.GetOutput());
+    frc::SmartDashboard::PutNumber("shooter hood rev", shooterHoodEncoderRev.GetPosition());
 
 
-    frc::SmartDashboard::PutBoolean("shooter ready shoot", shooterData.readyShoot);
+    //frc::SmartDashboard::PutBoolean("shooter ready shoot", shooterData.readyShoot);
     frc::SmartDashboard::PutNumber("HOOD ANGLE", HoodconvertFromAbsToAngle(shooterHoodEncoderAbs.GetOutput()));
     frc::SmartDashboard::PutNumber("flywheel vel", flyWheelLeadEncoder.GetVelocity());
     frc::SmartDashboard::PutNumber("desired flywheel vel", robotData.limelightData.desiredVel);
@@ -309,9 +313,10 @@ void Shooter::updateData(const RobotData &robotData, ShooterData &shooterData)
     shooterData.currentTurretAngle = turretConvertFromAbsToAngle(shooterTurretEncoderAbs.GetOutput());
     
     frc::SmartDashboard::PutNumber("turret angle", shooterData.currentTurretAngle);
-    frc::SmartDashboard::PutNumber("REEEEE", turretAbsoluteToREV(turretConvertFromAngleToAbs(robotData.limelightData.desiredTurretAngle)));
 
-    frc::SmartDashboard::PutNumber("Gyro angle", (robotData.drivebaseData.currentPose.Rotation().Radians().to<double>())*(180/pi));
+    frc::SmartDashboard::PutNumber("Gyro angle", robotData.drivebaseData.odometryYaw);
+    frc::SmartDashboard::PutNumber("control joystick", robotData.controlData.saTurretDirectionController);
+
 
     // frc::SmartDashboard::PutNumber("desired hood pos", robotData.limelightData.desiredHoodPos);
     // frc::SmartDashboard::PutNumber("upper hub shot", robotData.controlData.upperHubShot);
@@ -643,14 +648,21 @@ void Shooter::saTurret(const RobotData &robotData, ShooterData &shooterData){
         if(robotData.controlData.usingTurretDirection){
             turretControlTurn(robotData.controlData.saTurretDirectionController, robotData, shooterData);
         }else{
-            //if youre within 2 degrees of the target you can stop turning (mitigates jerky movement)
-            if(std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 2){
-                shooterTurret.Set(0);
+
+            if(robotData.limelightData.validTarget == 1){
+                //if youre within 2 degrees of the target you can stop turning (mitigates jerky movement)
+                if(std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 2){
+                    shooterTurret.Set(0);
+                }else{
+                    //turn the turret to face the target
+                    //accounts for if the robot is turning and adds more power
+                    setTurret_Pos(robotData.limelightData.desiredTurretAngle+turretGyroOffset(robotData.gyroData.angularMomentum), shooterData);
+                }
             }else{
-                //turn the turret to face the target
-                //accounts for if the robot is turning and adds more power
-                setTurret_Pos(robotData.limelightData.desiredTurretAngle+turretGyroOffset(robotData.gyroData.angularMomentum), shooterData);
+                shooterTurret.Set(0);
+
             }
+            
         }
 
     }
@@ -679,9 +691,8 @@ void Shooter::saTurret(const RobotData &robotData, ShooterData &shooterData){
 
 void Shooter::turretControlTurn(float controlTurretDirection, const RobotData &robotData, ShooterData &shooterData){
     //THIS WILL CHANGE NEED BRIANS CODE FOR ROBOT DIRECTION
-    float robotDirection = (robotData.drivebaseData.currentPose.Rotation().Radians().to<double>())*(180/pi); //in degrees
+    float robotDirection = robotData.drivebaseData.odometryYaw; //in degrees
     float turretTurnPos;
-    float turretTurnPos2;
 
     turretTurnPos = (controlTurretDirection - robotDirection) + turretMiddleDegrees; //calculates turret pos based on what we know to be the center of the bot
     
@@ -695,15 +706,22 @@ void Shooter::turretControlTurn(float controlTurretDirection, const RobotData &r
     }
     
     if(turretTurnPos > 360){
+        float turretTurnPos2;
+
         turretTurnPos2 = turretTurnPos - 360;
+
+        //checks to see which of the two values is closer to the current turret value and go to that position
+        if(std::abs(robotData.shooterData.currentTurretAngle-turretTurnPos) < std::abs(robotData.shooterData.currentTurretAngle-turretTurnPos2)){
+            setTurret_Pos(turretTurnPos, shooterData);
+        }else{
+            setTurret_Pos(turretTurnPos2, shooterData);
+        }
+    }else{
+        setTurret_Pos(turretTurnPos, shooterData);
+
     }
 
-    //checks to see which of the two values is closer to the current turret value and go to that position
-    if(std::abs(robotData.shooterData.currentTurretAngle-turretTurnPos) < std::abs(robotData.shooterData.currentTurretAngle-turretTurnPos2)){
-        setTurret_Pos(turretTurnPos, shooterData);
-    }else{
-        setTurret_Pos(turretTurnPos2, shooterData);
-    }
+    
 }
 
 

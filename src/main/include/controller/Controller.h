@@ -3,6 +3,7 @@
 #include <frc/DriverStation.h>
 #include <frc/Joystick.h>
 #include <frc/TimedRobot.h>
+#include <cmath>
 
 struct RobotData;
 

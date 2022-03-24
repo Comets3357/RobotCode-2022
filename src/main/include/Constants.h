@@ -34,9 +34,9 @@ static const int
 // shooter
 static const int
     shooterWheelLeadID = 31,
-    shooterHoodID = 32,
-    shooterTurretID = 34,
-    hoodRollerID = 33;
+    shooterHoodID = 33, //33
+    shooterTurretID = 34, 
+    hoodRollerID = 32; //32
 
 static const double
     //comp bot shooter hood positions

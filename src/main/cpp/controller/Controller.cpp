@@ -13,6 +13,8 @@ void Controller::TeleopPeriodic(const RobotData &robotData, ControllerData &cont
     updateBtnData(controllerData);
     updateControlData(robotData, controllerData, controlData);
     updateShootMode(robotData, controlData);
+
+    
 }
 
 void Controller::TestPeriodic(const RobotData &robotData, ControllerData &controllerData, ControlData &controlData){
