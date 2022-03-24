@@ -17,25 +17,9 @@ void Indexer::AutonomousInit(IndexerData &indexerData) {
 
 void Indexer::RobotPeriodic(const RobotData &robotData, IndexerData &indexerData)
 {
-    updateTopBeamToggled(indexerData);
-    updateData(robotData, indexerData);
-    count(robotData, indexerData);  // accounts for automatic counting as well as manual decrementing
-                                    // there are manual functions for incremeneting and decrementing cargo as well, see controldata.cpp
 
-    if(robotData.controlData.mode == mode_climb_manual || robotData.controlData.mode == mode_climb_sa){
-        indexerBelt.Set(0);
-        indexerWheel.Set(0);
-
-    }else{
-        if (robotData.controlData.mode == mode_teleop_manual)
-        {
             manual(robotData, indexerData);
-        }
-        else if (robotData.controlData.mode == mode_teleop_sa)
-        {
-            semiAuto(robotData, indexerData);
-        }
-    }
+
 
     
     
@@ -66,16 +50,9 @@ void Indexer::updateData(const RobotData &robotData, IndexerData &indexerData)
 void Indexer::manual(const RobotData &robotData, IndexerData &indexerData)
 {
 
-    if(robotData.controlData.mIndexerDown){ //run belt and wheel backwards  (B)
-        indexerWheel.Set(-indexerWheelSpeed);
-        indexerBelt.Set(-indexerShootingBeltSpeed);
-    }else if(robotData.controlData.mIndexerUp){ //run belt and wheel forwards (X)
         indexerBelt.Set(indexerShootingBeltSpeed);
         indexerWheel.Set(indexerWheelSpeed);    
-    }else{
-        indexerBelt.Set(0);
-        indexerWheel.Set(0);   
-    }
+
 
 }
 

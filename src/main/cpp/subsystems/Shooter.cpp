@@ -131,25 +131,9 @@ void Shooter::EnabledInit(ControlData &controlData, ShooterData &shooterData)
  * */
 void Shooter::RobotPeriodic(const RobotData &robotData, ShooterData &shooterData)
 {
-    updateData(robotData, shooterData);
 
-    if(robotData.controlData.mode == mode_climb_manual || robotData.controlData.mode == mode_climb_sa){
-        flyWheelLead.Set(0);
-        //shooterHood.Set(0);
-
-    }else{
-        if (robotData.controlData.mode == mode_teleop_manual)
-        {
             manual(robotData, shooterData);
-        }
-        else if (robotData.controlData.mode == mode_teleop_sa)
-        {
-            semiAuto(robotData, shooterData);
-        }
 
-        //manual(robotData, shooterData);
-
-    }
 
 }
 
@@ -252,41 +236,8 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
 void Shooter::manual(const RobotData &robotData, ShooterData &shooterData)
 {
     
-    //manual wheel forward
-    if(robotData.controlData.mShooterWheelForward){
-        flyWheelLead_pidController.SetReference(2000, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
+        flyWheelLead_pidController.SetReference(300, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
         hoodRoller_pidController.SetReference(5500, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
-
-
-    }else if(robotData.controlData.mShooterWheelBackward){ //wheel backwards
-        flyWheelLead_pidController.SetReference(-2000, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
-        hoodRoller_pidController.SetReference(-5500, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
-
-    }else{
-        flyWheelLead.Set(0); //stops flywheel
-        hoodRoller.Set(0);
-
-    }
-
-    //manual turret
-    if(robotData.controlData.mTurret >= 0.01 || robotData.controlData.mTurret <= -0.01){ //accounts for deadzone
-        shooterTurret.Set(robotData.controlData.mTurret*.5);
-    }else{
-        shooterTurret.Set(0);
-    }
-    //hood to joystick controls
-     if(robotData.controlData.mHood >= 0.01 || robotData.controlData.mHood <= -0.01){ //accounts for deadzone
-        shooterHood.Set(-robotData.controlData.mHood*.2);
-    }else{
-        shooterHood.Set(0);
-    }
-
-    //zeros hood pos
-    if(robotData.controlData.mZeroHood)
-    {
-        shooterTurretEncoderRev.SetPosition(0);
-        shooterHoodEncoderRev.SetPosition(0);
-    }
 
 }
 
