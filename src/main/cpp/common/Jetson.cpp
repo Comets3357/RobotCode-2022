@@ -49,6 +49,9 @@ void Jetson::RobotPeriodic(const RobotData &robotData, JetsonData &jetsonData)
     double leftCurrent = robotData.controlData.lDrive;
     double rightCurrent = robotData.controlData.rDrive;
     double maxCurrent = 0;
+    
+    double frontBack = robotData.controlData.maxStraight * (leftCurrent + rightCurrent) / 2;
+    double leftRight = robotData.controlData.maxTurn * (rightCurrent - leftCurrent) / 2;
 
     // SETS CURRENT ALLIANCE FOR JETSON
     if (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed)
@@ -119,11 +122,48 @@ void Jetson::RobotPeriodic(const RobotData &robotData, JetsonData &jetsonData)
                         jetsonData.rightSkew = 0.05;
                     }
                 }
+                else // IF BALL IS GREATER THAN 120 INCHES THEN ARCADE MODE IS STILL ACTIVATED
+                {
+                    //deadzone NOT needed for drone controller
+                    if (leftCurrent <= -0.08 || leftCurrent >= 0.08)
+                    {
+                        jetsonData.leftSkew = (frontBack - leftRight);
+                    }
+                    else
+                    {
+                        jetsonData.leftSkew = 0;
+                    }
+
+                    if (rightCurrent <= -0.08 || rightCurrent >= 0.08)
+                    {
+                        jetsonData.rightSkew = (frontBack + leftRight);
+                    }
+                    else
+                    {
+                        jetsonData.rightSkew = 0;
+                    }
+                }
             }
-            else if (maxCurrent < -0.08) // SKEW DOESN'T WORK IF NOT DRIVING FORWARD
+            else if (maxCurrent < -0.08) // GIVES DRIVER FULL CONTROL DRIVING BACKWARDS AND ARCADE CONTROL
             {
-                jetsonData.leftSkew = leftCurrent;
-                jetsonData.rightSkew = rightCurrent;
+                
+                if (leftCurrent <= -0.08 || leftCurrent >= 0.08)
+                {
+                    jetsonData.leftSkew = (frontBack - leftRight);
+                }
+                else
+                {
+                    jetsonData.leftSkew = 0;
+                }
+
+                if (rightCurrent <= -0.08 || rightCurrent >= 0.08)
+                {
+                    jetsonData.rightSkew = (frontBack + leftRight);
+                }
+                else
+                {
+                    jetsonData.rightSkew = 0;
+                }
             }
         }
     }
