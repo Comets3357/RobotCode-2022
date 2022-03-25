@@ -8,6 +8,7 @@ void Jetson::RobotInit()
 
     currentAlliance = 0;
 
+    // PUTS OUT VALS INTO NETWORK TABLE TO TUNE JETSON
     table->PutNumber("blue h min", 90); // THIS CHANGES AT COMPS
     table->PutNumber("blue h max", 110); // THIS CHANGES AT COMPS
     table->PutNumber("blue s min", 180); // THIS CHANGES AT COMPS
@@ -40,10 +41,16 @@ void Jetson::RobotInit()
 
 void Jetson::RobotPeriodic(const RobotData &robotData, JetsonData &jetsonData)
 {
-
+    // ATTAINS INSTANCE OF NETWORK TABLE
     auto inst = nt::NetworkTableInstance::GetDefault();
     auto table = inst.GetTable("default");
+    
+    // ATTAINS LEFT AND RIGHT DRIVE BASE DATA
+    double leftCurrent = robotData.controlData.lDrive;
+    double rightCurrent = robotData.controlData.rDrive;
+    double maxCurrent = 0;
 
+    // SETS CURRENT ALLIANCE FOR JETSON
     if (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed)
     {
        currentAlliance = 1;
@@ -55,15 +62,13 @@ void Jetson::RobotPeriodic(const RobotData &robotData, JetsonData &jetsonData)
 
     table->PutNumber("Alliance Jetson", currentAlliance);
 
-    double leftCurrent = robotData.controlData.lDrive;
-    double rightCurrent = robotData.controlData.rDrive;
-    double maxCurrent = 0;
-    
-    if (robotData.controlData.vectorDrive)
+    if (robotData.drivebaseData.driveMode == driveMode_vector)
     {
+        // GETS DISTANCE AND ANGLE OFF FROM BALL
         distanceFromBall = table->GetNumber("Distance To Closest Ball", 0);
         angleOffBall = table->GetNumber("Angle To Closest Ball", 0);
 
+        // CHECKS TO SEE WHICH JOYSTICK HAS MORE POWER TO USE
         if (leftCurrent > rightCurrent)
         {
             maxCurrent = leftCurrent;
@@ -73,47 +78,76 @@ void Jetson::RobotPeriodic(const RobotData &robotData, JetsonData &jetsonData)
             maxCurrent = rightCurrent;
         }
 
-        maxCurrent = 0.8 * maxCurrent;
+        //frc::SmartDashboard::PutNumber("skew", getSkew(distanceFromBall));
 
-        if (angleOffBall > 1)
+        // CREATES DEADZONE
+        if (std::abs(maxCurrent) > 0.08)
         {
-            jetsonData.leftSkew = getSkew(distanceFromBall) + maxCurrent;
-            jetsonData.rightSkew = (- getSkew(distanceFromBall)) + maxCurrent;
-        }
-        else if (angleOffBall < -1)
-        {
-            jetsonData.leftSkew = (- getSkew(distanceFromBall)) + maxCurrent;
-            jetsonData.rightSkew = getSkew(distanceFromBall) + maxCurrent;
-        }
-        else
-        {
-            jetsonData.leftSkew = getSkew(distanceFromBall) + maxCurrent;
-            jetsonData.rightSkew = getSkew(distanceFromBall) + maxCurrent;
-        }
+            // IF WE ARE DRIVING FORWARD, THEN THE SKEW WILL WORK
+            if (maxCurrent > 0.08)
+            {
+                // CHECKS TO SEE IF WE ARE WITHIN A SAFE DISTANCE OF THE BALL
+                if (distanceFromBall < 120)
+                {
+                    maxCurrent = 0.8 * maxCurrent;
 
-        if (jetsonData.leftSkew <= 0)
-        {
-            jetsonData.leftSkew = 0.05;
-        }
+                    // SKEWS DRIVE BASE BASED OFF WHERE THE BALL IS IN FRAME
+                    if (angleOffBall > 2)
+                    {
+                        jetsonData.leftSkew = getSkew(angleOffBall, distanceFromBall) * maxCurrent;
+                        jetsonData.rightSkew = maxCurrent;
+                    }
+                    else if (angleOffBall < -2)
+                    {
+                        jetsonData.leftSkew = maxCurrent;
+                        jetsonData.rightSkew = getSkew(angleOffBall, distanceFromBall) * maxCurrent;
+                    }
+                    else
+                    {
+                        jetsonData.leftSkew = getSkew(angleOffBall, distanceFromBall) * maxCurrent;
+                        jetsonData.rightSkew = getSkew(angleOffBall, distanceFromBall) * maxCurrent;
+                    }
 
-        if (jetsonData.rightSkew <= 0)
-        {
-            jetsonData.rightSkew = 0.05;
+                    // MAKES SURE WE AREN'T JUST UNDERDRIVING ANY SIDE TO REACH BALL
+                    if (jetsonData.leftSkew <= 0)
+                    {
+                        jetsonData.leftSkew = 0.05;
+                    }
+
+                    if (jetsonData.rightSkew <= 0)
+                    {
+                        jetsonData.rightSkew = 0.05;
+                    }
+                }
+            }
+            else if (maxCurrent < -0.08) // SKEW DOESN'T WORK IF NOT DRIVING FORWARD
+            {
+                jetsonData.leftSkew = leftCurrent;
+                jetsonData.rightSkew = rightCurrent;
+            }
         }
     }
 }
 
+// getter for if another class needs access to this information
 double Jetson::getDistanceFromBall()
 {
     return distanceFromBall;
 }
 
+// getter for if another class needs access to this information
 double Jetson::getAngleOffBall()
 {
     return angleOffBall;
 }
 
-double Jetson::getSkew(double distance)
+// this skew is based off of angle and distance
+double Jetson::getSkew(double angle, double distance)
 {
-    return (-0.001667 * (distance)) + 0.2;
+    // skew is derived from a quadratic equation
+    double angleSkew = 0.000108167 * std::pow(angle, 2);
+    // skew is derived from a linear equation
+    double distanceSkew = (-0.004167 * distance) + 1;
+    // returns a skew that is a dynamic quadratic equation based off distance and angle off from target
+    return (angleSkew * distanceSkew) + 1;
 }

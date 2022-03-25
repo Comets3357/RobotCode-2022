@@ -132,7 +132,7 @@ void Drivebase::updateData(const RobotData &robotData, DrivebaseData &drivebaseD
 void Drivebase::teleopControl(const RobotData &robotData, DrivebaseData &drivebaseData)
 {
     // assign drive mode
-    if ((robotData.controlData.lDrive <= -0.08 || robotData.controlData.lDrive >= 0.08) || (robotData.controlData.rDrive <= -0.08 || robotData.controlData.rDrive >= 0.08)) {
+    if (drivebaseData.driveMode != driveMode_vector &&  (robotData.controlData.lDrive <= -0.08 || robotData.controlData.lDrive >= 0.08) || (robotData.controlData.rDrive <= -0.08 || robotData.controlData.rDrive >= 0.08)) {
         drivebaseData.driveMode = driveMode_joystick;
     }
     else if (robotData.controlData.shootMode == shootMode_vision) {

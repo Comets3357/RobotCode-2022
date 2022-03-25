@@ -12,6 +12,7 @@ struct JetsonData
 {
     double leftSkew;
     double rightSkew;
+    int ballCount;
 };
 
 class Jetson
@@ -21,7 +22,7 @@ public:
     void RobotPeriodic(const RobotData &robotData, JetsonData &jetsonData);
     double getDistanceFromBall();
     double getAngleOffBall();
-    double getSkew(double distance);
+    double getSkew(double angle, double distance);
 private:
     double distanceFromBall;
     double angleOffBall;

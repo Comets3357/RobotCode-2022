@@ -58,10 +58,7 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
         controlData.rDrive = controllerData.pRYStick;
     }
 
-    if (controllerData.pLPalmSwitch)
-    {
-        controlData.vectorDrive = controllerData.pLPalmSwitch; 
-    }
+    controlData.vectorDrive = controllerData.pLPalmSwitch; 
 
     // manual:
 
