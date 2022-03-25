@@ -26,7 +26,9 @@ void Gyro::RobotPeriodic(GyroData &gyroData) {
     gyroData.rawPitch = gyro.GetPitch();
     gyroData.rawRoll = gyro.GetRoll();
     gyroData.angularMomentum = gyro.GetRawGyroY();
-    // frc::smartDashboard::PutNumber("angleMomentum",gyroData.angularMomentum);
+    gyroData.rotationalRate = gyro.GetRawGyroZ();
+
+    frc::SmartDashboard::PutNumber("angleMomentum",gyroData.rotationalRate);
     // frc::smartDashboard::PutNumber("yaw",gyro.GetYaw());
     // frc::smartDashboard::PutNumber("pitch",gyroData.rawPitch);
     // frc::smartDashboard::PutNumber("roll",gyroData.rawRoll);

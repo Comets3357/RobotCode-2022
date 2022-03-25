@@ -53,6 +53,7 @@ class Shooter{
         double turretConvertFromAngleToAbs(double angle);
         double turretConvertFromAbsToAngle(double abs);
         double turretAbsoluteToREV(double value);
+        double turretGyroOffset(double value);
         
         //init 
         void flyWheelInit();
@@ -70,6 +71,9 @@ class Shooter{
         void checkReadyShoot(ShooterData &shooterData);
         bool encoderPluggedInTurret(const ShooterData &shooterData);
         bool encoderPluggedInHood(const ShooterData &shooterData);
+        void saTurret(const RobotData &robotData, ShooterData &shooterData);
+        void turretControlTurn(float controlTurretDirection, const RobotData &robotData, ShooterData &shooterData);
+
 
         //FIXED SHOTS
         void outerLaunch(const RobotData &robotData);
@@ -87,13 +91,8 @@ class Shooter{
         //used to update rev encoder with abs encoder
         int tickCount;
         double validTargetTurretPos;
-
-        bool snapshotGot;
-        bool isLinedUp;
-        double direction;
-        double current;
-
         bool isTurretStatic;
+
         
      //Flywheel Lead
         rev::CANSparkMax flyWheelLead = rev::CANSparkMax(shooterWheelLeadID, rev::CANSparkMax::MotorType::kBrushless);

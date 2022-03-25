@@ -28,6 +28,10 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
             
     }
 
+    frc::SmartDashboard::PutNumber("Y", controllerData.sRYStick);
+    frc::SmartDashboard::PutNumber("X", controllerData.sRXStick);
+
+
 
     // controls:
 
@@ -58,7 +62,9 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
         controlData.rDrive = controllerData.pRYStick;
     }
 
-
+    if(controllerData.sRCenterBtnToggled){
+        controlData.staticTurret = !controlData.staticTurret;
+    }
 
     // manual:
 
@@ -116,6 +122,41 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
     controlData.sideWallShot = controllerData.sBBtnToggled && controlData.shift/*  && (controlData.mode == mode_teleop_sa) */;
     controlData.wallLaunchPadShot = controllerData.sXBtnToggled && controlData.shift/*  && (controlData.mode == mode_teleop_sa) */;
     controlData.cornerLaunchPadShot = controllerData.sYBtnToggled && controlData.shift /* && (controlData.mode == mode_teleop_sa) */;
+
+    //TURRET DIRECTION converts joystick (x,y) into degrees (0 is right) UNIT CIRCLE
+    double x = -controllerData.sRXStick;
+    double y = controllerData.sRYStick;
+
+    //check to make sure you're out of the deadzone
+    if(x > 0.1 || y > 0.1 || x < -0.1 || y < -0.1){
+        controlData.usingTurretDirection = true;
+        //does the conversions and accounts for different quadrants of the unit circle
+        if((x <0.1 && x > -0.1)  && y > 0){ //covers if @ up direction
+            controlData.saTurretDirectionController = 90;
+        }else if(x > 0 && y >= 0){ //covers 0 ~ 89 degrees
+            controlData.saTurretDirectionController = (std::atan(y/x)*(180/pi));
+        }else if((y >= 0 && x < 0) || (y < 0 && x < 0)){  //covers 91 ~ 269 degrees
+            controlData.saTurretDirectionController = (std::atan(y/x)*(180/pi)) + 180;
+        }else if((x <0.1 && x > -0.1) && y < 0){
+            controlData.saTurretDirectionController = 270;
+        }else if(y < 0 && x > 0){ //covers 271 ~ 359 degrees 
+            controlData.saTurretDirectionController = (std::atan(y/x)*(180/pi)) + 360;
+        }
+
+        
+        controlData.saTurretDirectionController = (controlData.saTurretDirectionController - 90);
+        if(controlData.saTurretDirectionController < 0){
+            controlData.saTurretDirectionController += 360;
+        }
+
+    } else{
+        controlData.usingTurretDirection = false;
+    }
+
+    //if we need 0 degrees to be up we can just add 90 to all these numbers right???
+    
+
+    
 
     
     // if(robotData.indexerData.indexerContents.front() == Cargo::cargo_Opponent){
