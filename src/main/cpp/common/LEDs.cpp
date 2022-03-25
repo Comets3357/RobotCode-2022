@@ -17,17 +17,19 @@ void LEDs::RobotPeriodic(const RobotData &robotData){
     } else if (robotData.controlData.mode == Mode::mode_teleop_sa){
         colorCode = 1; //teleop semiauto mode
     }
+
     char value[1] = {(char)colorCode};
-    //arduino.Write(value, 1);
-    if (lastColorCode != colorCode)
-    {
+
+    if (lastColorCode != colorCode){
         arduino.Write(value, 1);
-        frc::SmartDashboard::PutNumber("Idk", arduino.Write(value, 1));
     }
+
     lastColorCode = colorCode;
 
-
-    //prints the corresponding number of the color for the LEDs
+    frc::SmartDashboard::PutNumber("Bytes received", arduino.GetBytesReceived());
+    frc::SmartDashboard::PutNumber("Red", colors[0]);
+    frc::SmartDashboard::PutNumber("Green", colors[1]);
+    frc::SmartDashboard::PutNumber("Blue", colors[2]);
     frc::SmartDashboard::PutNumber("ColorCode for LEDs", colorCode);
     char colors[3];
     if (arduino.GetBytesReceived() >= 3)
@@ -41,8 +43,7 @@ void LEDs::RobotPeriodic(const RobotData &robotData){
     
 }
 
-void LEDs::DisbledPeriodic()
-{
+void LEDs::DisbledPeriodic(){
     char value[1] = {'0'};
     //arduino.Write(value, 1);
     if (lastColorCode != 0)
@@ -52,4 +53,5 @@ void LEDs::DisbledPeriodic()
     }
     lastColorCode = 0;
     colorCode = 0;
+    arduino.Reset();
 }

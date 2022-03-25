@@ -18,4 +18,5 @@ class LEDs {
 
         int colorCode = 6;
         int lastColorCode = 6;
+        char colors[12];
 };
