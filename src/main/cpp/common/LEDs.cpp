@@ -33,9 +33,11 @@ void LEDs::RobotPeriodic(const RobotData &robotData){
     if (arduino.GetBytesReceived() >= 3)
     {
         arduino.Read(colors,3);
+        arduino.Reset();
     }
 
     frc::SmartDashboard::PutRaw("colors", colors);
+    frc::SmartDashboard::PutNumber("red", (int)colors[0]);
     
 }
 
