@@ -40,12 +40,20 @@ static const int
 
 static const double
     //comp bot shooter hood positions
-    hoodabsOut = 0.0630,
-    hoodabsIn = 0.931,
+    hoodabsOut = 0.07,
+    hoodabsIn = 0.945,
     hoodrevOut = -38,
     hoodrevIn = 0,
     hoodAngleOut = 43,
     hoodAngleIn = 21,
+
+    //PRATLAS shooter hood positions
+    // hoodabsOut = 0.103,
+    // hoodabsIn = 0.98,
+    // hoodrevOut = -38,
+    // hoodrevIn = 0,
+    // hoodAngleOut = 43,
+    // hoodAngleIn = 21,
 
     //turret positions
     turretZeroDegrees = 0, 
@@ -58,16 +66,27 @@ static const double
     turretFullRotationAbs_CCW = 0.933, //0.91
     turretFullRotationAbs_C = 0.076; //0.05
 
+    //FOR PRATLAS
+    // turretZeroDegrees = 5, //15
+    // turretFullRotationDegrees = 535, //540
+    // turretMiddleDegrees = (turretFullRotationDegrees - turretZeroDegrees)/2,
+    // turretZeroRev = 87.5, //87.5
+    // turretFullRotationRev_CCW = 174.85, //174.85
+    // turretFullRotationRev_C = 0, //0
+    // turretZeroAbs = 0.479, //0.479
+    // turretFullRotationAbs_CCW = 0.91, //0.91
+    // turretFullRotationAbs_C = 0.05; //0.05
+
 
 //turret gyro offset
 static const float
     //at the the corresponding rate of rotation, offset the turret by an extra 20 degrees to account for the extra strength needed (centipetal acceleration?)
-    turretGyroOffset2 = 10,
+    turretGyroOffset2 = -50,
     turretGyroOffset1 = 0;
     
 static const double 
     //at certain rotational rate points add the speed offset above
-    rotationalRate2 = 100,
+    rotationalRate2 = 400,
     rotationalRate1 = 0;
 
 

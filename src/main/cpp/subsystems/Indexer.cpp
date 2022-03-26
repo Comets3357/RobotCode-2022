@@ -218,7 +218,7 @@ void Indexer::saBeltControl(const RobotData &robotData, IndexerData &indexerData
 
     if(robotData.controlData.saEjectBalls){ // if indexer is REVERSING (saEject or manual indexer backwards)
         indexerBelt.Set(-indexerShootingBeltSpeed);
-    } else if ((!pauseBelt(robotData, indexerData) && robotData.shooterData.readyShoot && robotData.controlData.saFinalShoot)|| (!getTopBeam() && !robotData.intakeData.intakeIdle)){ // if you're shooting or (BB3 is not  and the intake isn't idle)
+    } else if ((/**!pauseBelt(robotData, indexerData) &&**/ robotData.shooterData.readyShoot && robotData.controlData.saFinalShoot)|| (!getTopBeam() && !robotData.intakeData.intakeIdle)){ // if you're shooting or (BB3 is not  and the intake isn't idle)
         if(robotData.controlData.saFinalShoot){
             indexerBelt.Set(indexerShootingBeltSpeed);
         } else {

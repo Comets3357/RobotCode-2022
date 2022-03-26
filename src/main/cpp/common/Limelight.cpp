@@ -58,14 +58,15 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     frc::SmartDashboard::PutNumber("distance offset", robotData.limelightData.distanceOffset/12);
     //frc::SmartDashboard::PutNumber("desired turret angle", limelightData.desiredTurretAngle);
     frc::SmartDashboard::PutNumber("desired hood", robotData.limelightData.desiredHoodPos);
+    frc::SmartDashboard::PutNumber("desired hood roller", robotData.limelightData.desiredHoodRollerVel);
     //frc::SmartDashboard::PutNumber("final correct distance", robotData.limelightData.correctDistance);
 
-    if(robotData.controlData.mDistanceOffsetAdd){
-        limelightData.distanceOffset +=3; //adds 3 inches everytime it's clicked
-    }else if(robotData.controlData.mDistanceOffsetSubtract){
-        limelightData.distanceOffset -=3; //adds 3 inches everytime it's clicked
+    // if(robotData.controlData.mDistanceOffsetAdd){
+    //     limelightData.distanceOffset +=3; //adds 3 inches everytime it's clicked
+    // }else if(robotData.controlData.mDistanceOffsetSubtract){
+    //     limelightData.distanceOffset -=3; //adds 3 inches everytime it's clicked
 
-    }
+    // }
 }
 
 /**
@@ -171,9 +172,18 @@ double Limelight::getWheelVelocity(VisionLookup &visionLookup, LimelightData &li
     limelightData.upperVal = limelightData.lowerVal +1; //upper value in ft
 
     //if either of the int values are higher than the highest lookup table value,
-    //set the values to the highest lookup table value
+    //set the values to the highest lookup table value 
+    //This logic??
+    if(limelightData.lowerVal < 5){
+        limelightData.lowerVal = 5;
+    }
+
+    if(limelightData.upperVal < 5){
+        limelightData.upperVal = 5;
+    }
+
     if(limelightData.lowerVal > visionLookup.highestVelocity()){
-        limelightData.lowerVal = visionLookup.highestVelocity();
+        limelightData.upperVal = visionLookup.highestVelocity();
     }
 
     if(limelightData.upperVal > visionLookup.highestVelocity()){
@@ -201,7 +211,7 @@ double Limelight::getWheelVelocity(VisionLookup &visionLookup, LimelightData &li
 
     //multiply the difference in the distance and floored value by the slope to get desired velocity for that small distance 
     //then add that to the desired position of the lower floored value
-    return (desiredSlope*(orignalDistance - limelightData.lowerVal*12)+limelightData.lowerValVel) + 50;
+    return (desiredSlope*(orignalDistance - limelightData.lowerVal*12)+limelightData.lowerValVel);
 
 }
 
@@ -215,8 +225,10 @@ double Limelight::getHoodRollerVel(LimelightData &limelightData, const RobotData
         limelightData.hoodFlywheelRatio = 3;
     }
 
+
     double flywheelVel = robotData.limelightData.desiredVel;
     return flywheelVel*limelightData.hoodFlywheelRatio;
+    //return flywheelVel*3.5;
 }
 
 /**
