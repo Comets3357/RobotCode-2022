@@ -247,8 +247,7 @@ void Climb::runSequence(const RobotData &robotData, ClimbData &climbData)
     if (executeSequence && climbData.bar < 4)
     { //checks if you want to run the sequence, and also if you're already at bar 4, then you can't run it
         if (stage == 0) ChangeElevatorSpeed(elevatorSpeed, 1);
-        else if (stage == 1) RunArmsAndElevatorToPos(0,1,0,0,1); //Elevator goes down to latch on 2nd/3rd bar
-        //else if (stage == 1) RunElevatorToPos(0,1,1);
+        else if (stage == 1) RunArmsAndElevatorToPos(0,1,0,0,1);
         else if (stage == 2) ChangeElevatorSpeed(elevatorSpeed, 1);
         else if (stage == 3) {climbElevator_pidController.SetReference(-2, rev::CANSparkMax::ControlType::kPosition, 1); stage++;}
         //else if (stage == 4) RunElevatorToPos(0,1,1);
@@ -297,6 +296,18 @@ void Climb::runSequence(const RobotData &robotData, ClimbData &climbData)
             climbArms.Set(0);
             climbElevator.Set(0);
         }
+    }
+}
+
+void Climb::TopTransfer()
+{
+    climbElevator_pidController.SetReference(-200, rev::CANSparkMax::ControlType::kPosition, 1);
+    climbElevator.Set(0);
+
+    if (angle < -35 && angularRate > -5)
+    {
+        climbArms.Set(0);
+        RunElevatorToPos(80,1,1);
     }
 }
 
