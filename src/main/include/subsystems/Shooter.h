@@ -37,6 +37,7 @@ class Shooter{
         void DisabledPeriodic(const RobotData &robotData, ShooterData &shooterData);
         void EnabledInit(ControlData &controlData, ShooterData &shooterData);
         void TestPeriodic(const RobotData &robotData, ShooterData &shooterData);
+        void TestInit();
     
     private:
         void manual(const RobotData &robotData, ShooterData &shooterData);
@@ -68,10 +69,7 @@ class Shooter{
 
         //checks
         void checkReadyShoot(ShooterData &shooterData);
-        bool encoderPluggedInTurret(const ShooterData &shooterData);
-        bool encoderPluggedInHood(const ShooterData &shooterData);
-        void saTurret(const RobotData &robotData, ShooterData &shooterData);
-        void turretControlTurn(float controlTurretDirection, const RobotData &robotData, ShooterData &shooterData);
+        bool encoderPluggedIn();
 
 
         //FIXED SHOTS

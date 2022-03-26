@@ -12,6 +12,7 @@ void Robot::RobotInit()
     indexer.RobotInit();
     shooter.RobotInit(robotData.shooterData);
     climb.RobotInit();
+    
 }
 
 void Robot::RobotPeriodic()
@@ -20,7 +21,6 @@ void Robot::RobotPeriodic()
     limelight.RobotPeriodic(robotData, robotData.limelightData, visionLookup);
     colorSensor.RobotPeriodic(robotData);
     visionLookup.RobotPeriodic(robotData, robotData.visionLookupData);
-    LED.RobotPeriodic(robotData);
     jetson.RobotPeriodic();
 
     // frc::SmartDashboard::PutNumber("mode", robotData.controlData.mode);
@@ -53,6 +53,7 @@ void Robot::AutonomousPeriodic()
 {
     timer.EnabledPeriodic(robotData.timerData);
     auton.AutonomousPeriodic(robotData, robotData.autonData, robotData.controlData);
+    LED.RobotPeriodic(robotData,robotData.ledsData);
 }
 
 void Robot::TeleopInit()
@@ -66,6 +67,7 @@ void Robot::TeleopPeriodic()
 {
     timer.EnabledPeriodic(robotData.timerData);
     controller.TeleopPeriodic(robotData, robotData.controllerData, robotData.controlData);
+    LED.RobotPeriodic(robotData,robotData.ledsData);
 }
 
 void Robot::DisabledInit()
@@ -96,13 +98,15 @@ void Robot::TestInit(){
     //shooter.RobotInit();
     climb.RobotInit();
     climb.TestInit(robotData.climbData);
+    intake.TestInit();
+    shooter.TestInit();
 }
 
 //BENCH TEST CODE
 void Robot::TestPeriodic(){
     //runs all of the test functions (and one controller function) so things actually run
     controller.TestPeriodic(robotData, robotData.controllerData, robotData.controlData);
-    benchTest.TestPeriodic(robotData, robotData.benchTestData);
+    benchTest.TestPeriodic(robotData, robotData.benchTestData, robotData.controlData);
 
     climb.TestPeriodic(robotData, robotData.climbData);
     drivebase.TestPeriodic(robotData, robotData.drivebaseData);

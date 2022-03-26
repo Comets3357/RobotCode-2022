@@ -15,6 +15,9 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     }else{
         table->PutNumber("pipeline", 0);
     }
+    //table->PutNumber("ledMode", 0);
+    //table->PutNumber("ledMode", 0);
+
     
     
 
@@ -30,17 +33,11 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
 
     //the desired hood and velocity for shooting from anywhere
     limelightData.desiredHoodPos = getHoodPOS(visionLookup, limelightData, robotData); //returns an angle
-    limelightData.desiredVel = getWheelVelocity(visionLookup, limelightData, robotData); //returns rpm
-    limelightData.desiredHoodRollerVel = getHoodRollerVel(limelightData, robotData);
-
-    //TURRET 
-    limelightData.turretDifference = -robotData.limelightData.angleOffset;
-    limelightData.desiredTurretAngle = getTurretTurnAngle(limelightData, robotData); //position to go to to shoot
+    limelightData.desiredVel = getWheelVelocity(visionLookup, limelightData, robotData) - 35; //returns rpm
     
     //printing data to the dashboard
-    frc::SmartDashboard::PutNumber("distance offset", robotData.limelightData.distanceOffset/12);
-    frc::SmartDashboard::PutNumber("desired turret angle", limelightData.desiredTurretAngle);
-    frc::SmartDashboard::PutNumber("turret turn angle", limelightData.turretDifference);
+    //frc::SmartDashboard::PutNumber("distance offset", robotData.limelightData.distanceOffset/12);
+    //frc::SmartDashboard::PutNumber("angleOffset", limelightData.angleOffset);
     //frc::SmartDashboard::PutNumber("desired hood", robotData.limelightData.desiredHoodPos);
     //frc::SmartDashboard::PutNumber("final correct distance", robotData.limelightData.correctDistance);
 }
@@ -84,6 +81,7 @@ void Limelight::shooterOffset(const RobotData &robotData, LimelightData &limelig
     //calculate the angle between the shooter since it is different from that given by the limelight
     limelightData.angleOffset = (std::asin(xValueOffset/limelightData.distanceOffset));
     limelightData.angleOffset *= (180/pi);
+    frc::SmartDashboard::PutNumber("limelight angle diff real", limelightData.angleOffset);
 }
 
 /**
@@ -178,7 +176,7 @@ double Limelight::getWheelVelocity(VisionLookup &visionLookup, LimelightData &li
 
     //multiply the difference in the distance and floored value by the slope to get desired velocity for that small distance 
     //then add that to the desired position of the lower floored value
-    return (desiredSlope*(orignalDistance - limelightData.lowerVal*12)+limelightData.lowerValVel) ;
+    return (desiredSlope*(orignalDistance - limelightData.lowerVal*12)+limelightData.lowerValVel) - 15;
 
 }
 

@@ -21,18 +21,18 @@ void Jetson::RobotPeriodic()
 
     table->PutNumber("Alliance Jetson", currentAlliance);
     table->PutNumber("blue h min", 90); // THIS CHANGES AT COMPS
-    table->PutNumber("blue h max", 110); // THIS CHANGES AT COMPS
-    table->PutNumber("blue s min", 180); // THIS CHANGES AT COMPS
+    table->PutNumber("blue h max", 105); // THIS CHANGES AT COMPS
+    table->PutNumber("blue s min", 120); // THIS CHANGES AT COMPS
     table->PutNumber("blue s max", 255); // THIS CHANGES AT COMPS
-    table->PutNumber("blue v min", 50); // THIS CHANGES AT COMPS
+    table->PutNumber("blue v min", 60); // THIS CHANGES AT COMPS
     table->PutNumber("blue v max", 255); // THIS CHANGES AT COMPS
     table->PutNumber("red h lower min", 0); // THIS CHANGES AT COMPS
-    table->PutNumber("red h lower max", 12); // THIS CHANGES AT COMPS
-    table->PutNumber("red h upper min", 168); // THIS CHANGES AT COMPS
+    table->PutNumber("red h lower max", 9); // THIS CHANGES AT COMPS
+    table->PutNumber("red h upper min", 175); // THIS CHANGES AT COMPS
     table->PutNumber("red h upper max", 180); // THIS CHANGES AT COMPS
-    table->PutNumber("red s min", 120); // THIS CHANGES AT COMPS
+    table->PutNumber("red s min", 160); // THIS CHANGES AT COMPS
     table->PutNumber("red s max", 255); // THIS CHANGES AT COMPS
-    table->PutNumber("red v min", 58); // THIS CHANGES AT COMPS
+    table->PutNumber("red v min", 0); // THIS CHANGES AT COMPS
     table->PutNumber("red v max", 255); // THIS CHANGES AT COMPS
     table->PutNumber("realsense center x", 0);
     table->PutNumber("realsense center y", 0);
@@ -41,8 +41,8 @@ void Jetson::RobotPeriodic()
     table->PutNumber("ball radius", 4.75);
     table->PutNumber("realsense height", 34.5);
     table->PutNumber("realsense angle", 26);
-    table->PutNumber("red erosion", 4); // THIS CHANGES AT COMPS
-    table->PutNumber("red dilation", 8); // THIS CHANGES AT COMPS
-    table->PutNumber("blue erosion", 3); // THIS CHANGES AT COMPS
+    table->PutNumber("red erosion", 2); // THIS CHANGES AT COMPS
+    table->PutNumber("red dilation", 5); // THIS CHANGES AT COMPS
+    table->PutNumber("blue erosion", 4); // THIS CHANGES AT COMPS
     table->PutNumber("blue dilation", 5); // THIS CHANGES AT COMPS
 }

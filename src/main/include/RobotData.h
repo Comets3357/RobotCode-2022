@@ -40,4 +40,6 @@ struct RobotData
     IndexerData indexerData;
     ClimbData climbData;
     ShooterData shooterData;
+    LEDsData ledsData;
+    
 };
