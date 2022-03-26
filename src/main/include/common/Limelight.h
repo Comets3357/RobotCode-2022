@@ -47,6 +47,8 @@ struct LimelightData
     std::deque<double> distances;
     double avgDistance = 0;
 
+    float hoodFlywheelRatio;
+
 };
 
 class Limelight

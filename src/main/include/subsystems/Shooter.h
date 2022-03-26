@@ -65,7 +65,6 @@ class Shooter{
         double getWheelVel();
         void setShooterWheel(double speed);
         void setTurret_Pos(double pos, ShooterData &shooterData);
-        void saTurret(const RobotData &robotData, ShooterData &shooterData);
 
         //checks
         void checkReadyShoot(ShooterData &shooterData);

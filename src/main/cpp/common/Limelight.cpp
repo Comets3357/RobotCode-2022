@@ -19,11 +19,15 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     limelightData.distanceToTarget = distanceToTarget(); //the distance
 
     //turns off limelight if not shooting
-    if(robotData.controlData.shootMode == shootMode_none){
-        table->PutNumber("pipeline", 1);
-    }else{
-        table->PutNumber("pipeline", 0);
-    }
+    // if(robotData.controlData.shootMode == shootMode_none){
+    //     table->PutNumber("pipeline", 1);
+    // }else{
+    //     table->PutNumber("pipeline", 0);
+    // }
+
+    //table->PutNumber("ledMode", 0);
+    table->PutNumber("pipeline", 0);
+
     
     
 
@@ -52,10 +56,16 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     
     //printing data to the dashboard
     frc::SmartDashboard::PutNumber("distance offset", robotData.limelightData.distanceOffset/12);
-    frc::SmartDashboard::PutNumber("desired turret angle", limelightData.desiredTurretAngle);
-    frc::SmartDashboard::PutNumber("turret turn angle", limelightData.turretDifference);
-    //frc::SmartDashboard::PutNumber("desired hood", robotData.limelightData.desiredHoodPos);
+    //frc::SmartDashboard::PutNumber("desired turret angle", limelightData.desiredTurretAngle);
+    frc::SmartDashboard::PutNumber("desired hood", robotData.limelightData.desiredHoodPos);
     //frc::SmartDashboard::PutNumber("final correct distance", robotData.limelightData.correctDistance);
+
+    if(robotData.controlData.mDistanceOffsetAdd){
+        limelightData.distanceOffset +=3; //adds 3 inches everytime it's clicked
+    }else if(robotData.controlData.mDistanceOffsetSubtract){
+        limelightData.distanceOffset -=3; //adds 3 inches everytime it's clicked
+
+    }
 }
 
 /**
@@ -191,7 +201,7 @@ double Limelight::getWheelVelocity(VisionLookup &visionLookup, LimelightData &li
 
     //multiply the difference in the distance and floored value by the slope to get desired velocity for that small distance 
     //then add that to the desired position of the lower floored value
-    return (desiredSlope*(orignalDistance - limelightData.lowerVal*12)+limelightData.lowerValVel) ;
+    return (desiredSlope*(orignalDistance - limelightData.lowerVal*12)+limelightData.lowerValVel) + 50;
 
 }
 
@@ -199,8 +209,14 @@ double Limelight::getWheelVelocity(VisionLookup &visionLookup, LimelightData &li
  * @return the desired hood roller velocity based off of the desired flywheel velocity
  */
 double Limelight::getHoodRollerVel(LimelightData &limelightData, const RobotData &robotData){
+    if(robotData.limelightData.distanceOffset >= 15){
+        limelightData.hoodFlywheelRatio = 3.5;
+    }else{
+        limelightData.hoodFlywheelRatio = 3;
+    }
+
     double flywheelVel = robotData.limelightData.desiredVel;
-    return flywheelVel*hoodFlywheelRatio;
+    return flywheelVel*limelightData.hoodFlywheelRatio;
 }
 
 /**

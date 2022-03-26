@@ -68,16 +68,20 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
 
     // manual:
 
+    //ADD CONTROLLER BIND
+    controlData.mDistanceOffsetAdd;
+    controlData.mDistanceOffsetSubtract;
+
     
     controlData.mIntakeDown = controllerData.sRBumper /* && (controlData.mode == mode_teleop_manual) */;
     controlData.mIntakeUp = controllerData.sRBumper && controlData.shift /* && (controlData.mode == mode_teleop_manual) */;
     controlData.mIntakeRollersIn = controllerData.sRTrigger > 0.5 /* && (controlData.mode == mode_teleop_manual) */;
     controlData.mIntakeRollersOut = controllerData.sRTrigger > 0.5 && controlData.shift /* && (controlData.mode == mode_teleop_manual) */;
     
-    controlData.mZeroHood = controllerData.sLStickBtn /* && (controlData.mode == mode_teleop_manual) */;
-    controlData.mZeroTurret = controllerData.sRStickBtn /* && (controlData.mode == mode_teleop_manual) */;
-    controlData.mHood = controllerData.sLYStick/*  && (controlData.mode == mode_teleop_manual) */;
-    controlData.mTurret = controllerData.sRXStick /* && (controlData.mode == mode_teleop_manual) */;
+    controlData.mZeroHood = controllerData.sRStickBtn /* && (controlData.mode == mode_teleop_manual) */;
+    controlData.mZeroTurret = controllerData.sLStickBtn /* && (controlData.mode == mode_teleop_manual) */;
+    controlData.mHood = controllerData.sRYStick/*  && (controlData.mode == mode_teleop_manual) */;
+    controlData.mTurret = controllerData.sLXStick /* && (controlData.mode == mode_teleop_manual) */;
     controlData.mShooterWheelForward = controllerData.sXBtn /* && (controlData.mode == mode_teleop_manual) */;
     controlData.mShooterWheelBackward = controllerData.sXBtn && controlData.shift/*  && (controlData.mode == mode_teleop_manual) */;
 
@@ -124,8 +128,8 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
     controlData.cornerLaunchPadShot = controllerData.sYBtnToggled && controlData.shift /* && (controlData.mode == mode_teleop_sa) */;
 
     //TURRET DIRECTION converts joystick (x,y) into degrees (0 is right) UNIT CIRCLE
-    double x = -controllerData.sRXStick;
-    double y = controllerData.sRYStick;
+    double x = -controllerData.sLXStick;
+    double y = controllerData.sLYStick;
 
     //check to make sure you're out of the deadzone
     if(x > 0.1 || y > 0.1 || x < -0.1 || y < -0.1){
