@@ -7,9 +7,10 @@ struct LEDsData {
     int ColorData = 0;
 };
 
-class LEDs {
+class Arduino {
     public:
         void RobotPeriodic(const RobotData &robotData, LEDsData &ledData);
+        void DisabledPeriodic();
 
     private:
         //in constructor port, deviceaddress

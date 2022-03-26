@@ -50,9 +50,8 @@ private:
     VisionLookup visionLookup{};
     OtherComponents otherComponents{};
     Timer timer{};
-    ColorSensor colorSensor{};
     Auton auton{};
-    LEDs LED{};
+    Arduino arduino{};
     BenchTest benchTest{};
     Jetson jetson{};
     
