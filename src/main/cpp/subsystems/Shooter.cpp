@@ -691,11 +691,3 @@ void Shooter::checkTurretDeadStop(ShooterData &shooterData){
 void Shooter::DisabledPeriodic(const RobotData &robotData, ShooterData &shooterData){
     updateData(robotData, shooterData);
 }
-
-/* CHECKLIST FOR TURRET BENCH TEST
-- PID mode
-- rotate far enough that it actually makes a difference
-- automatic mode?
-- increment speeds?
-- keep up with current upgrade shooter branch? just like check if every day or something?
-- idk? */

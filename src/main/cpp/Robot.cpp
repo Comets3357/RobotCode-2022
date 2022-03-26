@@ -89,6 +89,7 @@ void Robot::TestInit(){
     frc::LiveWindow::SetEnabled(false); // to block their weird dashboard thing
 
     gyro.RobotInit();
+    benchTest.TestInit(robotData.benchTestData);
 
     drivebase.RobotInit();
     intake.RobotInit();
