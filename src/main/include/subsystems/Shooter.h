@@ -19,6 +19,7 @@ struct RobotData;
 struct ShooterData
 {
     bool readyShoot;
+    bool finalReject = false;
     float currentTurretAngle;
     
     //Bench test
@@ -54,6 +55,8 @@ class Shooter{
         double turretConvertFromAbsToAngle(double abs);
         double turretAbsoluteToREV(double value);
         double turretGyroOffset(double value);
+        double getFieldRelativeTurretAngle(const RobotData &robotData, ShooterData &shooterData);
+
         
         //init 
         void flyWheelInit();
@@ -79,6 +82,11 @@ class Shooter{
         void innerLaunch(const RobotData &robotData);
         void wall(const RobotData &robotData);
         void fender(const RobotData &robotData);
+
+        void reject(const RobotData &robotData, ShooterData &shooterData);
+        bool rejectInitialized = false;
+        int desiredAngle;
+
 
         //bench test
         bool encoderInRange(const ShooterData &shooterData);

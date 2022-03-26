@@ -184,7 +184,12 @@ void Shooter::RobotPeriodic(const RobotData &robotData, ShooterData &shooterData
 
 void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
 
-    //updates rev encoder if abs encoder is working
+    // for reject code
+    if(!robotData.indexerData.autoRejectTop){
+        rejectInitialized = false;
+        shooterData.finalReject = false;
+        desiredAngle = 180;
+    }
 
     saTurret(robotData, shooterData);
     //if nothing is happening then update the isTurretStatic value based on the button control
@@ -263,6 +268,9 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
         }
     
 //FIXED SHOTS 
+    }else if(robotData.indexerData.autoRejectTop){
+        reject(robotData, shooterData);
+        isTurretStatic = false;
     }else if(robotData.controlData.shootMode == shootMode_cornerLaunchPad){ //FROM THE CLOSER LAUNCH PAD
         innerLaunch(robotData);
         checkReadyShoot(shooterData);
@@ -478,6 +486,15 @@ double Shooter::turretGyroOffset(double value){
 }
 
 /**
+ * @return the angle of the turret relative to the field, 0-360. 
+ * 0 is opponent wall, 180 is our wall, CCW pos
+ **/
+double Shooter::getFieldRelativeTurretAngle(const RobotData &robotData, ShooterData &shooterData){
+    // 90 gets turret to robot on the same zero as robot to field
+    return ((int)(shooterData.currentTurretAngle + 90 + robotData.drivebaseData.odometryYaw) % 360);
+}
+
+/**
  * @return sets the turret to turn to face the target when shooting USING POSITIONS
  * @param pos is the desired angle position we want to turn to IN DEGREES
  * TURRET
@@ -564,6 +581,43 @@ void Shooter::fender(const RobotData &robotData)
         setShooterWheel(fenderVel_Low);
         
         readyShootLimit = fenderVel_Low - 30;
+    }
+}
+
+void Shooter::reject(const RobotData &robotData, ShooterData &shooterData){
+    shooterHood_pidController.SetReference(hoodrevOut, rev::CANSparkMaxLowLevel::ControlType::kPosition);
+    setShooterWheel(1000);
+    readyShootLimit = 1000;
+
+    if(!rejectInitialized){
+        if(getFieldRelativeTurretAngle(robotData, shooterData) < desiredAngle + 2 && getFieldRelativeTurretAngle(robotData, shooterData) > desiredAngle -2){
+            if(robotData.limelightData.validTarget){
+                desiredAngle = 0;
+                rejectInitialized = true;
+            } else {
+                desiredAngle = 180;
+                rejectInitialized = true;
+            }
+        } else {
+            turretControlTurn(desiredAngle, robotData, shooterData);
+        }
+    } else { // you've figured out which side you're on
+
+        turretControlTurn(desiredAngle, robotData, shooterData);
+        if(getWheelVel() > readyShootLimit - 30 && getWheelVel() < readyShootLimit + 30){
+            shooterData.readyShoot = true;
+        }
+
+        //you don't see a valid target
+        if(desiredAngle == 180){
+            if(!robotData.limelightData.validTarget && getFieldRelativeTurretAngle(robotData, shooterData) < desiredAngle + 2 && getFieldRelativeTurretAngle(robotData, shooterData) > desiredAngle - 2){
+                shooterData.finalReject = true;
+            }
+        } else if(desiredAngle == 0){
+            if(!robotData.limelightData.validTarget && getFieldRelativeTurretAngle(robotData, shooterData) < desiredAngle + 2 || getFieldRelativeTurretAngle(robotData, shooterData) > desiredAngle - 2 + 360){
+                shooterData.finalReject = true;
+            }
+        }
     }
 }
 
