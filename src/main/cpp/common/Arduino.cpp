@@ -1,9 +1,9 @@
 #include <frc/smartdashboard/SmartDashboard.h>
-#include "common/LEDs.h"
+#include "common/Arduino.h"
 #include "Robot.h"
 #include <time.h>
 
-void LEDs::RobotPeriodic(const RobotData &robotData){
+void Arduino::RobotPeriodic(const RobotData &robotData){
     // this makes the robot LEDs be different colors depending on the mode
     // writes the value of colorCode to device address 1 (the left arduino), which then color codes the LEDs based upon the value
     if (robotData.shooterData.readyShoot){
@@ -26,32 +26,25 @@ void LEDs::RobotPeriodic(const RobotData &robotData){
 
     lastColorCode = colorCode;
 
-    frc::SmartDashboard::PutNumber("Bytes received", arduino.GetBytesReceived());
-    frc::SmartDashboard::PutNumber("Red", colors[0]);
-    frc::SmartDashboard::PutNumber("Green", colors[1]);
-    frc::SmartDashboard::PutNumber("Blue", colors[2]);
-    frc::SmartDashboard::PutNumber("ColorCode for LEDs", colorCode);
-    char colors[3];
-    if (arduino.GetBytesReceived() >= 3)
-    {
-        arduino.Read(colors,3);
-        arduino.Reset();
-    }
+    frc::SmartDashboard::PutNumber("Arduino bytes received", arduino.GetBytesReceived());
+    frc::SmartDashboard::PutNumber("Arduino colorCode for LEDs", colorCode);
+    frc::SmartDashboard::PutBoolean("isDisabled", false);
 
-    frc::SmartDashboard::PutRaw("colors", colors);
-    frc::SmartDashboard::PutNumber("red", (int)colors[0]);
-    
+    if (arduino.GetBytesReceived() >= 1){
+        arduino.Read(colors,1);
+        arduino.Reset();
+
+    }
 }
 
-void LEDs::DisbledPeriodic(){
+void Arduino::DisbledPeriodic(){
     char value[1] = {'0'};
-    //arduino.Write(value, 1);
+    arduino.Write(value, 1);
     if (lastColorCode != 0)
     {
         arduino.Write(value, 1);
-        frc::SmartDashboard::PutNumber("Idk", arduino.Write(value, 1));
     }
     lastColorCode = 0;
     colorCode = 0;
-    arduino.Reset();
+    frc::SmartDashboard::PutBoolean("isDisabled", true);
 }

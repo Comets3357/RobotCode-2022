@@ -4,10 +4,10 @@
 #include <frc/SerialPort.h>
 
 struct LEDsData {
-    
+    int ColorData = 0;
 };
 
-class LEDs {
+class Arduino {
     public:
         void RobotPeriodic(const RobotData &robotData);
         void DisbledPeriodic();
@@ -18,5 +18,5 @@ class LEDs {
 
         int colorCode = 6;
         int lastColorCode = 6;
-        char colors[12];
+        char colors[1];
 };
