@@ -7,7 +7,8 @@
 #include "common/Limelight.h"
 #include "common/VisionLookup.h"
 #include "common/Timer.h"
-#include "common/Arduino.h"
+#include "common/LEDs.h"
+#include "common/ColorSensor.h"
 #include "common/BenchTest.h"
 
 #include "auton/Auton.h"
@@ -29,6 +30,7 @@ struct RobotData
     LimelightData limelightData;
     VisionLookupData visionLookupData;
     TimerData timerData;
+    ColorSensorData colorSensorData;
     BenchTestData benchTestData;
 
     AutonData autonData;
@@ -38,5 +40,6 @@ struct RobotData
     IndexerData indexerData;
     ClimbData climbData;
     ShooterData shooterData;
-    ArduinoData arduinoData;
+    LEDsData ledsData;
+    
 };

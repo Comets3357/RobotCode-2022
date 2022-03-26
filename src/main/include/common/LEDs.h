@@ -5,14 +5,13 @@
 
 struct RobotData;
 
-struct ArduinoData {
+struct LEDsData {
     int ColorData = 0;
 };
 
-class Arduino {
+class LEDs {
     public:
-        void RobotPeriodic(const RobotData &robotData, ArduinoData &arduinoData);
-        void DisabledPeriodic();
+        void RobotPeriodic(const RobotData &robotData, LEDsData &ledData);
 
     private:
         //in constructor port, deviceaddress

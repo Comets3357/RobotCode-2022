@@ -19,7 +19,8 @@
 #include "common/Limelight.h"
 #include "common/VisionLookup.h"
 #include "common/OtherComponents.h"
-#include "common/Arduino.h"
+#include "common/ColorSensor.h"
+#include "common/LEDs.h"
 #include "common/BenchTest.h"
 #include "common/Jetson.h"
 
@@ -49,8 +50,9 @@ private:
     VisionLookup visionLookup{};
     OtherComponents otherComponents{};
     Timer timer{};
+    ColorSensor colorSensor{};
     Auton auton{};
-    Arduino arduino{};
+    LEDs LED{};
     BenchTest benchTest{};
     Jetson jetson{};
     

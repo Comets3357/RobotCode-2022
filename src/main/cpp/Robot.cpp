@@ -19,6 +19,7 @@ void Robot::RobotPeriodic()
 {
     gyro.RobotPeriodic(robotData.gyroData);
     limelight.RobotPeriodic(robotData, robotData.limelightData, visionLookup);
+    colorSensor.RobotPeriodic(robotData);
     visionLookup.RobotPeriodic(robotData, robotData.visionLookupData);
     jetson.RobotPeriodic();
 
@@ -52,7 +53,7 @@ void Robot::AutonomousPeriodic()
 {
     timer.EnabledPeriodic(robotData.timerData);
     auton.AutonomousPeriodic(robotData, robotData.autonData, robotData.controlData);
-    arduino.RobotPeriodic(robotData, robotData.arduinoData);
+    LED.RobotPeriodic(robotData,robotData.ledsData);
 }
 
 void Robot::TeleopInit()
@@ -66,7 +67,7 @@ void Robot::TeleopPeriodic()
 {
     timer.EnabledPeriodic(robotData.timerData);
     controller.TeleopPeriodic(robotData, robotData.controllerData, robotData.controlData);
-    arduino.RobotPeriodic(robotData, robotData.arduinoData);
+    LED.RobotPeriodic(robotData,robotData.ledsData);
 }
 
 void Robot::DisabledInit()
@@ -83,7 +84,6 @@ void Robot::DisabledPeriodic()
     shooter.DisabledPeriodic(robotData, robotData.shooterData);
     intake.DisabledPeriodic(robotData, robotData.intakeData);
     indexer.DisabledPeriodic(robotData, robotData.indexerData);
-    arduino.DisabledPeriodic();
 }
 
 

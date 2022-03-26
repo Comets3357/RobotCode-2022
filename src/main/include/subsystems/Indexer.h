@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Constants.h"
+#include "common/ColorSensor.h"
 
 #include <frc/DriverStation.h>
 #include <rev/CANSparkMax.h>
