@@ -15,59 +15,79 @@ static const int
 
 static const double
     //practice bot
-    absOut = 0.485,
-    absIn = 0.616,
-    revOut = 6.4,
-    revIn = 0;
+    // absOut = 0.485,
+    // absIn = 0.616,
+    // revOut = 6.4,
+    // revIn = 0;
 
     //comp bot intake pivot positions
-    // absOut = 0.465,
-    // absIn = 0.605,
-    // revOut = 6.14,
-    // revIn = 0;
+    absOut = 0.465,
+    absIn = 0.605,
+    revOut = 6.14,
+    revIn = 0;
 
 //indexer
 static const int
     indexerBeltsID = 22,
     indexerWheelID = 21;
 
-// shooter
+// shooter IDs
 static const int
     shooterWheelLeadID = 31,
-    shooterHoodID = 32,
-    shooterTurretID = 34,
-    hoodRollerID = 33;
+    shooterHoodID = 33, 
+    shooterTurretID = 34, 
+    hoodRollerID = 32; 
 
 static const double
     //comp bot shooter hood positions
-    hoodabsOut = 0.054,
-    hoodabsIn = 0.952,
+    hoodabsOut = 0.07,
+    hoodabsIn = 0.945,
     hoodrevOut = -38,
     hoodrevIn = 0,
     hoodAngleOut = 43,
     hoodAngleIn = 21,
 
+    //PRATLAS shooter hood positions
+    // hoodabsOut = 0.103,
+    // hoodabsIn = 0.98,
+    // hoodrevOut = -38,
+    // hoodrevIn = 0,
+    // hoodAngleOut = 43,
+    // hoodAngleIn = 21,
+
     //turret positions
-    turretZeroDegrees = 5, //15
-    turretFullRotationDegrees = 535, //540
+    turretZeroDegrees = 0, 
+    turretFullRotationDegrees = 540, 
     turretMiddleDegrees = (turretFullRotationDegrees - turretZeroDegrees)/2,
-    turretZeroRev = 87.5, //87.5
+    turretZeroRev = 85.74, //87.5
     turretFullRotationRev_CCW = 174.85, //174.85
     turretFullRotationRev_C = 0, //0
-    turretZeroAbs = 0.479, //0.479
-    turretFullRotationAbs_CCW = 0.91, //0.91
-    turretFullRotationAbs_C = 0.05, //0.05
+    turretZeroAbs = 0.499, //0.479
+    turretFullRotationAbs_CCW = 0.933, //0.91
+    turretFullRotationAbs_C = 0.076; //0.05
 
-    hoodFlywheelRatio = 2.75;
+    //FOR PRATLAS
+    // turretZeroDegrees = 5, //15
+    // turretFullRotationDegrees = 535, //540
+    // turretMiddleDegrees = (turretFullRotationDegrees - turretZeroDegrees)/2,
+    // turretZeroRev = 87.5, //87.5
+    // turretFullRotationRev_CCW = 174.85, //174.85
+    // turretFullRotationRev_C = 0, //0
+    // turretZeroAbs = 0.479, //0.479
+    // turretFullRotationAbs_CCW = 0.91, //0.91
+    // turretFullRotationAbs_C = 0.05; //0.05
+
 
 //turret gyro offset
 static const float
-    turretGyroOffsetMax = 10,
-    turretGyroOffsetMin = 0;
+    //at the the corresponding rate of rotation, offset the turret by an extra 20 degrees to account for the extra strength needed (centipetal acceleration?)
+    turretGyroOffset2 = -50,
+    turretGyroOffset1 = 0;
     
 static const double 
-    rotationalRateMax = 100,
-    rotationalRateMin = 0;
+    //at certain rotational rate points add the speed offset above
+    rotationalRate2 = 400,
+    rotationalRate1 = 0;
 
 
 //Set shooting hood positions and velocity 

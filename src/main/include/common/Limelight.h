@@ -44,8 +44,10 @@ struct LimelightData
     double distanceOffset;
     double angleOffset;
 
-    //std::deque<double> distances;
-    //double avgDistance = 0;
+    std::deque<double> distances;
+    double avgDistance = 0;
+
+    float hoodFlywheelRatio;
 
 };
 
@@ -65,6 +67,8 @@ private:
     double getTurretPOS(VisionLookup &visionLookup, LimelightData &limelightData, const RobotData &robotData);
     double getHoodRollerVel(LimelightData &limelightData, const RobotData &robotData);
     double getTurretTurnAngle(LimelightData &limelightData, const RobotData &robotData);
+
+    void averageDistance(const RobotData &robotData, LimelightData &limelightData);
 
     //void averageDistance(const RobotData &robotData, LimelightData &limelightData);
 

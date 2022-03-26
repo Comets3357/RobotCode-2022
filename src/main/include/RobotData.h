@@ -8,6 +8,7 @@
 #include "common/VisionLookup.h"
 #include "common/Timer.h"
 #include "common/LEDs.h"
+#include "common/Jetson.h"
 #include "common/ColorSensor.h"
 #include "common/BenchTest.h"
 

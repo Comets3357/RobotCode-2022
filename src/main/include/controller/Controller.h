@@ -3,6 +3,7 @@
 #include <frc/DriverStation.h>
 #include <frc/Joystick.h>
 #include <frc/TimedRobot.h>
+#include <cmath>
 
 struct RobotData;
 
@@ -64,6 +65,7 @@ struct ControlData
     //shooter:
     bool saShooting; //gets hood at right angle, shooter wheel up to speed SEMIAUTO
     bool saFinalShoot; //makes belts run to actually fire balls SEMIAUTO
+    bool staticTurret;
 
     bool upperHubShot = true;
     bool cornerLaunchPadShot; //fixed long shot from the launch pad to upper hub SEMIAUTO
@@ -79,7 +81,9 @@ struct ControlData
     double mTurret; // moves turret left or right MANUAL (axis)
     float saTurretDirectionController; //move the turret in the direction of the joystick
     bool usingTurretDirection;
-    bool staticTurret;
+    bool mDistanceOffsetAdd; //everytime pressed, add three inches to distance
+    bool mDistanceOffsetSubtract; //everytime pressed, subtract three inches to distance
+
 
 
     //climb:

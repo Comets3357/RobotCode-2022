@@ -4,19 +4,29 @@
 void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelightData, VisionLookup &visionLookup)
 {
     //updating data
+    // int x = 0;
+    // if(x > 40){
+    //     limelightData.validTarget = table->GetNumber("tv", 0.0); //valid target or not
+    //     x = (x+1)%50;
+    // }else{
+    //     x = (x+1)%50;
+    // }
+
     limelightData.validTarget = table->GetNumber("tv", 0.0); //valid target or not
+
     limelightData.xOffset =  table->GetNumber("tx", 0.0) * (pi/180); //RADIANS
     limelightData.yOffset =  table->GetNumber("ty", 0.0);
     limelightData.distanceToTarget = distanceToTarget(); //the distance
 
     //turns off limelight if not shooting
-    if(robotData.controlData.shootMode == shootMode_none){
-        table->PutNumber("pipeline", 1);
-    }else{
-        table->PutNumber("pipeline", 0);
-    }
+    // if(robotData.controlData.shootMode == shootMode_none){
+    //     table->PutNumber("pipeline", 1);
+    // }else{
+    //     table->PutNumber("pipeline", 0);
+    // }
+
     //table->PutNumber("ledMode", 0);
-    //table->PutNumber("ledMode", 0);
+    table->PutNumber("pipeline", 0);
 
     
     
@@ -33,13 +43,30 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
 
     //the desired hood and velocity for shooting from anywhere
     limelightData.desiredHoodPos = getHoodPOS(visionLookup, limelightData, robotData); //returns an angle
-    limelightData.desiredVel = getWheelVelocity(visionLookup, limelightData, robotData) - 35; //returns rpm
+    limelightData.desiredVel = getWheelVelocity(visionLookup, limelightData, robotData); //returns rpm
+    limelightData.desiredHoodRollerVel = getHoodRollerVel(limelightData, robotData);
+
+    //TURRET 
+    limelightData.turretDifference = -robotData.limelightData.angleOffset;
+
+    // if(std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) >= 5){
+    //     limelightData.desiredTurretAngle = getTurretTurnAngle(limelightData, robotData); //position to go to to shoot
+    // } 
+    limelightData.desiredTurretAngle = getTurretTurnAngle(limelightData, robotData); //position to go to to shoot
     
     //printing data to the dashboard
-    //frc::SmartDashboard::PutNumber("distance offset", robotData.limelightData.distanceOffset/12);
-    //frc::SmartDashboard::PutNumber("angleOffset", limelightData.angleOffset);
-    //frc::SmartDashboard::PutNumber("desired hood", robotData.limelightData.desiredHoodPos);
+    frc::SmartDashboard::PutNumber("distance offset", robotData.limelightData.distanceOffset/12);
+    //frc::SmartDashboard::PutNumber("desired turret angle", limelightData.desiredTurretAngle);
+    frc::SmartDashboard::PutNumber("desired hood", robotData.limelightData.desiredHoodPos);
+    frc::SmartDashboard::PutNumber("desired hood roller", robotData.limelightData.desiredHoodRollerVel);
     //frc::SmartDashboard::PutNumber("final correct distance", robotData.limelightData.correctDistance);
+
+    // if(robotData.controlData.mDistanceOffsetAdd){
+    //     limelightData.distanceOffset +=3; //adds 3 inches everytime it's clicked
+    // }else if(robotData.controlData.mDistanceOffsetSubtract){
+    //     limelightData.distanceOffset -=3; //adds 3 inches everytime it's clicked
+
+    // }
 }
 
 /**
@@ -146,9 +173,18 @@ double Limelight::getWheelVelocity(VisionLookup &visionLookup, LimelightData &li
     limelightData.upperVal = limelightData.lowerVal +1; //upper value in ft
 
     //if either of the int values are higher than the highest lookup table value,
-    //set the values to the highest lookup table value
+    //set the values to the highest lookup table value 
+    //This logic??
+    if(limelightData.lowerVal < 5){
+        limelightData.lowerVal = 5;
+    }
+
+    if(limelightData.upperVal < 5){
+        limelightData.upperVal = 5;
+    }
+
     if(limelightData.lowerVal > visionLookup.highestVelocity()){
-        limelightData.lowerVal = visionLookup.highestVelocity();
+        limelightData.upperVal = visionLookup.highestVelocity();
     }
 
     if(limelightData.upperVal > visionLookup.highestVelocity()){
@@ -176,7 +212,7 @@ double Limelight::getWheelVelocity(VisionLookup &visionLookup, LimelightData &li
 
     //multiply the difference in the distance and floored value by the slope to get desired velocity for that small distance 
     //then add that to the desired position of the lower floored value
-    return (desiredSlope*(orignalDistance - limelightData.lowerVal*12)+limelightData.lowerValVel) - 15;
+    return (desiredSlope*(orignalDistance - limelightData.lowerVal*12)+limelightData.lowerValVel);
 
 }
 
@@ -184,8 +220,16 @@ double Limelight::getWheelVelocity(VisionLookup &visionLookup, LimelightData &li
  * @return the desired hood roller velocity based off of the desired flywheel velocity
  */
 double Limelight::getHoodRollerVel(LimelightData &limelightData, const RobotData &robotData){
+    if(robotData.limelightData.distanceOffset >= 15){
+        limelightData.hoodFlywheelRatio = 3.5;
+    }else{
+        limelightData.hoodFlywheelRatio = 3;
+    }
+
+
     double flywheelVel = robotData.limelightData.desiredVel;
-    return flywheelVel*hoodFlywheelRatio;
+    return flywheelVel*limelightData.hoodFlywheelRatio;
+    //return flywheelVel*3.5;
 }
 
 /**
@@ -217,23 +261,23 @@ double Limelight::getTurretTurnAngle(LimelightData &limelightData, const RobotDa
 /**
  * Returns the avg distance of the last 5 cycles to make the data smoother while shooting
  */
-// void Limelight::averageDistance(const RobotData &robotData, LimelightData &limelightData){
-//     double distance = robotData.limelightData.distanceOffset;
-//     double total = 0;
+void Limelight::averageDistance(const RobotData &robotData, LimelightData &limelightData){
+    // double distance = robotData.limelightData.desiredTurretAngle;
+    // double total = 0;
 
-//     //if size is less then 6 keep adding updated distances until the deque is full
-//     // if(robotData.limelightData.distances.size() < 6){
-//     //     limelightData.distances.push_back(distance);
-//     // }else{ //once it's full run through the deque and add it to the total
-//     //     for(int i = 0; (unsigned)i < robotData.limelightData.distances.size(); i ++){
-//     //         total += robotData.limelightData.distances.at(i);
-//     //     }
+    // //if size is less then 6 keep adding updated distances until the deque is full
+    // if(robotData.limelightData.distances.size() < 6){
+    //     limelightData.distances.push_back(distance);
+    // }else{ //once it's full run through the deque and add it to the total
+    //     for(int i = 0; (unsigned)i < robotData.limelightData.distances.size(); i ++){
+    //         total += robotData.limelightData.distances.at(i);
+    //     }
 
-//     //     //make sure to remove the first value and add an updated distance to the end
-//     //     limelightData.distances.pop_front();
-//     //     limelightData.distances.push_back(distance);
-//     // }
+    //     //make sure to remove the first value and add an updated distance to the end
+    //     limelightData.distances.pop_front();
+    //     limelightData.distances.push_back(distance);
+    // }
 
-//     //return the average of those distances
-//     limelightData.avgDistance = distance;
-// }
+    // //return the average of those distances
+    // limelightData.avgDistance = distance;
+}

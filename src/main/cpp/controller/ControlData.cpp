@@ -28,6 +28,10 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
             
     }
 
+    frc::SmartDashboard::PutNumber("Y", controllerData.sRYStick);
+    frc::SmartDashboard::PutNumber("X", controllerData.sRXStick);
+
+
 
     // controls:
 
@@ -64,16 +68,20 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
 
     // manual:
 
+    //ADD CONTROLLER BIND
+    controlData.mDistanceOffsetAdd;
+    controlData.mDistanceOffsetSubtract;
+
     
     controlData.mIntakeDown = controllerData.sRBumper /* && (controlData.mode == mode_teleop_manual) */;
     controlData.mIntakeUp = controllerData.sRBumper && controlData.shift /* && (controlData.mode == mode_teleop_manual) */;
     controlData.mIntakeRollersIn = controllerData.sRTrigger > 0.5 /* && (controlData.mode == mode_teleop_manual) */;
     controlData.mIntakeRollersOut = controllerData.sRTrigger > 0.5 && controlData.shift /* && (controlData.mode == mode_teleop_manual) */;
     
-    controlData.mZeroHood = controllerData.sLStickBtn /* && (controlData.mode == mode_teleop_manual) */;
-    controlData.mZeroTurret = controllerData.sRStickBtn /* && (controlData.mode == mode_teleop_manual) */;
-    controlData.mHood = controllerData.sLYStick/*  && (controlData.mode == mode_teleop_manual) */;
-    controlData.mTurret = controllerData.sRXStick /* && (controlData.mode == mode_teleop_manual) */;
+    controlData.mZeroHood = controllerData.sRStickBtn /* && (controlData.mode == mode_teleop_manual) */;
+    controlData.mZeroTurret = controllerData.sLStickBtn /* && (controlData.mode == mode_teleop_manual) */;
+    controlData.mHood = controllerData.sRYStick/*  && (controlData.mode == mode_teleop_manual) */;
+    controlData.mTurret = controllerData.sLXStick /* && (controlData.mode == mode_teleop_manual) */;
     controlData.mShooterWheelForward = controllerData.sXBtn /* && (controlData.mode == mode_teleop_manual) */;
     controlData.mShooterWheelBackward = controllerData.sXBtn && controlData.shift/*  && (controlData.mode == mode_teleop_manual) */;
 
@@ -100,6 +108,10 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
 
     controlData.saShooting = controllerData.sXBtnToggled && !controlData.shift/* && (controlData.mode == mode_teleop_sa) */;
     controlData.saFinalShoot = controllerData.sYBtn && !controlData.shift/* && (controlData.mode == mode_teleop_sa); */;
+    
+    if(controllerData.sRCenterBtnToggled){
+        controlData.staticTurret = !controlData.staticTurret;
+    }
 
     // secondary y to set readyshoot to true in testing
 
@@ -117,26 +129,32 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
     controlData.cornerLaunchPadShot = controllerData.sYBtnToggled && controlData.shift /* && (controlData.mode == mode_teleop_sa) */;
 
     //TURRET DIRECTION converts joystick (x,y) into degrees (0 is right) UNIT CIRCLE
-    double x = controllerData.sRXStick;
-    double y = controllerData.sRYStick;
+    double x = -controllerData.sLXStick;
+    double y = controllerData.sLYStick;
 
     //check to make sure you're out of the deadzone
     if(x > 0.1 || y > 0.1 || x < -0.1 || y < -0.1){
         controlData.usingTurretDirection = true;
         //does the conversions and accounts for different quadrants of the unit circle
-        if(x == 0 && y > 0){ //covers if @ up direction
+        if((x <0.1 && x > -0.1)  && y > 0){ //covers if @ up direction
             controlData.saTurretDirectionController = 90;
         }else if(x > 0 && y >= 0){ //covers 0 ~ 89 degrees
-            controlData.saTurretDirectionController = std::atan(y/x);
+            controlData.saTurretDirectionController = (std::atan(y/x)*(180/pi));
         }else if((y >= 0 && x < 0) || (y < 0 && x < 0)){  //covers 91 ~ 269 degrees
-            controlData.saTurretDirectionController = std::atan(y/x) + 180;
-        }else if(x == 0 && y < 0){
+            controlData.saTurretDirectionController = (std::atan(y/x)*(180/pi)) + 180;
+        }else if((x <0.1 && x > -0.1) && y < 0){
             controlData.saTurretDirectionController = 270;
         }else if(y < 0 && x > 0){ //covers 271 ~ 359 degrees 
-            controlData.saTurretDirectionController = std::atan(y/x) + 360;
+            controlData.saTurretDirectionController = (std::atan(y/x)*(180/pi)) + 360;
         }
+
         
-    }else{
+        controlData.saTurretDirectionController = (controlData.saTurretDirectionController - 90);
+        if(controlData.saTurretDirectionController < 0){
+            controlData.saTurretDirectionController += 360;
+        }
+
+    } else{
         controlData.usingTurretDirection = false;
     }
 
