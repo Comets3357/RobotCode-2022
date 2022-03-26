@@ -236,7 +236,7 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
 void Shooter::manual(const RobotData &robotData, ShooterData &shooterData)
 {
     
-        flyWheelLead_pidController.SetReference(300, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
+        flyWheelLead_pidController.SetReference(700, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
         hoodRoller_pidController.SetReference(5500, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
 
 }
