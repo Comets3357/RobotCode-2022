@@ -26,32 +26,39 @@ void LEDs::RobotPeriodic(const RobotData &robotData){
 
     lastColorCode = colorCode;
 
-    frc::SmartDashboard::PutNumber("Bytes received", arduino.GetBytesReceived());
-    frc::SmartDashboard::PutNumber("Red", colors[0]);
-    frc::SmartDashboard::PutNumber("Green", colors[1]);
-    frc::SmartDashboard::PutNumber("Blue", colors[2]);
-    frc::SmartDashboard::PutNumber("ColorCode for LEDs", colorCode);
-    char colors[3];
-    if (arduino.GetBytesReceived() >= 3)
-    {
-        arduino.Read(colors,3);
-        arduino.Reset();
-    }
 
-    frc::SmartDashboard::PutRaw("colors", colors);
-    frc::SmartDashboard::PutNumber("red", (int)colors[0]);
+    frc::SmartDashboard::PutNumber("Bytes received", arduino.GetBytesReceived());
+
+    frc::SmartDashboard::PutNumber("ColorCode for LEDs", colorCode);
+    if (arduino.GetBytesReceived() >= 1)
+    {
+        arduino.Read(colors,1);
+        arduino.Reset();
+
+    }
+    frc::SmartDashboard::PutBoolean("disabled", false);
+    
+
+
+
+
+
+
+    frc::SmartDashboard::PutNumber("reed", (int)colors[0]);
+
+    // arduino.EnableTermination();
+    // arduino.
     
 }
 
 void LEDs::DisbledPeriodic(){
     char value[1] = {'0'};
-    //arduino.Write(value, 1);
+    arduino.Write(value, 1);
     if (lastColorCode != 0)
     {
         arduino.Write(value, 1);
-        frc::SmartDashboard::PutNumber("Idk", arduino.Write(value, 1));
     }
     lastColorCode = 0;
     colorCode = 0;
-    arduino.Reset();
+    frc::SmartDashboard::PutBoolean("disabled", true);
 }

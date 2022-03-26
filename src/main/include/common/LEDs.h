@@ -4,7 +4,7 @@
 #include <frc/SerialPort.h>
 
 struct LEDsData {
-    
+    int ColorData = 0;
 };
 
 class LEDs {
@@ -18,5 +18,5 @@ class LEDs {
 
         int colorCode = 6;
         int lastColorCode = 6;
-        char colors[12];
+        char colors[1];
 };
