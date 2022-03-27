@@ -268,7 +268,7 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
         }
     
 //FIXED SHOTS 
-    }else if(robotData.indexerData.autoRejectTop){
+    }else if(robotData.indexerData.autoRejectTop && !robotData.controlData.shootUnassignedAsOpponent){
         reject(robotData, shooterData);
         isTurretStatic = false;
     }else if(robotData.controlData.shootMode == shootMode_cornerLaunchPad){ //FROM THE CLOSER LAUNCH PAD

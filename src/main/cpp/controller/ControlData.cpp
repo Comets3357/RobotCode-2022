@@ -240,6 +240,7 @@ void Controller::updateShootMode(const RobotData &robotData, ControlData &contro
     }
 
     // interpret button data to toggle between shooting unassigned as ours or opponent's
+    // CURRENTLY BEING USED TO SHUT OFF CARGO REJECT WHEN TRUE
     if (robotData.controlData.shootUnassignedAsOpponent) {
         controlData.shootUnassignedAsOpponent = !controlData.shootUnassignedAsOpponent;
     }

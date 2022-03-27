@@ -119,23 +119,23 @@ void Indexer::newCargo(const RobotData &robotData, IndexerData &indexerData){
 
     if(frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed){            // if you are red alliance
 
-        // if (robotData.colorSensorData.colorValue == CargoColor::cargo_Red){                 // and if the sensor senses red
-        //     indexerData.indexerContents.push_back(Cargo::cargo_Alliance);                   // add red cargo
-        // } else if (robotData.colorSensorData.colorValue == CargoColor::cargo_Blue){         // blue
-        //     indexerData.indexerContents.push_back(Cargo::cargo_Opponent);                   // add blue
-        // } else {                                                                            // doesn't sense red OR blue (if this happens check that the LED is on)
-        //     indexerData.indexerContents.push_back(Cargo::cargo_Unassigned);                 // add "unassigned"
-        // }
+        if (robotData.colorSensorData.colorValue == CargoColor::cargo_Red){                 // and if the sensor senses red
+            indexerData.indexerContents.push_back(Cargo::cargo_Alliance);                   // add red cargo
+        } else if (robotData.colorSensorData.colorValue == CargoColor::cargo_Blue){         // blue
+            indexerData.indexerContents.push_back(Cargo::cargo_Opponent);                   // add blue
+        } else {                                                                            // doesn't sense red OR blue (if this happens check that the LED is on)
+            indexerData.indexerContents.push_back(Cargo::cargo_Unassigned);                 // add "unassigned"
+        }
 
     } else if (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue){   // same logic for blue as for red
 
-        // if(robotData.colorSensorData.colorValue == CargoColor::cargo_Blue){ 
-        //     indexerData.indexerContents.push_back(Cargo::cargo_Alliance);
-        // } else if (robotData.colorSensorData.colorValue == CargoColor::cargo_Red){
-        //     indexerData.indexerContents.push_back(Cargo::cargo_Opponent);
-        // } else {
-        //     indexerData.indexerContents.push_back(Cargo::cargo_Unassigned);
-        // }
+        if(robotData.colorSensorData.colorValue == CargoColor::cargo_Blue){ 
+            indexerData.indexerContents.push_back(Cargo::cargo_Alliance);
+        } else if (robotData.colorSensorData.colorValue == CargoColor::cargo_Red){
+            indexerData.indexerContents.push_back(Cargo::cargo_Opponent);
+        } else {
+            indexerData.indexerContents.push_back(Cargo::cargo_Unassigned);
+        }
 
     } 
 }
