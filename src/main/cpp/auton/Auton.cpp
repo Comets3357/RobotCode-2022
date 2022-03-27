@@ -253,28 +253,29 @@ void Auton::fiveBallC(const RobotData &robotData, ControlData &controlData)
     double sec = robotData.timerData.secSinceEnabled;
 
     // intake
-    // if (sec > 2 && sec < 6) {
-    //     controlData.saIntake = true;
-    // } if (sec > 9 && sec < 12) {
-    //     controlData.saIntake = true;
-    // } else {
-    //     controlData.saIntake = false;
-    // }
-    controlData.saIntake = true;
+    if (sec > 1 && sec < 5) {
+        controlData.saIntake = true;
+    } else if (sec > 7 && sec < 12) {
+        controlData.saIntake = true;
+    } else {
+        controlData.saIntake = false;
+    }
+    // controlData.saIntake = false;
 
     // aim
     controlData.shootMode = shootMode_vision;
 
     // final shoot
-    if (sec > 0 && sec < 1.5) {
+    if (sec > 0 && sec < 1) {
         controlData.saFinalShoot = true;
-    } else if (sec > 6 && sec < 7.5) {
+    } else if (sec > 3.5 && sec < 7.5) {
         controlData.saFinalShoot = true;
-    } else if (sec > 12.5 && sec < 14) {
+    } else if (sec > 13 && sec < 15) {
         controlData.saFinalShoot = true;
     } else {
         controlData.saFinalShoot = false;
     }
+
 }
 
 void Auton::sixBallC(const RobotData &robotData, ControlData &controlData) {}

@@ -204,7 +204,7 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
         if(robotData.limelightData.distanceOffset >= 14){
             //if the difference between the current velocity and the desired velocity is greater than a certain amount give it straight 100% vbus to kick start it
             //then once it's reached a certain amount below the target velocity switch to a pid to get than final desired rpm 
-            if(std::abs(robotData.limelightData.desiredVel - flyWheelLeadEncoder.GetVelocity()) > 350){
+            if(robotData.limelightData.desiredVel - flyWheelLeadEncoder.GetVelocity() > 350){
                 flyWheelLead.Set(1); //give it full power
             }else{
                 flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity ,1);
@@ -610,7 +610,7 @@ void Shooter::saTurret(const RobotData &robotData, ShooterData &shooterData){
                 //if youre within 2 degrees of the target you can stop turning (mitigates jerky movement)
 
                 if(robotData.limelightData.distanceOffset < 7){
-                    if(std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 10){
+                    if(std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 5){
                         shooterTurret.Set(0);
                     }else{
                         //turn the turret to face the target

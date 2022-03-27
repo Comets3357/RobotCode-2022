@@ -238,10 +238,14 @@ bool Indexer::pauseBelt(const RobotData &robotData, IndexerData &indexerData){
  **/
 void Indexer::saBeltControl(const RobotData &robotData, IndexerData &indexerData){
 
+    frc::SmartDashboard::PutBoolean("indexer for shooting", robotData.shooterData.readyShoot && robotData.controlData.saFinalShoot)|| (!getTopBeam() && !robotData.intakeData.intakeIdle);
+    frc::SmartDashboard::PutBoolean("auton readyShoot", robotData.shooterData.readyShoot);
+    frc::SmartDashboard::PutBoolean("auton finalShoot", robotData.controlData.saFinalShoot);
+
     if(robotData.controlData.saEjectBalls){ // if indexer is REVERSING (saEject or manual indexer backwards)
         indexerBelt.Set(-indexerShootingBeltSpeed);
     } else if ((/**!pauseBelt(robotData, indexerData) &&**/ robotData.shooterData.readyShoot && robotData.controlData.saFinalShoot)|| (!getTopBeam() && !robotData.intakeData.intakeIdle)){ // if you're shooting or (BB3 is not  and the intake isn't idle)
-        // there are two main cases when you run the indexer forward: when you shoot, and when you're intaking
+        // there are two main cases when yo u run the indexer forward: when you shoot, and when you're intaking
         // when shooting, you check that you're done pausing (see pauseBelt) to make sure every ball pauses before going into the shooter, 
         // anyways, we have to get the signal that the shooter is ready to eject AND that the top ball in the indexer is the opponent color to run it in that case
         // and you also check readyShoot to make sure the flywheel is up to speed, along with saFinalShoot to make sure secondary is commanding it to shoot
