@@ -44,33 +44,24 @@ void Drivebase::RobotInit()
     dbR.Config_kP(0, 0.038723);
     dbR.Config_kD(0, 0); */
 
-    // PIDs for 2022
-    // last updated 03.01.22
-    // dbL.Config_kF(0, 0.074314);
-    // dbL.Config_kP(0, 0.67243);
+    // PIDs for 2022 Calvin University
+    // dbL.Config_kF(0, 0.077626);
+    // dbL.Config_kP(0, 0.10352);
     // dbL.Config_kD(0, 0);
 
-    // dbR.Config_kF(0, 0.074314);
-    // dbR.Config_kP(0, 0.67243);
+    // dbR.Config_kF(0, 0.077626);
+    // dbR.Config_kP(0, 0.10352);
     // dbR.Config_kD(0, 0);
 
-    // PIDs for 2022 Calvin University
-    dbL.Config_kF(0, 0.077626);
-    dbL.Config_kP(0, 0.10352);
+    // Atlas 03.26.22 Morning
+    dbL.Config_kF(0, 0.074655);
+    dbL.Config_kP(0, 0.1079);
     dbL.Config_kD(0, 0);
 
-    dbR.Config_kF(0, 0.077626);
-    dbR.Config_kP(0, 0.10352);
+    dbR.Config_kF(0, 0.074655);
+    dbR.Config_kP(0, 0.1079);
     dbR.Config_kD(0, 0);
 
-    // PIDs for 2022 Muskegon
-    // dbL.Config_kF(0, 0.072381);
-    // dbL.Config_kP(0, 0.11063);
-    // dbL.Config_kD(0, 0);
-
-    // dbR.Config_kF(0, 0.072381);
-    // dbR.Config_kP(0, 0.11063);
-    // dbR.Config_kD(0, 0);
 
     setPercentOutput(0, 0);
 
@@ -216,7 +207,7 @@ void Drivebase::autonControl(const RobotData &robotData, DrivebaseData &drivebas
             setVelocity(0, 0);
         }
         // frc::SmartDashboard::PutNumber("breakEndSec", breakEndSec);
-        if (robotData.timerData.secSinceEnabled > breakEndSec && robotData.controlData.shootMode == shootMode_none) {
+        if (robotData.timerData.secSinceEnabled > breakEndSec && !robotData.controlData.saFinalShoot) {
             // frc::SmartDashboard::PutNumber("secSinceEnabled", robotData.timerData.secSinceEnabled);
             frc::SmartDashboard::PutNumber("breakEndSec", breakEndSec);
             getNextAutonStep(robotData, drivebaseData, autonData);
