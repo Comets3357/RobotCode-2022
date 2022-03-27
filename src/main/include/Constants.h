@@ -34,21 +34,50 @@ static const int
 // shooter
 static const int
     shooterWheelLeadID = 31,
-    shooterHoodID = 32,
+    shooterHoodID = 33,
     shooterTurretID = 34,
-    hoodRollerID = 33;
+    hoodRollerID = 32;
 
 static const double
-    //comp bot shooter hood positions
-    hoodabsOut = 0.028,
-    hoodabsIn = 0.90,
-    hoodrevOut = -37,
+    //pratlas bot shooter hood positions
+    hoodabsOut = 0.083,
+    hoodabsIn = 0.987,
+    hoodrevOut = -38,
     hoodrevIn = 0,
     hoodAngleOut = 43,
-    hoodAngleIn = 21, 
+    hoodAngleIn = 21,
 
-    turretZeroRev = 0,
-    turretFullRotationRev = 400;
+    //turret positions
+    turretZeroDegrees = 15, //15
+    turretFullRotationDegrees = 540, //540
+    turretZeroRev = 87.5, //87.5
+    turretFullRotationRev_CCW = 174.85, //174.85
+    turretFullRotationRev_C = 0, //0
+    turretZeroAbs = 0.479, //0.479
+    turretFullRotationAbs_CCW = 0.906, //0.91
+    turretFullRotationAbs_C = 0.05, //0.05
+
+    hoodFlywheelRatio = 2.75;
+
+//Set shooting hood positions and velocity 
+static const float
+    outerLaunchHood = hoodrevOut,
+    outerLaunchVel = 1990,
+    innerLaunchHood = hoodrevOut,
+    innerLaunchVel = 2040,
+    wallHood = -32.33,
+    wallVel = 1860,
+    fenderHood = -0.25,
+    fenderVel = 1690,
+
+    outerLaunchHood_Low = hoodrevOut,
+    outerLaunchVel_Low = 1990,
+    innerLaunchHood_Low = hoodrevOut,
+    innerLaunchVel_Low = 2040,
+    wallHood_Low = -32.33,
+    wallVel_Low = 1860,
+    fenderHood_Low = -0.25,
+    fenderVel_Low = 1240;
 
 // climb
 static const int

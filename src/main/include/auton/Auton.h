@@ -48,6 +48,7 @@ private:
 
     // four ball autons (taxiShoot, neighboring ball, termincal shoot):
     void fourBallC(const RobotData &robotData, ControlData &controlData);
+    void fourBallCHP(const RobotData &robotData, ControlData &controlData);
 
     void sixBallC(const RobotData &robotData, ControlData &controlData);
 };
