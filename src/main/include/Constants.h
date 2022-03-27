@@ -34,14 +34,14 @@ static const int
 // shooter
 static const int
     shooterWheelLeadID = 31,
-    shooterHoodID = 32,
+    shooterHoodID = 33,
     shooterTurretID = 34,
-    hoodRollerID = 33;
+    hoodRollerID = 32;
 
 static const double
-    //comp bot shooter hood positions
-    hoodabsOut = 0.103,
-    hoodabsIn = 0.98,
+    //pratlas bot shooter hood positions
+    hoodabsOut = 0.083,
+    hoodabsIn = 0.987,
     hoodrevOut = -38,
     hoodrevIn = 0,
     hoodAngleOut = 43,
@@ -54,7 +54,7 @@ static const double
     turretFullRotationRev_CCW = 174.85, //174.85
     turretFullRotationRev_C = 0, //0
     turretZeroAbs = 0.479, //0.479
-    turretFullRotationAbs_CCW = 0.91, //0.91
+    turretFullRotationAbs_CCW = 0.906, //0.91
     turretFullRotationAbs_C = 0.05, //0.05
 
     hoodFlywheelRatio = 2.75;

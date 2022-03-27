@@ -90,7 +90,6 @@ struct ControlData
     double mArmPivot;
 
     //benchTest:
-
     bool manualBenchTest = false;
     bool autoBenchTest = false;
     bool incrementMotor = false;
