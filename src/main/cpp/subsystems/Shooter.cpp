@@ -11,7 +11,7 @@ void Shooter::RobotInit()
     hoodRollerInit();
     shooterTurretInit();
 
-    flyWheelLead.Set(ControlMode::Velocity, 0);
+    flyWheelLead.Set(0);
     shooterHood.Set(0);
 
 
@@ -46,60 +46,22 @@ void Shooter::shooterHoodInit()
 
 void Shooter::flyWheelInit()
 {
-     // fly wheel LEAD motor init
+    // fly wheel LEAD motor init
     flyWheelLead.RestoreFactoryDefaults();
     flyWheelLead.SetInverted(true);
-    flyWheelLead.SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
-    flyWheelLead.ConfigStatorCurrentLimit(StatorCurrentLimitConfiguration(true, 45, 50, 1.0)); // CHECK THIS
+    flyWheelLead.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
+    flyWheelLead.SetSmartCurrentLimit(45);
 
-    flyWheelLead.Config_kP(0, 0, 0);
-    flyWheelLead.Config_kI(0, 0, 0);
-    flyWheelLead.Config_kD(0, 0,0);
-    flyWheelLead.Config_kF(0, 0,0);
-    flyWheelLead.Config_IntegralZone(0,0,0);
-
-    readyShootLimit = 1200;         
-}
-
-void Shooter::hoodRollerInit()
-{
-    // fly wheel LEAD motor init
-    hoodRoller.RestoreFactoryDefaults();
-    hoodRoller.SetInverted(true);
-    hoodRoller.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
-    hoodRoller.SetSmartCurrentLimit(45);
-
-    // //PIDS
-    // flyWheelLead_pidController.SetP(0.0005); //0.002
-    // flyWheelLead_pidController.SetI(0);
-    // flyWheelLead_pidController.SetD(0); //0.005
-    // flyWheelLead_pidController.SetIZone(0);
-    // flyWheelLead_pidController.SetFF(0.00023); //0.0002
-    // flyWheelLead_pidController.SetOutputRange(-1,1);
-    hoodRoller.BurnFlash();           
-}
-
-void Shooter::shooterTurretInit(){
-    // fly wheel LEAD motor init
-    shooterTurret.RestoreFactoryDefaults();
-    shooterTurret.SetInverted(true);
-    shooterTurret.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-    shooterTurret.SetSmartCurrentLimit(15);
-
+    readyShootLimit = 1200;
 
     //PIDS
-    shooterTurret_pidController.SetP(0.0005); 
-    shooterTurret_pidController.SetI(0);
-    shooterTurret_pidController.SetD(0);
-    shooterTurret_pidController.SetIZone(0);
-    shooterTurret_pidController.SetFF(0.00023);
-    shooterTurret_pidController.SetOutputRange(-1,1);
-
-    shooterTurret.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward, turretZeroRev);
-    shooterTurret.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse, turretFullRotationRev);
-
-    shooterTurret.BurnFlash(); 
-
+    flyWheelLead_pidController.SetP(0.00001); //0.002
+    flyWheelLead_pidController.SetI(0);
+    flyWheelLead_pidController.SetD(0); //0.005
+    flyWheelLead_pidController.SetIZone(0);
+    flyWheelLead_pidController.SetFF(0.000219); //0.0002
+    flyWheelLead_pidController.SetOutputRange(-1,1);
+    flyWheelLead.BurnFlash();          
 }
 
 void Shooter::hoodRollerInit()
@@ -170,7 +132,7 @@ void Shooter::RobotPeriodic(const RobotData &robotData, ShooterData &shooterData
     updateData(robotData, shooterData);
 
     if(robotData.controlData.mode == mode_climb_manual || robotData.controlData.mode == mode_climb_sa){
-        flyWheelLead.Set(ControlMode::Velocity, 0);
+        flyWheelLead.Set(0);
         shooterHood.Set(0);
 
     }else{
@@ -334,7 +296,7 @@ void Shooter::updateData(const RobotData &robotData, ShooterData &shooterData)
  * ---------------------------------------------------------------------------------------------------------------------------------------------------
  * */
 double Shooter::getWheelVel(){
-    return flyWheelLead.GetSelectedSensorVelocity();
+    return flyWheelLeadEncoder.GetVelocity();
 }
 
 /**
@@ -506,9 +468,9 @@ void Shooter::checkReadyShoot(ShooterData &shooterData){
 //for checking voltage and setting the set shot wheel speed accordingly
 void Shooter::setShooterWheel(double speed){
     if(frc::DriverStation::GetBatteryVoltage() > 12.5){
-        flyWheelLead.Set(ControlMode::Velocity, speed);
+        flyWheelLead.Set(speed);
     }else{
-        flyWheelLead.Set(ControlMode::Velocity, speed + 20);
+        flyWheelLead.Set(speed + 20);
     }
 }
 
