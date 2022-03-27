@@ -55,8 +55,10 @@ void BenchTest::TestPeriodic(const RobotData &robotData, BenchTestData &benchTes
         else if (robotData.climbData.lowerLimit) benchTestData.stage = -1; //special case explained on lines 21-22
         else if (robotData.intakeData.bottomDeadStop) benchTestData.stage = 1;
         else if (robotData.intakeData.topDeadStop) benchTestData.stage = 2;
-        else if (robotData.shooterData.topDeadStop) benchTestData.stage = 1;
-        else if (robotData.shooterData.bottomDeadStop) benchTestData.stage = 2;
+        else if (robotData.shooterData.hoodTopDeadStop) benchTestData.stage = 1;
+        else if (robotData.shooterData.hoodBottomDeadStop) benchTestData.stage = 2;
+        else if (robotData.shooterData.turretTopDeadStop) benchTestData.stage = 5;
+        else if (robotData.shooterData.turretBottomDeadStop) benchTestData.stage = 4;
 
         //if the final motor in a subsystem is reached, then the subsystem increments
         //additionally, if it reaches the end of shooter, instead of looping back to climb like manual,
@@ -64,7 +66,7 @@ void BenchTest::TestPeriodic(const RobotData &robotData, BenchTestData &benchTes
         if (benchTestData.testStage == BenchTestStage::BenchTestStage_Climb && benchTestData.stage == -1){
             benchTestData.stage = 0;
             benchTestData.testStage = BenchTestStage::BenchTestStage_Drivebase;
-        } else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Shooter && benchTestData.stage >= 3){
+        } else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Shooter && benchTestData.stage >= 5){
             benchTestData.stage = 0;
             benchTestData.testStage = 5; //arbitrary value of delay stage
         } else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Intake && benchTestData.stage >= 6){
@@ -98,7 +100,7 @@ void BenchTest::TestPeriodic(const RobotData &robotData, BenchTestData &benchTes
 
             //if the final motor in a subsystem is reach, then the cycle resets to go through the motor sequence again
             if (benchTestData.testStage == BenchTestStage::BenchTestStage_Climb && benchTestData.stage >= 4) benchTestData.stage = 0;
-            else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Shooter && benchTestData.stage >= 3) benchTestData.stage = 0;
+            else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Shooter && benchTestData.stage >= 5) benchTestData.stage = 0;
             else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Intake && benchTestData.stage >= 6) benchTestData.stage = 0;
             else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Indexer && benchTestData.stage >= 4) benchTestData.stage = 0;
             else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Drivebase && benchTestData.stage >= 4) benchTestData.stage = 0;
