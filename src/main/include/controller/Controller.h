@@ -81,10 +81,7 @@ struct ControlData
     double mTurret; // moves turret left or right MANUAL (axis)
     float saTurretDirectionController; //move the turret in the direction of the joystick
     bool usingTurretDirection;
-    bool mDistanceOffsetAdd; //everytime pressed, add three inches to distance
-    bool mDistanceOffsetSubtract; //everytime pressed, subtract three inches to distance
-
-
+    float saDistanceOffset = 0; //everytime pressed, add or subtract six inches to distance
 
     //climb:
     bool saclimbTraversalSequence;
@@ -135,6 +132,9 @@ struct ControllerData
 
     bool sLStickBtn = false;
     bool sRStickBtn = false;
+
+    bool sLStickBtnToggled = false;
+    bool sRStickBtnToggled = false;
 
     double sLTrigger = 0;
     double sRTrigger = 0;

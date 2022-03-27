@@ -26,6 +26,9 @@ struct ShooterData
     bool bottomDeadStop = false;
     float benchTestShooterHoodSpeed = 0;
     float benchTestFlyWheelSpeed = 0;
+
+    float mode;
+
 };
 
 class Shooter{
@@ -69,7 +72,7 @@ class Shooter{
         //checks
         void checkReadyShoot(ShooterData &shooterData);
         bool encoderPluggedInTurret(const ShooterData &shooterData);
-        bool encoderPluggedInHood(const ShooterData &shooterData);
+        bool encoderPluggedInHood(ShooterData &shooterData);
         void saTurret(const RobotData &robotData, ShooterData &shooterData);
         void turretControlTurn(float controlTurretDirection, const RobotData &robotData, ShooterData &shooterData);
 
@@ -91,6 +94,10 @@ class Shooter{
         int tickCount;
         double validTargetTurretPos;
         bool isTurretStatic;
+        int modeCounter;
+        double hoodAbsValues [49] = { };
+
+
 
         
      //Flywheel Lead

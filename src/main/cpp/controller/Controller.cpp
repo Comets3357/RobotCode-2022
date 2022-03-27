@@ -103,6 +103,9 @@ void Controller::updateBtnData(ControllerData &controllerData)
     controllerData.sLStickBtn = getBtn(1, 9);
     controllerData.sRStickBtn = getBtn(1, 10);
 
+    controllerData.sLStickBtnToggled = getBtnToggled(1, 9);
+    controllerData.sRStickBtnToggled = getBtnToggled(1, 10);
+
     controllerData.sLTrigger = getAxis(1, 2);
     controllerData.sRTrigger = getAxis(1, 3);
     controllerData.sLBumper = getBtn(1, 5);

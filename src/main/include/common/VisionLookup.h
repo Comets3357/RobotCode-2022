@@ -21,7 +21,9 @@ class VisionLookup
         double getLowVelocity(double key);
 
         double highestVal();
+        double lowestVal();
         double highestVelocity();
+        double lowestVelocity();
         
     private:
         // Declaring umap to be of <double, double> type
