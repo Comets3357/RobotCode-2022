@@ -591,10 +591,6 @@ void Shooter::setShooterWheel(double speed){
     }
 }
 
-void Shooter::DisabledPeriodic(const RobotData &robotData, ShooterData &shooterData){
-    updateData(robotData, shooterData);
-}
-
 
 void Shooter::saTurret(const RobotData &robotData, ShooterData &shooterData){
 
@@ -725,7 +721,7 @@ void Shooter::TestPeriodic(const RobotData &robotData, ShooterData &shooterData)
     checkDeadStop(shooterData);
 
     //runs the bench test sequence
-    if (robotData.benchTestData.testStage == BenchTestStage::BenchTestStage_Shooter && robotData.controlData.startBenchTest){ //checks if we're testing shooter
+    if (robotData.benchTestData.testStage == BenchTestStage::BenchTestStage_Shooter && robotData.controlData.autoBenchTest){ //checks if we're testing shooter
         if (encoderPluggedInHood(shooterData) && encoderInRange(shooterData)){ //checks if the encoder is working
             if (robotData.benchTestData.stage == 0){
                 //run hood forwards

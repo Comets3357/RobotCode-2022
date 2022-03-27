@@ -202,7 +202,7 @@ void Drivebase::autonControl(const RobotData &robotData, DrivebaseData &drivebas
     if (drivebaseData.driveMode == driveMode_break)
     {
         if (robotData.controlData.shootMode == shootMode_vision) {
-            turnInPlaceTeleop(-robotData.limelightData.angleOffset, robotData);
+            // turnInPlaceTeleop(-robotData.limelightData.angleOffset, robotData);
             // frc::smartDashboard::PutNumber("angleOffsetLimelight", robotData.limelightData.angleOffset);
         } else {
             setVelocity(0, 0);
