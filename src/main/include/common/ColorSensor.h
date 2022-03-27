@@ -15,7 +15,7 @@ enum CargoColor {
 };
 
 struct ColorSensorData {
-    frc::Color currentColor;
+    // frc::Color currentColor;
     int colorValue = CargoColor::cargo_Unknown;
 };
 
@@ -23,11 +23,9 @@ class ColorSensor {
     public: 
         void RobotInit();
         void RobotPeriodic(const RobotData &robotData, ColorSensorData &colorSensorData);
-        void Disabled();
+        void DisabledPeriodic(const RobotData &robotData, ColorSensorData &colorSensorData);
 
     private:
         void updateData(const RobotData &robotData, ColorSensorData &colorSensorData);
-
-
-        frc::Color detectedColor;
+        // frc::Color detectedColor;
 }; 

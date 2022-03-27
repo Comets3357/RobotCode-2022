@@ -3,7 +3,7 @@
 #include "Robot.h"
 #include <time.h>
 
-void Arduino::RobotPeriodic(const RobotData &robotData, LEDsData &ledsData){
+void Arduino::RobotPeriodic(const RobotData &robotData, ArduinoData &arduinoData){
     // this makes the robot LEDs be different colors depending on the mode
     // writes the value of colorCode to device address 1 (the left arduino), which then color codes the LEDs based upon the value
     if (robotData.shooterData.readyShoot){

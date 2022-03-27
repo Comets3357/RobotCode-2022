@@ -65,6 +65,7 @@ static const double
     turretZeroAbs = 0.499, //0.479
     turretFullRotationAbs_CCW = 0.933, //0.91
     turretFullRotationAbs_C = 0.076; //0.05
+    
 
     //FOR PRATLAS
     // turretZeroDegrees = 5, //15

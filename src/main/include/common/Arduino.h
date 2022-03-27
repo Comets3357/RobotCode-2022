@@ -3,13 +3,13 @@
 
 struct RobotData;
 
-struct LEDsData {
+struct ArduinoData {
     int ColorData = 0;
 };
 
 class Arduino {
     public:
-        void RobotPeriodic(const RobotData &robotData, LEDsData &ledData);
+        void RobotPeriodic(const RobotData &robotData, ArduinoData &arduinoData);
         void DisabledPeriodic();
 
     private:

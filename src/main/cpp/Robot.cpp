@@ -19,7 +19,7 @@ void Robot::RobotPeriodic()
     gyro.RobotPeriodic(robotData.gyroData);
     limelight.RobotPeriodic(robotData, robotData.limelightData, visionLookup);
     visionLookup.RobotPeriodic(robotData, robotData.visionLookupData);
-    arduino.RobotPeriodic(robotData, robotData.ledsData);
+    arduino.RobotPeriodic(robotData, robotData.arduinoData);
     jetson.RobotPeriodic();
 
     // frc::SmartDashboard::PutNumber("mode", robotData.controlData.mode);
@@ -66,7 +66,7 @@ void Robot::TeleopPeriodic()
 {
     timer.EnabledPeriodic(robotData.timerData);
     controller.TeleopPeriodic(robotData, robotData.controllerData, robotData.controlData);
-    // arduino.RobotPeriodic(robotData, robotData.ledsData);
+    // arduino.RobotPeriodic(robotData, robotData.arduinoData);
 }
 
 void Robot::DisabledInit()

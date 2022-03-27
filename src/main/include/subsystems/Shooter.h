@@ -19,7 +19,7 @@ struct RobotData;
 struct ShooterData
 {
     bool readyShoot;
-    bool finalReject = false;
+    bool readyReject = false;
     float currentTurretAngle;
     
     //Bench test
@@ -55,6 +55,7 @@ class Shooter{
         double turretConvertFromAbsToAngle(double abs);
         double turretAbsoluteToREV(double value);
         double turretGyroOffset(double value);
+        // double getFieldRelativeToRobotRelativeTurret(const RobotData &robotData, ShooterData &shooterData);
         double getFieldRelativeTurretAngle(const RobotData &robotData, ShooterData &shooterData);
 
         
@@ -85,7 +86,7 @@ class Shooter{
 
         void reject(const RobotData &robotData, ShooterData &shooterData);
         bool rejectInitialized = false;
-        int desiredAngle;
+        int desiredAngle = 180;
 
 
         //bench test

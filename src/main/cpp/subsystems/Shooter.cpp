@@ -187,7 +187,7 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
     // for reject code
     if(!robotData.indexerData.autoRejectTop){
         rejectInitialized = false;
-        shooterData.finalReject = false;
+        shooterData.readyReject = false;
         desiredAngle = 180;
     }
 
@@ -485,6 +485,10 @@ double Shooter::turretGyroOffset(double value){
     return ((value*slope) + b);
 }
 
+// double Shooter::getFieldRelativeToRobotRelativeTurret(const RobotData &robotData, ShooterData &shooterData){
+    
+// }
+
 /**
  * @return the angle of the turret relative to the field, 0-360. 
  * 0 is opponent wall, 180 is our wall, CCW pos
@@ -585,14 +589,14 @@ void Shooter::fender(const RobotData &robotData)
 }
 
 void Shooter::reject(const RobotData &robotData, ShooterData &shooterData){
-    shooterHood_pidController.SetReference(hoodrevOut, rev::CANSparkMaxLowLevel::ControlType::kPosition);
-    setShooterWheel(1000);
-    readyShootLimit = 1000;
+    shooterHood_pidController.SetReference(hoodrevOut + 1, rev::CANSparkMaxLowLevel::ControlType::kPosition);
+    setShooterWheel(800);
+    readyShootLimit = 800;
 
     if(!rejectInitialized){
-        if(getFieldRelativeTurretAngle(robotData, shooterData) < desiredAngle + 2 && getFieldRelativeTurretAngle(robotData, shooterData) > desiredAngle -2){
+        if(std::abs(getFieldRelativeTurretAngle(robotData, shooterData) - desiredAngle)  < 5){
             if(robotData.limelightData.validTarget){
-                desiredAngle = 0;
+                desiredAngle = 0; // on the other side 
                 rejectInitialized = true;
             } else {
                 desiredAngle = 180;
@@ -610,12 +614,16 @@ void Shooter::reject(const RobotData &robotData, ShooterData &shooterData){
 
         //you don't see a valid target
         if(desiredAngle == 180){
-            if(!robotData.limelightData.validTarget && getFieldRelativeTurretAngle(robotData, shooterData) < desiredAngle + 2 && getFieldRelativeTurretAngle(robotData, shooterData) > desiredAngle - 2){
-                shooterData.finalReject = true;
+            if(!robotData.limelightData.validTarget && (std::abs(getFieldRelativeTurretAngle(robotData, shooterData) - desiredAngle)  < 5)){
+                shooterData.readyReject = true;
+            } else {
+                shooterData.readyReject = false;
             }
         } else if(desiredAngle == 0){
-            if(!robotData.limelightData.validTarget && getFieldRelativeTurretAngle(robotData, shooterData) < desiredAngle + 2 || getFieldRelativeTurretAngle(robotData, shooterData) > desiredAngle - 2 + 360){
-                shooterData.finalReject = true;
+            if(!robotData.limelightData.validTarget && (getFieldRelativeTurretAngle(robotData, shooterData) < desiredAngle + 5 || getFieldRelativeTurretAngle(robotData, shooterData) > desiredAngle - 5 + 360)){
+                shooterData.readyReject = true;
+            } else {
+                shooterData.readyReject = false;
             }
         }
     }
