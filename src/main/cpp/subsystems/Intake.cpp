@@ -33,6 +33,12 @@ void Intake::pivotInit(){
     intakePivot_pidController.SetOutputRange(-0.3, 0.2);
 
     intakePivot.SetSmartCurrentLimit(15);
+
+    intakePivot.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse, true);
+    intakePivot.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward, true);
+
+    intakePivot.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse, revIn);
+    intakePivot.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward, revOut);
 }
 
 void Intake::singulatorInit(){

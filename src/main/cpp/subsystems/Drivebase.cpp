@@ -76,6 +76,7 @@ void Drivebase::TeleopInit(const RobotData &robotData) {
     //     resetOdometry(startPoint, robotData.gyroData.rawYaw);
     //     odometryInitialized = true;
     // }
+    resetOdometry(0, 0, 0, robotData);
 }
 
 void Drivebase::AutonomousInit(const RobotData &robotData, DrivebaseData &drivebaseData, AutonData &autonData) {    
@@ -145,7 +146,7 @@ void Drivebase::teleopControl(const RobotData &robotData, DrivebaseData &driveba
         drivebaseData.driveMode = driveMode_joystick;
     }
     else if (robotData.controlData.shootMode == shootMode_vision) {
-        drivebaseData.driveMode = driveMode_turnInPlace;
+        //drivebaseData.driveMode = driveMode_turnInPlace;
     } else {
         drivebaseData.driveMode = driveMode_joystick;
     }
@@ -270,9 +271,17 @@ void Drivebase::updateOdometry(const RobotData &robotData, DrivebaseData &driveb
 
 
     drivebaseData.currentPose = odometry.GetPose();
-    // frc::smartDashboard::PutNumber("currentPoseX", drivebaseData.currentPose.Translation().X().to<double>());
-    // frc::smartDashboard::PutNumber("currentPoseY", drivebaseData.currentPose.Translation().Y().to<double>());
-    // frc::smartDashboard::PutNumber("currentRadians", odometry.GetPose().Rotation().Radians().to<double>());
+    drivebaseData.odometryX = drivebaseData.currentPose.X().to<double>();
+    drivebaseData.odometryY = drivebaseData.currentPose.Y().to<double>();
+
+    drivebaseData.odometryYaw = drivebaseData.currentPose.Rotation().Radians().to<double>();
+    drivebaseData.odometryYaw = (drivebaseData.odometryYaw / M_PI * 180); // convert from radians [-pi, pi] to degrees [0, 360]
+    if (drivebaseData.odometryYaw < 0) {
+        drivebaseData.odometryYaw = 360 + drivebaseData.odometryYaw;
+    }
+    frc::SmartDashboard::PutNumber("odometryX", drivebaseData.odometryX);
+    frc::SmartDashboard::PutNumber("odometryY", drivebaseData.odometryY);
+    frc::SmartDashboard::PutNumber("odometryYaw", drivebaseData.odometryYaw);
 }
 
 /**
@@ -500,6 +509,22 @@ void Drivebase::sendStartPointChooser() {
     frc::SmartDashboard::PutData("Select Start Point:", &startPointChooser);
 }
 
+
+void Drivebase::calcTurretEjectAngle(DrivebaseData &drivebaseData) {
+    if (drivebaseData.odometryX <= 8.23) {
+        double diffX = 0 - drivebaseData.odometryX;
+        double diffY = 4.115 - drivebaseData.odometryY;
+        drivebaseData.turretEjectAngle = (std::atan(diffY / diffX) * 180 / M_PI) - 180;
+    } else {
+        double diffX = 16.46 - drivebaseData.odometryX;
+        double diffY = 4.115 - drivebaseData.odometryY;
+        drivebaseData.turretEjectAngle = (std::atan(diffY / diffX) * 180 / M_PI);
+    }
+}
+
+
+
+//BENCH TEST CODE
 /**
  * ---------------------------------------------------------------------------------------------------------------------------------------------------
  * BENCH TEST CODE

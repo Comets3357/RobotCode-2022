@@ -10,7 +10,7 @@ void Robot::RobotInit()
     drivebase.RobotInit();
     intake.RobotInit();
     indexer.RobotInit();
-    shooter.RobotInit();
+    shooter.RobotInit(robotData.shooterData);
     climb.RobotInit();
     
 }
@@ -95,7 +95,7 @@ void Robot::TestInit(){
     drivebase.RobotInit();
     intake.RobotInit();
     indexer.RobotInit();
-    shooter.RobotInit();
+    //shooter.RobotInit();
     climb.RobotInit();
     climb.TestInit(robotData.climbData);
     intake.TestInit();
