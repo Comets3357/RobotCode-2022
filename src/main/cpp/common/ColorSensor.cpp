@@ -8,6 +8,7 @@ void ColorSensor::RobotInit(){
 // right now it's just the default example code... 
 void ColorSensor::RobotPeriodic(const RobotData &robotData, ColorSensorData &colorSensorData){
     
+    frc::SmartDashboard::PutNumber("cargo enum", colorSensorData.colorValue);
     if (robotData.arduinoData.ColorData == 11) {
       colorSensorData.colorValue = CargoColor::cargo_Blue;
     } else if (robotData.arduinoData.ColorData == 12) {

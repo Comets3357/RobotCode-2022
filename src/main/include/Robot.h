@@ -52,6 +52,7 @@ private:
     Timer timer{};
     Auton auton{};
     Arduino arduino{};
+    ColorSensor colorSensor{};
     BenchTest benchTest{};
     Jetson jetson{};
     

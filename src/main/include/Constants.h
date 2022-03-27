@@ -15,16 +15,16 @@ static const int
 
 static const double
     //practice bot
-    // absOut = 0.485,
-    // absIn = 0.616,
-    // revOut = 6.4,
-    // revIn = 0;
+    absOut = 0.485,
+    absIn = 0.616,
+    revOut = 6.4,
+    revIn = 0;
 
     //comp bot intake pivot positions
-    absOut = 0.465,
-    absIn = 0.605,
-    revOut = 6.14,
-    revIn = 0;
+    // absOut = 0.465,
+    // absIn = 0.605,
+    // revOut = 6.14,
+    // revIn = 0;
 
 //indexer
 static const int
@@ -40,20 +40,20 @@ static const int
 
 static const double
     //comp bot shooter hood positions
-    hoodabsOut = 0.07,
-    hoodabsIn = 0.945,
-    hoodrevOut = -38,
-    hoodrevIn = 0,
-    hoodAngleOut = 43,
-    hoodAngleIn = 21,
-
-    //PRATLAS shooter hood positions
-    // hoodabsOut = 0.103,
-    // hoodabsIn = 0.98,
+    // hoodabsOut = 0.07,
+    // hoodabsIn = 0.945,
     // hoodrevOut = -38,
     // hoodrevIn = 0,
     // hoodAngleOut = 43,
     // hoodAngleIn = 21,
+
+    //PRATLAS shooter hood positions
+    hoodabsOut = 0.103,
+    hoodabsIn = 0.98,
+    hoodrevOut = -38,
+    hoodrevIn = 0,
+    hoodAngleOut = 43,
+    hoodAngleIn = 21,
 
     //turret positions
     turretZeroDegrees = 0, 

@@ -26,8 +26,9 @@ void Arduino::RobotPeriodic(const RobotData &robotData, ArduinoData &arduinoData
 
     lastColorCode = colorCode;
 
-    frc::SmartDashboard::PutNumber("Arduino bytes received", arduino.GetBytesReceived());
+    frc::SmartDashboard::PutNumber("Color", (int)colors[0]);
     frc::SmartDashboard::PutNumber("Arduino colorCode for LEDs", colorCode);
+    arduinoData.ColorData = (int)colors[0];
     frc::SmartDashboard::PutBoolean("isDisabled", false);
 
     if (arduino.GetBytesReceived() >= 1){

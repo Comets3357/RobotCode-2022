@@ -191,6 +191,10 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
         desiredAngle = 180;
     }
 
+    frc::SmartDashboard::PutBoolean("should reject", robotData.indexerData.autoRejectTop);
+    frc::SmartDashboard::PutBoolean("in limelight mode", robotData.controlData.shootMode == shootMode_vision);
+    frc::SmartDashboard::PutBoolean("shoot? at al?", robotData.controlData.autoRejectOpponentCargo);
+
     saTurret(robotData, shooterData);
     //if nothing is happening then update the isTurretStatic value based on the button control
     //can this be outside the statement?
@@ -198,7 +202,10 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
 
 
     //SHOOTING LOGIC
-    if(robotData.controlData.shootMode == shootMode_vision){ // Aiming with limelight
+    if(robotData.indexerData.autoRejectTop && !robotData.controlData.autoRejectOpponentCargo){
+        reject(robotData, shooterData);
+        isTurretStatic = false;
+    } else if(robotData.controlData.shootMode == shootMode_vision){ // Aiming with limelight
 
         //set the hood and flywheel using pids to the desired values based off the limelight code
         //checks battery voltage and increases velocity if it doesn't have enough power
@@ -268,10 +275,8 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
         }
     
 //FIXED SHOTS 
-    }else if(robotData.indexerData.autoRejectTop && !robotData.controlData.shootUnassignedAsOpponent){
-        reject(robotData, shooterData);
-        isTurretStatic = false;
-    }else if(robotData.controlData.shootMode == shootMode_cornerLaunchPad){ //FROM THE CLOSER LAUNCH PAD
+    } 
+    else if(robotData.controlData.shootMode == shootMode_cornerLaunchPad){ //FROM THE CLOSER LAUNCH PAD
         innerLaunch(robotData);
         checkReadyShoot(shooterData);
 

@@ -38,8 +38,6 @@ void Indexer::RobotPeriodic(const RobotData &robotData, IndexerData &indexerData
             semiAuto(robotData, indexerData);
         }
     }
-
-    
     
 
 }
@@ -64,6 +62,8 @@ void Indexer::updateData(const RobotData &robotData, IndexerData &indexerData)
         indexerData.eBallCountZero = false;
     }
     lastTickBallCount = indexerData.indexerContents.size();
+
+    debuggingStuff(robotData, indexerData);
 }
 
 void Indexer::manual(const RobotData &robotData, IndexerData &indexerData)
@@ -84,6 +84,7 @@ void Indexer::manual(const RobotData &robotData, IndexerData &indexerData)
 
 void Indexer::semiAuto(const RobotData &robotData, IndexerData &indexerData)
 {
+    rejectDetection(robotData, indexerData);
     saBeltControl(robotData, indexerData);
     saWheelControl(robotData, indexerData);
 }
@@ -150,22 +151,22 @@ void Indexer::assignCargoColor(const RobotData &robotData, IndexerData &indexerD
     // same logic as above newCargo function, except you remove the last element before adding a new cargo
     if(frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed){        // red alliance
 
-        // if (robotData.colorSensorData.colorValue == CargoColor::cargo_Red){             // red ball
-        //     indexerData.indexerContents.pop_back();
-        //     indexerData.indexerContents.push_back(Cargo::cargo_Alliance);               // replace with alliance ball
-        // } else if (robotData.colorSensorData.colorValue == CargoColor::cargo_Blue){     // blue ball
-        //     indexerData.indexerContents.pop_back();
-        //     indexerData.indexerContents.push_back(Cargo::cargo_Opponent);               // replace with opponent ball
-        // } 
+        if (robotData.colorSensorData.colorValue == CargoColor::cargo_Red){             // red ball
+            indexerData.indexerContents.pop_back();
+            indexerData.indexerContents.push_back(Cargo::cargo_Alliance);               // replace with alliance ball
+        } else if (robotData.colorSensorData.colorValue == CargoColor::cargo_Blue){     // blue ball
+            indexerData.indexerContents.pop_back();
+            indexerData.indexerContents.push_back(Cargo::cargo_Opponent);               // replace with opponent ball
+        } 
     } else {                                                                            // blue alliance                                                                                      
 
-        // if (robotData.colorSensorData.colorValue == CargoColor::cargo_Blue){            // blue ball
-        //     indexerData.indexerContents.pop_back();
-        //     indexerData.indexerContents.push_back(Cargo::cargo_Alliance);               // replace with alliance ball
-        // } else if (robotData.colorSensorData.colorValue == CargoColor::cargo_Red){      // red ball
-        //     indexerData.indexerContents.pop_back();
-        //     indexerData.indexerContents.push_back(Cargo::cargo_Opponent);               // replace with opponent ball
-        // } 
+        if (robotData.colorSensorData.colorValue == CargoColor::cargo_Blue){            // blue ball
+            indexerData.indexerContents.pop_back();
+            indexerData.indexerContents.push_back(Cargo::cargo_Alliance);               // replace with alliance ball
+        } else if (robotData.colorSensorData.colorValue == CargoColor::cargo_Red){      // red ball
+            indexerData.indexerContents.pop_back();
+            indexerData.indexerContents.push_back(Cargo::cargo_Opponent);               // replace with opponent ball
+        } 
 
     }
 }
@@ -180,7 +181,7 @@ void Indexer::decrementCount(const RobotData &robotData, IndexerData &indexerDat
             indexerData.indexerContents.pop_back();     // remove "bottom" element of deque
         }
 
-    }else if (!reverse && getTopBeamToggledOff() && robotData.controlData.saFinalShoot){    // if you're going FORWARD, specifically in saFinalShoot, and the top sensor toggles to not being tripped (ball passed completely through and shot)
+    }else if (!reverse && getTopBeamToggledOff() && (robotData.controlData.saFinalShoot || robotData.shooterData.readyReject)){    // if you're going FORWARD, specifically in saFinalShoot, and the top sensor toggles to not being tripped (ball passed completely through and shot)
         if (indexerData.indexerContents.size() > 0){    // checks to make sure there's actually stuff in the indexer to make sure the code doesn't crash
             indexerData.indexerContents.pop_front();    // removes "top" element of deque
         }
@@ -206,7 +207,7 @@ void Indexer::count(const RobotData &robotData, IndexerData &indexerData){
         decrementCount(robotData, indexerData, true);                               // true means you're reversing
     } else {                                                                        // you are going forwards. this runs every time as you go forward
         decrementCount(robotData, indexerData, false);                              // false means going forward
-                                                                                    // decrement runs while the indexer goes forward and backward because balls can exit from top or bottom
+                                                              // decrement runs while the indexer goes forward and backward because balls can exit from top or bottom
         incrementCount(robotData, indexerData);                                     // only runs increment when you go forward because we're not ever intaking while reversing
     }
 
@@ -240,7 +241,7 @@ void Indexer::saBeltControl(const RobotData &robotData, IndexerData &indexerData
 
     if(robotData.controlData.saEjectBalls){             // if indexer is REVERSING (saEject curently is the only case where it runs backwards)
         indexerBelt.Set(-indexerShootingBeltSpeed);     // run the belt backwards fast
-    } else if ((!pauseBelt(robotData, indexerData) && robotData.shooterData.readyShoot && (robotData.controlData.saFinalShoot|| robotData.shooterData.readyReject)) /* || (indexerData.autoRejectTop && robotData.shooterData.readyEject) */|| (!getTopBeam() && !robotData.intakeData.intakeIdle)){ 
+    } else if ((!pauseBelt(robotData, indexerData) && robotData.shooterData.readyShoot && (robotData.controlData.saFinalShoot|| robotData.shooterData.readyReject)) || (!getTopBeam() && !robotData.intakeData.intakeIdle)){ 
         // there are two main cases when you run the indexer forward: when you shoot, and when you're intaking
         // when shooting, you check that you're done pausing (see pauseBelt) to make sure every ball pauses before going into the shooter, 
         // and you also check readyShoot to make sure the flywheel is up to speed, along with saFinalShoot to make sure secondary is commanding it to shoot
@@ -390,7 +391,7 @@ bool Indexer::getBottomBeamToggledOn(){
     }
     // if top sensor is currently being tripped and it previously wasn't
     if (currentBottomBeam && !prevBottomBeam){
-        bottomDebounceCount = 2;
+        bottomDebounceCount = 10;
         return true;
     } else {
         return false;
@@ -480,6 +481,7 @@ void Indexer::debuggingStuff(const RobotData &robotData, IndexerData &indexerDat
     // TESTING STUFF
     frc::SmartDashboard::PutNumber("cargo count", indexerData.indexerContents.size());
     frc::SmartDashboard::PutNumber("wrong ball?", robotData.controlData.wrongBall);
+    frc::SmartDashboard::PutBoolean("get bottom beam tripped", getBottomBeam());
 
     if (indexerData.indexerContents.size() == 0){
 
