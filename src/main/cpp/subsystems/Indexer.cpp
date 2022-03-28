@@ -175,16 +175,24 @@ void Indexer::assignCargoColor(const RobotData &robotData, IndexerData &indexerD
  * senses when balls leave the indexer either from top or bottom and removes them from the indexerContents deque
  **/
 void Indexer::decrementCount(const RobotData &robotData, IndexerData &indexerData, bool reverse){
+
     
     if (reverse && getBottomBeamToggledOff()){                                              // if you're reversing and bottom sensor toggles to not being tripped (ball passed completely through)
         if (indexerData.indexerContents.size() > 0){    // checks to make sure there's actually stuff in the indexer to make sure the code doesn't crash
             indexerData.indexerContents.pop_back();     // remove "bottom" element of deque
         }
 
-    }else if (!reverse && getTopBeamToggledOff() && (robotData.controlData.saFinalShoot || robotData.shooterData.readyReject)){    // if you're going FORWARD, specifically in saFinalShoot, and the top sensor toggles to not being tripped (ball passed completely through and shot)
-        if (indexerData.indexerContents.size() > 0){    // checks to make sure there's actually stuff in the indexer to make sure the code doesn't crash
-            indexerData.indexerContents.pop_front();    // removes "top" element of deque
+    }
+    
+    if (!reverse && getTopBeamToggledOff() && (robotData.controlData.saFinalShoot || robotData.shooterData.readyReject)){    // if you're going FORWARD, specifically in saFinalShoot, and the top sensor toggles to not being tripped (ball passed completely through and shot)
+        decrementDelay = 5;
+    }else if (decrementDelay > 0 && decrementDelay <= 5){       // the top sensor hasn't just been toggled off but was recently toggled off
+        decrementDelay--;                                       // count down the decrementDelay counter
+    } else if(decrementDelay == 0){                                                    // the count down is done 
+        if (indexerData.indexerContents.size() > 0){            // checks to make sure there's actually stuff in the indexer to make sure the code doesn't crash
+            indexerData.indexerContents.pop_front();            // removes "top" element of deque
         }
+        decrementDelay = 6;
     }
 }
 
