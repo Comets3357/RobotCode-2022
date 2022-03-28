@@ -62,15 +62,19 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
         controlData.rDrive = controllerData.pRYStick;
     }
 
-    if(controllerData.sRCenterBtnToggled){
+    if(controllerData.sLCenterBtnToggled){
         controlData.staticTurret = !controlData.staticTurret;
     }
 
     // manual:
 
     //ADD CONTROLLER BIND
-    controlData.mDistanceOffsetAdd;
-    controlData.mDistanceOffsetSubtract;
+    if(controllerData.sLStickBtnToggled){
+        controlData.saDistanceOffset = controlData.saDistanceOffset + 6;
+    }else if(controllerData.sRStickBtnToggled){
+        controlData.saDistanceOffset = controlData.saDistanceOffset - 6;
+    }
+    
 
     
     controlData.mIntakeDown = controllerData.sRBumper /* && (controlData.mode == mode_teleop_manual) */;

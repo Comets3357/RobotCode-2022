@@ -57,15 +57,24 @@ void Climb::RobotPeriodic(const RobotData &robotData, ClimbData &climbData)
     //checks if the robot is in climb mode
     if (robotData.controlData.mode == mode_climb_sa || robotData.controlData.mode == mode_climb_manual)
     {
-        //chacks if the robot is in manual
-        if (robotData.controlData.mode == mode_climb_manual)
-        { //updates whether or not the robot is in manual or semiAuto mode
-            manual(robotData, climbData);
-        }
-        else
+        if(std::abs(turretMiddleDegrees - robotData.shooterData.currentTurretAngle) <= 5) //if you're centered forward you can climb
         {
-            semiAuto(robotData, climbData);
+            //chacks if the robot is in manual
+            if (robotData.controlData.mode == mode_climb_manual)
+            { //updates whether or not the robot is in manual or semiAuto mode
+                manual(robotData, climbData);
+            }
+            else
+            {
+                semiAuto(robotData, climbData);
+            }
+            
+        }else{
+            //sets powers to 0 if the mode is changed out of climb mode
+            climbElevator.Set(0);
+            climbArms.Set(0);
         }
+        
     } 
     else
     {
@@ -249,25 +258,26 @@ void Climb::runSequence(const RobotData &robotData, ClimbData &climbData)
         if (stage == 0) ChangeElevatorSpeed(elevatorSpeed, 1);
         else if (stage == 1) RunArmsAndElevatorToPos(0,1,0,0,1);
         else if (stage == 2) ChangeElevatorSpeed(elevatorSpeed, 1);
-        else if (stage == 3) {climbElevator_pidController.SetReference(-2, rev::CANSparkMax::ControlType::kPosition, 1); stage++;}
+        else if (stage == 3) {climbElevator_pidController.SetReference(-0, rev::CANSparkMax::ControlType::kPosition, 1); stage++;}
         //else if (stage == 4) RunElevatorToPos(0,1,1);
-        else if (stage == 4) {RunArmsToPos(0,1,0); climbElevator_pidController.SetReference(-2, rev::CANSparkMax::ControlType::kPosition, 1);} //Elevator goes up to latch the arms onto the bar with the elevator a little above
-        else if (stage == 5) {RunArmsToPos(85,1,0); climbElevator_pidController.SetReference(-2, rev::CANSparkMax::ControlType::kPosition, 1);}//Elevator goes up to latch the arms onto the bar with the elevator a little above
-        else if (stage == 6) {CheckArms(); climbElevator_pidController.SetReference(-2, rev::CANSparkMax::ControlType::kPosition, 1);}
+        else if (stage == 4) {RunArmsToPos(0,1,0); ZeroElevator(0.8,0);} //Elevator goes up to latch the arms onto the bar with the elevator a little above
+        else if (stage == 5) {RunArmsToPos(85,1,0); ZeroElevator(0.8,0);}//Elevator goes up to latch the arms onto the bar with the elevator a little above
+        else if (stage == 6) {CheckArms(); ZeroElevator(0.8,0);}
         else if (stage == 7) ChangeElevatorSpeed(0.3,1);
         else if (stage == 8) RunElevatorToPos(30,1,0); //Outer Arms pivot the robot so the elevator is facing the next bar
         else if (stage == 9) ChangeElevatorSpeed(1,1);
         if (climbData.bar == targetBar-1)
         {
             if (stage == 10) RunArmsAndElevatorToPos(120,0,70,1,1);
-            else if (stage == 11) WaitUntilGyro(1, -38, 1);
+            else if (stage == 11) WaitUntilGyro(1, -35, 1);
             else if (stage == 12) RunElevatorToPos(148,1,1);
             else if (stage == 13) ChangeElevatorSpeed(elevatorSpeed,1);
             else if (stage == 14) ChangeArmSpeed(0.5,1);
-            else if (stage == 15) RunArmsToPos(190,1,1);
-            else if (stage == 16) ChangeElevatorSpeed(0.6, 1);
-            else if (stage == 17) RunElevatorToPos(70,1,1);
-            else if (stage == 18) ChangeElevatorSpeed(elevatorSpeed, 1);
+            else if (stage == 15) TopTransfer();
+            // else if (stage == 15) RunArmsToPos(190,1,1);
+            // else if (stage == 16) ChangeElevatorSpeed(0.6, 1);
+            // else if (stage == 17) RunElevatorToPos(70,1,1);
+            // else if (stage == 18) ChangeElevatorSpeed(elevatorSpeed, 1);
         }
         else 
         {
@@ -275,7 +285,7 @@ void Climb::runSequence(const RobotData &robotData, ClimbData &climbData)
             else if (stage == 11) WaitUntilGyro(-1, -42, 1);
             else if (stage == 12) RunElevatorToPos(148,1,1);
             else if (stage == 13) ChangeElevatorSpeed(elevatorSpeed,1);
-            else if (stage == 14) RunArmsToPos(130,1,1);
+            else if (stage == 14) RunArmsToPos(120,1,1);
             else if (stage == 15) ChangeElevatorSpeed(0.6, 1);
             else if (stage == 16) RunElevatorToPos(110,1,1);
             else if (stage == 17) ChangeElevatorSpeed(elevatorSpeed, 1);
@@ -301,13 +311,14 @@ void Climb::runSequence(const RobotData &robotData, ClimbData &climbData)
 
 void Climb::TopTransfer()
 {
-    climbElevator_pidController.SetReference(-200, rev::CANSparkMax::ControlType::kPosition, 1);
-    climbElevator.Set(0);
+    climbArms_pidController.SetReference(-200, rev::CANSparkMax::ControlType::kPosition, 1);
 
-    if (angle < -35 && angularRate > -5)
+    if (angle < -42.5)
     {
-        climbArms.Set(0);
+        ChangeElevatorSpeed(0.6, 0);
         RunElevatorToPos(80,1,1);
+    } else {
+        climbElevator.Set(0);
     }
 }
 
@@ -341,7 +352,7 @@ void Climb::updateData(const RobotData &robotData, ClimbData &climbData)
     // frc::smartDashboard::PutBoolean("zeroing", climbData.zeroing);
     // frc::smartDashboard::PutNumber("elevator motor temp", elevatorTemp);
     // frc::smartDashboard::PutNumber("arms temp", armsTemp);
-    // frc::smartDashboard::PutNumber("climb angle", angle);
+    frc::SmartDashboard::PutNumber("climb angle", angle);
 }
 
 void Climb::CheckArms()

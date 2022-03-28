@@ -135,6 +135,19 @@ double VisionLookup::highestVal(){
 }
 
 /**
+ * @return the smallest distance from the hood map
+ **/
+double VisionLookup::lowestVal(){
+    double lowest = 25;
+    for (auto x : visionMap){
+        if(x.first < lowest){
+            lowest = x.first;
+        }
+    }
+    return lowest;
+}
+
+/**
  * @return the greatest distance from the velocity map
  **/
 double VisionLookup::highestVelocity(){
@@ -145,6 +158,19 @@ double VisionLookup::highestVelocity(){
         }
     }
     return highest;
+}
+
+/**
+ * @return the smallest distance from the velocity map
+ **/
+double VisionLookup::lowestVelocity(){
+    double lowest = 25;
+    for (auto x : velocityMap){
+        if(x.first < lowest){
+            lowest = x.first;
+        }
+    }
+    return lowest;
 }
 
 /**

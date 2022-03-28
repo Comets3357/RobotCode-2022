@@ -247,14 +247,18 @@ bool Indexer::pauseBelt(const RobotData &robotData, IndexerData &indexerData){
  **/
 void Indexer::saBeltControl(const RobotData &robotData, IndexerData &indexerData){
 
+    frc::SmartDashboard::PutBoolean("indexer for shooting", robotData.shooterData.readyShoot && robotData.controlData.saFinalShoot)|| (!getTopBeam() && !robotData.intakeData.intakeIdle);
+    frc::SmartDashboard::PutBoolean("auton readyShoot", robotData.shooterData.readyShoot);
+    frc::SmartDashboard::PutBoolean("auton finalShoot", robotData.controlData.saFinalShoot);
     if(robotData.controlData.saEjectBalls){             // if indexer is REVERSING (saEject curently is the only case where it runs backwards)
         indexerBelt.Set(-indexerShootingBeltSpeed);     // run the belt backwards fast
     } else if ((!pauseBelt(robotData, indexerData) && robotData.shooterData.readyShoot && (robotData.controlData.saFinalShoot|| robotData.shooterData.readyReject)) || (!getTopBeam() && !robotData.intakeData.intakeIdle)){ 
         // there are two main cases when you run the indexer forward: when you shoot, and when you're intaking
         // when shooting, you check that you're done pausing (see pauseBelt) to make sure every ball pauses before going into the shooter, 
+        // anyways, we have to get the signal that the shooter is ready to eject AND that the top ball in the indexer is the opponent color to run it in that case
         // and you also check readyShoot to make sure the flywheel is up to speed, along with saFinalShoot to make sure secondary is commanding it to shoot
-        // when intaking, you want to run the ball up until it triggers the top sensor
         // you also check that the intake has been given a command in the past second (see intakeIdle function in intake class) to make sure the indexer isn't running for no reason
+        // when intaking, you want to run the ball up until it triggers the top sensor
         // even though this is the intaking mode it doesn't actually look at "if saIntake" directly or anything because no matter when we're intaking or just running a second cargo through,
         // we want to run it until it hits the top sensor, then stop it, no matter if the robot is shooting, intaking, or whatever
         // actually, new code

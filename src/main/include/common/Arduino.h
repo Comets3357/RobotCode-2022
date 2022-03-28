@@ -13,7 +13,7 @@ class Arduino {
         void DisabledPeriodic();
 
     private:
-        //in constructor port, deviceaddress
+        // in constructor port, deviceaddress
         frc::SerialPort arduino = frc::SerialPort(9600, frc::SerialPort::Port::kUSB);
 
         int colorCode = 6;

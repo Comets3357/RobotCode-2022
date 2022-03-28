@@ -44,33 +44,24 @@ void Drivebase::RobotInit()
     dbR.Config_kP(0, 0.038723);
     dbR.Config_kD(0, 0); */
 
-    // PIDs for 2022
-    // last updated 03.01.22
-    // dbL.Config_kF(0, 0.074314);
-    // dbL.Config_kP(0, 0.67243);
+    // PIDs for 2022 Calvin University
+    // dbL.Config_kF(0, 0.077626);
+    // dbL.Config_kP(0, 0.10352);
     // dbL.Config_kD(0, 0);
 
-    // dbR.Config_kF(0, 0.074314);
-    // dbR.Config_kP(0, 0.67243);
+    // dbR.Config_kF(0, 0.077626);
+    // dbR.Config_kP(0, 0.10352);
     // dbR.Config_kD(0, 0);
 
-    // PIDs for 2022 Calvin University
-    dbL.Config_kF(0, 0.077626);
-    dbL.Config_kP(0, 0.10352);
+    // Atlas 03.26.22 Morning
+    dbL.Config_kF(0, 0.074655);
+    dbL.Config_kP(0, 0.1079);
     dbL.Config_kD(0, 0);
 
-    dbR.Config_kF(0, 0.077626);
-    dbR.Config_kP(0, 0.10352);
+    dbR.Config_kF(0, 0.074655);
+    dbR.Config_kP(0, 0.1079);
     dbR.Config_kD(0, 0);
 
-    // PIDs for 2022 Muskegon
-    // dbL.Config_kF(0, 0.072381);
-    // dbL.Config_kP(0, 0.11063);
-    // dbL.Config_kD(0, 0);
-
-    // dbR.Config_kF(0, 0.072381);
-    // dbR.Config_kP(0, 0.11063);
-    // dbR.Config_kD(0, 0);
 
     setPercentOutput(0, 0);
 
@@ -80,12 +71,13 @@ void Drivebase::RobotInit()
 }
 
 void Drivebase::TeleopInit(const RobotData &robotData) {
-    // if (!odometryInitialized) {
+    if (!odometryInitialized) {
     //     frc::Pose2d startPoint = startPointChooser.GetSelected();
     //     resetOdometry(startPoint, robotData.gyroData.rawYaw);
-    //     odometryInitialized = true;
-    // }
-    resetOdometry(0, 0, 0, robotData);
+        resetOdometry(0, 0, 0, robotData);
+        odometryInitialized = true;
+    }
+    
 }
 
 void Drivebase::AutonomousInit(const RobotData &robotData, DrivebaseData &drivebaseData, AutonData &autonData) {    
@@ -154,9 +146,10 @@ void Drivebase::teleopControl(const RobotData &robotData, DrivebaseData &driveba
     if ((robotData.controlData.lDrive <= -0.08 || robotData.controlData.lDrive >= 0.08) || (robotData.controlData.rDrive <= -0.08 || robotData.controlData.rDrive >= 0.08)) {
         drivebaseData.driveMode = driveMode_joystick;
     }
-    else if (robotData.controlData.shootMode == shootMode_vision) {
+    // else if (robotData.controlData.shootMode == shootMode_vision) {
         //drivebaseData.driveMode = driveMode_turnInPlace;
-    } else {
+    // } 
+    else {
         drivebaseData.driveMode = driveMode_joystick;
     }
 
@@ -191,9 +184,9 @@ void Drivebase::teleopControl(const RobotData &robotData, DrivebaseData &driveba
         //set as percent vbus
         setPercentOutput(tempLDrive, tempRDrive);
     }
-    else if (drivebaseData.driveMode == driveMode_turnInPlace) {
-        turnInPlaceTeleop(-robotData.limelightData.angleOffset, robotData);
-    }
+    // else if (drivebaseData.driveMode == driveMode_turnInPlace) {
+        // turnInPlaceTeleop(-robotData.limelightData.angleOffset, robotData);
+    // }
     frc::SmartDashboard::PutNumber("limelight angle diff", -robotData.limelightData.angleOffset);
 
 
@@ -211,13 +204,13 @@ void Drivebase::autonControl(const RobotData &robotData, DrivebaseData &drivebas
     if (drivebaseData.driveMode == driveMode_break)
     {
         if (robotData.controlData.shootMode == shootMode_vision) {
-            turnInPlaceTeleop(-robotData.limelightData.angleOffset, robotData);
+            // turnInPlaceTeleop(-robotData.limelightData.angleOffset, robotData);
             // frc::smartDashboard::PutNumber("angleOffsetLimelight", robotData.limelightData.angleOffset);
         } else {
             setVelocity(0, 0);
         }
         // frc::SmartDashboard::PutNumber("breakEndSec", breakEndSec);
-        if (robotData.timerData.secSinceEnabled > breakEndSec && robotData.controlData.shootMode == shootMode_none) {
+        if (robotData.timerData.secSinceEnabled > breakEndSec /* && !robotData.controlData.saFinalShoot */) {
             // frc::SmartDashboard::PutNumber("secSinceEnabled", robotData.timerData.secSinceEnabled);
             frc::SmartDashboard::PutNumber("breakEndSec", breakEndSec);
             getNextAutonStep(robotData, drivebaseData, autonData);
@@ -453,8 +446,8 @@ void Drivebase::turnInPlaceAuton(double degrees, const RobotData &robotData, Dri
         // frc::SmartDashboard::PutString("AUTON", "TURN IN PLACE");
     } else {
         // profile that adjusts aggressiveness of turn based on the amount of degrees left to turn. has been tuned for speed & accuracy on both small and large turns
-        leftOutput = std::pow(std::abs(degrees / 400), 1.3) + 0.09;
-        rightOutput = std::pow(std::abs(degrees / 400), 1.3) + 0.09;
+        leftOutput = std::pow(std::abs(degrees / 400), 1.2) + 0.08;
+        rightOutput = std::pow(std::abs(degrees / 400), 1.2) + 0.08;
     }
     
 
@@ -534,6 +527,12 @@ void Drivebase::calcTurretEjectAngle(DrivebaseData &drivebaseData) {
 
 
 //BENCH TEST CODE
+/**
+ * ---------------------------------------------------------------------------------------------------------------------------------------------------
+ * BENCH TEST CODE
+ * ---------------------------------------------------------------------------------------------------------------------------------------------------
+ **/
+
 void Drivebase::TestPeriodic(const RobotData &robotData, DrivebaseData &drivebaseData){
     if (robotData.benchTestData.testStage == BenchTestStage::BenchTestStage_Drivebase && (robotData.controlData.manualBenchTest || robotData.controlData.autoBenchTest)){ //checks if we're testing drivebase
         if (robotData.benchTestData.stage == 0){
