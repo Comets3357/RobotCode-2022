@@ -19,6 +19,7 @@ struct RobotData;
 struct ShooterData
 {
     bool readyShoot;
+    bool readyReject = false;
     float currentTurretAngle;
     
     //Bench test
@@ -40,7 +41,6 @@ class Shooter{
         void DisabledPeriodic(const RobotData &robotData, ShooterData &shooterData);
         void EnabledInit(ControlData &controlData, ShooterData &shooterData);
         void TestPeriodic(const RobotData &robotData, ShooterData &shooterData);
-        void TestInit();
     
     private:
         void manual(const RobotData &robotData, ShooterData &shooterData);
@@ -58,6 +58,9 @@ class Shooter{
         double turretConvertFromAbsToAngle(double abs);
         double turretAbsoluteToREV(double value);
         double turretGyroOffset(double value);
+        // double getFieldRelativeToRobotRelativeTurret(const RobotData &robotData, ShooterData &shooterData);
+        double getFieldRelativeTurretAngle(const RobotData &robotData, ShooterData &shooterData);
+
         
         //init 
         void flyWheelInit();
@@ -83,6 +86,11 @@ class Shooter{
         void innerLaunch(const RobotData &robotData);
         void wall(const RobotData &robotData);
         void fender(const RobotData &robotData);
+
+        void reject(const RobotData &robotData, ShooterData &shooterData);
+        bool rejectInitialized = false;
+        int desiredAngle = 180;
+
 
         //bench test
         bool encoderInRange(const ShooterData &shooterData);

@@ -124,7 +124,7 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
         // controlData.upperHubShot = !controlData.upperHubShot;
     }
     if (controllerData.sBBtnToggled) {
-        controlData.shootUnassignedAsOpponent = !controlData.shootUnassignedAsOpponent;
+        controlData.autoRejectOpponentCargo = !controlData.autoRejectOpponentCargo;
     }
     
     controlData.fenderShot = controllerData.sABtnToggled && controlData.shift /* && (controlData.mode == mode_teleop_sa) */;
@@ -243,10 +243,6 @@ void Controller::updateShootMode(const RobotData &robotData, ControlData &contro
         } else { controlData.shootMode = shootMode_cornerLaunchPad; }
     }
 
-    // interpret button data to toggle between shooting unassigned as ours or opponent's
-    if (robotData.controlData.shootUnassignedAsOpponent) {
-        controlData.shootUnassignedAsOpponent = !controlData.shootUnassignedAsOpponent;
-    }
 
 
     // shut off shooting if all balls have exited (happens once upon ball count going to zero)
