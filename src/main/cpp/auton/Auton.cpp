@@ -143,8 +143,10 @@ void Auton::taxiShootA(const RobotData &robotData, ControlData &controlData) {
     double sec = robotData.timerData.secSinceEnabled;
 
     // intake
-    if (sec > 0 && sec < 8) {
-    controlData.saIntake = true;
+    if (sec > 0 && sec < 4) {
+        controlData.saIntake = true;
+    } else if (sec > 5.5 && sec < 8) {
+
     } else {
         controlData.saIntake = false;
     }
@@ -152,7 +154,7 @@ void Auton::taxiShootA(const RobotData &robotData, ControlData &controlData) {
     // shooting
     controlData.shootMode = shootMode_vision;
 
-    if (sec > 4 && sec < 6) {
+    if (sec > 2.5 && sec < 6) {
         controlData.saFinalShoot = true;
     } else {
         controlData.saFinalShoot = false;
@@ -253,9 +255,9 @@ void Auton::fiveBallC(const RobotData &robotData, ControlData &controlData)
     double sec = robotData.timerData.secSinceEnabled;
 
     // intake
-    if (sec > 1 && sec < 5) {
+    if (sec > 0.5 && sec < 5) {
         controlData.saIntake = true;
-    } else if (sec > 7 && sec < 12) {
+    } else if (sec > 8 && sec < 13) {
         controlData.saIntake = true;
     } else {
         controlData.saIntake = false;
