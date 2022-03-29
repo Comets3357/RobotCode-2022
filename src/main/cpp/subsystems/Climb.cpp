@@ -270,7 +270,7 @@ void Climb::runSequence(const RobotData &robotData, ClimbData &climbData)
         {
             if (stage == 10) RunArmsAndElevatorToPos(120,0,70,1,1);
             else if (stage == 11) WaitUntilGyro(1, -35, 1);
-            else if (stage == 12) RunElevatorToPos(148,1,1);
+            else if (stage == 12) RunElevatorToPos(140,1,1);
             else if (stage == 13) ChangeElevatorSpeed(elevatorSpeed,1);
             else if (stage == 14) ChangeArmSpeed(0.5,1);
             else if (stage == 15) TopTransfer();
@@ -282,7 +282,7 @@ void Climb::runSequence(const RobotData &robotData, ClimbData &climbData)
         else 
         {
             if (stage == 10) RunArmsAndElevatorToPos(110,0,200,1,1);
-            else if (stage == 11) WaitUntilGyro(-1, -42, 1);
+            else if (stage == 11) WaitUntilGyro(-1, -41, 1);
             else if (stage == 12) RunElevatorToPos(148,1,1);
             else if (stage == 13) ChangeElevatorSpeed(elevatorSpeed,1);
             else if (stage == 14) RunArmsToPos(120,1,1);
@@ -311,14 +311,19 @@ void Climb::runSequence(const RobotData &robotData, ClimbData &climbData)
 
 void Climb::TopTransfer()
 {
-    climbArms_pidController.SetReference(-200, rev::CANSparkMax::ControlType::kPosition, 1);
 
-    if (angle < -42.5)
+
+    if (angle < -41.5)
     {
+        climbArms.Set(0);
         ChangeElevatorSpeed(0.6, 0);
         RunElevatorToPos(80,1,1);
     } else {
-        climbElevator.Set(0);
+        if (angle > -30)
+        {
+            climbElevator.Set(0);
+        }
+        climbArms_pidController.SetReference(-200, rev::CANSparkMax::ControlType::kPosition, 1);
     }
 }
 
