@@ -22,9 +22,10 @@ public:
     void RobotPeriodic(const RobotData &robotData, JetsonData &jetsonData);
     double getDistanceFromBall();
     double getAngleOffBall();
-    double getSkew(double angle, double distance);
 private:
     double distanceFromBall;
     double angleOffBall;
     int currentAlliance;
+
+    double getSkew(double angle, double distance);
 };
