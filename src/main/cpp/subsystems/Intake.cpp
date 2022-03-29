@@ -60,11 +60,11 @@ void Intake::RobotPeriodic(const RobotData &robotData, IntakeData &intakeData)
     }else{
         if (robotData.controlData.mode == mode_teleop_manual)
         {        
-            // manual(robotData, intakeData);
+            manual(robotData, intakeData);
         }
         else if (robotData.controlData.mode == mode_teleop_sa)
         {
-            // semiAuto(robotData, intakeData);
+            semiAuto(robotData, intakeData);
             
         }
     }
