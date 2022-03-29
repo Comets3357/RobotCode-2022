@@ -33,7 +33,7 @@ static const int
 
 // shooter IDs
 static const int
-    shooterWheelLeadID = 31,
+    shooterWheelID = 31,
     shooterHoodID = 33, 
     shooterTurretID = 34, 
     hoodRollerID = 32; 
