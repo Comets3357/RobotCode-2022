@@ -523,7 +523,7 @@ void Drivebase::TestPeriodic(const RobotData &robotData, DrivebaseData &drivebas
             dbR.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
             dbL.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, -robotData.benchTestData.currentSpeed);
         } else {
-            dbR.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
+            dbR.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0); //if the drivebase stage isn't within 0 to 3, then the speeds get set to 0
             dbL.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
         }
     } else {

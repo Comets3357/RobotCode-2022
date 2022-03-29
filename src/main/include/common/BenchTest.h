@@ -27,5 +27,5 @@ class BenchTest {
         void TestPeriodic(const RobotData &robotData, BenchTestData &benchTestData, const ControlData &controlData);
 
     private:
-        float increment = 0;
+        float increment = 0; //time-based increment for non-dead stop based motors
 };

@@ -16,7 +16,7 @@ void BenchTest::TestPeriodic(const RobotData &robotData, BenchTestData &benchTes
     frc::SmartDashboard::PutNumber("Bench test power", robotData.benchTestData.currentSpeed); //prints the current testing speed
     frc::SmartDashboard::PutBoolean("Bench test PID mode", benchTestData.PIDMode); //PID mode
 
-    //toggles the testing of PIDs
+    //toggles PID mode
     if (controlData.PIDModeToggle) benchTestData.PIDMode = !benchTestData.PIDMode;
 
     //AUTOMATIC BENCH TEST
@@ -52,7 +52,7 @@ void BenchTest::TestPeriodic(const RobotData &robotData, BenchTestData &benchTes
         if (robotData.climbData.armsLowerLimit) benchTestData.stage = 1;
         else if (robotData.climbData.armsUpperLimit) benchTestData.stage = 2;
         else if (robotData.climbData.upperLimit) benchTestData.stage = 3;
-        else if (robotData.climbData.lowerLimit) benchTestData.stage = -1; //special case explained on lines 21-22
+        else if (robotData.climbData.lowerLimit) benchTestData.stage = -1; //special case explained on lines 25-26
         else if (robotData.intakeData.bottomDeadStop) benchTestData.stage = 1;
         else if (robotData.intakeData.topDeadStop) benchTestData.stage = 2;
         else if (robotData.shooterData.hoodTopDeadStop) benchTestData.stage = 1;

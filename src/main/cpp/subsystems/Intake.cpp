@@ -213,22 +213,24 @@ void Intake::DisabledPeriodic(const RobotData &robotData, IntakeData &intakeData
  **/
 
 void Intake::TestInit(){
-    //sets pid stuff for bench test
+    //sets pids for bench test
     intakePivot_pidController.SetP(0.23, 0);
     intakePivot_pidController.SetOutputRange(-0.3, 0.2, 0);
 }
 
 void Intake::TestPeriodic(const RobotData &robotData, IntakeData &intakeData){
+    //diagnosing issues with smart dashboard
     frc::SmartDashboard::PutBoolean("Intake abs encoder working", encoderPluggedIn());
     frc::SmartDashboard::PutBoolean("Intake abs encoder reading in correct range", encoderInRange());
     frc::SmartDashboard::PutNumber("Intake encoder position", intakePivotEncoderRev.GetPosition());
-    frc::SmartDashboard::PutBoolean("Intake hit top dead stop", intakeData.topDeadStop);
-    frc::SmartDashboard::PutBoolean("Intake hit bottom dead stop", intakeData.bottomDeadStop);
+    frc::SmartDashboard::PutBoolean("Intake hit inner dead stop", intakeData.topDeadStop);
+    frc::SmartDashboard::PutBoolean("Intake hit outer dead stop", intakeData.bottomDeadStop);
     frc::SmartDashboard::PutNumber("Intake actual abs encoder value", intakePivotEncoderAbs.GetOutput());
     frc::SmartDashboard::PutNumber("Intake expected top absolute encoder value", absIn);
     frc::SmartDashboard::PutNumber("Intake expected bottom absolute encoder value", absOut);
     frc::SmartDashboard::PutNumber("Intake pivot speed", intakeData.benchTestIntakePivotSpeed);
-    
+
+    //calls dead stop functions so the motors know when to stop
     checkDeadStop(intakeData);
 
     //runs the bench test sequence
@@ -299,7 +301,7 @@ void Intake::TestPeriodic(const RobotData &robotData, IntakeData &intakeData){
             if (!intakeData.topDeadStop && !intakeData.bottomDeadStop){
                 intakePivot.Set(intakeData.benchTestIntakePivotSpeed);
             } else {
-                intakePivot.Set(0);
+                intakePivot.Set(0); //sets the intake speed to 0 if the motor is at a dead stop
             }
         }
 
@@ -345,7 +347,7 @@ bool Intake::encoderInRange(){
     }
 }
 
-//checks if the motor has hit a dead stop
+//sets the limits and sets variables to the limits to let the TestPeriodic function know when to stop running the motors
 void Intake::checkDeadStop(IntakeData &intakeData){
     if (intakeData.benchTestIntakePivotSpeed > 0 && intakePivotEncoderAbs.GetOutput() < absOut + .01){
         intakeData.topDeadStop = false;

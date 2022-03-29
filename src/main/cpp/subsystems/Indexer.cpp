@@ -442,6 +442,7 @@ void Indexer::indexerWheelInit(){
  **/
 
 void Indexer::TestPeriodic(const RobotData &robotData, IndexerData &indexerData){
+    //diagnosing issues with smart dashboard
     frc::SmartDashboard::PutNumber("Indexer color sensor number", robotData.colorSensorData.colorValue);
     frc::SmartDashboard::PutNumber("Indexer first encoder", indexerBeltEncoder.GetPosition());
     frc::SmartDashboard::PutNumber("Indexer second encoder", indexerWheelEncoder.GetPosition());
@@ -467,7 +468,7 @@ void Indexer::TestPeriodic(const RobotData &robotData, IndexerData &indexerData)
             indexerBelt.Set(-robotData.benchTestData.currentSpeed);
             indexerWheel.Set(0);
         } else {
-            indexerBelt.Set(0);
+            indexerBelt.Set(0); //if the indexer stage isn't within 0 to 3, then the speeds get set to 0
             indexerWheel.Set(0);
         }
     } else {

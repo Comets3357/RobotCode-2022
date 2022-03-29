@@ -61,8 +61,8 @@ private:
     void checkElevatorDeadStop(ClimbData &climbData);
     void checkArmsDeadStop(ClimbData &climbData);
     void elevatorLimitSwitchWorking(ClimbData &climbData);
-    bool encoderPluggedIn(const ClimbData &climbData);
-    bool encoderInRange(const ClimbData &climbData);
+    bool encoderPluggedIn();
+    bool encoderInRange();
 
     int stage = 0;
 
