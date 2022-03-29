@@ -38,8 +38,6 @@ void Indexer::RobotPeriodic(const RobotData &robotData, IndexerData &indexerData
             semiAuto(robotData, indexerData);
         }
     }
-
-    
     
 
 }
@@ -64,6 +62,8 @@ void Indexer::updateData(const RobotData &robotData, IndexerData &indexerData)
         indexerData.eBallCountZero = false;
     }
     lastTickBallCount = indexerData.indexerContents.size();
+
+    debuggingStuff(robotData, indexerData);
 }
 
 void Indexer::manual(const RobotData &robotData, IndexerData &indexerData)
@@ -84,6 +84,7 @@ void Indexer::manual(const RobotData &robotData, IndexerData &indexerData)
 
 void Indexer::semiAuto(const RobotData &robotData, IndexerData &indexerData)
 {
+    rejectDetection(robotData, indexerData);
     saBeltControl(robotData, indexerData);
     saWheelControl(robotData, indexerData);
 }
@@ -174,16 +175,24 @@ void Indexer::assignCargoColor(const RobotData &robotData, IndexerData &indexerD
  * senses when balls leave the indexer either from top or bottom and removes them from the indexerContents deque
  **/
 void Indexer::decrementCount(const RobotData &robotData, IndexerData &indexerData, bool reverse){
+
     
     if (reverse && getBottomBeamToggledOff()){                                              // if you're reversing and bottom sensor toggles to not being tripped (ball passed completely through)
         if (indexerData.indexerContents.size() > 0){    // checks to make sure there's actually stuff in the indexer to make sure the code doesn't crash
             indexerData.indexerContents.pop_back();     // remove "bottom" element of deque
         }
 
-    }else if (!reverse && getTopBeamToggledOff() && robotData.controlData.saFinalShoot){    // if you're going FORWARD, specifically in saFinalShoot, and the top sensor toggles to not being tripped (ball passed completely through and shot)
-        if (indexerData.indexerContents.size() > 0){    // checks to make sure there's actually stuff in the indexer to make sure the code doesn't crash
-            indexerData.indexerContents.pop_front();    // removes "top" element of deque
+    }
+    
+    if (!reverse && getTopBeamToggledOff() && (robotData.controlData.saFinalShoot || robotData.shooterData.readyReject)){    // if you're going FORWARD, specifically in saFinalShoot, and the top sensor toggles to not being tripped (ball passed completely through and shot)
+        decrementDelay = 5;
+    }else if (decrementDelay > 0 && decrementDelay <= 5){       // the top sensor hasn't just been toggled off but was recently toggled off
+        decrementDelay--;                                       // count down the decrementDelay counter
+    } else if(decrementDelay == 0){                                                    // the count down is done 
+        if (indexerData.indexerContents.size() > 0){            // checks to make sure there's actually stuff in the indexer to make sure the code doesn't crash
+            indexerData.indexerContents.pop_front();            // removes "top" element of deque
         }
+        decrementDelay = 6;
     }
 }
 
@@ -206,7 +215,7 @@ void Indexer::count(const RobotData &robotData, IndexerData &indexerData){
         decrementCount(robotData, indexerData, true);                               // true means you're reversing
     } else {                                                                        // you are going forwards. this runs every time as you go forward
         decrementCount(robotData, indexerData, false);                              // false means going forward
-                                                                                    // decrement runs while the indexer goes forward and backward because balls can exit from top or bottom
+                                                              // decrement runs while the indexer goes forward and backward because balls can exit from top or bottom
         incrementCount(robotData, indexerData);                                     // only runs increment when you go forward because we're not ever intaking while reversing
     }
 
@@ -241,11 +250,10 @@ void Indexer::saBeltControl(const RobotData &robotData, IndexerData &indexerData
     frc::SmartDashboard::PutBoolean("indexer for shooting", robotData.shooterData.readyShoot && robotData.controlData.saFinalShoot)|| (!getTopBeam() && !robotData.intakeData.intakeIdle);
     frc::SmartDashboard::PutBoolean("auton readyShoot", robotData.shooterData.readyShoot);
     frc::SmartDashboard::PutBoolean("auton finalShoot", robotData.controlData.saFinalShoot);
-
-    if(robotData.controlData.saEjectBalls){ // if indexer is REVERSING (saEject or manual indexer backwards)
-        indexerBelt.Set(-indexerShootingBeltSpeed);
-    } else if ((/**!pauseBelt(robotData, indexerData) &&**/ robotData.shooterData.readyShoot && robotData.controlData.saFinalShoot)|| (!getTopBeam() && !robotData.intakeData.intakeIdle)){ // if you're shooting or (BB3 is not  and the intake isn't idle)
-        // there are two main cases when yo u run the indexer forward: when you shoot, and when you're intaking
+    if(robotData.controlData.saEjectBalls){             // if indexer is REVERSING (saEject curently is the only case where it runs backwards)
+        indexerBelt.Set(-indexerShootingBeltSpeed);     // run the belt backwards fast
+    } else if ((!pauseBelt(robotData, indexerData) && robotData.shooterData.readyShoot && (robotData.controlData.saFinalShoot|| robotData.shooterData.readyReject)) || (!getTopBeam() && !robotData.intakeData.intakeIdle)){ 
+        // there are two main cases when you run the indexer forward: when you shoot, and when you're intaking
         // when shooting, you check that you're done pausing (see pauseBelt) to make sure every ball pauses before going into the shooter, 
         // anyways, we have to get the signal that the shooter is ready to eject AND that the top ball in the indexer is the opponent color to run it in that case
         // and you also check readyShoot to make sure the flywheel is up to speed, along with saFinalShoot to make sure secondary is commanding it to shoot
@@ -255,6 +263,7 @@ void Indexer::saBeltControl(const RobotData &robotData, IndexerData &indexerData
         // we want to run it until it hits the top sensor, then stop it, no matter if the robot is shooting, intaking, or whatever
         // actually, new code
         // currently not stopping it if in ejecting mode because I don't want to think about that right now
+        // anyways, we have to get the signal that the shooter is ready to eject AND that the top ball in the indexer is the opponent color to run it in that case
         if(robotData.controlData.saFinalShoot){
             indexerBelt.Set(indexerShootingBeltSpeed);  // robot shoots at a higher speed than it intakes
         } else {
@@ -394,7 +403,7 @@ bool Indexer::getBottomBeamToggledOn(){
     }
     // if top sensor is currently being tripped and it previously wasn't
     if (currentBottomBeam && !prevBottomBeam){
-        bottomDebounceCount = 2;
+        bottomDebounceCount = 10;
         return true;
     } else {
         return false;
@@ -446,7 +455,7 @@ void Indexer::indexerWheelInit(){
  **/
 
 void Indexer::TestPeriodic(const RobotData &robotData, IndexerData &indexerData){
-    frc::SmartDashboard::PutNumber("Indexer color sensor number", robotData.colorSensorData.colorValue);
+    // frc::SmartDashboard::PutNumber("Indexer color sensor number", robotData.colorSensorData.colorValue);
     frc::SmartDashboard::PutNumber("Indexer first encoder", indexerBeltEncoder.GetPosition());
     frc::SmartDashboard::PutNumber("Indexer second encoder", indexerWheelEncoder.GetPosition());
     frc::SmartDashboard::PutBoolean("Indexer top sensor", getTopBeam());
@@ -484,6 +493,7 @@ void Indexer::debuggingStuff(const RobotData &robotData, IndexerData &indexerDat
     // TESTING STUFF
     frc::SmartDashboard::PutNumber("cargo count", indexerData.indexerContents.size());
     frc::SmartDashboard::PutNumber("wrong ball?", robotData.controlData.wrongBall);
+    frc::SmartDashboard::PutBoolean("get bottom beam tripped", getBottomBeam());
 
     if (indexerData.indexerContents.size() == 0){
 
