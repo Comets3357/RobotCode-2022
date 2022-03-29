@@ -18,10 +18,18 @@ void Arduino::RobotPeriodic(const RobotData &robotData, ArduinoData &arduinoData
         colorCode = 1; //teleop semiauto mode
     }
 
+    //colorCode = 0; //uncomment for reveal video
+
     char value[1] = {(char)colorCode};
 
     if (lastColorCode != colorCode){
-        arduino.Write(value, 1);
+        try {
+            arduino.Write(value, 1);
+        } catch (...)
+        {
+            failedTransfers += 1;
+        }
+    
     }
 
     lastColorCode = colorCode;
@@ -32,20 +40,30 @@ void Arduino::RobotPeriodic(const RobotData &robotData, ArduinoData &arduinoData
     frc::SmartDashboard::PutBoolean("isDisabled", false);
 
     if (arduino.GetBytesReceived() >= 1){
-        arduino.Read(colors,1);
-        arduino.Reset();
+        try{
+            arduino.Read(colors,1);
+            arduino.Reset();
+        } catch (...)
+        {
+            failedTransfers += 1;
+        }
 
     }
 }
 
 void Arduino::DisabledPeriodic(){
-    char value[1] = {'0'};
-    arduino.Write(value, 1);
-    if (lastColorCode != 0)
-    {
-        arduino.Write(value, 1);
-    }
-    lastColorCode = 0;
     colorCode = 0;
-    frc::SmartDashboard::PutBoolean("isDisabled", true);
+    char value[1] = {(char)colorCode};
+
+    if (lastColorCode != colorCode){
+        try {
+            arduino.Write(value, 1);
+        } catch (...)
+        {
+            failedTransfers += 1;
+        }
+        
+    }
+
+    lastColorCode = colorCode;
 }
