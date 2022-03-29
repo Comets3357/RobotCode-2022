@@ -54,7 +54,7 @@ void Climb::RobotPeriodic(const RobotData &robotData, ClimbData &climbData)
     //checks if the robot is in climb mode
     if (robotData.controlData.mode == mode_climb_sa || robotData.controlData.mode == mode_climb_manual)
     {
-        if(std::abs(turretMiddleDegrees - robotData.shooterData.currentTurretAngle) <= 5) //if you're centered forward you can climb
+        if(std::abs(turretMiddleDegrees - robotData.shooterData.currentTurretAngle) <= 45) //if you're centered forward you can climb
         {
             //chacks if the robot is in manual
             if (robotData.controlData.mode == mode_climb_manual)
@@ -295,6 +295,7 @@ void Climb::runSequence(const RobotData &robotData, ClimbData &climbData)
 // updates encoder and gyro values
 void Climb::updateData(const RobotData &robotData, ClimbData &climbData)
 {
+    climbData.elevatorEncoderPosition = -6;/**climbElevatorEncoder.GetPosition();**/
     angularRate = robotData.gyroData.angularMomentum;
     angle = robotData.gyroData.rawRoll;
     climbData.elevatorAmp = climbElevator.GetOutputCurrent();
@@ -309,7 +310,7 @@ void Climb::updateData(const RobotData &robotData, ClimbData &climbData)
     climbData.angularRate = angularRate;
     climbData.elevatorLimit = elevatorLimit.Get();
     
-    // frc::smartDashboard::PutNumber("elevator encoder value", climbElevatorEncoder.GetPosition());
+    frc::SmartDashboard::PutNumber("elevator encoder value", climbElevatorEncoder.GetPosition());
     // frc::smartDashboard::PutBoolean("limit Climb", elevatorLimit.Get());
     // frc::smartDashboard::PutNumber("elevator amps", elevatorAmperage);
     // frc::smartDashboard::PutNumber("Arms amps", armsAmperage);

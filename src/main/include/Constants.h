@@ -14,7 +14,7 @@ static const int
     intakeSingulatorID = 13;
 
 static const double
-    // //practice bot
+    //practice bot
     // absOut = 0.485,
     // absIn = 0.616,
     // revOut = 6.4,
@@ -47,7 +47,7 @@ static const float
     hoodAngleOut = 43,
     hoodAngleIn = 21,
 
-    // //PRATLAS shooter hood positions
+    //PRATLAS shooter hood positions
     // hoodabsOut = 0.083,
     // hoodabsIn = 0.987,
     // hoodrevOut = -38,

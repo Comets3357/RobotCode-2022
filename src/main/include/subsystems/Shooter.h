@@ -29,6 +29,9 @@ struct ShooterData
 
     float mode;
 
+    std::deque<double> offsetSpeeds;
+    double avgTurretOffsetSpeed = 0;
+
 };
 
 class Shooter{
@@ -57,6 +60,7 @@ class Shooter{
         double turretConvertFromAbsToAngle(double abs);
         double turretAbsoluteToREV(double value);
         double turretGyroOffset(double value);
+        double averageTurretGyroOffset(const RobotData &robotData, ShooterData &shooterData);
         
         //init 
         void flyWheelInit();
@@ -66,7 +70,7 @@ class Shooter{
         
         //gets and sets
         double getWheelVel();
-        void setShooterWheel(double speed);
+        void setShooterWheel(double speed, double pidSlot);
         void setTurret_Pos(double pos, ShooterData &shooterData);
 
         //checks
@@ -97,9 +101,6 @@ class Shooter{
         int modeCounter;
         double hoodAbsValues [49] = { };
 
-
-
-        
      //Flywheel Lead
         rev::CANSparkMax flyWheelLead = rev::CANSparkMax(shooterWheelLeadID, rev::CANSparkMax::MotorType::kBrushless);
         rev::SparkMaxRelativeEncoder flyWheelLeadEncoder = flyWheelLead.GetEncoder();

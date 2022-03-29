@@ -17,6 +17,7 @@ struct RobotData;
 
 struct ClimbData {
     int bar = 2;
+    int elevatorEncoderPosition = 0;
     bool climbing = false;
     bool zeroing = false;
     int stage;

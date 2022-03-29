@@ -19,14 +19,17 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     limelightData.distanceToTarget = distanceToTarget(); //the distance
 
     //turns off limelight if not shooting
-    // if(robotData.controlData.shootMode == shootMode_none){
-    //     table->PutNumber("pipeline", 1);
-    // }else{
-    //     table->PutNumber("pipeline", 0);
-    // }
-
     table->PutNumber("ledMode", 0);
-    table->PutNumber("pipeline", 0);
+
+    if(robotData.controlData.mode == mode_climb_manual || robotData.controlData.mode == mode_climb_sa){
+        table->PutNumber("pipeline", 1);
+    }else{
+        table->PutNumber("pipeline", 0);
+    }
+
+
+
+    //table->PutNumber("pipeline", 0);
 
     
     
@@ -114,6 +117,7 @@ void Limelight::shooterOffset(const RobotData &robotData, LimelightData &limelig
 
     //calculate the distance from the shooter to target using pythagorian theorem with the new x and y values (sorry for the spelling)
     limelightData.distanceOffset = std::sqrt(std::pow(yValueOffset,2)+std::pow(xValueOffset,2));
+    limelightData.distanceOffset = limelightData.distanceOffset / 12; //CONVERTS INTO FT
 
     //calculate the angle between the shooter since it is different from that given by the limelight
     limelightData.angleOffset = (std::asin(xValueOffset/limelightData.distanceOffset));
@@ -135,7 +139,7 @@ void Limelight::shooterOffset(const RobotData &robotData, LimelightData &limelig
 double Limelight::getHoodPOS(VisionLookup &visionLookup, LimelightData &limelightData, const RobotData &robotData){
     double distance = limelightData.distanceOffset;
     double orignalDistance = distance;
-    limelightData.lowerVal = std::floor(distance/12); //lower value in ft
+    limelightData.lowerVal = std::floor(distance); //lower value in ft
     limelightData.upperVal = limelightData.lowerVal +1; //upper value in ft
 
     //if either of the int values are higher than the highest lookup table value,
@@ -185,7 +189,7 @@ double Limelight::getHoodPOS(VisionLookup &visionLookup, LimelightData &limeligh
 double Limelight::getWheelVelocity(VisionLookup &visionLookup, LimelightData &limelightData, const RobotData &robotData){
     double distance = limelightData.distanceOffset;
     double orignalDistance = distance;
-    limelightData.lowerVal = std::floor(distance/12); //lower value in ft
+    limelightData.lowerVal = std::floor(distance); //lower value in ft
     limelightData.upperVal = limelightData.lowerVal +1; //upper value in ft
 
 
@@ -257,16 +261,10 @@ double Limelight::getHoodRollerVel(LimelightData &limelightData, const RobotData
  * is constantly updating based on the current Turret Angle and the angle offset from the limelight
  */
 double Limelight::getTurretTurnAngle(LimelightData &limelightData, const RobotData &robotData){
+
     float desired = robotData.limelightData.turretDifference + robotData.shooterData.currentTurretAngle;
-    
-    float snapshot;
 
-    
-
-    
-    if(desired < 0 || desired > turretFullRotationDegrees){
-        //so you're telling the turret to turn to turn to the unwrapped state, therefore, you are unwrapping
-        limelightData.unwrapping = true; 
+    if(desired < 0 || desired > turretFullRotationDegrees){ //if you're outside of the range, go through and add/subtract 360 to get in the range
 
         if(desired < 0){
             desired += 360;
@@ -274,18 +272,24 @@ double Limelight::getTurretTurnAngle(LimelightData &limelightData, const RobotDa
             desired -=360;
         }
 
+        //so you're telling the turret to turn to turn to the unwrapped state, therefore, you are unwrapping
+        limelightData.unwrapping = true;
+        //set the upwrapping value to the newly desired position 
+        unwrappingVal = desired;
+
     }
 
-    return desired;
+    //if you see a target, and youre in youre range of unwrapped, set unwrapped to false
+    if(robotData.limelightData.validTarget && robotData.shooterData.currentTurretAngle > (turretZeroDegrees + 90) && robotData.shooterData.currentTurretAngle < (turretFullRotationDegrees - 90)){ 
+        limelightData.unwrapping = false;
+    }
 
-    // if(limelightData.unwrapping){ //if you're trying to unwrap the turret, and the turret sees target and the difference is less than 45 from the hard stop
-    //     if(std::abs(desired - turretZeroDegrees) < 45 || std::abs(desired - turretFullRotationDegrees) < 45){
-    //         return snapshot;
-    //     }else{
+    //if you arent unwrapping  update the desired value
+    if(!limelightData.unwrapping){
+        unwrappingVal = desired;
+    }
 
-    //     }
-    // }
-    
+    return unwrappingVal;
 
 }
 
@@ -312,5 +316,5 @@ void Limelight::averageDistance(const RobotData &robotData, LimelightData &limel
     // }
 
     // //return the average of those distances
-    // limelightData.avgDistance = distance;
+    // limelightData.avgDistance = total/6;
 }

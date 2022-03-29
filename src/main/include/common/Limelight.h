@@ -44,12 +44,13 @@ struct LimelightData
     double distanceOffset;
     double angleOffset;
 
-    std::deque<double> distances;
-    double avgDistance = 0;
+    // std::deque<double> distances;
+    // double avgDistance = 0;
 
     float hoodFlywheelRatio;
 
     bool unwrapping = false;
+
 
 };
 
@@ -71,6 +72,8 @@ private:
     double getTurretTurnAngle(LimelightData &limelightData, const RobotData &robotData);
 
     void averageDistance(const RobotData &robotData, LimelightData &limelightData);
+    float unwrappingVal = 0; //acts as a snapshot for when we're trying to wrap around
+
 
     //void averageDistance(const RobotData &robotData, LimelightData &limelightData);
 

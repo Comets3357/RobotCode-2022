@@ -204,7 +204,7 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
         if(robotData.limelightData.distanceOffset >= 14){
             //if the difference between the current velocity and the desired velocity is greater than a certain amount give it straight 100% vbus to kick start it
             //then once it's reached a certain amount below the target velocity switch to a pid to get than final desired rpm 
-            if(std::abs(robotData.limelightData.desiredVel - flyWheelLeadEncoder.GetVelocity()) > 350){
+            if(robotData.limelightData.desiredVel - flyWheelLeadEncoder.GetVelocity() > 350){
                 flyWheelLead.Set(1); //give it full power
             }else{
                 flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity ,1);
@@ -334,11 +334,16 @@ void Shooter::manual(const RobotData &robotData, ShooterData &shooterData)
     }
 
     //manual turret
-    if(robotData.controlData.mTurret >= 0.015 || robotData.controlData.mTurret <= -0.015){ //accounts for deadzone
-        shooterTurret.Set(robotData.controlData.mTurret*.5);
+    if(robotData.climbData.elevatorEncoderPosition < -5){
+        setTurret_Pos(turretMiddleDegrees, shooterData);
     }else{
-        shooterTurret.Set(0);
+        if(robotData.controlData.mTurret >= 0.015 || robotData.controlData.mTurret <= -0.015){ //accounts for deadzone
+            shooterTurret.Set(robotData.controlData.mTurret*.5);
+        }else{
+            shooterTurret.Set(0);
+        }
     }
+   
     //hood to joystick controls
      if(robotData.controlData.mHood >= 0.01 || robotData.controlData.mHood <= -0.01){ //accounts for deadzone
         shooterHood.Set(-robotData.controlData.mHood*.2);
@@ -489,6 +494,30 @@ void Shooter::setTurret_Pos(double pos, ShooterData &shooterData){
     shooterTurret_pidController.SetReference(turretAbsoluteToREV(turretConvertFromAngleToAbs(pos)), rev::CANSparkMax::ControlType::kPosition);
 }
 
+/**
+ * Returns the avg offset from rate of rotation of the last 5 cycles to make the data smoother while shooting
+ */
+double Shooter::averageTurretGyroOffset(const RobotData &robotData, ShooterData &shooterData){
+    double offsetSpeed = turretGyroOffset(robotData.gyroData.rotationalRate);
+    double total = 0;
+
+    //if size is less then 6 keep adding updated distances until the deque is full
+    if(robotData.shooterData.offsetSpeeds.size() < 6){
+        shooterData.offsetSpeeds.push_back(offsetSpeed);
+    }else{ //once it's full run through the deque and add it to the total
+        for(size_t i = 0; i < robotData.shooterData.offsetSpeeds.size(); i++){
+            total += robotData.shooterData.offsetSpeeds.at(i);
+        }
+
+        //make sure to remove the first value and add an updated speed to the end
+        shooterData.offsetSpeeds.pop_front();
+        shooterData.offsetSpeeds.push_back(offsetSpeed);
+    }
+
+    //return the average of those speeds
+    shooterData.avgTurretOffsetSpeed = total/6;
+}
+
 
 
 /**
@@ -502,14 +531,14 @@ void Shooter::outerLaunch(const RobotData &robotData)
     {
         shooterHood_pidController.SetReference(outerLaunchHood, rev::CANSparkMaxLowLevel::ControlType::kPosition);
         //checks battery voltage and adjusts the pid accordingly
-        setShooterWheel(outerLaunchVel);
+        setShooterWheel(outerLaunchVel, 1);
 
         readyShootLimit = outerLaunchVel - 30;
     }
     else if (!robotData.controlData.upperHubShot)
     {
         shooterHood_pidController.SetReference(outerLaunchHood_Low, rev::CANSparkMaxLowLevel::ControlType::kPosition);
-        setShooterWheel(outerLaunchVel_Low);
+        setShooterWheel(outerLaunchVel_Low, 1);
 
         readyShootLimit = outerLaunchVel_Low - 30;
 
@@ -521,14 +550,14 @@ void Shooter::innerLaunch(const RobotData &robotData)
     if (robotData.controlData.upperHubShot)
     {
         shooterHood_pidController.SetReference(innerLaunchHood, rev::CANSparkMaxLowLevel::ControlType::kPosition);
-        setShooterWheel(innerLaunchVel);
+        setShooterWheel(innerLaunchVel, 1);
 
         readyShootLimit = innerLaunchVel - 30;
     }
     else if (!robotData.controlData.upperHubShot)
     {
         shooterHood_pidController.SetReference(innerLaunchHood_Low, rev::CANSparkMaxLowLevel::ControlType::kPosition);
-        setShooterWheel(innerLaunchVel_Low);
+        setShooterWheel(innerLaunchVel_Low, 1);
 
         readyShootLimit = innerLaunchVel_Low - 30;
     }
@@ -539,14 +568,14 @@ void Shooter::wall(const RobotData &robotData)
     if (robotData.controlData.upperHubShot)
     {
         shooterHood_pidController.SetReference(wallHood, rev::CANSparkMaxLowLevel::ControlType::kPosition);
-        setShooterWheel(wallVel);
+        setShooterWheel(wallVel, 0);
 
         readyShootLimit = wallVel - 30;
     }
     else if (!robotData.controlData.upperHubShot)
     {
         shooterHood_pidController.SetReference(wallHood_Low, rev::CANSparkMaxLowLevel::ControlType::kPosition);
-        setShooterWheel(wallVel_Low);
+        setShooterWheel(wallVel_Low, 0);
 
         readyShootLimit = wallVel_Low - 30;
     }
@@ -557,14 +586,14 @@ void Shooter::fender(const RobotData &robotData)
     if (robotData.controlData.upperHubShot)
     {
         shooterHood_pidController.SetReference(fenderHood, rev::CANSparkMaxLowLevel::ControlType::kPosition);
-        setShooterWheel(fenderVel);
+        setShooterWheel(fenderVel, 0);
 
         readyShootLimit = fenderVel - 30;
     }
     else if (!robotData.controlData.upperHubShot)
     {
         shooterHood_pidController.SetReference(fenderHood_Low, rev::CANSparkMaxLowLevel::ControlType::kPosition);
-        setShooterWheel(fenderVel_Low);
+        setShooterWheel(fenderVel_Low, 0);
         
         readyShootLimit = fenderVel_Low - 30;
     }
@@ -583,21 +612,17 @@ void Shooter::checkReadyShoot(ShooterData &shooterData){
 }
 
 //for checking voltage and setting the set shot wheel speed accordingly
-void Shooter::setShooterWheel(double speed){
-    if(frc::DriverStation::GetBatteryVoltage() > 12.5){
-        flyWheelLead_pidController.SetReference(speed, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
-    }else{
-        flyWheelLead_pidController.SetReference(speed+20, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
-    }
+void Shooter::setShooterWheel(double speed, double pidSlot){
+    flyWheelLead_pidController.SetReference(speed, rev::CANSparkMaxLowLevel::ControlType::kVelocity, pidSlot);
+
 }
 
 
 
 void Shooter::saTurret(const RobotData &robotData, ShooterData &shooterData){
 
-    if(isTurretStatic){
+    if(isTurretStatic || robotData.climbData.elevatorEncoderPosition < -5){
         //if static turret bring to front and dont move 
-        //NEED TO CHANGE TO FACING TOWARD CLIMB ARMS
         setTurret_Pos(turretMiddleDegrees, shooterData);
 
     }else{ //ok cool we can move now
@@ -611,25 +636,29 @@ void Shooter::saTurret(const RobotData &robotData, ShooterData &shooterData){
                 //if youre within 2 degrees of the target you can stop turning (mitigates jerky movement)
 
                 if(robotData.limelightData.distanceOffset < 7){
-                    if(std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 10){
+                    if(std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 5){
                         shooterTurret.Set(0);
                     }else{
                         //turn the turret to face the target
                         //accounts for if the robot is turning and adds more power
-                        setTurret_Pos(robotData.limelightData.desiredTurretAngle, shooterData);
+                        setTurret_Pos(robotData.limelightData.desiredTurretAngle + averageTurretGyroOffset(robotData, shooterData), shooterData);
                     }
 
-                    //+turretGyroOffset(robotData.gyroData.rotationalRate)
+
+
+
+                    
                 }else{
                     if(std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 2){
                         shooterTurret.Set(0);
                     }else{
+
                         //turn the turret to face the target
                         //accounts for if the robot is turning and adds more power
-                        setTurret_Pos(robotData.limelightData.desiredTurretAngle, shooterData);
+                        setTurret_Pos(robotData.limelightData.desiredTurretAngle + averageTurretGyroOffset(robotData, shooterData), shooterData);
                     } 
 
-                    //+turretGyroOffset(robotData.gyroData.rotationalRate)
+
                 }
                 
             }
@@ -766,60 +795,62 @@ bool Shooter::encoderPluggedInHood(ShooterData &shooterData){
     
 
     if (shooterHoodEncoderAbs.GetOutput() > 0.01) { //checks if the output of the abs encoder is actually reading a signal
+
+        shooterHoodEncoderRev.SetPosition(HoodabsoluteToREV(shooterHoodEncoderAbs.GetOutput()));
         //updates encoder values
-        if (tickCount > 48){
-            double number = hoodAbsValues[0];
-            double mode = number;
-            int count = 1;
-            int countMode = 1;
+        // if (tickCount > 48){
+        //     double number = hoodAbsValues[0];
+        //     double mode = number;
+        //     int count = 1;
+        //     int countMode = 1;
 
-            std::sort(std::begin(hoodAbsValues),std::end(hoodAbsValues));
+        //     std::sort(std::begin(hoodAbsValues),std::end(hoodAbsValues));
 
-            for(int i=0; i<49; i++){
-                if (hoodAbsValues[i] == number) 
-                { // count occurrences of the current number
-                    count++;
-                }else{ // now this is a different number
-                    if (count > countMode) 
-                    {
-                        countMode = count; // mode is the biggest ocurrences
-                        mode = number;
-                    }
-                    count = 1; // reset count for the new number
-                    number = hoodAbsValues[i];
-                }
-            }
+        //     for(int i=0; i<49; i++){
+        //         if (hoodAbsValues[i] == number) 
+        //         { // count occurrences of the current number
+        //             count++;
+        //         }else{ // now this is a different number
+        //             if (count > countMode) 
+        //             {
+        //                 countMode = count; // mode is the biggest ocurrences
+        //                 mode = number;
+        //             }
+        //             count = 1; // reset count for the new number
+        //             number = hoodAbsValues[i];
+        //         }
+        //     }
 
-            // float maxFreq = 0;
-            // float mostFrequent = -1;
+        //     // float maxFreq = 0;
+        //     // float mostFrequent = -1;
 
-            // for(int i = 0; i < 49; i++){
-            //     int countFreq = 1;
-            //     for(int j = 0; j < 49; j++){
-            //         if(hoodAbsValues[j] == hoodAbsValues[i]){
-            //             countFreq ++;
-            //         }
-            //     }
+        //     // for(int i = 0; i < 49; i++){
+        //     //     int countFreq = 1;
+        //     //     for(int j = 0; j < 49; j++){
+        //     //         if(hoodAbsValues[j] == hoodAbsValues[i]){
+        //     //             countFreq ++;
+        //     //         }
+        //     //     }
 
-            //     if(maxFreq < countFreq){
-            //         maxFreq = countFreq;
-            //         mostFrequent = hoodAbsValues[i];
-            //     }
-            //     else if(maxFreq == countFreq){
-            //         mostFrequent = std::min(mostFrequent, hoodAbsValues[i]);
-            //     }
-            // }
+        //     //     if(maxFreq < countFreq){
+        //     //         maxFreq = countFreq;
+        //     //         mostFrequent = hoodAbsValues[i];
+        //     //     }
+        //     //     else if(maxFreq == countFreq){
+        //     //         mostFrequent = std::min(mostFrequent, hoodAbsValues[i]);
+        //     //     }
+        //     // }
 
-            shooterData.mode = mode;
+        //     shooterData.mode = mode;
 
-            //shooterHoodEncoderRev.SetPosition(HoodabsoluteToREV(mode));
-            tickCount = (tickCount + 1) % 50;
-        } else {
-            float hoodAbsValue = 1000*shooterHoodEncoderAbs.GetOutput();
-            hoodAbsValue = std::floor(hoodAbsValue);
-            hoodAbsValues[tickCount] = hoodAbsValue/1000.0;
-            tickCount = (tickCount + 1) % 50;
-        }
+        //     //shooterHoodEncoderRev.SetPosition(HoodabsoluteToREV(mode));
+        //     tickCount = (tickCount + 1) % 50;
+        // } else {
+        //     float hoodAbsValue = 1000*shooterHoodEncoderAbs.GetOutput();
+        //     hoodAbsValue = std::floor(hoodAbsValue);
+        //     hoodAbsValues[tickCount] = hoodAbsValue/1000.0;
+        //     tickCount = (tickCount + 1) % 50;
+        // }
 
 
     
