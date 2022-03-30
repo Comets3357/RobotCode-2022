@@ -70,9 +70,9 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
 
     //ADD CONTROLLER BIND
     if(controllerData.sLStickBtnToggled){
-        controlData.saDistanceOffset = controlData.saDistanceOffset + 0.5;
+        controlData.saDistanceOffset = controlData.saDistanceOffset + 6;
     }else if(controllerData.sRStickBtnToggled){
-        controlData.saDistanceOffset = controlData.saDistanceOffset - 0.5;
+        controlData.saDistanceOffset = controlData.saDistanceOffset - 6;
     }
     
 

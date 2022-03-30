@@ -190,7 +190,7 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
 
         //set the hood and flywheel using pids to the desired values based off the limelight code and how far away you are
         //if farther away
-        if(robotData.limelightData.distanceOffset >= 14){
+        if(robotData.limelightData.distanceOffset >= 14*12){
 
             //if the difference between the current velocity and the desired velocity is greater than a certain amount give it straight 100% vbus to kick start it
             //then once it's reached a certain amount below the target velocity switch to a pid to get than final desired rpm 
@@ -379,7 +379,7 @@ void Shooter::updateData(const RobotData &robotData, ShooterData &shooterData)
 
     //hood roller
     //frc::SmartDashboard::PutNumber("hood roller vel", hoodRollerEncoderRev.GetVelocity());
-    //frc::SmartDashboard::PutNumber("hood roller desired ", robotData.limelightData.desiredHoodRollerVel);
+    //frc::SmartDashboard::PutNumber("desired hood roller", robotData.limelightData.desiredHoodRollerVel);
 
 }
 
@@ -630,9 +630,9 @@ void Shooter::saTurret(const RobotData &robotData, ShooterData &shooterData){
 
         }else{
 
-            if(robotData.limelightData.validTarget == 1){ //if you can see a target
+            if(robotData.limelightData.validTarget){ //if you can see a target
 
-                if(robotData.limelightData.distanceOffset < 7){ //takes into account how far away you are, farther away == needs to be more precise
+                if(robotData.limelightData.distanceOffset < 7*12){ //takes into account how far away you are, farther away == needs to be more precise
                     //if youre within 2 degrees of the target you can stop turning (mitigates jerky movement)
                     if(std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 5){
                         shooterTurret.Set(0);

@@ -57,14 +57,14 @@ static const float
 
     // //ATLAS turret positions
     turretZeroDegrees = 0, 
-    turretFullRotationDegrees = 540, 
+    turretFullRotationDegrees = 460, //540
     turretMiddleDegrees = (turretFullRotationDegrees - turretZeroDegrees)/2,
-    turretZeroRev = 85.74, //87.5
-    turretFullRotationRev_CCW = 174.85, //174.85
-    turretFullRotationRev_C = 0, //0
-    turretZeroAbs = 0.499, //0.479
-    turretFullRotationAbs_CCW = 0.929, //0.91
-    turretFullRotationAbs_C = 0.076; //0.05
+    turretZeroRev = 85.74, //CHANGE
+    turretFullRotationRev_CCW = 174.85, //174.85 //CHANGE
+    turretFullRotationRev_C = 0, //0 
+    turretZeroAbs = 0.499, //CHANGE
+    turretFullRotationAbs_CCW = 0.929, //CHANGE
+    turretFullRotationAbs_C = 0.076; //CHANGE
 
     //FOR PRATLAS
     // turretZeroDegrees = 5, //15
