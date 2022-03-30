@@ -84,12 +84,12 @@ void Shooter::hoodRollerInit()
     hoodRoller.SetSmartCurrentLimit(45);
 
     // //PIDS
-    hoodRoller_pidController.SetP(0.00001, 0);
-    hoodRoller_pidController.SetI(0, 0);
-    hoodRoller_pidController.SetD(0, 0);
-    hoodRoller_pidController.SetIZone(0, 0);
-    hoodRoller_pidController.SetFF(0.0000955, 0);
-    hoodRoller_pidController.SetOutputRange(-1, 1, 0);
+    hoodRoller_pidController.SetP(0.00001);
+    hoodRoller_pidController.SetI(0);
+    hoodRoller_pidController.SetD(0);
+    hoodRoller_pidController.SetIZone(0);
+    hoodRoller_pidController.SetFF(0.0000955);
+    hoodRoller_pidController.SetOutputRange(-1, 1);
     hoodRoller.BurnFlash(); 
 
 }
@@ -202,7 +202,7 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
         }
 
         //sets the hood roller speed as normal
-        hoodRoller_pidController.SetReference(robotData.limelightData.desiredHoodRollerVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 0);
+        hoodRoller_pidController.SetReference(robotData.limelightData.desiredHoodRollerVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
 
         //sets the hood to the desired location, once you're close stop it from moving to decrease jitter
         if(std::abs(HoodabsoluteToREV(HoodconvertFromAngleToAbs(robotData.limelightData.desiredHoodPos)) - shooterHoodEncoderRev.GetPosition()) <= 1){
@@ -524,7 +524,7 @@ void Shooter::outerLaunch(const RobotData &robotData)
     {
         shooterHood_pidController.SetReference(outerLaunchHood, rev::CANSparkMaxLowLevel::ControlType::kPosition);
         setShooterWheel(outerLaunchVel, 1);
-        hoodRoller_pidController.SetReference(outerLaunchVel*3.5, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 0);
+        hoodRoller_pidController.SetReference(outerLaunchVel*3.5, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
 
         readyShootLimit = outerLaunchVel - 30;
     }
@@ -532,7 +532,7 @@ void Shooter::outerLaunch(const RobotData &robotData)
     {
         shooterHood_pidController.SetReference(outerLaunchHood_Low, rev::CANSparkMaxLowLevel::ControlType::kPosition);
         setShooterWheel(outerLaunchVel_Low, 1);
-        hoodRoller_pidController.SetReference(outerLaunchVel_Low*3.5, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 0);
+        hoodRoller_pidController.SetReference(outerLaunchVel_Low*3.5, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
 
 
         readyShootLimit = outerLaunchVel_Low - 30;
@@ -546,7 +546,7 @@ void Shooter::innerLaunch(const RobotData &robotData)
     {
         shooterHood_pidController.SetReference(innerLaunchHood, rev::CANSparkMaxLowLevel::ControlType::kPosition);
         setShooterWheel(innerLaunchVel, 1);
-        hoodRoller_pidController.SetReference(innerLaunchVel*3.5, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 0);
+        hoodRoller_pidController.SetReference(innerLaunchVel*3.5, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
 
 
         readyShootLimit = innerLaunchVel - 30;
@@ -555,7 +555,7 @@ void Shooter::innerLaunch(const RobotData &robotData)
     {
         shooterHood_pidController.SetReference(innerLaunchHood_Low, rev::CANSparkMaxLowLevel::ControlType::kPosition);
         setShooterWheel(innerLaunchVel_Low, 1);
-        hoodRoller_pidController.SetReference(innerLaunchVel*3.5, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 0);
+        hoodRoller_pidController.SetReference(innerLaunchVel*3.5, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
 
 
         readyShootLimit = innerLaunchVel_Low - 30;
@@ -568,7 +568,7 @@ void Shooter::wall(const RobotData &robotData)
     {
         shooterHood_pidController.SetReference(wallHood, rev::CANSparkMaxLowLevel::ControlType::kPosition);
         setShooterWheel(wallVel, 0);
-        hoodRoller_pidController.SetReference(wallVel*3, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 0);
+        hoodRoller_pidController.SetReference(wallVel*3, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
 
 
         readyShootLimit = wallVel - 30;
@@ -577,7 +577,7 @@ void Shooter::wall(const RobotData &robotData)
     {
         shooterHood_pidController.SetReference(wallHood_Low, rev::CANSparkMaxLowLevel::ControlType::kPosition);
         setShooterWheel(wallVel_Low, 0);
-        hoodRoller_pidController.SetReference(wallVel*3, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 0);
+        hoodRoller_pidController.SetReference(wallVel*3, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
 
 
         readyShootLimit = wallVel_Low - 30;
@@ -590,7 +590,7 @@ void Shooter::fender(const RobotData &robotData)
     {
         shooterHood_pidController.SetReference(fenderHood, rev::CANSparkMaxLowLevel::ControlType::kPosition);
         setShooterWheel(fenderVel, 0);
-        hoodRoller_pidController.SetReference(fenderVel*3, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 0);
+        hoodRoller_pidController.SetReference(fenderVel*3, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
 
 
         readyShootLimit = fenderVel - 30;
@@ -599,7 +599,7 @@ void Shooter::fender(const RobotData &robotData)
     {
         shooterHood_pidController.SetReference(fenderHood_Low, rev::CANSparkMaxLowLevel::ControlType::kPosition);
         setShooterWheel(fenderVel_Low, 0);
-        hoodRoller_pidController.SetReference(fenderVel*3, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 0);
+        hoodRoller_pidController.SetReference(fenderVel*3, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
 
         
         readyShootLimit = fenderVel_Low - 30;
