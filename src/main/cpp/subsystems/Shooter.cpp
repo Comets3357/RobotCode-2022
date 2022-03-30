@@ -177,7 +177,7 @@ void Shooter::RobotPeriodic(const RobotData &robotData, ShooterData &shooterData
 void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
 
     // for reject code
-    if(!robotData.indexerData.autoRejectTop){
+    /* if(!robotData.indexerData.autoRejectTop){
         rejectInitialized = false;
         shooterData.readyReject = false;
         desiredAngle = 180;
@@ -185,7 +185,7 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
 
     frc::SmartDashboard::PutBoolean("should reject", robotData.indexerData.autoRejectTop);
     frc::SmartDashboard::PutBoolean("in limelight mode", robotData.controlData.shootMode == shootMode_vision);
-    frc::SmartDashboard::PutBoolean("shoot? at al?", robotData.controlData.autoRejectOpponentCargo);
+    frc::SmartDashboard::PutBoolean("shoot? at al?", robotData.controlData.autoRejectOpponentCargo); */
 
     saTurret(robotData, shooterData);
     //if nothing is happening then update the isTurretStatic value based on the button control
@@ -194,10 +194,10 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
 
 
     //SHOOTING LOGIC
-    if(robotData.indexerData.autoRejectTop && robotData.controlData.autoRejectOpponentCargo){
+    /* if(robotData.indexerData.autoRejectTop && robotData.controlData.autoRejectOpponentCargo){
         reject(robotData, shooterData);
         isTurretStatic = false;
-    } else if(robotData.controlData.shootMode == shootMode_vision){ // Aiming with limelight
+    } else */ if(robotData.controlData.shootMode == shootMode_vision){ // Aiming with limelight
 
         //set the hood and flywheel using pids to the desired values based off the limelight code
         //checks battery voltage and increases velocity if it doesn't have enough power
