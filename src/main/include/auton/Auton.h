@@ -41,6 +41,7 @@ private:
 
     // exit tarmac, collect 1, turn, shoot 2:
     void taxiShoot(const RobotData &robotData, ControlData &controlData);
+    void taxiShootA(const RobotData &robotData, ControlData &controlData);
 
     // three ball autons (taxiShoot + terminal shoot):
     void threeBallB(const RobotData &robotData, ControlData &controlData);
@@ -48,6 +49,8 @@ private:
 
     // four ball autons (taxiShoot, neighboring ball, termincal shoot):
     void fourBallC(const RobotData &robotData, ControlData &controlData);
+    
+    void fiveBallC(const RobotData &robotData, ControlData &controlData);
 
     void sixBallC(const RobotData &robotData, ControlData &controlData);
 };

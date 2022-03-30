@@ -1,2 +1,7 @@
 taxiShootA1
-turnInPlace 180
+break 2.5
+turnInPlace -90
+taxiShootA2
+turnInPlace 135
+break 1.75
+turnInPlace 170

@@ -182,7 +182,10 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
     saTurret(robotData, shooterData);
 
     //SHOOTING LOGIC
-    if(robotData.controlData.shootMode == shootMode_vision){ // Aiming with limelight
+    /* if(robotData.indexerData.autoRejectTop && robotData.controlData.autoRejectOpponentCargo){
+        reject(robotData, shooterData);
+        isTurretStatic = false;
+    } else */ if(robotData.controlData.shootMode == shootMode_vision){ // Aiming with limelight
 
         //set the hood and flywheel using pids to the desired values based off the limelight code and how far away you are
         //if farther away
@@ -476,6 +479,19 @@ double Shooter::turretGyroOffset(double value){
     return ((value*slope) + b);
 }
 
+// double Shooter::getFieldRelativeToRobotRelativeTurret(const RobotData &robotData, ShooterData &shooterData){
+    
+// }
+
+/**
+ * @return the angle of the turret relative to the field, 0-360. 
+ * 0 is opponent wall, 180 is our wall, CCW pos
+ **/
+double Shooter::getFieldRelativeTurretAngle(const RobotData &robotData, ShooterData &shooterData){
+    // 90 gets turret to robot on the same zero as robot to field
+    return ((int)(shooterData.currentTurretAngle + 90 + robotData.drivebaseData.odometryYaw) % 360);
+}
+
 /**
  * @return sets the turret to turn to face the target when shooting USING POSITIONS
  * @param pos is the desired angle position we want to turn to IN DEGREES
@@ -755,7 +771,7 @@ void Shooter::TestPeriodic(const RobotData &robotData, ShooterData &shooterData)
     checkDeadStop(shooterData);
 
     //runs the bench test sequence
-    if (robotData.benchTestData.testStage == BenchTestStage::BenchTestStage_Shooter && robotData.controlData.startBenchTest){ //checks if we're testing shooter
+    if (robotData.benchTestData.testStage == BenchTestStage::BenchTestStage_Shooter && robotData.controlData.manualBenchTest){ //checks if we're testing shooter
         if (encoderPluggedInHood(shooterData) && encoderInRange(shooterData)){ //checks if the encoder is working
             if (robotData.benchTestData.stage == 0){
                 //run hood forwards
@@ -876,6 +892,9 @@ bool Shooter::encoderPluggedInTurret(const ShooterData &shooterData){
     if (shooterTurretEncoderAbs.GetOutput() > 0.01) { //checks if the output of the abs encoder is actually reading a signal
         //updates encoder values
         shooterTurretEncoderRev.SetPosition(turretAbsoluteToREV(shooterTurretEncoderAbs.GetOutput()));
+        return true;
+    } else {
+        return false;
     }
 }
 
