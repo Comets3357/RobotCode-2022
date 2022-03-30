@@ -104,9 +104,9 @@ void Shooter::shooterTurretInit()
 
 
     //PIDS
-    shooterTurret_pidController.SetP(0.12); 
+    shooterTurret_pidController.SetP(0.23); 
     shooterTurret_pidController.SetI(0);
-    shooterTurret_pidController.SetD(0);
+    shooterTurret_pidController.SetD(0.0004);
     shooterTurret_pidController.SetIZone(0);
     shooterTurret_pidController.SetFF(0);
     shooterTurret_pidController.SetOutputRange(-1,1);
