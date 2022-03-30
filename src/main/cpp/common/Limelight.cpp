@@ -45,6 +45,7 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
 
     //printing data to the dashboard
     frc::SmartDashboard::PutNumber("distance offset", robotData.limelightData.distanceOffset/12);
+    frc::SmartDashboard::PutNumber("desired turret", robotData.limelightData.desiredTurretAngle);
 
     //DECOMMISSIONED
     //updates the angle to be in degrees rather than radians
@@ -209,7 +210,7 @@ double Limelight::getWheelVelocity(VisionLookup &visionLookup, LimelightData &li
 
     //multiply the difference in the distance and floored value by the slope to get desired velocity for that small distance 
     //then add that to the desired position of the lower floored value
-    return (desiredSlope*((originalDistance - limelightData.lowerVal)*12) + limelightData.lowerValVel);
+    return (desiredSlope*((originalDistance - limelightData.lowerVal)*12) + limelightData.lowerValVel) + 60;
 
 }
 

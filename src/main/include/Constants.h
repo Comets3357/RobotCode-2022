@@ -57,14 +57,12 @@ static const float
 
     // //ATLAS turret positions
     turretZeroDegrees = 0, 
-    turretFullRotationDegrees = 460, //540
+    turretFullRotationDegrees = 450, //540
     turretMiddleDegrees = (turretFullRotationDegrees - turretZeroDegrees)/2,
-    turretZeroRev = 85.74, //CHANGE
-    turretFullRotationRev_CCW = 159.58, //174.85 //CHANGE
-    turretFullRotationRev_C = 7.21, //0 
-    turretZeroAbs = 0.499, //CHANGE
-    turretFullRotationAbs_CCW = 0.85, //CHANGE
-    turretFullRotationAbs_C = 0.11; //CHANGE
+    turretFullRotationRev_CCW = 140.16, //174.85 
+    turretFullRotationRev_C = 0, //0 
+    turretFullRotationAbs_CCW = 0.84, 
+    turretFullRotationAbs_C = 0.157; 
 
     //FOR PRATLAS
     // turretZeroDegrees = 5, //15
@@ -94,12 +92,12 @@ static const double
 static const float
     outerLaunchHood = hoodrevOut,
     outerLaunchVel = 1990,
-    innerLaunchHood = hoodrevOut,
-    innerLaunchVel = 2040,
-    wallHood = -32.33,
-    wallVel = 1860,
-    fenderHood = -0.25,
-    fenderVel = 1690,
+    innerLaunchHood = 35,
+    innerLaunchVel = 1620,
+    wallHood = -25,
+    wallVel = 1500,
+    fenderHood = -2.5,
+    fenderVel = 1500,
 
     outerLaunchHood_Low = hoodrevOut,
     outerLaunchVel_Low = 1990,
@@ -107,8 +105,8 @@ static const float
     innerLaunchVel_Low = 2040,
     wallHood_Low = -32.33,
     wallVel_Low = 1860,
-    fenderHood_Low = -0.25,
-    fenderVel_Low = 1240;
+    fenderHood_Low = -2.5,
+    fenderVel_Low = 1500;
 
 
 // climb
