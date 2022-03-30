@@ -209,7 +209,7 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
         hoodRoller_pidController.SetReference(robotData.limelightData.desiredHoodRollerVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 0);
 
         //sets the hood to the desired location, once you're close stop it from moving to decrease jitter
-        if(std::abs(HoodabsoluteToREV(HoodconvertFromAngleToAbs(robotData.limelightData.desiredHoodPos) - shooterHoodEncoderRev.GetPosition())) <= 1){
+        if(std::abs(HoodabsoluteToREV(HoodconvertFromAngleToAbs(robotData.limelightData.desiredHoodPos)) - shooterHoodEncoderRev.GetPosition()) <= 1){
             shooterHood.Set(0);
         }else{
             shooterHood_pidController.SetReference(HoodabsoluteToREV(HoodconvertFromAngleToAbs(robotData.limelightData.desiredHoodPos)), rev::CANSparkMaxLowLevel::ControlType::kPosition);

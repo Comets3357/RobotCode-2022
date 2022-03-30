@@ -60,11 +60,11 @@ static const float
     turretFullRotationDegrees = 460, //540
     turretMiddleDegrees = (turretFullRotationDegrees - turretZeroDegrees)/2,
     turretZeroRev = 85.74, //CHANGE
-    turretFullRotationRev_CCW = 174.85, //174.85 //CHANGE
-    turretFullRotationRev_C = 0, //0 
+    turretFullRotationRev_CCW = 159.58, //174.85 //CHANGE
+    turretFullRotationRev_C = 7.21, //0 
     turretZeroAbs = 0.499, //CHANGE
-    turretFullRotationAbs_CCW = 0.929, //CHANGE
-    turretFullRotationAbs_C = 0.076; //CHANGE
+    turretFullRotationAbs_CCW = 0.85, //CHANGE
+    turretFullRotationAbs_C = 0.11; //CHANGE
 
     //FOR PRATLAS
     // turretZeroDegrees = 5, //15
