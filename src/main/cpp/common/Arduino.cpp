@@ -22,15 +22,16 @@ void Arduino::RobotPeriodic(const RobotData &robotData, ArduinoData &arduinoData
 
     char value[1] = {(char)colorCode};
 
-    if (lastColorCode != colorCode){
-        try {
+    try {
+        if (lastColorCode != colorCode){
             arduino.Write(value, 1);
-        } catch (...)
-        {
-            failedTransfers += 1;
         }
-    
+    } catch (...)
+    {
+        failedTransfers += 1;
     }
+    
+    
 
     lastColorCode = colorCode;
 
@@ -39,31 +40,33 @@ void Arduino::RobotPeriodic(const RobotData &robotData, ArduinoData &arduinoData
     arduinoData.ColorData = (int)colors[0];
     frc::SmartDashboard::PutBoolean("isDisabled", false);
 
-    if (arduino.GetBytesReceived() >= 1){
-        try{
+    try{
+        if (arduino.GetBytesReceived() >= 1){
             arduino.Read(colors,1);
             arduino.Reset();
-        } catch (...)
-        {
-            failedTransfers += 1;
         }
-
+    } catch (...)
+    {
+        failedTransfers += 1;
     }
+
+    
 }
 
 void Arduino::DisabledPeriodic(){
     colorCode = 0;
     char value[1] = {(char)colorCode};
 
-    if (lastColorCode != colorCode){
-        try {
+    try {
+        if (lastColorCode != colorCode){
             arduino.Write(value, 1);
-        } catch (...)
-        {
-            failedTransfers += 1;
         }
-        
+    } catch (...)
+    {
+        failedTransfers += 1;
     }
+        
+    
 
     lastColorCode = colorCode;
 }

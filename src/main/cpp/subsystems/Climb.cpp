@@ -265,6 +265,7 @@ void Climb::runSequence(const RobotData &robotData, ClimbData &climbData)
         else if (stage == 7) ChangeElevatorSpeed(0.3,1);
         else if (stage == 8) RunElevatorToPos(30,1,0);
         else if (stage == 9) ChangeElevatorSpeed(1,1);
+        //top bar transfer
         if (climbData.bar == targetBar-1)
         {
             if (stage == 10) RunArmsAndElevatorToPos(120,0,70,1,1);
@@ -278,6 +279,7 @@ void Climb::runSequence(const RobotData &robotData, ClimbData &climbData)
             // else if (stage == 17) RunElevatorToPos(70,1,1);
             // else if (stage == 18) ChangeElevatorSpeed(elevatorSpeed, 1);
         }
+        //transfer onto 3rd bar
         else 
         {
             if (stage == 10) RunArmsAndElevatorToPos(110,0,200,1,1);
@@ -314,6 +316,7 @@ void Climb::RunElevatorToPos(int position, int stageAdd, int onBar)
     if (climbElevatorEncoder.GetPosition() > -position + 1 || climbElevatorEncoder.GetPosition() < -position - 1)
     {
         elevatorRunning = true;
+        //only moves when angular rate is low to reduce swinging
         if (onBar){
             if (abs(angularRate) < 60)
             {
@@ -354,10 +357,12 @@ void Climb::RunArmsToPos(int position, int stageAdd, int onBar)
     }
 }
 
+//runs both elevator and arms
 void Climb::RunArmsAndElevatorToPos(int elevatorPos, int elevatorBar, int armsPos, int armsBar, int stageAdd)
 {
     RunElevatorToPos(elevatorPos, 0, elevatorBar);
     RunArmsToPos(armsPos, 0, armsBar);
+    //waits until the arms and the elevator are done running
     if (!elevatorRunning && !armsRunning)
     {
         climbArms.Set(0);
@@ -367,10 +372,11 @@ void Climb::RunArmsAndElevatorToPos(int elevatorPos, int elevatorBar, int armsPo
 
 }
 
+//trasfers on top bar
 void Climb::TopTransfer()
 {
 
-
+    //checks for angle where the bot pulls off bar
     if (angle < -41.5)
     {
         climbArms.Set(0);
@@ -381,23 +387,28 @@ void Climb::TopTransfer()
         {
             climbElevator.Set(0);
         }
+        //runs arms down when not at the angle for transfer
         climbArms_pidController.SetReference(-200, rev::CANSparkMax::ControlType::kPosition, 1);
     }
 }
 
 void Climb::CheckArms()
 {
+    //checks to see if arms are in the right place
     if (climbArmsAbs.GetOutput() < 0.8)
     {
         stage += 1;
     } else 
     {
+        //goes back if the arms are not in the right place
         stage -= 2;
     }
 }
 
+//checks for a specific gyro value before moving on
 void Climb::WaitUntilGyro(int cmp, float gyroValue, int stageAdd)
 {
+    //checks greater than a value
     if (cmp == 1)
     {
         if (gyroValue < angle)
@@ -405,6 +416,7 @@ void Climb::WaitUntilGyro(int cmp, float gyroValue, int stageAdd)
             stage += stageAdd;
         }
     }
+    //checks less than a value
     else if (cmp == -1)
     {
         if (gyroValue > angle)
@@ -412,31 +424,36 @@ void Climb::WaitUntilGyro(int cmp, float gyroValue, int stageAdd)
             stage += stageAdd;
         }
     }
+    //checks equal to a value
     else if (cmp == 0){
         if (gyroValue == angle)
         {
             stage += stageAdd;
         }
-
     }
 }
 
 void Climb::ChangeElevatorSpeed(float speed, int stageAdd)
 {
+    //changes speed on elevator on bot PIDS
     climbElevator_pidController.SetOutputRange(-speed, speed, 0);
     climbElevator_pidController.SetOutputRange(-speed, speed, 1);
     stage += stageAdd;
 }
 
+
 void Climb::ChangeArmSpeed(float speed, int stageAdd)
 {
+    //changed speed on arms on both PIDS
     climbArms_pidController.SetOutputRange(-speed, speed, 0);
     climbArms_pidController.SetOutputRange(-speed, speed, 1);
     stage += stageAdd;
 }
 
+//zeros elevator
 void Climb::ZeroElevator(float power, int stageAdd)
 {
+    //runs elevator if limit is not reached
     if (elevatorLimit.Get())
     {
         elevatorRunning = true;
@@ -450,6 +467,7 @@ void Climb::ZeroElevator(float power, int stageAdd)
         stage += stageAdd;
         zeroingTimer = 0;
     }
+    //stops zeroing if going for too long
     if (zeroingTimer > 20)
     {
         climbElevator.Set(0);
