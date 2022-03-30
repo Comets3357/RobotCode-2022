@@ -64,7 +64,9 @@ void Auton::sendAutonSelectionChooser() {
     autonChooser.AddOption("threeBallC", "threeBallC");
 
     autonChooser.AddOption("fourBallC", "fourBallC");
+    
     autonChooser.AddOption("fiveBallC", "fiveBallC");
+    autonChooser.AddOption("fiveBallC", "fiveBallCAlt");
 
     autonChooser.AddOption("sixBallC", "sixBallC");
 
@@ -101,6 +103,9 @@ void Auton::AutonomousPeriodic(const RobotData &robotData, AutonData &autonData,
         fourBallC(robotData, controlData);
     }
     else if (autonData.autonRoutineName == "fiveBallC") {
+        fiveBallC(robotData, controlData);
+    }
+    else if (autonData.autonRoutineName == "fiveBallCAlt") {
         fiveBallC(robotData, controlData);
     }
     else if (autonData.autonRoutineName == "sixBallC") {
