@@ -69,7 +69,7 @@ void Shooter::flyWheelInit()
     flyWheelLead_pidController.SetI(0, 1);
     flyWheelLead_pidController.SetD(0, 1); 
     flyWheelLead_pidController.SetIZone(0, 1);
-    flyWheelLead_pidController.SetFF(0.00021, 1); 
+    flyWheelLead_pidController.SetFF(0.000215, 1); 
     flyWheelLead_pidController.SetOutputRange(0, 1, 1);
 
     flyWheel.BurnFlash();            
@@ -186,6 +186,7 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
         reject(robotData, shooterData);
         isTurretStatic = false;
     } else */ if(robotData.controlData.shootMode == shootMode_vision){ // Aiming with limelight
+        isTurretStatic = false;
 
         //set the hood and flywheel using pids to the desired values based off the limelight code and how far away you are
         //if farther away
@@ -264,7 +265,7 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
         fender(robotData);
         checkReadyShoot(shooterData);
 
-        isTurretStatic = true;
+        isTurretStatic = false;
     } 
     else if (robotData.controlData.shootMode == shootMode_sideWall) //FROM THE SIDE WALL FIXED SHOT
     {
@@ -658,6 +659,8 @@ void Shooter::saTurret(const RobotData &robotData, ShooterData &shooterData){
         //this is set in the semiauto function
         setTurret_Pos(turretMiddleDegrees, shooterData);
 
+    }else if(robotData.controlData.shootMode == shootMode_fender){
+        shooterTurret.Set(0);
     }else{ //ok cool we can move now
 
         if(robotData.controlData.usingTurretDirection){ //controls turret using field oriented control and joystick

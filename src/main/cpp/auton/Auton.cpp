@@ -66,7 +66,7 @@ void Auton::sendAutonSelectionChooser() {
     autonChooser.AddOption("fourBallC", "fourBallC");
     
     autonChooser.AddOption("fiveBallC", "fiveBallC");
-    autonChooser.AddOption("fiveBallC", "fiveBallCAlt");
+    autonChooser.AddOption("fiveBallCAlt", "fiveBallCAlt");
 
     autonChooser.AddOption("sixBallC", "sixBallC");
 
