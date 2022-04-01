@@ -8,6 +8,7 @@ void Shooter::RobotInit(ShooterData &shooterData)
 {
     flyWheelInit();
     shooterHoodInit();
+    encoderPluggedInHood(shooterData);
     hoodRollerInit();
     shooterTurretInit();
 
@@ -18,7 +19,7 @@ void Shooter::RobotInit(ShooterData &shooterData)
 
     //FOR TESTING
     // used for reading flywheel speeds from the dashboard
-    frc::SmartDashboard::PutNumber("flywheel speed", 0);
+    //frc::SmartDashboard::PutNumber("flywheel speed", 0);
 
 }
 
@@ -101,12 +102,12 @@ void Shooter::shooterTurretInit()
 
 
     //PIDS
-    shooterTurret_pidController.SetP(0.23); 
+    shooterTurret_pidController.SetP(0.65); 
     shooterTurret_pidController.SetI(0);
-    shooterTurret_pidController.SetD(0.0004);
+    shooterTurret_pidController.SetD(0);
     shooterTurret_pidController.SetIZone(0);
     shooterTurret_pidController.SetFF(0);
-    shooterTurret_pidController.SetOutputRange(-1,1);
+    shooterTurret_pidController.SetOutputRange(-0.75,0.75);
     shooterTurret.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse, true);
     shooterTurret.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward, true);
 
@@ -131,7 +132,7 @@ void Shooter::DisabledInit()
 void Shooter::DisabledPeriodic(const RobotData &robotData, ShooterData &shooterData){
     updateData(robotData, shooterData);
     encoderPluggedInTurret(shooterData);
-    encoderPluggedInHood(shooterData);
+    // encoderPluggedInHood(shooterData);
 
 }
 
@@ -680,7 +681,7 @@ void Shooter::saTurret(const RobotData &robotData, ShooterData &shooterData){
             if(robotData.limelightData.validTarget){ //if you can see a target
 
                 if(robotData.limelightData.distanceOffset < 7*12){ //takes into account how far away you are, farther away == needs to be more precise
-                    //if youre within 2 degrees of the target you can stop turning (mitigates jerky movement)
+                    //if youre within 2 degrees of the target you can stop turning (mitigates jerky movempent)
                     if(std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 5){
                         shooterTurret.Set(0);
                     }else{
@@ -770,7 +771,7 @@ void Shooter::turretControlTurn(float controlTurretDirection, const RobotData &r
  * ---------------------------------------------------------------------------------------------------------------------------------------------------
  * */
 void Shooter::TestPeriodic(const RobotData &robotData, ShooterData &shooterData){
-    frc::SmartDashboard::PutBoolean("Shooter abs encoder working", encoderPluggedInHood(shooterData));
+    //frc::SmartDashboard::PutBoolean("Shooter abs encoder working", encoderPluggedInHood(shooterData));
     frc::SmartDashboard::PutBoolean("Shooter abs encoder reading in correct range", encoderInRange(shooterData));
     frc::SmartDashboard::PutBoolean("Shooter hit bottom dead stop?", shooterData.bottomDeadStop);
     frc::SmartDashboard::PutBoolean("Shooter hit top dead stop?", shooterData.topDeadStop);
@@ -784,7 +785,7 @@ void Shooter::TestPeriodic(const RobotData &robotData, ShooterData &shooterData)
 
     //runs the bench test sequence
     if (robotData.benchTestData.testStage == BenchTestStage::BenchTestStage_Shooter && robotData.controlData.manualBenchTest){ //checks if we're testing shooter
-        if (encoderPluggedInHood(shooterData) && encoderInRange(shooterData)){ //checks if the encoder is working
+        if (false){ //checks if the encoder is working
             if (robotData.benchTestData.stage == 0){
                 //run hood forwards
                 shooterData.benchTestShooterHoodSpeed = -.07; //sets the speed of the hood
@@ -831,7 +832,7 @@ void Shooter::TestPeriodic(const RobotData &robotData, ShooterData &shooterData)
 //checks if the encoder is plugged in and giving an output
 bool Shooter::encoderPluggedInHood(ShooterData &shooterData){
 
-    if (shooterHoodEncoderAbs.GetOutput() > 0.01) { //checks if the output of the abs encoder is actually reading a signal
+    if (shooterHoodEncoderAbs.GetOutput() > 0.01 && shooterHoodEncoderAbs.GetOutput() < 1)  { //checks if the output of the abs encoder is actually reading a signal
 
         shooterHoodEncoderRev.SetPosition(HoodabsoluteToREV(shooterHoodEncoderAbs.GetOutput()));
 

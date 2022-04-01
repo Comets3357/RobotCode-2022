@@ -40,8 +40,8 @@ static const int
 
 static const float
     //comp bot shooter hood positions
-    hoodabsOut = 0.07,
-    hoodabsIn = 0.945,
+    hoodabsOut = 0.058,
+    hoodabsIn = 0.956,
     hoodrevOut = -38,
     hoodrevIn = 0,
     hoodAngleOut = 43,
@@ -92,7 +92,7 @@ static const double
 static const float
     outerLaunchHood = hoodrevOut,
     outerLaunchVel = 1990,
-    innerLaunchHood = 35,
+    innerLaunchHood = -35,
     innerLaunchVel = 1620,
     wallHood = -25,
     wallVel = 1500,

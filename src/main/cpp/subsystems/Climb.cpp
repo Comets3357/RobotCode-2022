@@ -99,6 +99,7 @@ void Climb::RobotPeriodic(const RobotData &robotData, ClimbData &climbData)
     }
 
     //runs after the zeroing button is pressed
+    frc::SmartDashboard::PutBoolean("climbZeroing", climbData.zeroing);
     if (climbData.zeroing)
     {
         if (climbArmsAbs.GetOutput() > 0.03) {
@@ -126,10 +127,10 @@ void Climb::RobotPeriodic(const RobotData &robotData, ClimbData &climbData)
 
     }
 
-    if (climbArmsAbs.GetOutput() > 0.811 && climbArms.Get() > 0)
-    {
-        climbArms.Set(0);
-    }
+    // if (climbArmsAbs.GetOutput() > 0.811 && climbArms.Get() > 0)
+    // {
+    //     climbArms.Set(0);
+    // }
 }
 
 //manual

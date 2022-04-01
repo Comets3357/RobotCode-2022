@@ -157,7 +157,11 @@ void Auton::taxiShootA(const RobotData &robotData, ControlData &controlData) {
     }
 
     // shooting
-    controlData.shootMode = shootMode_vision;
+    // if (sec > 0 && sec < 14.5) {
+        controlData.shootMode = shootMode_vision;
+    // } else {
+        // controlData.shootMode = shootMode_none;
+    // }
 
     if (sec > 2.5 && sec < 6) {
         controlData.saFinalShoot = true;
@@ -270,14 +274,19 @@ void Auton::fiveBallC(const RobotData &robotData, ControlData &controlData)
     // controlData.saIntake = false;
 
     // aim
-    controlData.shootMode = shootMode_vision;
+    // if (sec > 0 && sec < 14) {
+        controlData.shootMode = shootMode_vision;
+    // } else {
+    //     controlData.shootMode = shootMode_none;
+    // }
+    
 
     // final shoot
     if (sec > 0 && sec < 1) {
         controlData.saFinalShoot = true;
     } else if (sec > 3.5 && sec < 7.5) {
         controlData.saFinalShoot = true;
-    } else if (sec > 13.7 && sec < 15) {
+    } else if (sec > 13 && sec < 15) {
         controlData.saFinalShoot = true;
     } else {
         controlData.saFinalShoot = false;
