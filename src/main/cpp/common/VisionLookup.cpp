@@ -15,11 +15,11 @@ void VisionLookup::RobotPeriodic(const RobotData &robotData, VisionLookupData &v
     // hood angle map HIGH HUB
     // key is the distance in feet
     // assigned value is the hood position in angle measurment(degrees)
-    visionMap[4] = 23;
-    visionMap[5] = 24.39;
-    visionMap[6] = 25.57; 
-    visionMap[7] = 25.57; 
-    visionMap[8] = 28.51; 
+    visionMap[4] = 23.31;
+    visionMap[5] = 23.5;
+    visionMap[6] = 25.07; 
+    visionMap[7] = 26.21; 
+    visionMap[8] = 27.37; 
     visionMap[9] = 28.51; 
     visionMap[10] = 30.622; 
     visionMap[11] = 30.622; 
@@ -35,13 +35,13 @@ void VisionLookup::RobotPeriodic(const RobotData &robotData, VisionLookupData &v
     // velocity map
     // key is the distance in feet
     // assigned value is the desired flywheel velocity in rpm
-    velocityMap[4] = 1330;
-    velocityMap[5] = 1290; 
-    velocityMap[6] = 1290; 
-    velocityMap[7] = 1320; 
-    velocityMap[8] = 1350; 
-    velocityMap[9] =  1390; 
-    velocityMap[10] =  1450; 
+    velocityMap[4] = 1250;
+    velocityMap[5] = 1250; 
+    velocityMap[6] = 1300; 
+    velocityMap[7] = 1325; 
+    velocityMap[8] = 1370; 
+    velocityMap[9] =  1460; 
+    velocityMap[10] =  1480; 
     velocityMap[11] = 1500; 
     velocityMap[12] =  1550; 
     velocityMap[13] = 1600; 

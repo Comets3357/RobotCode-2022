@@ -23,8 +23,8 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
 
     //the desired hood and velocity for shooting from anywhere
     if(robotData.limelightData.validTarget == 0){
-        limelightData.desiredVel = 1300; //returns rpm
-        limelightData.desiredHoodRollerVel = 1300*3.5;
+        limelightData.desiredVel = 1250; //returns rpm
+        limelightData.desiredHoodRollerVel = 1250*3.5;
     }else{
         limelightData.desiredVel = getWheelVelocity(visionLookup, limelightData, robotData); //returns rpm
         limelightData.desiredHoodRollerVel = getHoodRollerVel(limelightData, robotData);
@@ -92,7 +92,7 @@ void Limelight::shooterOffset(const RobotData &robotData, LimelightData &limelig
 
     //calculate the distance from the shooter to target using pythagorian theorem with the new x and y values (sorry for the spelling)
     limelightData.distanceOffset = std::sqrt(std::pow(yValueOffset,2)+std::pow(xValueOffset,2));
-    limelightData.distanceOffset = limelightData.distanceOffset; //IN INCHES
+    //limelightData.distanceOffset = 5*12; //IN INCHES
 
     //calculate the angle between the shooter since it is different from that given by the limelight
     limelightData.angleOffset = (std::asin(xValueOffset/limelightData.distanceOffset));
@@ -223,7 +223,7 @@ double Limelight::getHoodRollerVel(LimelightData &limelightData, const RobotData
     if(robotData.limelightData.distanceOffset >= 15*12){
         limelightData.hoodFlywheelRatio = 3.5;
     }else{
-        limelightData.hoodFlywheelRatio = 3;
+        limelightData.hoodFlywheelRatio = 3.5;
     }
 
     double flywheelVel = robotData.limelightData.desiredVel;

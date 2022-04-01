@@ -45,7 +45,7 @@ void Climb::RobotInit()
     climbArms_pidController.SetOutputRange(-armsSpeed, armsSpeed, 1);
 
     climbElevator.BurnFlash();
-    climbElevator.BurnFlash();
+    climbArms.BurnFlash();
     
 }
 
@@ -274,7 +274,8 @@ void Climb::runSequence(const RobotData &robotData, ClimbData &climbData)
             else if (stage == 13) ChangeElevatorSpeed(elevatorSpeed,1);
             else if (stage == 14) ChangeArmSpeed(0.5,1);
             else if (stage == 15) TopTransfer();
-            // else if (stage == 15) RunArmsToPos(190,1,1);
+            else if (stage == 16) ChangeArmSpeed(1,1);
+            else if (stage == 17) RunArmsToPos(0,1,1);
             // else if (stage == 16) ChangeElevatorSpeed(0.6, 1);
             // else if (stage == 17) RunElevatorToPos(70,1,1);
             // else if (stage == 18) ChangeElevatorSpeed(elevatorSpeed, 1);
@@ -381,12 +382,9 @@ void Climb::TopTransfer()
     {
         climbArms.Set(0);
         ChangeElevatorSpeed(0.6, 0);
-        RunElevatorToPos(80,1,1);
+        RunElevatorToPos(90,1,1);
     } else {
-        if (angle > -30)
-        {
-            climbElevator.Set(0);
-        }
+        
         //runs arms down when not at the angle for transfer
         climbArms_pidController.SetReference(-200, rev::CANSparkMax::ControlType::kPosition, 1);
     }
@@ -499,7 +497,7 @@ void Climb::updateData(const RobotData &robotData, ClimbData &climbData)
     // frc::smartDashboard::PutBoolean("limit Climb", elevatorLimit.Get());
     // frc::smartDashboard::PutNumber("elevator amps", elevatorAmperage);
     // frc::smartDashboard::PutNumber("Arms amps", armsAmperage);
-    // frc::smartDashboard::PutNumber("climb stage", stage);
+    frc::SmartDashboard::PutNumber("climb stage", stage);
     // frc::smartDashboard::PutBoolean("running sequence", executeSequence);
     frc::SmartDashboard::PutNumber("climbarms encoder", climbArmsEncoder.GetPosition());
     frc::SmartDashboard::PutNumber("climbarms abs encoder", climbArmsAbs.GetOutput());

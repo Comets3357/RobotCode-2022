@@ -17,8 +17,8 @@ void Shooter::RobotInit(ShooterData &shooterData)
     isTurretStatic = false;
 
     //FOR TESTING
-    //used for reading flywheel speeds from the dashboard
-    //frc::SmartDashboard::PutNumber("flywheel speed", 0);
+    // used for reading flywheel speeds from the dashboard
+    frc::SmartDashboard::PutNumber("flywheel speed", 0);
 
 }
 
@@ -37,11 +37,8 @@ void Shooter::shooterHoodInit()
     shooterHood_pidController.SetFF(0);
     shooterHood_pidController.SetOutputRange(-0.5,0.5);
 
-    shooterHood.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse, true);
-    shooterHood.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward, true);
 
-    shooterHood.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward, hoodrevIn -2);
-    shooterHood.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse, hoodrevOut +1);
+    shooterHood.BurnFlash();
 
 }
 
@@ -180,6 +177,12 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
 
     //Semi auto turret functionality
     saTurret(robotData, shooterData);
+    
+    shooterHood.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse, true);
+    shooterHood.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward, true);
+
+    shooterHood.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward, hoodrevIn -2);
+    shooterHood.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse, hoodrevOut +1);
 
     //SHOOTING LOGIC
     /* if(robotData.indexerData.autoRejectTop && robotData.controlData.autoRejectOpponentCargo){
@@ -190,20 +193,22 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
 
         //set the hood and flywheel using pids to the desired values based off the limelight code and how far away you are
         //if farther away
-        if(robotData.limelightData.distanceOffset >= 14*12){
 
-            //if the difference between the current velocity and the desired velocity is greater than a certain amount give it straight 100% vbus to kick start it
-            //then once it's reached a certain amount below the target velocity switch to a pid to get than final desired rpm 
-            if(robotData.limelightData.desiredVel - flyWheelLeadEncoder.GetVelocity() > 350){
-                flyWheel.Set(1); //give it full power
-            }else{
-                flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity ,1);
-            }
-        
+        //if the difference between the current velocity and the desired velocity is greater than a certain amount give it straight 100% vbus to kick start it
+        //then once it's reached a certain amount below the target velocity switch to a pid to get than final desired rpm 
+        if(robotData.limelightData.desiredVel - flyWheelLeadEncoder.GetVelocity() > 350){
+            flyWheel.Set(1); //give it full power
         }else{
-            flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 0);
+            if(robotData.limelightData.distanceOffset >= 9*12){
+                flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity ,1);
+
+            }else{
+                flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 0);
+
+            }
 
         }
+        
 
         //sets the hood roller speed as normal
         hoodRoller_pidController.SetReference(robotData.limelightData.desiredHoodRollerVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
@@ -229,9 +234,9 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
         }
 
         //CODE FOR TUNING SHOTS, TESTING CODE
-        //double flywheelSpeed = frc::SmartDashboard::GetNumber("flywheel speed", 0);
-        //flyWheelLead_pidController.SetReference(flywheelSpeed, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
-        //hoodRoller_pidController.SetReference(flywheelSpeed*2.75, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
+        // double flywheelSpeed = frc::SmartDashboard::GetNumber("flywheel speed", 0);
+        // flyWheelLead_pidController.SetReference(flywheelSpeed, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 0);
+        // hoodRoller_pidController.SetReference(flywheelSpeed*3.5, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
 
         // if (shooterData.readyShoot == false && (getWheelVel() > (flywheelSpeed - 30)))
         // //if you're not in readyShoot yet and the wheel velocity is above 30 under the desire velocity, readyShoot will become true
@@ -312,6 +317,10 @@ void Shooter::manual(const RobotData &robotData, ShooterData &shooterData)
 
     }
 
+    
+    shooterHood.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse, false);
+    shooterHood.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward, false);
+
     //LOGIC FOR IF THE CLIMB ELEVATOR IS STILL EXTENDED
     // if(robotData.climbData.elevatorEncoderPosition < -5){ //if the climb elevator is still up, set the turret to a specific location so that it doesn't hit anything
     //     if(std::abs(robotData.shooterData.currentTurretAngle - turretMiddleDegrees) < 45){ //if current turret angle is closest to facing forward
@@ -345,10 +354,10 @@ void Shooter::manual(const RobotData &robotData, ShooterData &shooterData)
     }
 
     //zeros hood pos
-    // if(robotData.controlData.mZeroHood)
-    // {
-    //     shooterHoodEncoderRev.SetPosition(0);
-    // }
+    if(robotData.controlData.mZeroHood)
+    {
+        shooterHoodEncoderRev.SetPosition(0);
+    }
     if(robotData.controlData.mZeroTurret)
     {
         shooterTurretEncoderRev.SetPosition(0);
