@@ -21,6 +21,10 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     //takes into account the limelight's position offset from shooter
     shooterOffset(robotData, limelightData);
 
+    if(robotData.controlData.mode == mode_teleop_sa){
+        limelightData.distanceOffset = limelightData.distanceOffset + robotData.controlData.saDistanceOffset; //adds 6 inches everytime it's clicked
+    }
+
     //the desired hood and velocity for shooting from anywhere
     if(robotData.limelightData.validTarget == 0){
         limelightData.desiredVel = 1250; //returns rpm
@@ -39,9 +43,7 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     limelightData.desiredTurretAngle = getTurretTurnAngle(limelightData, robotData); //position to go to to shoot
 
 
-    if(robotData.controlData.mode == mode_teleop_sa){
-        limelightData.distanceOffset = limelightData.distanceOffset + robotData.controlData.saDistanceOffset; //adds 6 inches everytime it's clicked
-    }
+    
 
     //printing data to the dashboard
     frc::SmartDashboard::PutNumber("distance offset", robotData.limelightData.distanceOffset/12);
@@ -211,7 +213,7 @@ double Limelight::getWheelVelocity(VisionLookup &visionLookup, LimelightData &li
 
     //multiply the difference in the distance and floored value by the slope to get desired velocity for that small distance 
     //then add that to the desired position of the lower floored value
-    return (desiredSlope*((originalDistance - limelightData.lowerVal)*12) + limelightData.lowerValVel);
+    return ( (desiredSlope*((originalDistance - limelightData.lowerVal)*12) + limelightData.lowerValVel) );   // 320 for front!
 
 }
 
@@ -278,7 +280,7 @@ double Limelight::getTurretTurnAngle(LimelightData &limelightData, const RobotDa
 //     // if(robotData.limelightData.distances.size() < 6){
 //     //     limelightData.distances.push_back(distance);
 //     // }else{ //once it's full run through the deque and add it to the total
-//     //     for(int i = 0; (unsigned)i < robotData.limelightData.distances.size(); i ++){
+//     //     for(size_t i = 0; i < robotData.limelightData.distances.size(); i ++){
 //     //         total += robotData.limelightData.distances.at(i);
 //     //     }
 
@@ -288,5 +290,5 @@ double Limelight::getTurretTurnAngle(LimelightData &limelightData, const RobotDa
 //     // }
 
 //     // //return the average of those distances
-//     // limelightData.avgDistance = total/6;
+//     // limelightData.avgDistance = total / (robotData.limelightData.distances.size().to<double>());
 // }

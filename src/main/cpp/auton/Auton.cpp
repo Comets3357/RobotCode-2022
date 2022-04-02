@@ -151,7 +151,7 @@ void Auton::taxiShootA(const RobotData &robotData, ControlData &controlData) {
     if (sec > 0 && sec < 4) {
         controlData.saIntake = true;
     } else if (sec > 5.5 && sec < 8) {
-
+        controlData.saIntake = true;
     } else {
         controlData.saIntake = false;
     }
@@ -163,7 +163,7 @@ void Auton::taxiShootA(const RobotData &robotData, ControlData &controlData) {
         // controlData.shootMode = shootMode_none;
     // }
 
-    if (sec > 2.5 && sec < 6) {
+    if (sec > 1.7 && sec < 6) {
         controlData.saFinalShoot = true;
     } else {
         controlData.saFinalShoot = false;

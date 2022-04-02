@@ -235,7 +235,7 @@ void Indexer::count(const RobotData &robotData, IndexerData &indexerData){
 bool Indexer::pauseBelt(const RobotData &robotData, IndexerData &indexerData){
 
     if(getTopBeamToggledOn()){          // the top sensor was just toggled on
-        pauseBeltCount = 5;             // set pause belt count for .1s
+        pauseBeltCount = 20;             // set pause belt count for .1s
         return true;                    
     } else if (pauseBeltCount > 0){     // the top sensor was not JUST toggled on but was recently toggled on
         pauseBeltCount--;               // count down the pause belt counter
@@ -256,7 +256,7 @@ void Indexer::saBeltControl(const RobotData &robotData, IndexerData &indexerData
     frc::SmartDashboard::PutBoolean("pauseBelt", pauseBelt(robotData, indexerData));
     if(robotData.controlData.saEjectBalls){             // if indexer is REVERSING (saEject curently is the only case where it runs backwards)
         indexerBelt.Set(-indexerShootingBeltSpeed);     // run the belt backwards fast
-    } else if ((/* !pauseBelt(robotData, indexerData) &&  */robotData.shooterData.readyShoot && (robotData.controlData.saFinalShoot|| robotData.shooterData.readyReject)) || (!getTopBeam() && !robotData.intakeData.intakeIdle)){ 
+    } else if ((!pauseBelt(robotData, indexerData) && robotData.shooterData.readyShoot && (robotData.controlData.saFinalShoot|| robotData.shooterData.readyReject)) || (!getTopBeam() && !robotData.intakeData.intakeIdle)){ 
         // there are two main cases when you run the indexer forward: when you shoot, and when you're intaking
         // when shooting, you check that you're done pausing (see pauseBelt) to make sure every ball pauses before going into the shooter, 
         // anyways, we have to get the signal that the shooter is ready to eject AND that the top ball in the indexer is the opponent color to run it in that case

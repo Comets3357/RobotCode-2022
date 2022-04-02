@@ -69,11 +69,11 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
     // manual:
 
     //ADD CONTROLLER BIND
-    // if(controllerData.sLStickBtnToggled){
-    //     controlData.saDistanceOffset = controlData.saDistanceOffset + 6;
-    // }else if(controllerData.sRStickBtnToggled){
-    //     controlData.saDistanceOffset = controlData.saDistanceOffset - 6;
-    // }
+    if(controllerData.sLStickBtnToggled){
+        controlData.saDistanceOffset = controlData.saDistanceOffset + 6;
+    }else if(controllerData.sRStickBtnToggled){
+        controlData.saDistanceOffset = controlData.saDistanceOffset - 6;
+    }
     
 
     
@@ -82,7 +82,7 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
     controlData.mIntakeRollersIn = controllerData.sRTrigger > 0.5 /* && (controlData.mode == mode_teleop_manual) */;
     controlData.mIntakeRollersOut = controllerData.sRTrigger > 0.5 && controlData.shift /* && (controlData.mode == mode_teleop_manual) */;
     
-    controlData.mZeroHood = controllerData.sRStickBtn /* && (controlData.mode == mode_teleop_manual) */;
+    controlData.mZeroHood = controllerData.sRStickBtn & !controlData.shift /* && (controlData.mode == mode_teleop_manual) */;
     controlData.mZeroTurret = controllerData.sLStickBtn /* && (controlData.mode == mode_teleop_manual) */;
     controlData.mHood = controllerData.sRYStick/*  && (controlData.mode == mode_teleop_manual) */;
     controlData.mTurret = controllerData.sLXStick /* && (controlData.mode == mode_teleop_manual) */;

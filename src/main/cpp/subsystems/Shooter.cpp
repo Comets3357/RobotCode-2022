@@ -396,6 +396,8 @@ void Shooter::updateData(const RobotData &robotData, ShooterData &shooterData)
     //frc::SmartDashboard::PutNumber("hood roller vel", hoodRollerEncoderRev.GetVelocity());
     //frc::SmartDashboard::PutNumber("desired hood roller", robotData.limelightData.desiredHoodRollerVel);
 
+    frc::SmartDashboard::PutNumber("DISTANE OFFEST", robotData.controlData.saDistanceOffset);
+
 }
 
 /**
@@ -698,6 +700,8 @@ void Shooter::saTurret(const RobotData &robotData, ShooterData &shooterData){
                         //turn the turret to face the target
                         //accounts for if the robot is turning and adds more power
                         setTurret_Pos(robotData.limelightData.desiredTurretAngle + averageTurretGyroOffset(robotData, shooterData), shooterData);
+                        //setTurret_Pos(robotData.limelightData.avgDistance + averageTurretGyroOffset(robotData, shooterData), shooterData);
+
                     } 
 
 
