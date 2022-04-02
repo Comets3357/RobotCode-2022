@@ -20,15 +20,15 @@ void VisionLookup::RobotPeriodic(const RobotData &robotData, VisionLookupData &v
     visionMap[6] = 25.07; 
     visionMap[7] = 26.21; 
     visionMap[8] = 27.37; 
-    visionMap[9] = 28.51; 
-    visionMap[10] = 30.622; 
-    visionMap[11] = 30.622; 
-    visionMap[12] = 33.07; 
-    visionMap[13] = 35.07; 
-    visionMap[14] = 35.07; 
-    visionMap[15] = 37.82; 
-    visionMap[16] = 37.82; 
-    visionMap[17] = 39.38; 
+    visionMap[9] = 29.62; 
+    visionMap[10] = 33.78; 
+    visionMap[11] = 34.90; 
+    visionMap[12] = 36.49; 
+    visionMap[13] = 36.39; 
+    visionMap[14] = 37.27; 
+    visionMap[15] = 37.28; 
+    visionMap[16] = 37.29; 
+    visionMap[17] = 40.02; 
     visionMap[18] = 39.87; 
     visionMap[19] = 40; 
 
@@ -40,17 +40,17 @@ void VisionLookup::RobotPeriodic(const RobotData &robotData, VisionLookupData &v
     velocityMap[6] = 1300; 
     velocityMap[7] = 1325; 
     velocityMap[8] = 1370; 
-    velocityMap[9] =  1460; 
-    velocityMap[10] =  1480; 
-    velocityMap[11] = 1500; 
+    velocityMap[9] =  1430; 
+    velocityMap[10] =  1430; 
+    velocityMap[11] = 1510; 
     velocityMap[12] =  1550; 
     velocityMap[13] = 1600; 
-    velocityMap[14] = 1670; 
+    velocityMap[14] = 1650; 
 
 //hood roller ratio back to 3.5
-    velocityMap[15] = 1800; 
+    velocityMap[15] = 1720; 
     velocityMap[16] = 1800; 
-    velocityMap[17] = 1900; 
+    velocityMap[17] = 1950; 
     velocityMap[18] = 1950; 
     velocityMap[19] = 2100;
 
