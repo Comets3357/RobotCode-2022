@@ -8,7 +8,7 @@ void ColorSensor::RobotInit(){
 // right now it's just the default example code... 
 void ColorSensor::RobotPeriodic(const RobotData &robotData, ColorSensorData &colorSensorData){
     
-    frc::SmartDashboard::PutNumber("cargo enum", colorSensorData.colorValue);
+    // frc::SmartDashboard::PutNumber("cargo enum", colorSensorData.colorValue);
     if (robotData.arduinoData.ColorData == 11) {
       colorSensorData.colorValue = CargoColor::cargo_Blue;
     } else if (robotData.arduinoData.ColorData == 12) {
@@ -37,8 +37,8 @@ void ColorSensor::DisabledPeriodic(const RobotData &robotData, ColorSensorData &
 
 void ColorSensor::updateData(const RobotData &robotData, ColorSensorData &colorSensorData){
     // colorSensorData.currentColor = detectColor();
-    frc::SmartDashboard::PutBoolean("sensed Blue?", robotData.arduinoData.ColorData == 11);
-    frc::SmartDashboard::PutBoolean("sensed Red?", robotData.arduinoData.ColorData == 12);
-    frc::SmartDashboard::PutBoolean("sensed Nothing?", robotData.arduinoData.ColorData == 10);
-    frc::SmartDashboard::PutBoolean("not data", robotData.arduinoData.ColorData);
+    // frc::SmartDashboard::PutBoolean("sensed Blue?", robotData.arduinoData.ColorData == 11);
+    // frc::SmartDashboard::PutBoolean("sensed Red?", robotData.arduinoData.ColorData == 12);
+    // frc::SmartDashboard::PutBoolean("sensed Nothing?", robotData.arduinoData.ColorData == 10);
+    // frc::SmartDashboard::PutBoolean("not data", robotData.arduinoData.ColorData);
 }

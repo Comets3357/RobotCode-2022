@@ -12,8 +12,6 @@
 #include <frc/DutyCycle.h>
 #include <frc/DigitalSource.h>
 
-#include <ctre/Phoenix.h>
-
 struct RobotData;
 
 struct ShooterData
@@ -21,15 +19,18 @@ struct ShooterData
     bool readyShoot;
     bool readyReject = false;
     float currentTurretAngle;
-    
+
+    //for rolling average of turret offset 
+    std::deque<double> offsetPos;
+    double avgTurretOffsetPos = 0;
+
+    //float mode;
+
     //Bench test
     bool topDeadStop = false;
     bool bottomDeadStop = false;
     float benchTestShooterHoodSpeed = 0;
     float benchTestFlyWheelSpeed = 0;
-
-    float mode;
-
 };
 
 class Shooter{
@@ -58,6 +59,7 @@ class Shooter{
         double turretConvertFromAbsToAngle(double abs);
         double turretAbsoluteToREV(double value);
         double turretGyroOffset(double value);
+        double averageTurretGyroOffset(const RobotData &robotData, ShooterData &shooterData);
         // double getFieldRelativeToRobotRelativeTurret(const RobotData &robotData, ShooterData &shooterData);
         double getFieldRelativeTurretAngle(const RobotData &robotData, ShooterData &shooterData);
 
@@ -70,7 +72,7 @@ class Shooter{
         
         //gets and sets
         double getWheelVel();
-        void setShooterWheel(double speed);
+        void setShooterWheel(double speed, double pidSlot);
         void setTurret_Pos(double pos, ShooterData &shooterData);
 
         //checks
@@ -103,16 +105,15 @@ class Shooter{
         int tickCount;
         double validTargetTurretPos;
         bool isTurretStatic;
-        int modeCounter;
-        double hoodAbsValues [49] = { };
 
+        //for deprecated mode function
+        //int modeCounter;
+        //double hoodAbsValues [49] = { };
 
-
-        
-     //Flywheel Lead
-        rev::CANSparkMax flyWheelLead = rev::CANSparkMax(shooterWheelLeadID, rev::CANSparkMax::MotorType::kBrushless);
-        rev::SparkMaxRelativeEncoder flyWheelLeadEncoder = flyWheelLead.GetEncoder();
-        rev::SparkMaxPIDController flyWheelLead_pidController = flyWheelLead.GetPIDController();
+        //Flywheel Lead
+        rev::CANSparkMax flyWheel = rev::CANSparkMax(shooterWheelID, rev::CANSparkMax::MotorType::kBrushless);
+        rev::SparkMaxRelativeEncoder flyWheelLeadEncoder = flyWheel.GetEncoder();
+        rev::SparkMaxPIDController flyWheelLead_pidController = flyWheel.GetPIDController();
 
 
         //lip roller

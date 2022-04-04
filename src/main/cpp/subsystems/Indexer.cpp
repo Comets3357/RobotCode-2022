@@ -64,6 +64,9 @@ void Indexer::updateData(const RobotData &robotData, IndexerData &indexerData)
     lastTickBallCount = indexerData.indexerContents.size();
 
     debuggingStuff(robotData, indexerData);
+
+    // frc::SmartDashboard::PutBoolean("top beam break", getTopBeam());
+
 }
 
 void Indexer::manual(const RobotData &robotData, IndexerData &indexerData)
@@ -232,7 +235,7 @@ void Indexer::count(const RobotData &robotData, IndexerData &indexerData){
 bool Indexer::pauseBelt(const RobotData &robotData, IndexerData &indexerData){
 
     if(getTopBeamToggledOn()){          // the top sensor was just toggled on
-        pauseBeltCount = 5;             // set pause belt count for .1s
+        pauseBeltCount = 20;             // set pause belt count for .1s
         return true;                    
     } else if (pauseBeltCount > 0){     // the top sensor was not JUST toggled on but was recently toggled on
         pauseBeltCount--;               // count down the pause belt counter
@@ -250,6 +253,7 @@ void Indexer::saBeltControl(const RobotData &robotData, IndexerData &indexerData
     frc::SmartDashboard::PutBoolean("indexer for shooting", robotData.shooterData.readyShoot && robotData.controlData.saFinalShoot)|| (!getTopBeam() && !robotData.intakeData.intakeIdle);
     frc::SmartDashboard::PutBoolean("auton readyShoot", robotData.shooterData.readyShoot);
     frc::SmartDashboard::PutBoolean("auton finalShoot", robotData.controlData.saFinalShoot);
+    frc::SmartDashboard::PutBoolean("pauseBelt", pauseBelt(robotData, indexerData));
     if(robotData.controlData.saEjectBalls){             // if indexer is REVERSING (saEject curently is the only case where it runs backwards)
         indexerBelt.Set(-indexerShootingBeltSpeed);     // run the belt backwards fast
     } else if ((!pauseBelt(robotData, indexerData) && robotData.shooterData.readyShoot && (robotData.controlData.saFinalShoot|| robotData.shooterData.readyReject)) || (!getTopBeam() && !robotData.intakeData.intakeIdle)){ 

@@ -132,7 +132,7 @@ void Drivebase::updateData(const RobotData &robotData, DrivebaseData &drivebaseD
     drivebaseData.lDriveVel = dbL.GetSensorCollection().GetIntegratedSensorVelocity() / mpsToTpds;
     drivebaseData.rDriveVel = dbR.GetSensorCollection().GetIntegratedSensorVelocity() / mpsToTpds;
 
-    frc::SmartDashboard::PutNumber("driveMode", drivebaseData.driveMode);
+    // frc::SmartDashboard::PutNumber("driveMode", drivebaseData.driveMode);
 
     // call updateOdometry
     updateOdometry(robotData, drivebaseData);
@@ -187,7 +187,7 @@ void Drivebase::teleopControl(const RobotData &robotData, DrivebaseData &driveba
     // else if (drivebaseData.driveMode == driveMode_turnInPlace) {
         // turnInPlaceTeleop(-robotData.limelightData.angleOffset, robotData);
     // }
-    frc::SmartDashboard::PutNumber("limelight angle diff", -robotData.limelightData.angleOffset);
+    // frc::SmartDashboard::PutNumber("limelight angle diff", -robotData.limelightData.angleOffset);
 
 
 }
@@ -212,7 +212,7 @@ void Drivebase::autonControl(const RobotData &robotData, DrivebaseData &drivebas
         // frc::SmartDashboard::PutNumber("breakEndSec", breakEndSec);
         if (robotData.timerData.secSinceEnabled > breakEndSec /* && !robotData.controlData.saFinalShoot */) {
             // frc::SmartDashboard::PutNumber("secSinceEnabled", robotData.timerData.secSinceEnabled);
-            frc::SmartDashboard::PutNumber("breakEndSec", breakEndSec);
+            // frc::SmartDashboard::PutNumber("breakEndSec", breakEndSec);
             getNextAutonStep(robotData, drivebaseData, autonData);
         }
     }
@@ -281,9 +281,9 @@ void Drivebase::updateOdometry(const RobotData &robotData, DrivebaseData &driveb
     if (drivebaseData.odometryYaw < 0) {
         drivebaseData.odometryYaw = 360 + drivebaseData.odometryYaw;
     }
-    frc::SmartDashboard::PutNumber("odometryX", drivebaseData.odometryX);
-    frc::SmartDashboard::PutNumber("odometryY", drivebaseData.odometryY);
-    frc::SmartDashboard::PutNumber("odometryYaw", drivebaseData.odometryYaw);
+    // frc::SmartDashboard::PutNumber("odometryX", drivebaseData.odometryX);
+    // frc::SmartDashboard::PutNumber("odometryY", drivebaseData.odometryY);
+    // frc::SmartDashboard::PutNumber("odometryYaw", drivebaseData.odometryYaw);
 }
 
 /**
@@ -412,7 +412,7 @@ void Drivebase::getNextAutonStep(const RobotData &robotData, DrivebaseData &driv
             // frc::smartDashboard::PutBoolean("odometryInitialized", odometryInitialized);
         }
 
-        frc::SmartDashboard::PutNumber("autonStep", autonData.autonStep);
+        // frc::SmartDashboard::PutNumber("autonStep", autonData.autonStep);
     }
     else {
         drivebaseData.driveMode = driveMode_break;
@@ -421,7 +421,7 @@ void Drivebase::getNextAutonStep(const RobotData &robotData, DrivebaseData &driv
 
 void Drivebase::turnInPlaceAuton(double degrees, const RobotData &robotData, DrivebaseData &drivebaseData, AutonData &autonData) {
 
-    frc::SmartDashboard::PutNumber("degree diff", degrees);
+    // frc::SmartDashboard::PutNumber("degree diff", degrees);
     
     lastDegrees.push_back(degrees);
     if (lastDegrees.size() > 2) {
@@ -446,8 +446,8 @@ void Drivebase::turnInPlaceAuton(double degrees, const RobotData &robotData, Dri
         // frc::SmartDashboard::PutString("AUTON", "TURN IN PLACE");
     } else {
         // profile that adjusts aggressiveness of turn based on the amount of degrees left to turn. has been tuned for speed & accuracy on both small and large turns
-        leftOutput = std::pow(std::abs(degrees / 400), 1.3) + 0.08;
-        rightOutput = std::pow(std::abs(degrees / 400), 1.3) + 0.08;
+        leftOutput = std::pow(std::abs(degrees / 400), 1.5) + 0.09;
+        rightOutput = std::pow(std::abs(degrees / 400), 1.5) + 0.09;
     }
     
 
@@ -458,7 +458,7 @@ void Drivebase::turnInPlaceAuton(double degrees, const RobotData &robotData, Dri
 }
 
 void Drivebase::turnInPlaceTeleop(double degrees, const RobotData &robotData) {
-    frc::SmartDashboard::PutNumber("degree diff", degrees);
+    // frc::SmartDashboard::PutNumber("degree diff", degrees);
     
     lastDegrees.push_back(degrees);
     if (lastDegrees.size() > 5) {

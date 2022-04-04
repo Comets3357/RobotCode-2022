@@ -3,102 +3,82 @@
 
 void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelightData, VisionLookup &visionLookup)
 {
-    //updating data
-    // int x = 0;
-    // if(x > 40){
-    //     limelightData.validTarget = table->GetNumber("tv", 0.0); //valid target or not
-    //     x = (x+1)%50;
-    // }else{
-    //     x = (x+1)%50;
-    // }
 
     limelightData.validTarget = table->GetNumber("tv", 0.0); //valid target or not
-
     limelightData.xOffset =  table->GetNumber("tx", 0.0) * (pi/180); //RADIANS
-    limelightData.yOffset =  table->GetNumber("ty", 0.0);
-    limelightData.distanceToTarget = distanceToTarget(); //the distance
+    limelightData.yOffset =  table->GetNumber("ty", 0.0); //DEGREES
+    limelightDistance = distanceToTarget(); //the distance in INCHES. NOT TO BE USED 
 
-    //turns off limelight if not shooting
-    // if(robotData.controlData.shootMode == shootMode_none){
-    //     table->PutNumber("pipeline", 1);
-    // }else{
-    //     table->PutNumber("pipeline", 0);
-    // }
-
+    //SETS LEDS ON LIMELIGHT
     table->PutNumber("ledMode", 0);
-    table->PutNumber("pipeline", 0);
 
-    
-    
-
-    //updates the angle to be in degrees rather than radians
-    //the actual distance from the hub based on the turning of the drivebase
-    //limelightData.correctDistance = correctDistance(limelightData.angleOffset, limelightData.distanceOffset);
+    if(robotData.controlData.mode == mode_climb_manual || robotData.controlData.mode == mode_climb_sa){
+        table->PutNumber("pipeline", 1);
+    }else{
+        table->PutNumber("pipeline", 0);
+    }
 
     //takes into account the limelight's position offset from shooter
     shooterOffset(robotData, limelightData);
-
-    //averages the distances provided by the limelight in order to make the shooting sequence smoother
-    //averageDistance(robotData, limelightData);
-
-    //the desired hood and velocity for shooting from anywhere
-    if(robotData.limelightData.validTarget == 0){
-        limelightData.desiredVel = 1300; //returns rpm
-        limelightData.desiredHoodRollerVel = 1300*3.5;
-    }else{
-        limelightData.desiredVel = getWheelVelocity(visionLookup, limelightData, robotData); //returns rpm
-        limelightData.desiredHoodRollerVel = getHoodRollerVel(limelightData, robotData);
-    }
-
-    limelightData.desiredHoodPos = getHoodPOS(visionLookup, limelightData, robotData); //returns an angle
-    
-
-    //TURRET 
-    limelightData.turretDifference = -robotData.limelightData.angleOffset;
-
-    limelightData.desiredTurretAngle = getTurretTurnAngle(limelightData, robotData); //position to go to to shoot
 
     if(robotData.controlData.mode == mode_teleop_sa){
         limelightData.distanceOffset = limelightData.distanceOffset + robotData.controlData.saDistanceOffset; //adds 6 inches everytime it's clicked
     }
 
+    //the desired hood and velocity for shooting from anywhere
+    if(robotData.limelightData.validTarget == 0){
+        limelightData.desiredVel = 1250; //returns rpm
+        limelightData.desiredHoodRollerVel = 1250*3.5;
+    }else{
+        limelightData.desiredVel = getWheelVelocity(visionLookup, limelightData, robotData); //returns rpm
+        limelightData.desiredHoodRollerVel = getHoodRollerVel(limelightData, robotData);
+    }
+
+    //DESIRED HOOD
+    limelightData.desiredHoodPos = getHoodPOS(visionLookup, limelightData, robotData); //returns an angle
+
+    //TURRET DIFFERENCE
+    limelightData.turretDifference = -robotData.limelightData.angleOffset;
+    //DESIRED TURRET
+    limelightData.desiredTurretAngle = getTurretTurnAngle(limelightData, robotData); //position to go to to shoot
+
+
     
+
     //printing data to the dashboard
-    frc::SmartDashboard::PutNumber("distance offset", robotData.limelightData.distanceOffset);
-    //frc::SmartDashboard::PutNumber("desired turret angle", limelightData.desiredTurretAngle);
-    frc::SmartDashboard::PutNumber("desired hood", robotData.limelightData.desiredHoodPos);
-    frc::SmartDashboard::PutNumber("desired hood roller", robotData.limelightData.desiredHoodRollerVel);
-    //frc::SmartDashboard::PutNumber("final correct distance", robotData.limelightData.correctDistance);
+    frc::SmartDashboard::PutNumber("distance offset", robotData.limelightData.distanceOffset/12);
+    frc::SmartDashboard::PutNumber("desired turret", robotData.limelightData.desiredTurretAngle);
 
-    // if(robotData.controlData.mDistanceOffsetAdd){
-    //     limelightData.distanceOffset +=3; //adds 3 inches everytime it's clicked
-    // }else if(robotData.controlData.mDistanceOffsetSubtract){
-    //     limelightData.distanceOffset -=3; //adds 3 inches everytime it's clicked
-
-    // }
+    //DECOMMISSIONED
+    //updates the angle to be in degrees rather than radians
+    //the actual distance from the hub based on the turning of the drivebase
+    //limelightData.correctDistance = correctDistance(limelightData.angleOffset, limelightData.distanceOffset);
+    //averages the distances provided by the limelight in order to make the shooting sequence smoother
+    //averageDistance(robotData, limelightData);
 
 }
 
 /**
- * @return distance from limelight to target in inches
+ * @return distance from LIMELIGHT to target in INCHES
  */
 double Limelight::distanceToTarget(){ 
     double radianAngle = table->GetNumber("ty", 0.0);
-    radianAngle = (radianAngle + limelightAngle) * (pi / 180);
+    radianAngle = (radianAngle + limelightAngle) * (pi / 180); //converts to radians
     return(((hubHeight + crosshairOffset)-limelightMount)/std::tan(radianAngle));
-
 }
 
 /**
  * stores the distance and angle to the target of the shooter rather than the limelight (adds the offset)
+ * distanceoffset in INCHES 
+ * angle offset in DEGREES
  */
 void Limelight::shooterOffset(const RobotData &robotData, LimelightData &limelightData){
     //get to radians
     double radianAngle = robotData.limelightData.xOffset;
 
     //find the values of the two sides of the right triangle
-    double xValue = robotData.limelightData.distanceToTarget*std::sin(radianAngle);
-    double yValue = robotData.limelightData.distanceToTarget*std::cos(radianAngle);
+    double xValue = limelightDistance*std::sin(radianAngle);
+    double yValue = limelightDistance*std::cos(radianAngle);
     
     double xValueOffset = 0;
 
@@ -114,6 +94,7 @@ void Limelight::shooterOffset(const RobotData &robotData, LimelightData &limelig
 
     //calculate the distance from the shooter to target using pythagorian theorem with the new x and y values (sorry for the spelling)
     limelightData.distanceOffset = std::sqrt(std::pow(yValueOffset,2)+std::pow(xValueOffset,2));
+    //limelightData.distanceOffset = 5*12; //IN INCHES
 
     //calculate the angle between the shooter since it is different from that given by the limelight
     limelightData.angleOffset = (std::asin(xValueOffset/limelightData.distanceOffset));
@@ -134,9 +115,9 @@ void Limelight::shooterOffset(const RobotData &robotData, LimelightData &limelig
  * @return the desired hood position using lookup table
  */
 double Limelight::getHoodPOS(VisionLookup &visionLookup, LimelightData &limelightData, const RobotData &robotData){
-    double distance = limelightData.distanceOffset;
-    double orignalDistance = distance;
-    limelightData.lowerVal = std::floor(distance/12); //lower value in ft
+    double distance = limelightData.distanceOffset/12; // original distance offset is in inches, and we are converting it to feet
+    double originalDistance = distance;
+    limelightData.lowerVal = std::floor(distance); //lower value in ft 
     limelightData.upperVal = limelightData.lowerVal +1; //upper value in ft
 
     //if either of the int values are higher than the highest lookup table value,
@@ -149,11 +130,9 @@ double Limelight::getHoodPOS(VisionLookup &visionLookup, LimelightData &limeligh
         limelightData.upperVal = visionLookup.highestVal();
     }
 
-    
     //checks to see if the controldata for shooting in the highhub is true
     // if(robotData.shooterData.isHighGeneral){
-    //     //use lookup table to get the desired hood positions
-        
+    //use lookup table to get the desired hood positions
 
     // }else if(!robotData.shooterData.isHighGeneral){ //LOW HUB VALUES
     //     //use lookup table to get the desired hood positions
@@ -166,11 +145,12 @@ double Limelight::getHoodPOS(VisionLookup &visionLookup, LimelightData &limeligh
     limelightData.upperValPos = visionLookup.getValue(limelightData.upperVal);
 
     //get the slope of the line between the upper and lower values (interpolating)
+    //position/inch
     double desiredSlope = (limelightData.upperValPos - limelightData.lowerValPos)/12; 
 
     //multiply the difference in the distance and floored value by the slope to get desired position of hood for that small distance 
     //then add that to the desired position of the lower floored value
-    float desiredHood = (desiredSlope*(orignalDistance - limelightData.lowerVal*12)+limelightData.lowerValPos);
+    float desiredHood = (desiredSlope*((originalDistance - limelightData.lowerVal)*12)+limelightData.lowerValPos);
     if(desiredHood > hoodAngleOut){
         return hoodAngleOut;
     }else if(desiredHood < hoodAngleIn){
@@ -184,11 +164,10 @@ double Limelight::getHoodPOS(VisionLookup &visionLookup, LimelightData &limeligh
  * @return the desired flywheel velocity using lookup table
  */
 double Limelight::getWheelVelocity(VisionLookup &visionLookup, LimelightData &limelightData, const RobotData &robotData){
-    double distance = limelightData.distanceOffset;
-    double orignalDistance = distance;
-    limelightData.lowerVal = std::floor(distance/12); //lower value in ft
+    double distance = limelightData.distanceOffset/12;
+    double originalDistance = distance;
+    limelightData.lowerVal = std::floor(distance); //lower value in ft
     limelightData.upperVal = limelightData.lowerVal +1; //upper value in ft
-
 
     //if either of the distance values are lower than the lowest lookup table value,
     //set the values to the lowest lookup table value 
@@ -229,11 +208,12 @@ double Limelight::getWheelVelocity(VisionLookup &visionLookup, LimelightData &li
     limelightData.upperValVel = visionLookup.getVelocity(limelightData.upperVal);
 
     //get the slope of the line between the upper and lower values (interpolate)
+    //position/inch
     double desiredSlope = (limelightData.upperValVel - limelightData.lowerValVel)/12; 
 
     //multiply the difference in the distance and floored value by the slope to get desired velocity for that small distance 
     //then add that to the desired position of the lower floored value
-    return (desiredSlope*(orignalDistance - limelightData.lowerVal*12)+limelightData.lowerValVel);
+    return ( (desiredSlope*((originalDistance - limelightData.lowerVal)*12) + limelightData.lowerValVel) );   // 320 for front!
 
 }
 
@@ -241,16 +221,15 @@ double Limelight::getWheelVelocity(VisionLookup &visionLookup, LimelightData &li
  * @return the desired hood roller velocity based off of the desired flywheel velocity
  */
 double Limelight::getHoodRollerVel(LimelightData &limelightData, const RobotData &robotData){
-    if(robotData.limelightData.distanceOffset >= 15){
+    //if you're farther back get a faster flywheel hoodroller ratio
+    if(robotData.limelightData.distanceOffset >= 15*12){
         limelightData.hoodFlywheelRatio = 3.5;
     }else{
-        limelightData.hoodFlywheelRatio = 3;
+        limelightData.hoodFlywheelRatio = 3.5;
     }
-
 
     double flywheelVel = robotData.limelightData.desiredVel;
     return flywheelVel*limelightData.hoodFlywheelRatio;
-    //return flywheelVel*3.5;
 }
 
 /**
@@ -258,16 +237,10 @@ double Limelight::getHoodRollerVel(LimelightData &limelightData, const RobotData
  * is constantly updating based on the current Turret Angle and the angle offset from the limelight
  */
 double Limelight::getTurretTurnAngle(LimelightData &limelightData, const RobotData &robotData){
+
     float desired = robotData.limelightData.turretDifference + robotData.shooterData.currentTurretAngle;
-    
-    float snapshot;
 
-    
-
-    
-    if(desired < 0 || desired > turretFullRotationDegrees){
-        //so you're telling the turret to turn to turn to the unwrapped state, therefore, you are unwrapping
-        limelightData.unwrapping = true; 
+    if(desired < 0 || desired > turretFullRotationDegrees){ //if you're outside of the range, go through and add/subtract 360 to get in the range
 
         if(desired < 0){
             desired += 360;
@@ -275,43 +248,47 @@ double Limelight::getTurretTurnAngle(LimelightData &limelightData, const RobotDa
             desired -=360;
         }
 
+        //so you're telling the turret to turn to turn to the unwrapped state, therefore, you are unwrapping
+        limelightData.unwrapping = true;
+        //set the upwrapping value to the newly desired position 
+        unwrappingVal = desired;
+
     }
 
-    return desired;
+    //if you see a target, and youre in youre range of unwrapped, set unwrapped to false
+    if(robotData.limelightData.validTarget && robotData.shooterData.currentTurretAngle > (turretZeroDegrees + 90) && robotData.shooterData.currentTurretAngle < (turretFullRotationDegrees - 90)){ 
+        limelightData.unwrapping = false;
+    }
 
-    // if(limelightData.unwrapping){ //if you're trying to unwrap the turret, and the turret sees target and the difference is less than 45 from the hard stop
-    //     if(std::abs(desired - turretZeroDegrees) < 45 || std::abs(desired - turretFullRotationDegrees) < 45){
-    //         return snapshot;
-    //     }else{
+    //if you arent unwrapping update the returned value to the desired one thats constantly updated
+    if(!limelightData.unwrapping){
+        unwrappingVal = desired;
+    }
 
-    //     }
-    // }
-    
+    return unwrappingVal;
 
 }
-
-
 
 /**
  * Returns the avg distance of the last 5 cycles to make the data smoother while shooting
  */
-void Limelight::averageDistance(const RobotData &robotData, LimelightData &limelightData){
-    // double distance = robotData.limelightData.desiredTurretAngle;
-    // double total = 0;
+// void Limelight::averageDistance(const RobotData &robotData, LimelightData &limelightData){
+//     // double distance = robotData.limelightData.desiredTurretAngle;
+//     // double total = 0;
 
-    // //if size is less then 6 keep adding updated distances until the deque is full
-    // if(robotData.limelightData.distances.size() < 6){
-    //     limelightData.distances.push_back(distance);
-    // }else{ //once it's full run through the deque and add it to the total
-    //     for(int i = 0; (unsigned)i < robotData.limelightData.distances.size(); i ++){
-    //         total += robotData.limelightData.distances.at(i);
-    //     }
+//     // //if size is less then 6 keep adding updated distances until the deque is full
+//     // if(robotData.limelightData.distances.size() < 6){
+//     //     limelightData.distances.push_back(distance);
+//     // }else{ //once it's full run through the deque and add it to the total
+//     //     for(size_t i = 0; i < robotData.limelightData.distances.size(); i ++){
+//     //         total += robotData.limelightData.distances.at(i);
+//     //     }
 
-    //     //make sure to remove the first value and add an updated distance to the end
-    //     limelightData.distances.pop_front();
-    //     limelightData.distances.push_back(distance);
-    // }
+//     //     //make sure to remove the first value and add an updated distance to the end
+//     //     limelightData.distances.pop_front();
+//     //     limelightData.distances.push_back(distance);
+//     // }
 
-    // //return the average of those distances
-    // limelightData.avgDistance = distance;
-}
+//     // //return the average of those distances
+//     // limelightData.avgDistance = total / (robotData.limelightData.distances.size().to<double>());
+// }

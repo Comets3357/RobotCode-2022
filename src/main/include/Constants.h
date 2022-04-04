@@ -14,7 +14,7 @@ static const int
     intakeSingulatorID = 13;
 
 static const double
-    // //practice bot
+    //practice bot
     // absOut = 0.485,
     // absIn = 0.616,
     // revOut = 6.4,
@@ -33,21 +33,21 @@ static const int
 
 // shooter IDs
 static const int
-    shooterWheelLeadID = 31,
+    shooterWheelID = 31,
     shooterHoodID = 33, 
     shooterTurretID = 34, 
     hoodRollerID = 32; 
 
 static const float
     //comp bot shooter hood positions
-    hoodabsOut = 0.07,
-    hoodabsIn = 0.945,
+    hoodabsOut = 0.058,
+    hoodabsIn = 0.956,
     hoodrevOut = -38,
     hoodrevIn = 0,
     hoodAngleOut = 43,
     hoodAngleIn = 21,
 
-    // //PRATLAS shooter hood positions
+    //PRATLAS shooter hood positions
     // hoodabsOut = 0.083,
     // hoodabsIn = 0.987,
     // hoodrevOut = -38,
@@ -57,15 +57,12 @@ static const float
 
     // //ATLAS turret positions
     turretZeroDegrees = 0, 
-    turretFullRotationDegrees = 540, 
+    turretFullRotationDegrees = 450, //540
     turretMiddleDegrees = (turretFullRotationDegrees - turretZeroDegrees)/2,
-    turretZeroRev = 85.74, //87.5
-    turretFullRotationRev_CCW = 174.85, //174.85
-    turretFullRotationRev_C = 0, //0
-    turretZeroAbs = 0.499, //0.479
-    turretFullRotationAbs_CCW = 0.929, //0.91
-    turretFullRotationAbs_C = 0.076; //0.05
-    
+    turretFullRotationRev_CCW = 140.16, //174.85 
+    turretFullRotationRev_C = 0, //0 
+    turretFullRotationAbs_CCW = 0.84, 
+    turretFullRotationAbs_C = 0.157; 
 
     //FOR PRATLAS
     // turretZeroDegrees = 5, //15
@@ -95,12 +92,12 @@ static const double
 static const float
     outerLaunchHood = hoodrevOut,
     outerLaunchVel = 1990,
-    innerLaunchHood = hoodrevOut,
-    innerLaunchVel = 2040,
-    wallHood = -32.33,
-    wallVel = 1860,
-    fenderHood = -0.25,
-    fenderVel = 1690,
+    innerLaunchHood = -35,
+    innerLaunchVel = 1620,
+    wallHood = -25,
+    wallVel = 1500,
+    fenderHood = -2.5,
+    fenderVel = 1500,
 
     outerLaunchHood_Low = hoodrevOut,
     outerLaunchVel_Low = 1990,
@@ -108,8 +105,8 @@ static const float
     innerLaunchVel_Low = 2040,
     wallHood_Low = -32.33,
     wallVel_Low = 1860,
-    fenderHood_Low = -0.25,
-    fenderVel_Low = 1240;
+    fenderHood_Low = -2.5,
+    fenderVel_Low = 1500;
 
 
 // climb

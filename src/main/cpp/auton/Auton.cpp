@@ -66,7 +66,7 @@ void Auton::sendAutonSelectionChooser() {
     autonChooser.AddOption("fourBallC", "fourBallC");
     
     autonChooser.AddOption("fiveBallC", "fiveBallC");
-    autonChooser.AddOption("fiveBallC", "fiveBallCAlt");
+    autonChooser.AddOption("fiveBallCAlt", "fiveBallCAlt");
 
     autonChooser.AddOption("sixBallC", "sixBallC");
 
@@ -150,23 +150,27 @@ void Auton::taxiShootA(const RobotData &robotData, ControlData &controlData) {
     // intake
     if (sec > 0 && sec < 4) {
         controlData.saIntake = true;
-    } else if (sec > 5.5 && sec < 8) {
-
+    } else if (sec > 5.5 && sec < 11) {
+        controlData.saIntake = true;
     } else {
         controlData.saIntake = false;
     }
 
     // shooting
-    controlData.shootMode = shootMode_vision;
+    // if (sec > 0 && sec < 14.5) {
+        controlData.shootMode = shootMode_vision;
+    // } else {
+        // controlData.shootMode = shootMode_none;
+    // }
 
-    if (sec > 2.5 && sec < 6) {
+    if (sec > 1.5 && sec < 6) {
         controlData.saFinalShoot = true;
     } else {
         controlData.saFinalShoot = false;
     }
 
     // eject
-    if (sec > 8 && sec < 10) {
+    if (sec > 11 && sec < 13) {
         controlData.saEjectBalls = true;
     } else {
         controlData.saEjectBalls = false;
@@ -270,7 +274,12 @@ void Auton::fiveBallC(const RobotData &robotData, ControlData &controlData)
     // controlData.saIntake = false;
 
     // aim
-    controlData.shootMode = shootMode_vision;
+    // if (sec > 0 && sec < 14) {
+        controlData.shootMode = shootMode_vision;
+    // } else {
+    //     controlData.shootMode = shootMode_none;
+    // }
+    
 
     // final shoot
     if (sec > 0 && sec < 1) {
