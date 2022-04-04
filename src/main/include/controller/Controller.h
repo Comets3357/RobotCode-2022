@@ -73,8 +73,8 @@ struct ControlData
     bool sideWallShot;
     bool fenderShot;
     bool hubShot;//fixed close shot to lower hub from infront of hub SEMIAUTO
-    bool shootUnassignedAsOpponent = false;
-    bool wrongBall; //if the ball isn't our alliance color eject ball out shooter SEMIAUTO  DEPRECATED (using ControlData.shootUnassignedAsOpponent)
+    bool autoRejectOpponentCargo = true;
+    bool wrongBall; //if the ball isn't our alliance color eject ball out shooter SEMIAUTO  DEPRECATED (using ControlData.autoRejectOpponentCargo)
     bool mShooterWheelForward; //get flywheel running MANUAL
     bool mShooterWheelBackward; //get flywheel running backward MANUAL
     double mHood; //moves hood up or down MANUAL (axis)
@@ -96,16 +96,12 @@ struct ControlData
 
     //benchTest:
 
-    bool startBenchTest = false;
-    bool incrementMotor;
-    bool incrementSpeed;
-    bool incrementSubsystem;
-
-    bool startBenchTestToggle;
-    bool incrementMotorToggle;
-    bool incrementSpeedToggle;
+    bool manualBenchTest = false;
+    bool autoBenchTest = false;
+    bool incrementMotor = false;
+    bool incrementSpeed = false;
+    bool incrementSubsystem = false;
     bool PIDModeToggle = false;
-    bool incrementSubsystemToggle;
 };
 
 struct ControllerData
@@ -169,6 +165,7 @@ struct ControllerData
     bool testXButton = false;
     bool testYButton = false;
     bool testRBumper = false;
+    bool testLBumper = false;
 };
 
 class Controller

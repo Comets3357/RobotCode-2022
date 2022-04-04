@@ -11,6 +11,7 @@
 #include <rev/CANDigitalInput.h>
 #include <frc/DigitalInput.h>
 #include <frc/DutyCycle.h>
+#include <frc/smartdashboard/SmartDashboard.h>
 
 
 struct RobotData;
@@ -21,10 +22,12 @@ struct ClimbData {
     bool climbing = false;
     bool zeroing = false;
     int stage;
-    float armsAmp, elevatorAmp, armsTemp, elevatorTemp, elevatorPos, armsPos, armsAbsPos;
     int angle, angularRate;
     bool elevatorLimit;
 
+    float armsAmp, elevatorAmp, armsTemp, elevatorTemp, elevatorPos, armsPos, armsAbsPos;
+
+    //bench test
     float benchTestClimbArmsSpeed = 0;
     float benchTestClimbElevatorSpeed = 0;
     bool limitSwitchWorking = false;
@@ -48,7 +51,7 @@ public:
 
 private:
 
-    float elevatorSpeed = 0.7;
+    float elevatorSpeed = 0.8;
     float armsSpeed = 1;
     int zeroingTimer = 0;
 
@@ -59,9 +62,7 @@ private:
     //bench test
     void checkElevatorDeadStop(ClimbData &climbData);
     void checkArmsDeadStop(ClimbData &climbData);
-    bool armsEncoderInRange(const ClimbData &climbData);
     void elevatorLimitSwitchWorking(ClimbData &climbData);
-    bool elevatorEncoderInRange(const ClimbData &climbData);
     bool encoderPluggedIn(const ClimbData &climbData);
     bool encoderInRange(const ClimbData &climbData);
 
@@ -95,15 +96,13 @@ private:
     void ZeroElevator(float power, int stageAdd);
 
     void ChangeElevatorSpeed(float speed, int stageAdd);
-    void ChangeElevatorSpeedOnBar(float speed, bool run, int stageAdd);
+    void ChangeArmSpeed(float speed, int stageAdd);
 
     void WaitUntilGyro(int cmp, float gyroValue, int stageAdd);
-    void CheckGyroPosition(int cmp, float gyroValue, int failAdd, int successAdd);
-
-    void waitTillDirection(int direction, float value, int stageAdd, int bar);
 
     void CheckArms();
-    void CheckAngleForTransfer();
+
+    void TopTransfer();
 
     //CHANGE MOTOr ID STUFF  (just outline lol don't take your life too seriously:))
     //initualizes climb elevator motor

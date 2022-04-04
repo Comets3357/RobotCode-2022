@@ -21,10 +21,14 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     //takes into account the limelight's position offset from shooter
     shooterOffset(robotData, limelightData);
 
+    if(robotData.controlData.mode == mode_teleop_sa){
+        limelightData.distanceOffset = limelightData.distanceOffset + robotData.controlData.saDistanceOffset; //adds 6 inches everytime it's clicked
+    }
+
     //the desired hood and velocity for shooting from anywhere
     if(robotData.limelightData.validTarget == 0){
-        limelightData.desiredVel = 1300; //returns rpm
-        limelightData.desiredHoodRollerVel = 1300*3.5;
+        limelightData.desiredVel = 1250; //returns rpm
+        limelightData.desiredHoodRollerVel = 1250*3.5;
     }else{
         limelightData.desiredVel = getWheelVelocity(visionLookup, limelightData, robotData); //returns rpm
         limelightData.desiredHoodRollerVel = getHoodRollerVel(limelightData, robotData);
@@ -39,9 +43,7 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     limelightData.desiredTurretAngle = getTurretTurnAngle(limelightData, robotData); //position to go to to shoot
 
 
-    if(robotData.controlData.mode == mode_teleop_sa){
-        limelightData.distanceOffset = limelightData.distanceOffset + robotData.controlData.saDistanceOffset; //adds 6 inches everytime it's clicked
-    }
+    
 
     //printing data to the dashboard
     frc::SmartDashboard::PutNumber("distance offset", robotData.limelightData.distanceOffset/12);
@@ -92,11 +94,12 @@ void Limelight::shooterOffset(const RobotData &robotData, LimelightData &limelig
 
     //calculate the distance from the shooter to target using pythagorian theorem with the new x and y values (sorry for the spelling)
     limelightData.distanceOffset = std::sqrt(std::pow(yValueOffset,2)+std::pow(xValueOffset,2));
-    limelightData.distanceOffset = limelightData.distanceOffset; //IN INCHES
+    //limelightData.distanceOffset = 5*12; //IN INCHES
 
     //calculate the angle between the shooter since it is different from that given by the limelight
     limelightData.angleOffset = (std::asin(xValueOffset/limelightData.distanceOffset));
     limelightData.angleOffset *= (180/pi);
+    frc::SmartDashboard::PutNumber("limelight angle diff real", limelightData.angleOffset);
 }
 
 /**
@@ -210,7 +213,7 @@ double Limelight::getWheelVelocity(VisionLookup &visionLookup, LimelightData &li
 
     //multiply the difference in the distance and floored value by the slope to get desired velocity for that small distance 
     //then add that to the desired position of the lower floored value
-    return (desiredSlope*((originalDistance - limelightData.lowerVal)*12) + limelightData.lowerValVel) + 60;
+    return ( (desiredSlope*((originalDistance - limelightData.lowerVal)*12) + limelightData.lowerValVel) );   // 320 for front!
 
 }
 
@@ -222,7 +225,7 @@ double Limelight::getHoodRollerVel(LimelightData &limelightData, const RobotData
     if(robotData.limelightData.distanceOffset >= 15*12){
         limelightData.hoodFlywheelRatio = 3.5;
     }else{
-        limelightData.hoodFlywheelRatio = 3;
+        limelightData.hoodFlywheelRatio = 3.5;
     }
 
     double flywheelVel = robotData.limelightData.desiredVel;
@@ -277,7 +280,7 @@ double Limelight::getTurretTurnAngle(LimelightData &limelightData, const RobotDa
 //     // if(robotData.limelightData.distances.size() < 6){
 //     //     limelightData.distances.push_back(distance);
 //     // }else{ //once it's full run through the deque and add it to the total
-//     //     for(int i = 0; (unsigned)i < robotData.limelightData.distances.size(); i ++){
+//     //     for(size_t i = 0; i < robotData.limelightData.distances.size(); i ++){
 //     //         total += robotData.limelightData.distances.at(i);
 //     //     }
 
@@ -287,5 +290,5 @@ double Limelight::getTurretTurnAngle(LimelightData &limelightData, const RobotDa
 //     // }
 
 //     // //return the average of those distances
-//     // limelightData.avgDistance = total/6;
+//     // limelightData.avgDistance = total / (robotData.limelightData.distances.size().to<double>());
 // }
