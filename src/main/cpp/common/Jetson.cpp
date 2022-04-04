@@ -34,9 +34,6 @@ void Jetson::RobotInit()
     table->PutNumber("red dilation", 8); // THIS CHANGES AT COMPS
     table->PutNumber("blue erosion", 3); // THIS CHANGES AT COMPS
     table->PutNumber("blue dilation", 5); // THIS CHANGES AT COMPS
-
-    distanceFromBall = 0;
-    angleOffBall = 0;
 }
 
 void Jetson::RobotPeriodic(const RobotData &robotData, JetsonData &jetsonData)
@@ -44,22 +41,17 @@ void Jetson::RobotPeriodic(const RobotData &robotData, JetsonData &jetsonData)
     // ATTAINS INSTANCE OF NETWORK TABLE
     auto inst = nt::NetworkTableInstance::GetDefault();
     auto table = inst.GetTable("default");
+
+    // ATTAINS DISTANCE AND ANGLE FROM BALL    
+    jetsonData.distanceFromBall = table->GetNumber("Distance To Closest Ball", 0);
+    jetsonData.angleOffBall = table->GetNumber("Angle To Closest Ball", 0);
     
     // ATTAINS LEFT AND RIGHT DRIVE BASE DATA
     double leftCurrent = robotData.controlData.lDrive;
     double rightCurrent = robotData.controlData.rDrive;
     double maxCurrent = 0;
-    
-    if (leftCurrent > rightCurrent)
-    {
-        maxCurrent = leftCurrent;
-    }
-    else
-    {
-        maxCurrent = rightCurrent;
-    }
 
-    // SETS CURRENT ALLIANCE FOR JETSON
+    // SETS WHAT ALLIANCE WE ARE ON AND PUTS THAT OUT TO JETSON
     if (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed)
     {
        currentAlliance = 1;
@@ -70,57 +62,60 @@ void Jetson::RobotPeriodic(const RobotData &robotData, JetsonData &jetsonData)
     }
     
     table->PutNumber("Alliance Jetson", currentAlliance);
-    
-    distanceFromBall = table->GetNumber("Distance To Closest Ball", 0);
-    angleOffBall = table->GetNumber("Angle To Closest Ball", 0);
 
-    // frc::SmartDashboard::PutNumber("skew", getSkew(angleOffBall, distanceFromBall));
-    // frc::SmartDashboard::PutNumber("distance from ball", distanceFromBall);
-    jetsonData.leftSkew = 0;
-    jetsonData.rightSkew = 0;
-
+    // IF IN VECTOR MODE GO INTO SKEW DB CONTROL
     if (robotData.drivebaseData.driveMode == driveMode_vector)
     {
-        if (maxCurrent > 0.08)
+        // IF THE AVERAGE OF THE TWO SIDE VELOCITIES IS GREATER THAN 0 THEN PROCEED
+        if (((leftCurrent + rightCurrent) / 2) > 0)
         {
-            if (angleOffBall > 2)
+            // SETS MAXCURRENT TO THE GREATER JOYSTICK VAL
+            if (rightCurrent > leftCurrent)
             {
-                jetsonData.leftSkew = maxCurrent;
-                jetsonData.rightSkew = maxCurrent / getSkew(angleOffBall, distanceFromBall);
+                maxCurrent = rightCurrent;
             }
-            else if (angleOffBall < -2)
+            else
             {
-                jetsonData.leftSkew = maxCurrent / getSkew(angleOffBall, distanceFromBall);
-                jetsonData.rightSkew = maxCurrent;
+                maxCurrent = leftCurrent;
+            }
+
+            // IF THE MAX CURRENT IS ABOVE DEADZONE THEN GOES INTO ACTUAL SKEW
+            if (maxCurrent > 0.08)
+            {
+                // CREATES DEADZONE OF 4 DEGREES AND THEN SKEWS DB TO THE BALL BASED OFF THE BALLS DISTANCE AND ANGLE OFF 
+                if (jetsonData.angleOffBall > 2)
+                {
+                    jetsonData.leftSkew = maxCurrent;
+                    jetsonData.rightSkew = maxCurrent / getSkew(jetsonData.angleOffBall, jetsonData.distanceFromBall);
+                }
+                else if (jetsonData.angleOffBall < -2)
+                {
+                    jetsonData.leftSkew = maxCurrent / getSkew(jetsonData.angleOffBall, jetsonData.distanceFromBall);
+                    jetsonData.rightSkew = maxCurrent;
+                }
+            }
+            else if (maxCurrent < -0.08) // IF MAX CURRENT IS BELOW DEADZONE THEN JUST SET VELOCITES TO RIGHT AND LEFT TO ALLOW FOR DRIVING BACKWARDS
+            {
+                jetsonData.leftSkew = leftCurrent;
+                jetsonData.rightSkew = rightCurrent;
             }
         }
-        else if (maxCurrent < -0.08)
+        else // ELSE GO RETURN THE RIGHT AND LEFT VELOCITIES TO ALLOW TURNING
         {
             jetsonData.leftSkew = leftCurrent;
-            jetsonData.rightSkew = rightCurrent;
+            jetsonData.rightSkew = rightCurrent;    
         }
     }
 }
 
-// getter for if another class needs access to this information
-double Jetson::getDistanceFromBall()
-{
-    return distanceFromBall;
-}
-
-// getter for if another class needs access to this information
-double Jetson::getAngleOffBall()
-{
-    return angleOffBall;
-}
-
-// this skew is based off of angle and distance
+// SKEW BASED OFF DISTANCE AND ANGLE
 double Jetson::getSkew(double angle, double distance)
 {
-    // skew is derived from a quadratic equation
+    // ANGLE SKEW DERIVED FROM QUADRATIC EQUATION
     double angleSkew = 0.00022715 * std::pow(angle, 2);
-    // skew is derived from a linear equation
+    // DISTANCE SKEW DERIVED FROM DECLINING LINEAR EQUATION
     double distanceSkew = (-0.002083 * distance) + 1;
-    // returns a skew that is a dynamic quadratic equation based off distance and angle off from target
+    // RETURNS THE DISTANCE AND ANGLE SKEW BASED OFF THE SELECT POSITION OF THE BALL
+    // DYNAMIC SKEWING TO ALLOW FOR SPECIFIC BALL POSITION
     return (angleSkew * distanceSkew) + 1;
 }
