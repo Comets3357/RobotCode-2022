@@ -11,6 +11,7 @@ struct GyroData
     double rawPitch = 0;
     double rawRoll = 0;
     double angularMomentum;
+    double rotationalRate;
 };
 
 class Gyro
