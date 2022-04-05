@@ -518,8 +518,8 @@ void Climb::TestPeriodic(const RobotData &robotData, ClimbData &climbData){
     frc::SmartDashboard::PutBoolean("Climb limit switch working", climbData.limitSwitchWorking);
     frc::SmartDashboard::PutNumber("Climb arms speed", climbData.benchTestClimbArmsSpeed);
     frc::SmartDashboard::PutNumber("Climb elevator speed", climbData.benchTestClimbElevatorSpeed);
-    frc::SmartDashboard::PutBoolean("Climb elevator hit top dead stop", climbData.upperLimit);
-    frc::SmartDashboard::PutBoolean("Climb elevator hit bottom dead stop", climbData.lowerLimit);
+    frc::SmartDashboard::PutBoolean("Climb elevator hit top dead stop", climbData.elevatorUpperLimit);
+    frc::SmartDashboard::PutBoolean("Climb elevator hit bottom dead stop", climbData.elevatorLowerLimit);
     frc::SmartDashboard::PutBoolean("Climb arms hit top dead stop", climbData.armsUpperLimit);
     frc::SmartDashboard::PutBoolean("Climb arms hit lower dead stop", climbData.armsLowerLimit);
 
@@ -581,7 +581,7 @@ void Climb::TestPeriodic(const RobotData &robotData, ClimbData &climbData){
         //if statement to make sure the speed doesn't interfere with PID mode
         if (!robotData.benchTestData.PIDMode){
             //uses the variables in the above ^ code to set the motor speeds (also checks if the motor has hit a dead stop, and if so, the motor stops)
-            if (!climbData.upperLimit && !climbData.lowerLimit){
+            if (!climbData.elevatorUpperLimit && !climbData.elevatorLowerLimit){
                 climbElevator.Set(climbData.benchTestClimbElevatorSpeed);
             } else {
                 climbElevator.Set(0); //sets the speed to 0 if the motor is at a dead stop
@@ -604,14 +604,14 @@ void Climb::TestPeriodic(const RobotData &robotData, ClimbData &climbData){
 //sets the limits and sets variables to the limits to let the TestPeriodic function know when to stop running the motors
 void Climb::checkElevatorDeadStop(ClimbData &climbData){
     if (climbElevatorEncoder.GetPosition() <= -140 && climbData.benchTestClimbElevatorSpeed < 0){
-        climbData.upperLimit = true;
-        climbData.lowerLimit = false;
+        climbData.elevatorUpperLimit = true;
+        climbData.elevatorLowerLimit = false;
     } else if (!elevatorLimit.Get() && climbData.benchTestClimbElevatorSpeed > 0){
-        climbData.upperLimit = false;
-        climbData.lowerLimit = true;
+        climbData.elevatorUpperLimit = false;
+        climbData.elevatorLowerLimit = true;
     } else {
-        climbData.upperLimit = false;
-        climbData.lowerLimit = false;
+        climbData.elevatorUpperLimit = false;
+        climbData.elevatorLowerLimit = false;
     }
 }
 
@@ -629,7 +629,7 @@ void Climb::checkArmsDeadStop(ClimbData &climbData){
     }
 }
 
-//checks if the limit switch is working
+//checks if the limit switch is working - only run in TestInit
 void Climb::elevatorLimitSwitchWorking(ClimbData &climbData){
     if (elevatorLimit.Get()){
         climbData.limitSwitchWorking = false; //false to indicate that the limit switch isn't functioning
@@ -640,7 +640,7 @@ void Climb::elevatorLimitSwitchWorking(ClimbData &climbData){
 
 //checks to see if the encoder is reading zero because if it is that means the encoder was most likley unplugged and the current values are wrong and we don't want to run any motors
 bool Climb::encoderPluggedIn(){
-    if (climbArmsAbs.GetOutput() > 0.03){
+    if (climbArmsAbs.GetOutput() > 0.01){
         return true; //returns true to indicate that the encoder is functioning
     } else {
         return false;

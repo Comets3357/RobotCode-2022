@@ -336,11 +336,9 @@ bool Intake::encoderPluggedIn(){
 
 //checks if the encoder is reading values in the incorrect range, and if the values aren't reasonable, then the motors stop running in the bench test function
 bool Intake::encoderInRange(){
-    if (intakePivot.Get() > 0 && intakePivotEncoderAbs.GetOutput() < absOut - .01){
-        intakePivot.Set(0);
+    if (intakePivotEncoderAbs.GetOutput() < absOut - .01){
         return false;
-    } else if (intakePivot.Get() < 0 && intakePivotEncoderAbs.GetOutput() > absIn + .01){
-        intakePivot.Set(0);
+    } else if (intakePivotEncoderAbs.GetOutput() > absIn + .01){
         return false;
     } else {
         return true;

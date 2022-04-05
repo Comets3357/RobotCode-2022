@@ -644,9 +644,9 @@ bool Shooter::encoderPluggedInTurret(){
 
 //checks if the encoder is reading presumably correct values (i.e. values in the expected range)
 bool Shooter::encoderInRangeHood(const ShooterData &shooterData){
-    if (shooterData.benchTestShooterHoodSpeed > 0 && shooterHoodEncoderAbs.GetOutput() > hoodabsIn + .02){ //out of range
+    if (shooterHoodEncoderAbs.GetOutput() > hoodabsIn + .02){ //out of range
         return false;
-    } else if (shooterData.benchTestShooterHoodSpeed < 0 && shooterHoodEncoderAbs.GetOutput() < hoodabsOut - .02){ //out of range
+    } else if (shooterHoodEncoderAbs.GetOutput() < hoodabsOut - .02){ //out of range
         return false;
     } else {
         return true; //everything else is within range, so return true
@@ -655,9 +655,9 @@ bool Shooter::encoderInRangeHood(const ShooterData &shooterData){
 
 //checks if the encoder is reading presumably correct values (i.e. values in the expected range)
 bool Shooter::encoderInRangeTurret(const ShooterData &shooterData){
-    if (shooterData.benchTestTurretSpeed > 0 && shooterTurretEncoderAbs.GetOutput() > turretFullRotationAbs_CCW + .02){ //out of range
+    if (shooterTurretEncoderAbs.GetOutput() > turretFullRotationAbs_CCW + .02){ //out of range
         return false;
-    } else if (shooterData.benchTestTurretSpeed < 0 && shooterTurretEncoderAbs.GetOutput() < turretFullRotationAbs_C - .02){ //out of range
+    } else if (shooterTurretEncoderAbs.GetOutput() < turretFullRotationAbs_C - .02){ //out of range
         return false;
     } else {
         return true; //everything else is within range, so return true
@@ -680,10 +680,10 @@ void Shooter::checkHoodDeadStop(ShooterData &shooterData){
 
 //sets the limits and sets variables to the limits to let the TestPeriodic function know when to stop running the motors
 void Shooter::checkTurretDeadStop(ShooterData &shooterData){
-    if (shooterData.benchTestTurretSpeed < 0 && shooterTurretEncoderAbs.GetOutput() < turretFullRotationAbs_C + .125){
+    if (shooterData.benchTestTurretSpeed < 0 && shooterTurretEncoderAbs.GetOutput() < turretFullRotationAbs_C + .01){
         shooterData.turretTopDeadStop = true;
         shooterData.turretBottomDeadStop = false;
-    } else if (shooterData.benchTestTurretSpeed > 0 && shooterTurretEncoderAbs.GetOutput() > turretFullRotationAbs_CCW - .1){
+    } else if (shooterData.benchTestTurretSpeed > 0 && shooterTurretEncoderAbs.GetOutput() > turretFullRotationAbs_CCW - .01){
         shooterData.turretTopDeadStop = false;
         shooterData.turretBottomDeadStop = true;
     } else {

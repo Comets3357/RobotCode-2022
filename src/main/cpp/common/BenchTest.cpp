@@ -1,10 +1,12 @@
 #include "RobotData.h" //beep boop
 
-void BenchTest::TestInit(BenchTestData &benchTestData){
+void BenchTest::TestInit(BenchTestData &benchTestData, ControlData &controlData){
     benchTestData.testStage = BenchTestStage::BenchTestStage_Climb; //sets the starting stage of the bench test
     benchTestData.currentSpeed = 0; //sets the speed of the motor we're currently testing
     benchTestData.stage = 0; //sets which motor we're currently testing
     benchTestData.PIDMode = false; //toggles pid testing
+    controlData.autoBenchTest = false; //resets automatic bench test when enabling
+    controlData.manualBenchTest = false; //resets manual bench test when enabling
 }
 
 void BenchTest::TestPeriodic(const RobotData &robotData, BenchTestData &benchTestData, const ControlData &controlData){
@@ -18,6 +20,53 @@ void BenchTest::TestPeriodic(const RobotData &robotData, BenchTestData &benchTes
 
     //toggles PID mode
     if (controlData.PIDModeToggle) benchTestData.PIDMode = !benchTestData.PIDMode;
+
+    //changes the motor that's currently being tested
+    if (controlData.incrementMotor){
+        benchTestData.currentSpeed = 0; //sets the speed to 0 when incrementing motors
+        benchTestData.stage++; //if the subsystem doesn't need to be incremented, then the motor stage is instead
+
+        //if the final motor in a subsystem is reach, then the cycle resets to go through the motor sequence again
+        if (benchTestData.testStage == BenchTestStage::BenchTestStage_Climb && benchTestData.stage >= 4) benchTestData.stage = 0;
+        else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Shooter && benchTestData.stage >= 5) benchTestData.stage = 0;
+        else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Intake && benchTestData.stage >= 6) benchTestData.stage = 0;
+        else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Indexer && benchTestData.stage >= 4) benchTestData.stage = 0;
+        else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Drivebase && benchTestData.stage >= 4) benchTestData.stage = 0;
+    }
+
+    //increments the subsystem with B button
+    if (controlData.incrementSubsystem){
+        if (benchTestData.testStage == BenchTestStage::BenchTestStage_Drivebase){
+            benchTestData.testStage = BenchTestStage::BenchTestStage_Indexer; //increments subsystem
+            benchTestData.stage = 0;  //sets the motor stage to 0 (so no motors are skipped)
+            benchTestData.currentSpeed = 0; //sets the speed to 0 (so mototrs don't go flying from the start)
+        } else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Indexer){
+            benchTestData.testStage = BenchTestStage::BenchTestStage_Intake;
+            benchTestData.stage = 0;
+            benchTestData.currentSpeed = 0;
+        } else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Intake){
+            benchTestData.testStage = BenchTestStage::BenchTestStage_Shooter;
+            benchTestData.stage = 0;
+            benchTestData.currentSpeed = 0;
+        } else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Shooter){
+            benchTestData.testStage = BenchTestStage::BenchTestStage_Climb; //resets back to climb in case you want to test that again (bench test starts in climb)
+            benchTestData.stage = 0;
+            benchTestData.currentSpeed = 0;
+        } else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Climb){
+            benchTestData.testStage = BenchTestStage::BenchTestStage_Drivebase;
+            benchTestData.stage = 0;
+            benchTestData.currentSpeed = 0;
+        }
+    }
+
+    //MANUAL BENCH TEST
+    if (controlData.manualBenchTest){  //starts bench test in manual mode (toggle with right bumper on/off)
+        //increments the speed of motors when testing (speed starts at 0)
+        if (controlData.incrementSpeed){ //if the button is pressed, then speed goes up by .1
+            if (benchTestData.currentSpeed >= .7) benchTestData.currentSpeed = 0; //caps the speed so it doesn't just infinitely go up 
+            else benchTestData.currentSpeed += .1; //speed goes up by .1
+        }
+    }
 
     //AUTOMATIC BENCH TEST
     if (controlData.autoBenchTest){
@@ -51,8 +100,8 @@ void BenchTest::TestPeriodic(const RobotData &robotData, BenchTestData &benchTes
         //increments the motors at dead stops
         if (robotData.climbData.armsLowerLimit) benchTestData.stage = 1;
         else if (robotData.climbData.armsUpperLimit) benchTestData.stage = 2;
-        else if (robotData.climbData.upperLimit) benchTestData.stage = 3;
-        else if (robotData.climbData.lowerLimit) benchTestData.stage = -1; //special case explained on lines 25-26
+        else if (robotData.climbData.elevatorUpperLimit) benchTestData.stage = 3;
+        else if (robotData.climbData.elevatorLowerLimit) benchTestData.stage = -1; //special case explained on lines 27-28
         else if (robotData.intakeData.bottomDeadStop) benchTestData.stage = 1;
         else if (robotData.intakeData.topDeadStop) benchTestData.stage = 2;
         else if (robotData.shooterData.hoodTopDeadStop) benchTestData.stage = 1;
@@ -81,54 +130,6 @@ void BenchTest::TestPeriodic(const RobotData &robotData, BenchTestData &benchTes
         } else if (benchTestData.testStage == 5 && benchTestData.stage >= 2){ //adds 8 seconds delay before rerunning auto bench test
             benchTestData.stage = 0;
             benchTestData.testStage = BenchTestStage::BenchTestStage_Climb;
-        }
-    }
-
-    //MANUAL BENCH TEST
-    if (controlData.manualBenchTest){  //starts testing to see if the robot is mechanically sound (toggle with A button on/off)
-
-        //increments the speed of motors when testing
-        if (controlData.incrementSpeed){ //if the button is pressed, then speed goes up by .1
-            if (benchTestData.currentSpeed >= .7) benchTestData.currentSpeed = 0; //caps the speed so it doesn't just infinitely go up 
-            else benchTestData.currentSpeed += .1; //speed goes up by .1
-        }
-
-        //changes the motor that's currently being tested
-        if (controlData.incrementMotor){
-            benchTestData.currentSpeed = 0; //sets the speed to 0 when incrementing motors
-            benchTestData.stage++; //if the subsystem doesn't need to be incremented, then the motor stage is instead
-
-            //if the final motor in a subsystem is reach, then the cycle resets to go through the motor sequence again
-            if (benchTestData.testStage == BenchTestStage::BenchTestStage_Climb && benchTestData.stage >= 4) benchTestData.stage = 0;
-            else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Shooter && benchTestData.stage >= 5) benchTestData.stage = 0;
-            else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Intake && benchTestData.stage >= 6) benchTestData.stage = 0;
-            else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Indexer && benchTestData.stage >= 4) benchTestData.stage = 0;
-            else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Drivebase && benchTestData.stage >= 4) benchTestData.stage = 0;
-        }
-
-        //increments the subsystem with B button
-        if (controlData.incrementSubsystem){
-            if (benchTestData.testStage == BenchTestStage::BenchTestStage_Drivebase){
-                benchTestData.testStage = BenchTestStage::BenchTestStage_Indexer; //increments subsystem
-                benchTestData.stage = 0;  //sets the motor stage to 0 (so no motors are skipped)
-                benchTestData.currentSpeed = 0; //sets the speed to 0 (so mototrs don't go flying from the start)
-            } else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Indexer){
-                benchTestData.testStage = BenchTestStage::BenchTestStage_Intake;
-                benchTestData.stage = 0;
-                benchTestData.currentSpeed = 0;
-            } else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Intake){
-                benchTestData.testStage = BenchTestStage::BenchTestStage_Shooter;
-                benchTestData.stage = 0;
-                benchTestData.currentSpeed = 0;
-            } else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Shooter){
-                benchTestData.testStage = BenchTestStage::BenchTestStage_Climb; //resets back to climb in case you want to test that again (bench test starts in climb)
-                benchTestData.stage = 0;
-                benchTestData.currentSpeed = 0;
-            } else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Climb){
-                benchTestData.testStage = BenchTestStage::BenchTestStage_Drivebase;
-                benchTestData.stage = 0;
-                benchTestData.currentSpeed = 0;
-            }
         }
     }
 }

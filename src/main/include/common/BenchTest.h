@@ -23,7 +23,7 @@ struct BenchTestData {
 class BenchTest {
 
     public:
-        void TestInit(BenchTestData &benchTestData);
+        void TestInit(BenchTestData &benchTestData, ControlData &controlData);
         void TestPeriodic(const RobotData &robotData, BenchTestData &benchTestData, const ControlData &controlData);
 
     private:

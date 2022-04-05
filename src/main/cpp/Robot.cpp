@@ -90,7 +90,7 @@ void Robot::TestInit(){
 
     gyro.RobotInit();
 
-    benchTest.TestInit(robotData.benchTestData);
+    benchTest.TestInit(robotData.benchTestData, robotData.controlData);
     drivebase.RobotInit();
     intake.RobotInit();
     indexer.RobotInit();

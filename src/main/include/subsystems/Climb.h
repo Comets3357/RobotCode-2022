@@ -29,8 +29,8 @@ struct ClimbData {
     float benchTestClimbArmsSpeed = 0;
     float benchTestClimbElevatorSpeed = 0;
     bool limitSwitchWorking = false;
-    bool upperLimit = false;
-    bool lowerLimit = false;
+    bool elevatorUpperLimit = false;
+    bool elevatorLowerLimit = false;
     bool armsUpperLimit = false;
     bool armsLowerLimit = false;
 

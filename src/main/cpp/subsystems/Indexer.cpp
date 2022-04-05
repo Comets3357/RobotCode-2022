@@ -443,7 +443,7 @@ void Indexer::indexerWheelInit(){
 
 void Indexer::TestPeriodic(const RobotData &robotData, IndexerData &indexerData){
     //diagnosing issues with smart dashboard
-    frc::SmartDashboard::PutNumber("Indexer color sensor number", robotData.colorSensorData.colorValue);
+    // frc::SmartDashboard::PutNumber("Indexer color sensor number", robotData.colorSensorData.colorValue); //FIX COLOR SENSOR BENCH TEST AFTER MERGE
     frc::SmartDashboard::PutNumber("Indexer first encoder", indexerBeltEncoder.GetPosition());
     frc::SmartDashboard::PutNumber("Indexer second encoder", indexerWheelEncoder.GetPosition());
     frc::SmartDashboard::PutBoolean("Indexer top sensor", getTopBeam());
