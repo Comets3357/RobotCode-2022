@@ -17,8 +17,15 @@ struct RobotData;
 struct ShooterData
 {
     bool readyShoot;
+    bool readyReject = false;
     float currentTurretAngle;
-    
+
+    //for rolling average of turret offset 
+    std::deque<double> offsetPos;
+    double avgTurretOffsetPos = 0;
+
+    //float mode;
+
     //Bench test
     bool hoodTopDeadStop = false;
     bool hoodBottomDeadStop = false;
@@ -32,7 +39,7 @@ struct ShooterData
 class Shooter{
 
     public:
-        void RobotInit();
+        void RobotInit(ShooterData &shooterData);
         void RobotPeriodic(const RobotData &robotData, ShooterData &shooterData);
         void DisabledInit();
         void DisabledPeriodic(const RobotData &robotData, ShooterData &shooterData);
@@ -55,22 +62,30 @@ class Shooter{
         double turretConvertFromAngleToAbs(double angle);
         double turretConvertFromAbsToAngle(double abs);
         double turretAbsoluteToREV(double value);
+        double turretGyroOffset(double value);
+        double averageTurretGyroOffset(const RobotData &robotData, ShooterData &shooterData);
+        // double getFieldRelativeToRobotRelativeTurret(const RobotData &robotData, ShooterData &shooterData);
+        double getFieldRelativeTurretAngle(const RobotData &robotData, ShooterData &shooterData);
+
         
         //init 
         void flyWheelInit();
-        void shooterHoodInit();
         void hoodRollerInit();
+        void shooterHoodInit();
         void shooterTurretInit();
         
         //gets and sets
         double getWheelVel();
-        void setShooterWheel(double speed);
+        void setShooterWheel(double speed, double pidSlot);
         void setTurret_Pos(double pos, ShooterData &shooterData);
 
         //checks
         void checkReadyShoot(ShooterData &shooterData);
         bool encoderPluggedInTurret();
         bool encoderPluggedInHood();
+        void saTurret(const RobotData &robotData, ShooterData &shooterData);
+        void turretControlTurn(float controlTurretDirection, const RobotData &robotData, ShooterData &shooterData);
+
 
         //FIXED SHOTS
         void outerLaunch(const RobotData &robotData);
@@ -78,22 +93,33 @@ class Shooter{
         void wall(const RobotData &robotData);
         void fender(const RobotData &robotData);
 
+        void reject(const RobotData &robotData, ShooterData &shooterData);
+        bool rejectInitialized = false;
+        int desiredAngle = 180;
+
+
         //bench test
-        bool encoderInRangeHood(const ShooterData &shooterData);
-        bool encoderInRangeTurret(const ShooterData &shooterData);
+        bool encoderInRangeHood();
+        bool encoderInRangeTurret();
         void checkHoodDeadStop(ShooterData &shooterData);
         void checkTurretDeadStop(ShooterData &shooterData);
+        void relocateTurretDirection(const RobotData &robotData);
 
         //shooter velocity min threshold
         int readyShootLimit;
         //used to update rev encoder with abs encoder
         int tickCount;
         double validTargetTurretPos;
-    
+        bool isTurretStatic;
+
+        //for deprecated mode function
+        //int modeCounter;
+        //double hoodAbsValues [49] = { };
+
         //Flywheel Lead
-        rev::CANSparkMax flyWheelLead = rev::CANSparkMax(shooterWheelLeadID, rev::CANSparkMax::MotorType::kBrushless);
-        rev::SparkMaxRelativeEncoder flyWheelLeadEncoder = flyWheelLead.GetEncoder();
-        rev::SparkMaxPIDController flyWheelLead_pidController = flyWheelLead.GetPIDController();
+        rev::CANSparkMax flyWheel = rev::CANSparkMax(shooterWheelLeadID, rev::CANSparkMax::MotorType::kBrushless);
+        rev::SparkMaxRelativeEncoder flyWheelLeadEncoder = flyWheel.GetEncoder();
+        rev::SparkMaxPIDController flyWheelLead_pidController = flyWheel.GetPIDController();
 
 
         //lip roller

@@ -10,7 +10,7 @@ void Robot::RobotInit()
     drivebase.RobotInit();
     intake.RobotInit();
     indexer.RobotInit();
-    shooter.RobotInit();
+    shooter.RobotInit(robotData.shooterData);
     climb.RobotInit();
 }
 
@@ -18,10 +18,9 @@ void Robot::RobotPeriodic()
 {
     gyro.RobotPeriodic(robotData.gyroData);
     limelight.RobotPeriodic(robotData, robotData.limelightData, visionLookup);
-    colorSensor.RobotPeriodic(robotData);
     visionLookup.RobotPeriodic(robotData, robotData.visionLookupData);
-    LED.RobotPeriodic(robotData);
-    jetson.RobotPeriodic();
+    arduino.RobotPeriodic(robotData, robotData.arduinoData);
+    colorSensor.RobotPeriodic(robotData, robotData.colorSensorData);
 
     // frc::SmartDashboard::PutNumber("mode", robotData.controlData.mode);
 
@@ -53,6 +52,7 @@ void Robot::AutonomousPeriodic()
 {
     timer.EnabledPeriodic(robotData.timerData);
     auton.AutonomousPeriodic(robotData, robotData.autonData, robotData.controlData);
+    // arduino.RobotPeriodic(robotData);
 }
 
 void Robot::TeleopInit()
@@ -66,6 +66,7 @@ void Robot::TeleopPeriodic()
 {
     timer.EnabledPeriodic(robotData.timerData);
     controller.TeleopPeriodic(robotData, robotData.controllerData, robotData.controlData);
+    // arduino.RobotPeriodic(robotData, robotData.arduinoData);
 }
 
 void Robot::DisabledInit()
@@ -82,6 +83,7 @@ void Robot::DisabledPeriodic()
     shooter.DisabledPeriodic(robotData, robotData.shooterData);
     intake.DisabledPeriodic(robotData, robotData.intakeData);
     indexer.DisabledPeriodic(robotData, robotData.indexerData);
+    arduino.DisabledPeriodic();
 }
 
 
@@ -94,11 +96,9 @@ void Robot::TestInit(){
     drivebase.RobotInit();
     intake.RobotInit();
     indexer.RobotInit();
-    shooter.RobotInit();
+    //shooter.RobotInit();
     climb.RobotInit();
     climb.TestInit(robotData.climbData);
-    intake.TestInit();
-    shooter.TestInit();
 }
 
 //BENCH TEST CODE

@@ -38,7 +38,7 @@ static const int
     shooterTurretID = 34, 
     hoodRollerID = 32; 
 
-static const double
+static const float
     //comp bot shooter hood positions
     hoodabsOut = 0.07,
     hoodabsIn = 0.945,
@@ -128,6 +128,7 @@ static const double
     ycameraDistanceFromBot = 9.5, //offset from center of shooter Y
     shooterDistanceFromCenterOfBot = 2, 
     crosshairOffset = 0;
+
 
 // DIO
 static const int

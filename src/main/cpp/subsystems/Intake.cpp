@@ -33,6 +33,12 @@ void Intake::pivotInit(){
     intakePivot_pidController.SetOutputRange(-0.3, 0.2);
 
     intakePivot.SetSmartCurrentLimit(15);
+
+    intakePivot.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse, true);
+    intakePivot.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward, true);
+
+    intakePivot.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse, revIn);
+    intakePivot.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward, revOut);
 }
 
 void Intake::singulatorInit(){
@@ -59,6 +65,7 @@ void Intake::RobotPeriodic(const RobotData &robotData, IntakeData &intakeData)
         else if (robotData.controlData.mode == mode_teleop_sa)
         {
             semiAuto(robotData, intakeData);
+            
         }
     }
     
@@ -167,8 +174,8 @@ void Intake::DisabledInit()
 void Intake::updateData(const RobotData &robotData, IntakeData &intakeData)
 {
     intakeData.intakeIdle = intakeIdle(robotData, intakeData);
-    // frc::smartDashboard::PutNumber("Pivot built in Pos", intakePivotEncoderRev.GetPosition());
-    // frc::smartDashboard::PutNumber("Pivot absolute Pos", intakePivotEncoderAbs.GetOutput());
+    frc::SmartDashboard::PutNumber("Pivot built in Pos", intakePivotEncoderRev.GetPosition());
+    frc::SmartDashboard::PutNumber("Pivot absolute Pos", intakePivotEncoderAbs.GetOutput());
     //frc::SmartDashboard::PutNumber("Changed pos", absoluteToREV(intakePivotEncoder2.GetOutput()));
 
     //frc::SmartDashboard::PutBoolean("idle?", intakeData.intakeIdle);

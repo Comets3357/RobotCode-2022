@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Constants.h"
-#include "common/ColorSensor.h"
 
 #include <frc/DriverStation.h>
 #include <rev/CANSparkMax.h>
@@ -97,11 +96,11 @@ private:
     int bottomDebounceCount = 0;
     int topDebounceCount = 0;
     int pauseBeltCount = 0;
-    int autoRejectBottomCount = 0;
+    int decrementDelay = 0;
 
     const double indexerWheelSpeed = 0.6;
-    const double indexerShootingBeltSpeed = 0.6; 
-    const double indexerIntakingBeltSpeed = 0.4;
+    const double indexerShootingBeltSpeed = 0.8;
+    const double indexerIntakingBeltSpeed = 0.27;
 
     int lastTickBallCount;
 

@@ -9,7 +9,7 @@ void BenchTest::TestInit(BenchTestData &benchTestData, ControlData &controlData)
     controlData.manualBenchTest = false; //resets manual bench test when enabling
 }
 
-void BenchTest::TestPeriodic(const RobotData &robotData, BenchTestData &benchTestData, const ControlData &controlData){
+void BenchTest::TestPeriodic(const RobotData &robotData, BenchTestData &benchTestData, ControlData &controlData){
     frc::SmartDashboard::PutNumber("Bench test automatic increment", increment); //time-based increment for auto bench test
     frc::SmartDashboard::PutBoolean("Bench test manual mode", robotData.controlData.manualBenchTest); //manual bench test
     frc::SmartDashboard::PutBoolean("Bench test automatic mode", robotData.controlData.autoBenchTest); //auto bench test
@@ -32,9 +32,10 @@ void BenchTest::TestPeriodic(const RobotData &robotData, BenchTestData &benchTes
         else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Intake && benchTestData.stage >= 6) benchTestData.stage = 0;
         else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Indexer && benchTestData.stage >= 4) benchTestData.stage = 0;
         else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Drivebase && benchTestData.stage >= 4) benchTestData.stage = 0;
+        else if (benchTestData.testStage == 5 && benchTestData.stage >= 4) benchTestData.stage = 0;
     }
 
-    //increments the subsystem with B button
+    //increments the subsystem with right bumper button
     if (controlData.incrementSubsystem){
         if (benchTestData.testStage == BenchTestStage::BenchTestStage_Drivebase){
             benchTestData.testStage = BenchTestStage::BenchTestStage_Indexer; //increments subsystem
@@ -49,11 +50,15 @@ void BenchTest::TestPeriodic(const RobotData &robotData, BenchTestData &benchTes
             benchTestData.stage = 0;
             benchTestData.currentSpeed = 0;
         } else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Shooter){
-            benchTestData.testStage = BenchTestStage::BenchTestStage_Climb; //resets back to climb in case you want to test that again (bench test starts in climb)
+            benchTestData.testStage = 5;
             benchTestData.stage = 0;
             benchTestData.currentSpeed = 0;
         } else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Climb){
             benchTestData.testStage = BenchTestStage::BenchTestStage_Drivebase;
+            benchTestData.stage = 0;
+            benchTestData.currentSpeed = 0;
+        } else if (benchTestData.testStage == 5){
+            benchTestData.testStage = BenchTestStage::BenchTestStage_Climb;//resets back to climb in case you want to test that again (bench test starts in climb)
             benchTestData.stage = 0;
             benchTestData.currentSpeed = 0;
         }
@@ -65,6 +70,14 @@ void BenchTest::TestPeriodic(const RobotData &robotData, BenchTestData &benchTes
         if (controlData.incrementSpeed){ //if the button is pressed, then speed goes up by .1
             if (benchTestData.currentSpeed >= .7) benchTestData.currentSpeed = 0; //caps the speed so it doesn't just infinitely go up 
             else benchTestData.currentSpeed += .1; //speed goes up by .1
+        }
+
+        //stage 5 for testing LEDs
+        if (benchTestData.testStage == 5){
+            if (benchTestData.stage == 0) controlData.mode = mode_climb_manual;
+            else if (benchTestData.stage == 1) controlData.mode = mode_climb_sa;
+            else if (benchTestData.stage == 2) controlData.mode = mode_teleop_manual;
+            else if (benchTestData.stage == 3) controlData.mode = mode_teleop_sa;
         }
     }
 
@@ -90,6 +103,14 @@ void BenchTest::TestPeriodic(const RobotData &robotData, BenchTestData &benchTes
         else if (increment <= .5) benchTestData.currentSpeed = .2;
         else if (increment <= .75) benchTestData.currentSpeed = .3;
         else if (increment <= 1) benchTestData.currentSpeed = .4;
+
+        //miscellaneous stage 5 for LEDs
+        if (benchTestData.testStage == 5 && benchTestData.stage == 0){
+            if (increment <= .25) controlData.mode = mode_climb_manual;
+            else if (increment <= .5) controlData.mode = mode_climb_sa;
+            else if (increment <= .75) controlData.mode = mode_teleop_manual;
+            else if (increment <= 1) controlData.mode = mode_teleop_sa;
+        }
 
         //resets the time increment when moving between motors
         if (increment > 1){
@@ -127,9 +148,6 @@ void BenchTest::TestPeriodic(const RobotData &robotData, BenchTestData &benchTes
         } else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Drivebase && benchTestData.stage >= 4){
             benchTestData.stage = 0;
             benchTestData.testStage = BenchTestStage::BenchTestStage_Indexer;
-        } else if (benchTestData.testStage == 5 && benchTestData.stage >= 2){ //adds 8 seconds delay before rerunning auto bench test
-            benchTestData.stage = 0;
-            benchTestData.testStage = BenchTestStage::BenchTestStage_Climb;
         }
     }
 }
