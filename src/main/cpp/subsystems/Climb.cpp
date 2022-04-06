@@ -58,8 +58,12 @@ void Climb::RobotPeriodic(const RobotData &robotData, ClimbData &climbData)
     if (robotData.controlData.mode == mode_climb_sa || robotData.controlData.mode == mode_climb_manual)
     {
         //checks is turret is facing forward
-        if(std::abs(turretMiddleDegrees - robotData.shooterData.currentTurretAngle) <= 5) //if you're centered forward you can climb
+        if((std::abs(turretMiddleDegrees - robotData.shooterData.currentTurretAngle) >= 30) && robotData.controlData.mode == mode_climb_sa) //if you're centered forward you can climb
         {
+            //sets powers to 0 if the mode is changed out of climb mode
+            climbElevator.Set(0);
+            climbArms.Set(0);
+        }else{
             //chacks if the robot is in manual
             if (robotData.controlData.mode == mode_climb_manual)
             { //updates whether or not the robot is in manual or semiAuto mode
@@ -69,11 +73,6 @@ void Climb::RobotPeriodic(const RobotData &robotData, ClimbData &climbData)
             {
                 semiAuto(robotData, climbData);
             }
-            
-        }else{
-            //sets powers to 0 if the mode is changed out of climb mode
-            climbElevator.Set(0);
-            climbArms.Set(0);
         }
         
     } 

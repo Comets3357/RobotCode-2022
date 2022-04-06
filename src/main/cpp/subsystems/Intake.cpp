@@ -11,6 +11,7 @@ void Intake::RobotInit()
     intakePivot.Set(0);
     intakeRollers.Set(0);
     intakeSingulator.Set(0);
+
 }
 
 void Intake::rollersInit(){
@@ -33,12 +34,7 @@ void Intake::pivotInit(){
     intakePivot_pidController.SetOutputRange(-0.3, 0.2);
 
     intakePivot.SetSmartCurrentLimit(15);
-
-    intakePivot.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse, true);
-    intakePivot.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward, true);
-
-    intakePivot.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse, revIn);
-    intakePivot.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward, revOut);
+    intakePivot.BurnFlash();
 }
 
 void Intake::singulatorInit(){
@@ -50,10 +46,26 @@ void Intake::singulatorInit(){
 
 void Intake::RobotPeriodic(const RobotData &robotData, IntakeData &intakeData)
 {
+
+    if(robotData.timerData.secSinceInit > 5 && robotData.timerData.secSinceInit < 6){
+        if(encoderPluggedIn()){
+            intakePivotEncoderRev.SetPosition(absoluteToREV(intakePivotEncoderAbs.GetOutput()));
+            isZeroed_pivot = true;
+        }else{
+            intakePivotEncoderRev.SetPosition(0);
+            isZeroed_pivot = false;
+        }
+    }
+
     updateData(robotData, intakeData);
 
     if(robotData.controlData.mode == mode_climb_manual || robotData.controlData.mode == mode_climb_sa){
-        intakePivot_pidController.SetReference(0.1, rev::CANSparkMaxLowLevel::ControlType::kPosition, 0);
+        if(isZeroed_pivot){
+            intakePivot_pidController.SetReference(revIn + 0.1, rev::CANSparkMaxLowLevel::ControlType::kPosition, 0);
+        }else{
+            intakePivot_pidController.SetReference(intakePivotEncoderRev.GetPosition(), rev::CANSparkMaxLowLevel::ControlType::kPosition, 0);
+        }
+
         intakeRollers.Set(0);
         intakeSingulator.Set(0);
 
@@ -84,13 +96,30 @@ void Intake::RobotPeriodic(const RobotData &robotData, IntakeData &intakeData)
 void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
     
     //updates rev encoder if abs encoder is working
-    encoderPluggedIn();
+    //encoderPluggedIn();
+
+    intakePivot.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse, true);
+    intakePivot.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward, true);
+
+    intakePivot.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse, revIn);
+    intakePivot.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward, revOut);
+    // if(isZeroed_pivot){
+        
+    // }else{
+    //     intakePivot.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse, false);
+    //     intakePivot.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward, false);
+    // }
+    
 
 //INTAKE FUNCTIONALITY
     if (robotData.controlData.saIntake) //intaking
     {
         // pivot down
-        intakePivot_pidController.SetReference(revOut - 0.5, rev::CANSparkMaxLowLevel::ControlType::kPosition,0);
+        if(isZeroed_pivot){
+            intakePivot_pidController.SetReference(revOut - 0.5, rev::CANSparkMaxLowLevel::ControlType::kPosition,0);
+        }else{
+            intakePivot_pidController.SetReference(intakePivotEncoderRev.GetPosition(), rev::CANSparkMaxLowLevel::ControlType::kPosition,0);
+        }
 
         //run rollers, singulator
         intakeRollers.Set(intakeRollerSpeed);
@@ -101,15 +130,21 @@ void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
     else if (robotData.controlData.saIntakeBackward)
     {
         intakeRollers.Set(-intakeRollerSpeed);
-        intakePivot_pidController.SetReference(revOut - 0.1, rev::CANSparkMaxLowLevel::ControlType::kPosition,0);
-
+        if(isZeroed_pivot){
+            intakePivot_pidController.SetReference(revOut - 0.5, rev::CANSparkMaxLowLevel::ControlType::kPosition,0);
+        }else{
+            intakePivot_pidController.SetReference(intakePivotEncoderRev.GetPosition(), rev::CANSparkMaxLowLevel::ControlType::kPosition,0);
+        }
     }
     else if (robotData.controlData.saEjectBalls) //rollers backwards, pivot down
     {
         intakeRollers.Set(-intakeRollersEjectSpeed);
         intakeSingulator.Set(-intakesingulatorSpeed);
-        intakePivot_pidController.SetReference(revOut - 0.1, rev::CANSparkMaxLowLevel::ControlType::kPosition,0);
-
+        if(isZeroed_pivot){
+            intakePivot_pidController.SetReference(revOut - 0.5, rev::CANSparkMaxLowLevel::ControlType::kPosition,0);
+        }else{
+            intakePivot_pidController.SetReference(intakePivotEncoderRev.GetPosition(), rev::CANSparkMaxLowLevel::ControlType::kPosition,0);
+        }
     }
     else //default case, everything up and not running
     {
@@ -120,13 +155,23 @@ void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
         }
 
         //bring up the intake
-        intakePivot_pidController.SetReference(0.1, rev::CANSparkMaxLowLevel::ControlType::kPosition, 0);
+        // pivot down
+        if(isZeroed_pivot){
+            intakePivot_pidController.SetReference(revIn + 0.1, rev::CANSparkMaxLowLevel::ControlType::kPosition,0);
+        }else{
+            intakePivot_pidController.SetReference(intakePivotEncoderRev.GetPosition(), rev::CANSparkMaxLowLevel::ControlType::kPosition,0);
+        }
+
         intakeRollers.Set(0);
     }
 }
 
 
 void Intake::manual(const RobotData &robotData, IntakeData &intakeData){
+
+    intakePivot.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse, false);
+    intakePivot.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward, false);
+
     //intake extended
     if(robotData.controlData.mIntakeUp){
         intakePivot.Set(-intakePivotSpeed);
@@ -136,6 +181,11 @@ void Intake::manual(const RobotData &robotData, IntakeData &intakeData){
     //not intaking
     }else{
         intakePivot.Set(0);
+    }
+
+    if(robotData.controlData.mZeroIntakePivot){
+        intakePivotEncoderRev.SetPosition(0);
+        isZeroed_pivot = true;
     }
 
     //intake rollers running inward
@@ -176,6 +226,10 @@ void Intake::updateData(const RobotData &robotData, IntakeData &intakeData)
     intakeData.intakeIdle = intakeIdle(robotData, intakeData);
     frc::SmartDashboard::PutNumber("Pivot built in Pos", intakePivotEncoderRev.GetPosition());
     frc::SmartDashboard::PutNumber("Pivot absolute Pos", intakePivotEncoderAbs.GetOutput());
+    frc::SmartDashboard::PutBoolean("is zeroed PIVOT", isZeroed_pivot);
+    frc::SmartDashboard::PutNumber("time since init", robotData.timerData.secSinceInit);
+    frc::SmartDashboard::PutBoolean("eoncder plugged PIVOT", encoderPluggedIn());
+
     //frc::SmartDashboard::PutNumber("Changed pos", absoluteToREV(intakePivotEncoder2.GetOutput()));
 
     //frc::SmartDashboard::PutBoolean("idle?", intakeData.intakeIdle);
@@ -206,6 +260,7 @@ bool Intake::intakeIdle(const RobotData &robotData, IntakeData &intakeData){
 double Intake::absoluteToREV(double value){
     double slope = (revOut - revIn)/(absOut - absIn);
     double b = revIn - (slope*absIn);
+    frc::SmartDashboard::PutNumber("Pivot built in Pos Calc", ((value*slope) + b));
     return ((value*slope) + b);
 }
 
@@ -325,14 +380,6 @@ void Intake::TestPeriodic(const RobotData &robotData, IntakeData &intakeData){
 //checks to see if the encoder is reading zero because if it is that means the encoder was most likley unplugged and the current values are wrong and we don't want to run any motors
 bool Intake::encoderPluggedIn(){
     if (intakePivotEncoderAbs.GetOutput() > 0.03){
-        //constantly updates the intake rev encoder based on the absolute encoder values 
-        if (tickCount > 45){
-            intakePivotEncoderRev.SetPosition(absoluteToREV(intakePivotEncoderAbs.GetOutput()));
-            tickCount = (tickCount + 1) % 50;
-        } else {
-            tickCount = (tickCount + 1) % 50;
-        }
-
         return true; //returns true to indicate that the encoder is functioning
     } else {
         return false;
