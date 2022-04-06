@@ -45,6 +45,7 @@ void Jetson::RobotPeriodic(const RobotData &robotData, JetsonData &jetsonData)
     // ATTAINS DISTANCE AND ANGLE FROM BALL    
     jetsonData.distanceFromBall = table->GetNumber("Distance To Closest Ball", 0);
     jetsonData.angleOffBall = table->GetNumber("Angle To Closest Ball", 0);
+    jetsonData.ballCount = table->GetNumber("ball count", 0);
     
     // ATTAINS LEFT AND RIGHT DRIVE BASE DATA
     double leftCurrent = robotData.controlData.lDrive;
