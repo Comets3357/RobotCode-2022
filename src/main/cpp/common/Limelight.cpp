@@ -1,4 +1,3 @@
-
 #include "RobotData.h"
 
 void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelightData, VisionLookup &visionLookup)
@@ -38,7 +37,7 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     limelightData.desiredHoodPos = getHoodPOS(visionLookup, limelightData, robotData); //returns an angle
 
     //TURRET DIFFERENCE
-    limelightData.turretDifference = -robotData.limelightData.angleOffset;
+    limelightData.turretDifference = -robotData.limelightData.angleOffset; // turret turning is not consistent with limelight degrees off
     //DESIRED TURRET
     limelightData.desiredTurretAngle = getTurretTurnAngle(limelightData, robotData); //position to go to to shoot
 
@@ -240,13 +239,14 @@ double Limelight::getHoodRollerVel(LimelightData &limelightData, const RobotData
 double Limelight::getTurretTurnAngle(LimelightData &limelightData, const RobotData &robotData){
 
     float desired = robotData.limelightData.turretDifference + robotData.shooterData.currentTurretAngle;
+    double theta = (180/pi)*(std::atan(1/robotData.limelightData.distanceOffset));
 
     if(desired < 0 || desired > turretFullRotationDegrees){ //if you're outside of the range, go through and add/subtract 360 to get in the range
 
         if(desired < 0){
             desired += 360;
         }else if(desired > turretFullRotationDegrees){
-            desired -=360;
+            desired -= 360;
         }
 
         //so you're telling the turret to turn to turn to the unwrapped state, therefore, you are unwrapping
@@ -266,34 +266,40 @@ double Limelight::getTurretTurnAngle(LimelightData &limelightData, const RobotDa
         unwrappingVal = desired;
     }
 
-    return unwrappingVal;
+    if (unwrappingVal < std::max(theta, 0.75))
+    {
+        unwrappingVal = 0;
+    }
 
+    return unwrappingVal;
 }
+
+// ROLLING AVG NOT NEEDED. IT WILL SLOW DOWN TURRET
 
 /**
  * Returns the avg distance of the last 5 cycles to make the data smoother while shooting
- */
-void Limelight::averageDesiredTurret(const RobotData &robotData, LimelightData &limelightData){
-    double desiredTurretAngle = robotData.limelightData.desiredTurretAngle;
-    double total = 0;
+ */ 
+// void Limelight::averageDesiredTurret(const RobotData &robotData, LimelightData &limelightData){
+//     double desiredTurretAngle = robotData.limelightData.desiredTurretAngle;
+//     double total = 0;
 
-    if(robotData.limelightData.unwrapping){
-        limelightData.desiredTurretAngles.clear();
-    }
+//     if(robotData.limelightData.unwrapping){
+//         limelightData.desiredTurretAngles.clear();
+//     }
 
-    //if size is less then 6 keep adding updated distances until the deque is full
-    if(robotData.limelightData.desiredTurretAngles.size() < 6){
-        limelightData.desiredTurretAngles.push_back(desiredTurretAngle);
-    }else{ //once it's full run through the deque and add it to the total
-        for(size_t i = 0; i < robotData.limelightData.desiredTurretAngles.size(); i ++){
-            total += robotData.limelightData.desiredTurretAngles.at(i);
-        }
+//     //if size is less then 6 keep adding updated distances until the deque is full
+//     if(robotData.limelightData.desiredTurretAngles.size() < 6){
+//         limelightData.desiredTurretAngles.push_back(desiredTurretAngle);
+//     }else{ //once it's full run through the deque and add it to the total
+//         for(size_t i = 0; i < robotData.limelightData.desiredTurretAngles.size(); i ++){
+//             total += robotData.limelightData.desiredTurretAngles.at(i);
+//         }
 
-        //make sure to remove the first value and add an updated distance to the end
-        limelightData.desiredTurretAngles.pop_front();
-        limelightData.desiredTurretAngles.push_back(desiredTurretAngle);
-    }
+//         //make sure to remove the first value and add an updated distance to the end
+//         limelightData.desiredTurretAngles.pop_front();
+//         limelightData.desiredTurretAngles.push_back(desiredTurretAngle);
+//     }
 
-    //return the average of those distances
-    limelightData.avgDesiredTurretAngle = total / ((double)robotData.limelightData.desiredTurretAngles.size());
-}
+//     //return the average of those distances
+//     limelightData.avgDesiredTurretAngle = total / ((double)robotData.limelightData.desiredTurretAngles.size());
+// }
