@@ -112,6 +112,8 @@ void Robot::TestPeriodic(){
     indexer.TestPeriodic(robotData, robotData.indexerData);
     intake.TestPeriodic(robotData, robotData.intakeData);
     shooter.TestPeriodic(robotData, robotData.shooterData);
+    arduino.RobotPeriodic(robotData, robotData.arduinoData);
+    colorSensor.RobotPeriodic(robotData, robotData.colorSensorData);
 }
 
 #ifndef RUNNING_FRC_TESTS

@@ -524,9 +524,6 @@ void Drivebase::calcTurretEjectAngle(DrivebaseData &drivebaseData) {
     }
 }
 
-
-
-//BENCH TEST CODE
 /**
  * ---------------------------------------------------------------------------------------------------------------------------------------------------
  * BENCH TEST CODE
