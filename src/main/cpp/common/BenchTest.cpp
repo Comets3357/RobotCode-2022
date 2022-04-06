@@ -22,7 +22,7 @@ void BenchTest::TestPeriodic(const RobotData &robotData, BenchTestData &benchTes
     if (controlData.PIDModeToggle) benchTestData.PIDMode = !benchTestData.PIDMode;
 
     //changes the motor that's currently being tested
-    if (controlData.incrementMotor){
+    if (controlData.incrementMotor && !controlData.autoBenchTest){
         benchTestData.currentSpeed = 0; //sets the speed to 0 when incrementing motors
         benchTestData.stage++; //if the subsystem doesn't need to be incremented, then the motor stage is instead
 
@@ -36,7 +36,7 @@ void BenchTest::TestPeriodic(const RobotData &robotData, BenchTestData &benchTes
     }
 
     //increments the subsystem with right bumper button
-    if (controlData.incrementSubsystem){
+    if (controlData.incrementSubsystem && !controlData.autoBenchTest){
         if (benchTestData.testStage == BenchTestStage::BenchTestStage_Drivebase){
             benchTestData.testStage = BenchTestStage::BenchTestStage_Indexer; //increments subsystem
             benchTestData.stage = 0;  //sets the motor stage to 0 (so no motors are skipped)
