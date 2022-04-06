@@ -22,16 +22,17 @@ void Robot::RobotPeriodic()
     arduino.RobotPeriodic(robotData, robotData.arduinoData);
     colorSensor.RobotPeriodic(robotData, robotData.colorSensorData);
 
+
     // frc::SmartDashboard::PutNumber("mode", robotData.controlData.mode);
 
     //frc::SmartDashboard::PutNumber("mode", robotData.controlData.mode);
 
 
-    if (IsEnabled() && !IsTest())
+    if (!IsTest())
     {
+        intake.RobotPeriodic(robotData, robotData.intakeData);
         otherComponents.RobotPeriodic(robotData.otherComponentsData);
         drivebase.RobotPeriodic(robotData, robotData.drivebaseData, robotData.autonData);
-        intake.RobotPeriodic(robotData, robotData.intakeData);
         indexer.RobotPeriodic(robotData, robotData.indexerData);
         shooter.RobotPeriodic(robotData, robotData.shooterData);
         climb.RobotPeriodic(robotData, robotData.climbData);
@@ -71,6 +72,7 @@ void Robot::TeleopPeriodic()
 
 void Robot::DisabledInit()
 {
+    timer.DisabledInit(robotData.timerData);
     drivebase.DisabledInit();
     intake.DisabledInit();
     indexer.DisabledInit();
@@ -80,6 +82,7 @@ void Robot::DisabledInit()
 
 void Robot::DisabledPeriodic() 
 {
+    timer.DisabledPeriodic(robotData.timerData);
     shooter.DisabledPeriodic(robotData, robotData.shooterData);
     intake.DisabledPeriodic(robotData, robotData.intakeData);
     indexer.DisabledPeriodic(robotData, robotData.indexerData);

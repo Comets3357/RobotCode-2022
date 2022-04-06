@@ -70,6 +70,8 @@ private:
     //used to update rev encoder with abs encoder
     int tickCount = 0;
 
+    bool isZeroed_pivot = false;
+
 
     //rollers
     rev::CANSparkMax intakeRollers = rev::CANSparkMax(intakeRollerID, rev::CANSparkMax::MotorType::kBrushless);

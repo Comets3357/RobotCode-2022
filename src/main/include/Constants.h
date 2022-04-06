@@ -21,8 +21,8 @@ static const double
     // revIn = 0;
 
     //comp bot intake pivot positions
-    absOut = 0.465,
-    absIn = 0.605,
+    absOut = 0.292,
+    absIn = 0.419,
     revOut = 6.14,
     revIn = 0;
 
@@ -59,8 +59,9 @@ static const float
     turretZeroDegrees = 0, 
     turretFullRotationDegrees = 450, //540
     turretMiddleDegrees = (turretFullRotationDegrees - turretZeroDegrees)/2,
-    turretFullRotationRev_CCW = 140.16, //174.85 
+    turretFullRotationRev_CCW = 140.16, //174.85
     turretFullRotationRev_C = 0, //0 
+    turretMiddleRev = turretFullRotationRev_CCW/2,
     turretFullRotationAbs_CCW = 0.84, 
     turretFullRotationAbs_C = 0.157; 
 

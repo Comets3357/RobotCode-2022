@@ -86,6 +86,7 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
     controlData.mZeroTurret = controllerData.sLStickBtn /* && (controlData.mode == mode_teleop_manual) */;
     controlData.mHood = controllerData.sRYStick/*  && (controlData.mode == mode_teleop_manual) */;
     controlData.mTurret = controllerData.sLXStick /* && (controlData.mode == mode_teleop_manual) */;
+
     controlData.mShooterWheelForward = controllerData.sXBtn /* && (controlData.mode == mode_teleop_manual) */;
     controlData.mShooterWheelBackward = controllerData.sXBtn && controlData.shift/*  && (controlData.mode == mode_teleop_manual) */;
 
@@ -113,10 +114,15 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
     controlData.saShooting = controllerData.sXBtnToggled && !controlData.shift/* && (controlData.mode == mode_teleop_sa) */;
     controlData.saFinalShoot = controllerData.sYBtn && !controlData.shift/* && (controlData.mode == mode_teleop_sa); */;
     
-    if(controllerData.sRCenterBtnToggled){
-        controlData.staticTurret = !controlData.staticTurret;
-    }
+    if(controlData.mode == mode_teleop_sa){
+        if(controllerData.sRCenterBtnToggled){
+            controlData.staticTurret = !controlData.staticTurret;
+        }
+    }else{
+        controlData.mZeroIntakePivot = controllerData.sRCenterBtn;
 
+    }
+    
     // secondary y to set readyshoot to true in testing
 
     // disabled because there has not yet been a case where we want to shoot low hub

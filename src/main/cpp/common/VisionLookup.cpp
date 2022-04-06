@@ -46,8 +46,6 @@ void VisionLookup::RobotPeriodic(const RobotData &robotData, VisionLookupData &v
     velocityMap[12] =  1550; 
     velocityMap[13] = 1600; 
     velocityMap[14] = 1650; 
-
-//hood roller ratio back to 3.5
     velocityMap[15] = 1720; 
     velocityMap[16] = 1800; 
     velocityMap[17] = 1950; 
@@ -55,43 +53,42 @@ void VisionLookup::RobotPeriodic(const RobotData &robotData, VisionLookupData &v
     velocityMap[19] = 2100;
 
     // hood angle map LOW HUB
-    // lowVisionMap[4] = 25.3;
-    // lowVisionMap[5] = 27.3;
-    // lowVisionMap[6] = 28.8;
-    // lowVisionMap[7] = 30.6;
-    // lowVisionMap[8] = 31.9;
-    // lowVisionMap[9] = 34.7;
-    // lowVisionMap[10] = 35.1;
-    // lowVisionMap[11] = 37.25;
-    // lowVisionMap[12] = 37.7;
-    // lowVisionMap[13] = 39;
-    // lowVisionMap[14] = 39.4;
-    // lowVisionMap[15] = ;
-    // lowVisionMap[16] = ;
-    // lowVisionMap[17] = ;
-    // lowVisionMap[18] = ;
-    // lowVisionMap[19] = ;
-    // lowVisionMap[20] = ;
-
+    forwardVisionMap[4] = 25.3;
+    forwardVisionMap[5] = 27.3;
+    forwardVisionMap[6] = 28.8;
+    forwardVisionMap[7] = 30.6;
+    forwardVisionMap[8] = 31.9;
+    forwardVisionMap[9] = 34.7;
+    forwardVisionMap[11] = 37.25;
+    forwardVisionMap[10] = 35.1;
+    forwardVisionMap[12] = 37.7;
+    forwardVisionMap[13] = 39;
+    forwardVisionMap[14] = 39.4;
+    forwardVisionMap[15] = 23.31;
+    forwardVisionMap[16] = 23.31;
+    forwardVisionMap[17] = 23.31;
+    forwardVisionMap[18] = 23.31;
+    forwardVisionMap[19] = 23.31;
+    forwardVisionMap[20] = 23.31;
     
-    // velocity map LOW HUB
-    // lowVelocityMap[4] = 1450;
-    // lowVelocityMap[5] = 1500;
-    // lowVelocityMap[6] = 1600;
-    // lowVelocityMap[7] = 1650;
-    // lowVelocityMap[8] = 1750;
-    // lowVelocityMap[9] = 1750;
-    // lowVelocityMap[10] = 1775;
-    // lowVelocityMap[11] = 1850;
-    // lowVelocityMap[12] = 1950;
-    // lowVelocityMap[13] = 2000;
-    // lowVelocityMap[14] = 2100;
-    // lowVelocityMap[15] = 2300;
-    // lowVelocityMap[16] = ;
-    // lowVelocityMap[17] = ;
-    // lowVelocityMap[18] = ;
-    // lowVelocityMap[19] = ;
-    // lowVelocityMap[20] = ;
+    //velocity map LOW HUB
+    fowardVelocityMap[4] = 1450;
+    fowardVelocityMap[5] = 1500;
+    fowardVelocityMap[6] = 1600;
+    fowardVelocityMap[7] = 1650;
+    fowardVelocityMap[8] = 1750;
+    fowardVelocityMap[9] = 1750;
+    fowardVelocityMap[10] = 1775;
+    fowardVelocityMap[11] = 1850;
+    fowardVelocityMap[12] = 1950;
+    fowardVelocityMap[13] = 2000;
+    fowardVelocityMap[14] = 2100;
+    fowardVelocityMap[15] = 2300;
+    fowardVelocityMap[16] = 2300;
+    fowardVelocityMap[17] = 2300;
+    fowardVelocityMap[18] = 2300;
+    fowardVelocityMap[19] = 2300;
+    fowardVelocityMap[20] = 2300;
 }
 
 /**

@@ -44,8 +44,8 @@ struct LimelightData
     double distanceOffset;
     double angleOffset;
 
-    // std::deque<double> distances;
-    // double avgDistance = 0;
+    std::deque<double> desiredTurretAngles;
+    double avgDesiredTurretAngle = 0;
 
     float hoodFlywheelRatio;
 
@@ -75,7 +75,7 @@ private:
     //Intermediate step, is the LIMELIGHTS distance from target, not shooters
     double limelightDistance;
 
-    //void averageDistance(const RobotData &robotData, LimelightData &limelightData);
+    void averageDesiredTurret(const RobotData &robotData, LimelightData &limelightData);
 
     //network table for limelight
     std::shared_ptr<nt::NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("limelight");

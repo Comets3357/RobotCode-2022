@@ -45,6 +45,7 @@ struct ControlData
     bool mIntakeUp; // (hold)
     bool mIntakeRollersIn; //runs intake forward MANUAL (axis)
     bool mIntakeRollersOut; //runs intake backward MANUAL (axis)
+    bool mZeroIntakePivot;
     bool mZeroHood; //set the hood encoder to zero MANUAL
     bool mZeroTurret; //set the turret encoder to zero MANUAL
     bool saIntake; //runs the intake rollers and brings intake down and the indexer to intake balls SEMIAUTO
