@@ -174,6 +174,17 @@ void Shooter::RobotPeriodic(const RobotData &robotData, ShooterData &shooterData
 
 void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
 
+    // for reject code
+    if(!robotData.indexerData.autoRejectTop){
+        rejectInitialized = false;
+        shooterData.readyReject = false;
+        shooterData.desiredRejectAngle = 180;
+    }
+
+    frc::SmartDashboard::PutBoolean("should reject", robotData.indexerData.autoRejectTop);
+    frc::SmartDashboard::PutBoolean("in limelight mode", robotData.controlData.shootMode == shootMode_vision);
+    frc::SmartDashboard::PutBoolean("shoot? at al?", robotData.controlData.autoRejectOpponentCargo);
+
     //Semi auto turret functionality
     saTurret(robotData, shooterData);
     
@@ -214,10 +225,10 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
     
 
     //SHOOTING LOGIC
-    /* if(robotData.indexerData.autoRejectTop && robotData.controlData.autoRejectOpponentCargo){
+    if(robotData.indexerData.autoRejectTop && robotData.controlData.autoRejectOpponentCargo){
         reject(robotData, shooterData);
         isTurretStatic = false;
-    } else */ if(robotData.controlData.shootMode == shootMode_vision){ // Aiming with limelight
+    } else if(robotData.controlData.shootMode == shootMode_vision){ // Aiming with limelight
         isTurretStatic = false;
 
         //set the hood and flywheel using pids to the desired values based off the limelight code and how far away you are
@@ -684,7 +695,7 @@ double Shooter::turretGyroOffset(double value){
  **/
 double Shooter::getFieldRelativeTurretAngle(const RobotData &robotData, ShooterData &shooterData){
     // 90 gets turret to robot on the same zero as robot to field
-    return ((int)(shooterData.currentTurretAngle + 90 + robotData.drivebaseData.odometryYaw) % 360);
+    return ((int)(shooterData.currentTurretAngle + turretMiddleDegrees + robotData.drivebaseData.odometryYaw) % 360);
 }
 
 /**
@@ -720,6 +731,7 @@ double Shooter::averageTurretGyroOffset(const RobotData &robotData, ShooterData 
 
     //return the average of those speeds
     shooterData.avgTurretOffsetPos = total/6;
+    return shooterData.avgTurretOffsetPos;
 }
 
 
@@ -845,6 +857,48 @@ void Shooter::fender(const RobotData &robotData)
 
         
         readyShootLimit = fenderVel_Low - 30;
+    }
+}
+
+
+void Shooter::reject(const RobotData &robotData, ShooterData &shooterData){
+    shooterHood_pidController.SetReference(hoodrevOut + 1, rev::CANSparkMaxLowLevel::ControlType::kPosition);
+    setShooterWheel(800, 0);
+    readyShootLimit = 800;
+
+    if(!rejectInitialized){
+        if(std::abs(getFieldRelativeTurretAngle(robotData, shooterData) - shooterData.desiredRejectAngle)  < 5){
+            if(robotData.limelightData.validTarget){
+                shooterData.desiredRejectAngle = 0; // on the other side 
+                rejectInitialized = true;
+            } else {
+                shooterData.desiredRejectAngle = 180;
+                rejectInitialized = true;
+            }
+        } /* else {
+            turretControlTurn(shooterData.desiredRejectAngle, robotData, shooterData);
+        } */
+    } else { // you've figured out which side you're on
+
+        // turretControlTurn(shooterData.desiredRejectAngle, robotData, shooterData); // FIX
+        if(getWheelVel() > readyShootLimit - 30 && getWheelVel() < readyShootLimit + 30){
+            shooterData.readyShoot = true;
+        }
+
+        //you don't see a valid target
+        if(shooterData.desiredRejectAngle == 180){
+            if(!robotData.limelightData.validTarget && (std::abs(getFieldRelativeTurretAngle(robotData, shooterData) - shooterData.desiredRejectAngle)  < 5)){
+                shooterData.readyReject = true;
+            } else {
+                shooterData.readyReject = false;
+            }
+        } else if(shooterData.desiredRejectAngle == 0){
+            if(!robotData.limelightData.validTarget && (getFieldRelativeTurretAngle(robotData, shooterData) < shooterData.desiredRejectAngle + 5 || getFieldRelativeTurretAngle(robotData, shooterData) > shooterData.desiredRejectAngle - 5 + 360)){
+                shooterData.readyReject = true;
+            } else {
+                shooterData.readyReject = false;
+            }
+        }
     }
 }
 
