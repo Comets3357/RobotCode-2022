@@ -162,10 +162,6 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
             controlData.saTurretDirectionController += 360;
         }
 
-    } else if (robotData.indexerData.autoRejectTop && controlData.autoRejectOpponentCargo){
-        controlData.usingTurretDirection = true;
-        controlData.saTurretDirectionController = robotData.shooterData.desiredRejectAngle;
-
     } else{
         controlData.usingTurretDirection = false;
     }

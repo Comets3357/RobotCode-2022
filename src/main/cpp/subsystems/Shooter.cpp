@@ -435,7 +435,9 @@ void Shooter::saTurret(const RobotData &robotData, ShooterData &shooterData){
         //this is set in the semiauto function
         setTurret_Pos(turretMiddleDegrees, shooterData);
     }else if(robotData.controlData.usingTurretDirection){ //controls turret using field oriented control and joystick
-            turretControlTurn(robotData.controlData.saTurretDirectionController, robotData, shooterData);
+        turretControlTurn(robotData.controlData.saTurretDirectionController, robotData, shooterData);
+    }else if (robotData.indexerData.autoRejectTop && robotData.controlData.autoRejectOpponentCargo){
+        turretControlTurn(shooterData.desiredRejectAngle, robotData, shooterData);
     }else{
         if(robotData.limelightData.validTarget){ //if you can see a target
             if(robotData.limelightData.distanceOffset < 7*12){ //takes into account how far away you are, farther away == needs to be more precise
