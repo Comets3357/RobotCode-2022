@@ -203,10 +203,12 @@ void Climb::climbInit(const RobotData &robotData, ClimbData &climbData)
 
     if (climbInitiating && climbUp)
     {
+        ChangeElevatorSpeed(1,0);
         RunElevatorToPos(140,0,0); //runs the climb up when button is pressed
     }
     else if (climbInitiating && !climbUp)
     { 
+        ChangeElevatorSpeed(1,0);
         RunElevatorToPos(0,0,0); //runs the climb back down if you press it again
     }
 }
@@ -257,10 +259,10 @@ void Climb::runSequence(const RobotData &robotData, ClimbData &climbData)
     if (executeSequence && climbData.bar < 4)
     { //checks if you want to run the sequence, and also if you're already at bar 4, then you can't run it
         if (stage == 0) ChangeElevatorSpeed(elevatorSpeed, 1);
-        else if (stage == 1) RunArmsAndElevatorToPos(20,1,0,0,1);
+        else if (stage == 1) RunArmsAndElevatorToPos(20,1,0,0,1); // get value in manual
         else if (stage == 1) RunArmsAndElevatorToPos(-1,1,85,0,1);
-        else if (stage == 3) WaitUntilArmsOnBar();
-        else if (stage == 4) RunElevatorToPos(20,1,0);
+        else if (stage == 3) WaitUntilArmsOnBar(); //test 2 get value in manual
+        else if (stage == 4) RunElevatorToPos(20,1,0); //test 3
         //top bar transfer
         if (climbData.bar == targetBar-1)
         {
@@ -304,6 +306,14 @@ void Climb::runSequence(const RobotData &robotData, ClimbData &climbData)
     }
 }
 
+void Climb::WaitUntilArmsOnBar()
+{
+    if (climbArmsAbs.GetOutput() < 0.8)
+    {
+        stage += 1;
+    }
+}
+
 //Runs the elevator to a specific location, specified in semiAuto
 void Climb::RunElevatorToPos(int position, int stageAdd, int onBar)
 {
@@ -312,7 +322,7 @@ void Climb::RunElevatorToPos(int position, int stageAdd, int onBar)
         elevatorRunning = true;
         //only moves when angular rate is low to reduce swinging
         if (onBar){
-            if (abs(angularRate) < 60)
+            if (abs(angularRate) < 70)
             {
                 climbElevator_pidController.SetReference(-position, rev::CANSparkMax::ControlType::kPosition, onBar);
             }
@@ -375,7 +385,7 @@ void Climb::TopTransfer()
     {
         climbArms.Set(0);
         ChangeElevatorSpeed(0.6, 0);
-        RunElevatorToPos(90,1,1);
+        RunElevatorToPos(90,1,0);
     } else {
         
         //runs arms down when not at the angle for transfer
