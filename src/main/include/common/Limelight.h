@@ -32,15 +32,25 @@ struct LimelightData
 
     double desiredHoodPos;
     double desiredVel;
-    double distanceToTarget;
+    double desiredHoodRollerVel;
+
+    //how many degrees the turret needs to move in order to hit the target
+    double turretDifference;
+    double desiredTurretAngle;
     double correctDistance;
 
     //shooter corrections:
+    //FINAL CORRECT DISTANCE
     double distanceOffset;
     double angleOffset;
 
-    //std::deque<double> distances;
-    //double avgDistance = 0;
+    // std::deque<double> distances;
+    // double avgDistance = 0;
+
+    float hoodFlywheelRatio;
+
+    bool unwrapping = false;
+
 
 };
 
@@ -57,6 +67,13 @@ private:
 
     double getHoodPOS(VisionLookup &visionLookup, LimelightData &limelightData, const RobotData &robotData);
     double getWheelVelocity(VisionLookup &visionLookup, LimelightData &limelightData, const RobotData &robotData);
+    double getTurretPOS(VisionLookup &visionLookup, LimelightData &limelightData, const RobotData &robotData);
+    double getHoodRollerVel(LimelightData &limelightData, const RobotData &robotData);
+    double getTurretTurnAngle(LimelightData &limelightData, const RobotData &robotData);
+    float unwrappingVal = 0; //acts as a snapshot for when we're trying to wrap around
+
+    //Intermediate step, is the LIMELIGHTS distance from target, not shooters
+    double limelightDistance;
 
     //void averageDistance(const RobotData &robotData, LimelightData &limelightData);
 

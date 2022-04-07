@@ -17,7 +17,15 @@ struct RobotData;
 struct ShooterData
 {
     bool readyShoot;
-    
+    bool readyReject = false;
+    float currentTurretAngle;
+
+    //for rolling average of turret offset 
+    std::deque<double> offsetPos;
+    double avgTurretOffsetPos = 0;
+
+    //float mode;
+
     //Bench test
     bool topDeadStop = false;
     bool bottomDeadStop = false;
@@ -28,13 +36,12 @@ struct ShooterData
 class Shooter{
 
     public:
-        void RobotInit();
+        void RobotInit(ShooterData &shooterData);
         void RobotPeriodic(const RobotData &robotData, ShooterData &shooterData);
         void DisabledInit();
         void DisabledPeriodic(const RobotData &robotData, ShooterData &shooterData);
         void EnabledInit(ControlData &controlData, ShooterData &shooterData);
         void TestPeriodic(const RobotData &robotData, ShooterData &shooterData);
-        void TestInit();
     
     private:
         void manual(const RobotData &robotData, ShooterData &shooterData);
@@ -42,51 +49,93 @@ class Shooter{
         void updateData(const RobotData &robotData, ShooterData &shooterData);
 
 
-        //converting
-        double convertFromAngleToAbs(double angle);
-        double convertFromAbsToAngle(double abs);
-        double absoluteToREV(double value);
+        //converting hood
+        double HoodconvertFromAngleToAbs(double angle);
+        double HoodconvertFromAbsToAngle(double abs);
+        double HoodabsoluteToREV(double value);
+
+        //converting turret
+        double turretConvertFromAngleToAbs(double angle);
+        double turretConvertFromAbsToAngle(double abs);
+        double turretAbsoluteToREV(double value);
+        double turretGyroOffset(double value);
+        double averageTurretGyroOffset(const RobotData &robotData, ShooterData &shooterData);
+        // double getFieldRelativeToRobotRelativeTurret(const RobotData &robotData, ShooterData &shooterData);
+        double getFieldRelativeTurretAngle(const RobotData &robotData, ShooterData &shooterData);
+
         
         //init 
         void flyWheelInit();
+        void hoodRollerInit();
         void shooterHoodInit();
+        void shooterTurretInit();
         
         //gets and sets
         double getWheelVel();
-        void setShooterWheel(double speed);
+        void setShooterWheel(double speed, double pidSlot);
+        void setTurret_Pos(double pos, ShooterData &shooterData);
 
         //checks
         void checkReadyShoot(ShooterData &shooterData);
-        bool encoderPluggedIn();
+        bool encoderPluggedInTurret(const ShooterData &shooterData);
+        bool encoderPluggedInHood(ShooterData &shooterData);
+        void saTurret(const RobotData &robotData, ShooterData &shooterData);
+        void turretControlTurn(float controlTurretDirection, const RobotData &robotData, ShooterData &shooterData);
+
 
         //FIXED SHOTS
         void outerLaunch(const RobotData &robotData);
         void innerLaunch(const RobotData &robotData);
         void wall(const RobotData &robotData);
         void fender(const RobotData &robotData);
-        void endOfTarmac(const RobotData &robotData);
+
+        void reject(const RobotData &robotData, ShooterData &shooterData);
+        bool rejectInitialized = false;
+        int desiredAngle = 180;
+
 
         //bench test
         bool encoderInRange(const ShooterData &shooterData);
         void checkDeadStop(ShooterData &shooterData);
+        void relocateTurretDirection(const RobotData &robotData);
 
         //shooter velocity min threshold
         int readyShootLimit;
         //used to update rev encoder with abs encoder
         int tickCount;
-    
-        //FLywheel Lead
-        rev::CANSparkMax flyWheelLead = rev::CANSparkMax(shooterWheelLeadID, rev::CANSparkMax::MotorType::kBrushless);
-        rev::SparkMaxRelativeEncoder flyWheelLeadEncoder = flyWheelLead.GetEncoder();
-        rev::SparkMaxPIDController flyWheelLead_pidController = flyWheelLead.GetPIDController();
+        double validTargetTurretPos;
+        bool isTurretStatic;
 
-        //flywheel hood, rev encoder, pid
+        //for deprecated mode function
+        //int modeCounter;
+        //double hoodAbsValues [49] = { };
+
+        //Flywheel Lead
+        rev::CANSparkMax flyWheel = rev::CANSparkMax(shooterWheelID, rev::CANSparkMax::MotorType::kBrushless);
+        rev::SparkMaxRelativeEncoder flyWheelLeadEncoder = flyWheel.GetEncoder();
+        rev::SparkMaxPIDController flyWheelLead_pidController = flyWheel.GetPIDController();
+
+
+        //lip roller
+        rev::CANSparkMax hoodRoller = rev::CANSparkMax(hoodRollerID, rev::CANSparkMax::MotorType::kBrushless);
+        rev::SparkMaxRelativeEncoder hoodRollerEncoderRev = hoodRoller.GetEncoder();
+        rev::SparkMaxPIDController hoodRoller_pidController = hoodRoller.GetPIDController();
+
+        //hood, rev encoder, pid
         rev::CANSparkMax shooterHood = rev::CANSparkMax(shooterHoodID, rev::CANSparkMax::MotorType::kBrushless);
         rev::SparkMaxRelativeEncoder shooterHoodEncoderRev = shooterHood.GetEncoder();
         rev::SparkMaxPIDController shooterHood_pidController = shooterHood.GetPIDController();
+
+        rev::CANSparkMax shooterTurret = rev::CANSparkMax(shooterTurretID, rev::CANSparkMax::MotorType::kBrushless);
+        rev::SparkMaxRelativeEncoder shooterTurretEncoderRev = shooterTurret.GetEncoder();
+        rev::SparkMaxPIDController shooterTurret_pidController = shooterTurret.GetPIDController();
+
+        //turret abs encoder
+        frc::DigitalInput m_inputTurret{TurretAbsoluteEncoderPort};
+        frc::DutyCycle shooterTurretEncoderAbs = frc::DutyCycle{m_inputTurret};
         
-        //flywheel abs encoder
-        frc::DigitalInput m_input{HoodAbsoluteEncoderPort};
-        frc::DutyCycle shooterHoodEncoderAbs = frc::DutyCycle{m_input};
+        //hood abs encoder
+        frc::DigitalInput m_inputHood{HoodAbsoluteEncoderPort};
+        frc::DutyCycle shooterHoodEncoderAbs = frc::DutyCycle{m_inputHood};
 
 };

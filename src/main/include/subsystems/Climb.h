@@ -18,12 +18,14 @@ struct RobotData;
 
 struct ClimbData {
     int bar = 2;
+    int elevatorEncoderPosition = 0;
     bool climbing = false;
     bool zeroing = false;
     int stage;
-    float armsAmp, elevatorAmp, armsTemp, elevatorTemp, elevatorPos, armsPos, armsAbsPos;
     int angle, angularRate;
     bool elevatorLimit;
+
+    float armsAmp, elevatorAmp, armsTemp, elevatorTemp, elevatorPos, armsPos, armsAbsPos;
 
     //bench test
     float benchTestClimbArmsSpeed = 0;
@@ -95,13 +97,10 @@ private:
 
     void ChangeElevatorSpeed(float speed, int stageAdd);
     void ChangeArmSpeed(float speed, int stageAdd);
-    void ChangeElevatorSpeedOnBar(float speed, bool run, int stageAdd);
 
     void WaitUntilGyro(int cmp, float gyroValue, int stageAdd);
 
     void CheckArms();
-    void CheckArms2();
-    void CheckAngleForTransfer();
 
     void TopTransfer();
 

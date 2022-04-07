@@ -1,20 +1,24 @@
 #pragma once
-
-#include "RobotData.h"
 #include <frc/SerialPort.h>
 
-struct LEDsData {
+struct RobotData;
+
+struct ArduinoData {
     int ColorData = 0;
 };
 
 class Arduino {
     public:
-        void RobotPeriodic(const RobotData &robotData);
-        void DisbledPeriodic();
+        void RobotPeriodic(const RobotData &robotData, ArduinoData &arduinoData);
+        void DisabledPeriodic();
+        void RobotInit();
+
+        int failedTransfers = 0;
 
     private:
-        //in constructor port, deviceaddress
-        frc::SerialPort arduino = frc::SerialPort(9600, frc::SerialPort::Port::kUSB);
+        bool ArduinoWorks = true;
+        // in constructor port, deviceaddress
+        frc::SerialPort *arduino;
 
         int colorCode = 6;
         int lastColorCode = 6;

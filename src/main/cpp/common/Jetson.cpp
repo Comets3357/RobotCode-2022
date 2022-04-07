@@ -27,10 +27,10 @@ void Jetson::RobotPeriodic()
     table->PutNumber("blue v min", 60); // THIS CHANGES AT COMPS
     table->PutNumber("blue v max", 255); // THIS CHANGES AT COMPS
     table->PutNumber("red h lower min", 0); // THIS CHANGES AT COMPS
-    table->PutNumber("red h lower max", 15); // THIS CHANGES AT COMPS
-    table->PutNumber("red h upper min", 170); // THIS CHANGES AT COMPS
+    table->PutNumber("red h lower max", 9); // THIS CHANGES AT COMPS
+    table->PutNumber("red h upper min", 175); // THIS CHANGES AT COMPS
     table->PutNumber("red h upper max", 180); // THIS CHANGES AT COMPS
-    table->PutNumber("red s min", 140); // THIS CHANGES AT COMPS
+    table->PutNumber("red s min", 160); // THIS CHANGES AT COMPS
     table->PutNumber("red s max", 255); // THIS CHANGES AT COMPS
     table->PutNumber("red v min", 0); // THIS CHANGES AT COMPS
     table->PutNumber("red v max", 255); // THIS CHANGES AT COMPS
@@ -41,8 +41,8 @@ void Jetson::RobotPeriodic()
     table->PutNumber("ball radius", 4.75);
     table->PutNumber("realsense height", 34.5);
     table->PutNumber("realsense angle", 26);
-    table->PutNumber("red erosion", 0); // THIS CHANGES AT COMPS
-    table->PutNumber("red dilation", 1); // THIS CHANGES AT COMPS
+    table->PutNumber("red erosion", 2); // THIS CHANGES AT COMPS
+    table->PutNumber("red dilation", 5); // THIS CHANGES AT COMPS
     table->PutNumber("blue erosion", 4); // THIS CHANGES AT COMPS
     table->PutNumber("blue dilation", 5); // THIS CHANGES AT COMPS
 }

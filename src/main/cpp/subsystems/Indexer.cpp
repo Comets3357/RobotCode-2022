@@ -38,8 +38,6 @@ void Indexer::RobotPeriodic(const RobotData &robotData, IndexerData &indexerData
             semiAuto(robotData, indexerData);
         }
     }
-
-    
     
 
 }
@@ -64,6 +62,11 @@ void Indexer::updateData(const RobotData &robotData, IndexerData &indexerData)
         indexerData.eBallCountZero = false;
     }
     lastTickBallCount = indexerData.indexerContents.size();
+
+    debuggingStuff(robotData, indexerData);
+
+    // frc::SmartDashboard::PutBoolean("top beam break", getTopBeam());
+
 }
 
 void Indexer::manual(const RobotData &robotData, IndexerData &indexerData)
@@ -84,6 +87,7 @@ void Indexer::manual(const RobotData &robotData, IndexerData &indexerData)
 
 void Indexer::semiAuto(const RobotData &robotData, IndexerData &indexerData)
 {
+    rejectDetection(robotData, indexerData);
     saBeltControl(robotData, indexerData);
     saWheelControl(robotData, indexerData);
 }
@@ -119,23 +123,23 @@ void Indexer::newCargo(const RobotData &robotData, IndexerData &indexerData){
 
     if(frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed){            // if you are red alliance
 
-        // if (robotData.colorSensorData.colorValue == CargoColor::cargo_Red){                 // and if the sensor senses red
-        //     indexerData.indexerContents.push_back(Cargo::cargo_Alliance);                   // add red cargo
-        // } else if (robotData.colorSensorData.colorValue == CargoColor::cargo_Blue){         // blue
-        //     indexerData.indexerContents.push_back(Cargo::cargo_Opponent);                   // add blue
-        // } else {                                                                            // doesn't sense red OR blue (if this happens check that the LED is on)
-        //     indexerData.indexerContents.push_back(Cargo::cargo_Unassigned);                 // add "unassigned"
-        // }
+        if (robotData.colorSensorData.colorValue == CargoColor::cargo_Red){                 // and if the sensor senses red
+            indexerData.indexerContents.push_back(Cargo::cargo_Alliance);                   // add red cargo
+        } else if (robotData.colorSensorData.colorValue == CargoColor::cargo_Blue){         // blue
+            indexerData.indexerContents.push_back(Cargo::cargo_Opponent);                   // add blue
+        } else {                                                                            // doesn't sense red OR blue (if this happens check that the LED is on)
+            indexerData.indexerContents.push_back(Cargo::cargo_Unassigned);                 // add "unassigned"
+        }
 
     } else if (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue){   // same logic for blue as for red
 
-        // if(robotData.colorSensorData.colorValue == CargoColor::cargo_Blue){ 
-        //     indexerData.indexerContents.push_back(Cargo::cargo_Alliance);
-        // } else if (robotData.colorSensorData.colorValue == CargoColor::cargo_Red){
-        //     indexerData.indexerContents.push_back(Cargo::cargo_Opponent);
-        // } else {
-        //     indexerData.indexerContents.push_back(Cargo::cargo_Unassigned);
-        // }
+        if(robotData.colorSensorData.colorValue == CargoColor::cargo_Blue){ 
+            indexerData.indexerContents.push_back(Cargo::cargo_Alliance);
+        } else if (robotData.colorSensorData.colorValue == CargoColor::cargo_Red){
+            indexerData.indexerContents.push_back(Cargo::cargo_Opponent);
+        } else {
+            indexerData.indexerContents.push_back(Cargo::cargo_Unassigned);
+        }
 
     } 
 }
@@ -150,22 +154,22 @@ void Indexer::assignCargoColor(const RobotData &robotData, IndexerData &indexerD
     // same logic as above newCargo function, except you remove the last element before adding a new cargo
     if(frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed){        // red alliance
 
-        // if (robotData.colorSensorData.colorValue == CargoColor::cargo_Red){             // red ball
-        //     indexerData.indexerContents.pop_back();
-        //     indexerData.indexerContents.push_back(Cargo::cargo_Alliance);               // replace with alliance ball
-        // } else if (robotData.colorSensorData.colorValue == CargoColor::cargo_Blue){     // blue ball
-        //     indexerData.indexerContents.pop_back();
-        //     indexerData.indexerContents.push_back(Cargo::cargo_Opponent);               // replace with opponent ball
-        // } 
+        if (robotData.colorSensorData.colorValue == CargoColor::cargo_Red){             // red ball
+            indexerData.indexerContents.pop_back();
+            indexerData.indexerContents.push_back(Cargo::cargo_Alliance);               // replace with alliance ball
+        } else if (robotData.colorSensorData.colorValue == CargoColor::cargo_Blue){     // blue ball
+            indexerData.indexerContents.pop_back();
+            indexerData.indexerContents.push_back(Cargo::cargo_Opponent);               // replace with opponent ball
+        } 
     } else {                                                                            // blue alliance                                                                                      
 
-        // if (robotData.colorSensorData.colorValue == CargoColor::cargo_Blue){            // blue ball
-        //     indexerData.indexerContents.pop_back();
-        //     indexerData.indexerContents.push_back(Cargo::cargo_Alliance);               // replace with alliance ball
-        // } else if (robotData.colorSensorData.colorValue == CargoColor::cargo_Red){      // red ball
-        //     indexerData.indexerContents.pop_back();
-        //     indexerData.indexerContents.push_back(Cargo::cargo_Opponent);               // replace with opponent ball
-        // } 
+        if (robotData.colorSensorData.colorValue == CargoColor::cargo_Blue){            // blue ball
+            indexerData.indexerContents.pop_back();
+            indexerData.indexerContents.push_back(Cargo::cargo_Alliance);               // replace with alliance ball
+        } else if (robotData.colorSensorData.colorValue == CargoColor::cargo_Red){      // red ball
+            indexerData.indexerContents.pop_back();
+            indexerData.indexerContents.push_back(Cargo::cargo_Opponent);               // replace with opponent ball
+        } 
 
     }
 }
@@ -174,16 +178,24 @@ void Indexer::assignCargoColor(const RobotData &robotData, IndexerData &indexerD
  * senses when balls leave the indexer either from top or bottom and removes them from the indexerContents deque
  **/
 void Indexer::decrementCount(const RobotData &robotData, IndexerData &indexerData, bool reverse){
+
     
     if (reverse && getBottomBeamToggledOff()){                                              // if you're reversing and bottom sensor toggles to not being tripped (ball passed completely through)
         if (indexerData.indexerContents.size() > 0){    // checks to make sure there's actually stuff in the indexer to make sure the code doesn't crash
             indexerData.indexerContents.pop_back();     // remove "bottom" element of deque
         }
 
-    }else if (!reverse && getTopBeamToggledOff() && robotData.controlData.saFinalShoot){    // if you're going FORWARD, specifically in saFinalShoot, and the top sensor toggles to not being tripped (ball passed completely through and shot)
-        if (indexerData.indexerContents.size() > 0){    // checks to make sure there's actually stuff in the indexer to make sure the code doesn't crash
-            indexerData.indexerContents.pop_front();    // removes "top" element of deque
+    }
+    
+    if (!reverse && getTopBeamToggledOff() && (robotData.controlData.saFinalShoot || robotData.shooterData.readyReject)){    // if you're going FORWARD, specifically in saFinalShoot, and the top sensor toggles to not being tripped (ball passed completely through and shot)
+        decrementDelay = 5;
+    }else if (decrementDelay > 0 && decrementDelay <= 5){       // the top sensor hasn't just been toggled off but was recently toggled off
+        decrementDelay--;                                       // count down the decrementDelay counter
+    } else if(decrementDelay == 0){                                                    // the count down is done 
+        if (indexerData.indexerContents.size() > 0){            // checks to make sure there's actually stuff in the indexer to make sure the code doesn't crash
+            indexerData.indexerContents.pop_front();            // removes "top" element of deque
         }
+        decrementDelay = 6;
     }
 }
 
@@ -206,7 +218,7 @@ void Indexer::count(const RobotData &robotData, IndexerData &indexerData){
         decrementCount(robotData, indexerData, true);                               // true means you're reversing
     } else {                                                                        // you are going forwards. this runs every time as you go forward
         decrementCount(robotData, indexerData, false);                              // false means going forward
-                                                                                    // decrement runs while the indexer goes forward and backward because balls can exit from top or bottom
+                                                              // decrement runs while the indexer goes forward and backward because balls can exit from top or bottom
         incrementCount(robotData, indexerData);                                     // only runs increment when you go forward because we're not ever intaking while reversing
     }
 
@@ -223,7 +235,7 @@ void Indexer::count(const RobotData &robotData, IndexerData &indexerData){
 bool Indexer::pauseBelt(const RobotData &robotData, IndexerData &indexerData){
 
     if(getTopBeamToggledOn()){          // the top sensor was just toggled on
-        pauseBeltCount = 5;             // set pause belt count for .1s
+        pauseBeltCount = 20;             // set pause belt count for .1s
         return true;                    
     } else if (pauseBeltCount > 0){     // the top sensor was not JUST toggled on but was recently toggled on
         pauseBeltCount--;               // count down the pause belt counter
@@ -238,14 +250,19 @@ bool Indexer::pauseBelt(const RobotData &robotData, IndexerData &indexerData){
  **/
 void Indexer::saBeltControl(const RobotData &robotData, IndexerData &indexerData){
 
+    frc::SmartDashboard::PutBoolean("indexer for shooting", robotData.shooterData.readyShoot && robotData.controlData.saFinalShoot)|| (!getTopBeam() && !robotData.intakeData.intakeIdle);
+    frc::SmartDashboard::PutBoolean("auton readyShoot", robotData.shooterData.readyShoot);
+    frc::SmartDashboard::PutBoolean("auton finalShoot", robotData.controlData.saFinalShoot);
+    frc::SmartDashboard::PutBoolean("pauseBelt", pauseBelt(robotData, indexerData));
     if(robotData.controlData.saEjectBalls){             // if indexer is REVERSING (saEject curently is the only case where it runs backwards)
         indexerBelt.Set(-indexerShootingBeltSpeed);     // run the belt backwards fast
-    } else if ((!pauseBelt(robotData, indexerData) && robotData.shooterData.readyShoot && robotData.controlData.saFinalShoot) /* || (indexerData.autoRejectTop && robotData.shooterData.readyEject) */|| (!getTopBeam() && !robotData.intakeData.intakeIdle)){ 
+    } else if ((!pauseBelt(robotData, indexerData) && robotData.shooterData.readyShoot && (robotData.controlData.saFinalShoot|| robotData.shooterData.readyReject)) || (!getTopBeam() && !robotData.intakeData.intakeIdle)){ 
         // there are two main cases when you run the indexer forward: when you shoot, and when you're intaking
         // when shooting, you check that you're done pausing (see pauseBelt) to make sure every ball pauses before going into the shooter, 
+        // anyways, we have to get the signal that the shooter is ready to eject AND that the top ball in the indexer is the opponent color to run it in that case
         // and you also check readyShoot to make sure the flywheel is up to speed, along with saFinalShoot to make sure secondary is commanding it to shoot
-        // when intaking, you want to run the ball up until it triggers the top sensor
         // you also check that the intake has been given a command in the past second (see intakeIdle function in intake class) to make sure the indexer isn't running for no reason
+        // when intaking, you want to run the ball up until it triggers the top sensor
         // even though this is the intaking mode it doesn't actually look at "if saIntake" directly or anything because no matter when we're intaking or just running a second cargo through,
         // we want to run it until it hits the top sensor, then stop it, no matter if the robot is shooting, intaking, or whatever
         // actually, new code
@@ -390,7 +407,7 @@ bool Indexer::getBottomBeamToggledOn(){
     }
     // if top sensor is currently being tripped and it previously wasn't
     if (currentBottomBeam && !prevBottomBeam){
-        bottomDebounceCount = 2;
+        bottomDebounceCount = 10;
         return true;
     } else {
         return false;
@@ -480,6 +497,7 @@ void Indexer::debuggingStuff(const RobotData &robotData, IndexerData &indexerDat
     // TESTING STUFF
     frc::SmartDashboard::PutNumber("cargo count", indexerData.indexerContents.size());
     frc::SmartDashboard::PutNumber("wrong ball?", robotData.controlData.wrongBall);
+    frc::SmartDashboard::PutBoolean("get bottom beam tripped", getBottomBeam());
 
     if (indexerData.indexerContents.size() == 0){
 

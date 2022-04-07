@@ -8,6 +8,8 @@
 #include "common/VisionLookup.h"
 #include "common/Timer.h"
 #include "common/Arduino.h"
+#include "common/Jetson.h"
+#include "common/ColorSensor.h"
 #include "common/BenchTest.h"
 
 #include "auton/Auton.h"
@@ -38,4 +40,7 @@ struct RobotData
     IndexerData indexerData;
     ClimbData climbData;
     ShooterData shooterData;
+    ArduinoData arduinoData;
+    ColorSensorData colorSensorData;
+    
 };

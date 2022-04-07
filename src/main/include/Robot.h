@@ -6,22 +6,23 @@
 #include <frc/TimedRobot.h>
 
 //Header files from us
-#include "controller/Controller.h"
-#include "common/Gyro.h"
-#include "auton/Auton.h"
+// #include "controller/Controller.h"
+// #include "common/Gyro.h"
+// #include "auton/Auton.h"
 #include "RobotData.h"
 
-#include "subsystems/Drivebase.h"
-#include "subsystems/Shooter.h"
-#include "subsystems/Indexer.h"
-#include "subsystems/Climb.h"
-#include "subsystems/Intake.h"
-#include "common/Limelight.h"
-#include "common/VisionLookup.h"
-#include "common/OtherComponents.h"
-#include "common/Arduino.h"
-#include "common/BenchTest.h"
-#include "common/Jetson.h"
+// #include "subsystems/Drivebase.h"
+// #include "subsystems/Shooter.h"
+// #include "subsystems/Indexer.h"
+// #include "subsystems/Climb.h"
+// #include "subsystems/Intake.h"
+// #include "common/Limelight.h"
+// #include "common/VisionLookup.h"
+// #include "common/OtherComponents.h"
+// #include "common/ColorSensor.h"
+// #include "common/LEDs.h"
+// #include "common/BenchTest.h"
+// #include "common/Jetson.h"
 
 //Robot class inherits from TimedRobot
 class Robot : public frc::TimedRobot
@@ -51,6 +52,7 @@ private:
     Timer timer{};
     Auton auton{};
     Arduino arduino{};
+    ColorSensor colorSensor{};
     BenchTest benchTest{};
     Jetson jetson{};
     
