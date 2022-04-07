@@ -12,6 +12,7 @@ void Robot::RobotInit()
     indexer.RobotInit();
     shooter.RobotInit(robotData.shooterData);
     climb.RobotInit();
+    arduino.RobotInit();
 }
 
 void Robot::RobotPeriodic()
