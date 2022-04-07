@@ -28,6 +28,10 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
             
     }
 
+    // frc::SmartDashboard::PutNumber("Y", controllerData.sRYStick);
+    // frc::SmartDashboard::PutNumber("X", controllerData.sRXStick);
+
+
 
     // controls:
 
@@ -58,9 +62,19 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
         controlData.rDrive = controllerData.pRYStick;
     }
 
-
+    if(controllerData.sLCenterBtnToggled){
+        controlData.staticTurret = !controlData.staticTurret;
+    }
 
     // manual:
+
+    //ADD CONTROLLER BIND
+    if(controllerData.sLStickBtnToggled){
+        controlData.saDistanceOffset = controlData.saDistanceOffset + 6;
+    }else if(controllerData.sRStickBtnToggled){
+        controlData.saDistanceOffset = controlData.saDistanceOffset - 6;
+    }
+    
 
     
     controlData.mIntakeDown = controllerData.sRBumper /* && (controlData.mode == mode_teleop_manual) */;
@@ -68,10 +82,10 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
     controlData.mIntakeRollersIn = controllerData.sRTrigger > 0.5 /* && (controlData.mode == mode_teleop_manual) */;
     controlData.mIntakeRollersOut = controllerData.sRTrigger > 0.5 && controlData.shift /* && (controlData.mode == mode_teleop_manual) */;
     
-    controlData.mZeroHood = controllerData.sLStickBtn /* && (controlData.mode == mode_teleop_manual) */;
-    controlData.mZeroTurret = controllerData.sRStickBtn /* && (controlData.mode == mode_teleop_manual) */;
-    controlData.mHood = controllerData.sLYStick/*  && (controlData.mode == mode_teleop_manual) */;
-    controlData.mTurret = controllerData.sRXStick /* && (controlData.mode == mode_teleop_manual) */;
+    controlData.mZeroHood = controllerData.sRStickBtn & !controlData.shift /* && (controlData.mode == mode_teleop_manual) */;
+    controlData.mZeroTurret = controllerData.sLStickBtn /* && (controlData.mode == mode_teleop_manual) */;
+    controlData.mHood = controllerData.sRYStick/*  && (controlData.mode == mode_teleop_manual) */;
+    controlData.mTurret = controllerData.sLXStick /* && (controlData.mode == mode_teleop_manual) */;
     controlData.mShooterWheelForward = controllerData.sXBtn /* && (controlData.mode == mode_teleop_manual) */;
     controlData.mShooterWheelBackward = controllerData.sXBtn && controlData.shift/*  && (controlData.mode == mode_teleop_manual) */;
 
@@ -92,26 +106,66 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
     controlData.saIntake = (controllerData.sRTrigger > 0.5) && !controlData.shift;/*  && (controlData.mode == mode_teleop_sa) */;
     controlData.saIntakeBackward = controllerData.sLTrigger > 0.5 /* && (controlData.mode == mode_teleop_sa) */;
     controlData.saIntakeIdle = (controllerData.sRTrigger > 0.5) && controlData.shift;
-    frc::SmartDashboard::PutBoolean("saIntakeIdle", controlData.saIntakeIdle);
+    // frc::SmartDashboard::PutBoolean("saIntakeIdle", controlData.saIntakeIdle);
 
     controlData.saEjectBalls = controllerData.sABtn && !controlData.shift/*  && (controlData.mode == mode_teleop_sa) */;
 
     controlData.saShooting = controllerData.sXBtnToggled && !controlData.shift/* && (controlData.mode == mode_teleop_sa) */;
     controlData.saFinalShoot = controllerData.sYBtn && !controlData.shift/* && (controlData.mode == mode_teleop_sa); */;
+    
+    if(controllerData.sRCenterBtnToggled){
+        controlData.staticTurret = !controlData.staticTurret;
+    }
 
     // secondary y to set readyshoot to true in testing
 
+    // disabled because there has not yet been a case where we want to shoot low hub
     if (controllerData.sRBumperToggled) {
-        controlData.upperHubShot = !controlData.upperHubShot;
+        // controlData.upperHubShot = !controlData.upperHubShot;
     }
     if (controllerData.sBBtnToggled) {
-        controlData.shootUnassignedAsOpponent = !controlData.shootUnassignedAsOpponent;
+        controlData.autoRejectOpponentCargo = !controlData.autoRejectOpponentCargo;
     }
     
     controlData.fenderShot = controllerData.sABtnToggled && controlData.shift /* && (controlData.mode == mode_teleop_sa) */;
     controlData.sideWallShot = controllerData.sBBtnToggled && controlData.shift/*  && (controlData.mode == mode_teleop_sa) */;
     controlData.wallLaunchPadShot = controllerData.sXBtnToggled && controlData.shift/*  && (controlData.mode == mode_teleop_sa) */;
     controlData.cornerLaunchPadShot = controllerData.sYBtnToggled && controlData.shift /* && (controlData.mode == mode_teleop_sa) */;
+
+    //TURRET DIRECTION converts joystick (x,y) into degrees (0 is right) UNIT CIRCLE
+    double x = -controllerData.sLXStick;
+    double y = controllerData.sLYStick;
+
+    //check to make sure you're out of the deadzone
+    if(x > 0.1 || y > 0.1 || x < -0.1 || y < -0.1){
+        controlData.usingTurretDirection = true;
+        //does the conversions and accounts for different quadrants of the unit circle
+        if((x <0.1 && x > -0.1)  && y > 0){ //covers if @ up direction
+            controlData.saTurretDirectionController = 90;
+        }else if(x > 0 && y >= 0){ //covers 0 ~ 89 degrees
+            controlData.saTurretDirectionController = (std::atan(y/x)*(180/pi));
+        }else if((y >= 0 && x < 0) || (y < 0 && x < 0)){  //covers 91 ~ 269 degrees
+            controlData.saTurretDirectionController = (std::atan(y/x)*(180/pi)) + 180;
+        }else if((x <0.1 && x > -0.1) && y < 0){
+            controlData.saTurretDirectionController = 270;
+        }else if(y < 0 && x > 0){ //covers 271 ~ 359 degrees 
+            controlData.saTurretDirectionController = (std::atan(y/x)*(180/pi)) + 360;
+        }
+
+        
+        controlData.saTurretDirectionController = (controlData.saTurretDirectionController - 90);
+        if(controlData.saTurretDirectionController < 0){
+            controlData.saTurretDirectionController += 360;
+        }
+
+    } else{
+        controlData.usingTurretDirection = false;
+    }
+
+    //if we need 0 degrees to be up we can just add 90 to all these numbers right???
+    
+
+    
 
     
     // if(robotData.indexerData.indexerContents.front() == Cargo::cargo_Opponent){
@@ -132,19 +186,23 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
     controlData.saclimbInit = controllerData.sBBtn;
     controlData.climbZeroing = controllerData.sABtnToggled;
 
+    //BENCH TEST
+
     //toggle buttons, part of index 2 (third controller - aka test controller) on drivers station
     //we're not making it in the normal structure because that would be a lot of work - tananya
-    controlData.startBenchTestToggle = controllerData.testAButton; // a: starts and stops (in case of emergency) the bench tests
-    controlData.incrementMotorToggle = controllerData.testBButton; // b: increments what motor/encoder/thing that you're testing
-    controlData.incrementSpeedToggle = controllerData.testXButton; // x: increases the speed
+    controlData.incrementMotor = controllerData.testBButton; // b: increments what motor/encoder/thing that you're testing
+    controlData.incrementSpeed = controllerData.testXButton; // x: increases the speed
     controlData.PIDModeToggle = controllerData.testYButton; //toggles pid mode (if we want to test pids)
-    controlData.incrementSubsystemToggle = controllerData.testRBumper;
+    controlData.incrementSubsystem = controllerData.testAButton; //increments the subsystem
 
-    //sets the value of the variables used in robot.cppbased upon the toggle button variables
-    if (controlData.startBenchTestToggle) controlData.startBenchTest = !controlData.startBenchTest;
-    controlData.incrementMotor = controlData.incrementMotorToggle;
-    controlData.incrementSpeed = controlData.incrementSpeedToggle;
-    controlData.incrementSubsystem = controlData.incrementSubsystemToggle;
+    //sets the value of the variables used in robot.cpp based upon the toggle button variables
+    if (!controlData.autoBenchTest){ //can't do manual bench test in automatic bench test
+        if (controllerData.testRBumper) controlData.manualBenchTest = !controlData.manualBenchTest; //a: starts and stops manual bench test
+    }
+    
+    if (!controlData.manualBenchTest){ //can't do automatic bench test in manual bench test
+        if (controllerData.testLBumper) controlData.autoBenchTest = !controlData.autoBenchTest; //left bumper: starts and stops automatic bench test
+    }
 }
 
 void Controller::updateShootMode(const RobotData &robotData, ControlData &controlData) {
@@ -185,14 +243,11 @@ void Controller::updateShootMode(const RobotData &robotData, ControlData &contro
         } else { controlData.shootMode = shootMode_cornerLaunchPad; }
     }
 
-    // interpret button data to toggle between shooting unassigned as ours or opponent's
-    if (robotData.controlData.shootUnassignedAsOpponent) {
-        controlData.shootUnassignedAsOpponent = !controlData.shootUnassignedAsOpponent;
-    }
 
 
     // shut off shooting if all balls have exited (happens once upon ball count going to zero)
-    if (robotData.indexerData.eBallCountZero) {
-        controlData.shootMode = shootMode_none;
-    }
+    // if (robotData.indexerData.eBallCountZero) {
+        // controlData.shootMode = shootMode_none;
+    // }
+    // disabled at at muskegon, inconsistent ball counting
 }

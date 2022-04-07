@@ -43,9 +43,12 @@ struct DrivebaseData
 
     // odometry
     frc::Pose2d currentPose{};
+    frc::Pose2d shooterRejectTestPose{};
+    double odometryX;
+    double odometryY;
+    double odometryYaw;
 
-    double cumulativeX = 0.0;
-    double cumulativeY = 0.0;
+    double turretEjectAngle;
 };
 
 class Drivebase
@@ -71,6 +74,8 @@ private:
     void resetOdometry(double x, double y, double radians, const RobotData &robotData);
     // void resetOdometry(double x, double y, double tanX, double tanY, const RobotData &robotData);
     void zeroEncoders();
+    
+    void calcTurretEjectAngle(DrivebaseData &drivebaseData);
 
     void sendStartPointChooser();
 

@@ -13,6 +13,8 @@ void Controller::TeleopPeriodic(const RobotData &robotData, ControllerData &cont
     updateBtnData(controllerData);
     updateControlData(robotData, controllerData, controlData);
     updateShootMode(robotData, controlData);
+
+    
 }
 
 void Controller::TestPeriodic(const RobotData &robotData, ControllerData &controllerData, ControlData &controlData){
@@ -93,13 +95,16 @@ void Controller::updateBtnData(ControllerData &controllerData)
 
     //secondary controls:
 
-    controllerData.sLXStick = -getAxis(1, 1);
+    controllerData.sLXStick = -getAxis(1, 0);
     controllerData.sLYStick = -getAxis(1, 1);
-    controllerData.sRXStick = -getAxis(1, 5);
+    controllerData.sRXStick = -getAxis(1, 4);
     controllerData.sRYStick = -getAxis(1, 5);
 
     controllerData.sLStickBtn = getBtn(1, 9);
     controllerData.sRStickBtn = getBtn(1, 10);
+
+    controllerData.sLStickBtnToggled = getBtnToggled(1, 9);
+    controllerData.sRStickBtnToggled = getBtnToggled(1, 10);
 
     controllerData.sLTrigger = getAxis(1, 2);
     controllerData.sRTrigger = getAxis(1, 3);
@@ -135,5 +140,6 @@ void Controller::updateBtnData(ControllerData &controllerData)
     controllerData.testBButton = getBtnToggled(2, 2);
     controllerData.testXButton = getBtnToggled(2, 3);
     controllerData.testYButton = getBtnToggled(2, 4);
+    controllerData.testLBumper = getBtnToggled(2, 5);
     controllerData.testRBumper = getBtnToggled(2, 6);
 }

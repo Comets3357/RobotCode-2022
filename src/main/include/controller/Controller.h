@@ -3,6 +3,7 @@
 #include <frc/DriverStation.h>
 #include <frc/Joystick.h>
 #include <frc/TimedRobot.h>
+#include <cmath>
 
 struct RobotData;
 
@@ -64,6 +65,7 @@ struct ControlData
     //shooter:
     bool saShooting; //gets hood at right angle, shooter wheel up to speed SEMIAUTO
     bool saFinalShoot; //makes belts run to actually fire balls SEMIAUTO
+    bool staticTurret;
 
     bool upperHubShot = true;
     bool cornerLaunchPadShot; //fixed long shot from the launch pad to upper hub SEMIAUTO
@@ -71,12 +73,15 @@ struct ControlData
     bool sideWallShot;
     bool fenderShot;
     bool hubShot;//fixed close shot to lower hub from infront of hub SEMIAUTO
-    bool shootUnassignedAsOpponent = false;
-    bool wrongBall; //if the ball isn't our alliance color eject ball out shooter SEMIAUTO  DEPRECATED (using ControlData.shootUnassignedAsOpponent)
+    bool autoRejectOpponentCargo = true;
+    bool wrongBall; //if the ball isn't our alliance color eject ball out shooter SEMIAUTO  DEPRECATED (using ControlData.autoRejectOpponentCargo)
     bool mShooterWheelForward; //get flywheel running MANUAL
     bool mShooterWheelBackward; //get flywheel running backward MANUAL
     double mHood; //moves hood up or down MANUAL (axis)
     double mTurret; // moves turret left or right MANUAL (axis)
+    float saTurretDirectionController; //move the turret in the direction of the joystick
+    bool usingTurretDirection;
+    float saDistanceOffset = 0; //everytime pressed, add or subtract six inches to distance
 
     //climb:
     bool saclimbTraversalSequence;
@@ -91,16 +96,12 @@ struct ControlData
 
     //benchTest:
 
-    bool startBenchTest = false;
-    bool incrementMotor;
-    bool incrementSpeed;
-    bool incrementSubsystem;
-
-    bool startBenchTestToggle;
-    bool incrementMotorToggle;
-    bool incrementSpeedToggle;
+    bool manualBenchTest = false;
+    bool autoBenchTest = false;
+    bool incrementMotor = false;
+    bool incrementSpeed = false;
+    bool incrementSubsystem = false;
     bool PIDModeToggle = false;
-    bool incrementSubsystemToggle;
 };
 
 struct ControllerData
@@ -127,6 +128,9 @@ struct ControllerData
 
     bool sLStickBtn = false;
     bool sRStickBtn = false;
+
+    bool sLStickBtnToggled = false;
+    bool sRStickBtnToggled = false;
 
     double sLTrigger = 0;
     double sRTrigger = 0;
@@ -161,6 +165,7 @@ struct ControllerData
     bool testXButton = false;
     bool testYButton = false;
     bool testRBumper = false;
+    bool testLBumper = false;
 };
 
 class Controller

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Constants.h"
-#include "common/ColorSensor.h"
 
 #include <frc/DriverStation.h>
 #include <rev/CANSparkMax.h>
@@ -13,6 +12,7 @@
 
 struct RobotData;
 
+// when you're having the deque show what's in the indexer
 enum Cargo
 {
     cargo_Alliance,
@@ -22,9 +22,11 @@ enum Cargo
 
 struct IndexerData
 {
-    std::deque<Cargo> indexerContents;
-    bool topBeamToggledOn; // sensed a ball
-    bool topBeamToggledOff; // stopped sensing a ball
+    std::deque<Cargo> indexerContents; // what's in the indexer
+
+    bool autoRejectTop;     // true if we are auto ejecting an opponent ball out the top of the indexer
+    bool autoRejectBottom;  // true if we are auto ejecting an opponent ball out the bottom of the indexer
+    
     bool eBallCountZero; // event boolean for when ball count goes from 1 to 0
 };
 
@@ -45,7 +47,7 @@ private:
     void manual(const RobotData &robotData, IndexerData &indexerData);
     void semiAuto(const RobotData &robotData, IndexerData &indexerData);
 
-    void debuggingStuff(const RobotData &robotData, IndexerData &indexerData);
+    // void debuggingStuff(const RobotData &robotData, IndexerData &indexerData);
 
     void incrementCount(const RobotData &robotData, IndexerData &indexerData);
     void newCargo(const RobotData &robotData, IndexerData &indexerData);
@@ -54,44 +56,51 @@ private:
     void mDecrement(const RobotData &robotData, IndexerData &indexerData);
     void count(const RobotData &robotData, IndexerData &indexerData);
 
+    bool pauseBelt(const RobotData &robotData, IndexerData &indexerData); 
     void saBeltControl(const RobotData &robotData, IndexerData &indexerData);
     void saWheelControl(const RobotData &robotData, IndexerData &indexerData);
-    bool pauseBelt(const RobotData &robotData, IndexerData &indexerData);
+    
 
+    void rejectDetection(const RobotData &robotData, IndexerData &indexerData);
 
+    // basic sensor getters
     bool getBottomBeam();
     bool getMidBeam();
     bool getTopBeam();
 
-    // get if it was toggled to state specified in bool broken
-    bool getBottomBeamToggled(bool broken);
-    bool getTopBeamToggled(bool broken); // not in use
-    void updateTopBeamToggled(IndexerData &indexerData);
+    // for sensor toggles
+    void updateSensors();
+    bool getTopBeamToggledOff();
+    bool getTopBeamToggledOn();
+    bool getBottomBeamToggledOff();
+    bool getBottomBeamToggledOn();
 
     void indexerBeltInit();
     void indexerWheelInit();
 
-    
+    void debuggingStuff(const RobotData &robotData, IndexerData &indexerData);
     
     frc::DigitalInput bottomBeamBreak{bottomBeamBreakPort};
     frc::DigitalInput midBeamBreak{midBeamBreakPort};
     frc::DigitalInput topBeamBreak{topBeamBreakPort};
 
     bool prevBottomBeam = false;
+    bool currentBottomBeam = false;
     bool prevTopBeam = false;
+    bool currentTopBeam = false;
+
+    // variables for auto rejection of opponent balls
+    bool ejectTop = false;
 
     // debounce counters to time debounce
     int bottomDebounceCount = 0;
     int topDebounceCount = 0;
     int pauseBeltCount = 0;
+    int decrementDelay = 0;
 
-    bool runWheel = false; // checks if one ball has left shooter so that you can run the wheel and get the other ball out
-
-    const double indexerWheelSpeed = 0.3;
-    const double indexerBeltSpeed = 0.6;
-
-
-    // ColorSensor colorSensor{}; //rev v3, for detecting ball color
+    const double indexerWheelSpeed = 0.6;
+    const double indexerShootingBeltSpeed = 0.8;
+    const double indexerIntakingBeltSpeed = 0.27;
 
     int lastTickBallCount;
 
