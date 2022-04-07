@@ -153,24 +153,9 @@ void Shooter::RobotPeriodic(const RobotData &robotData, ShooterData &shooterData
 {
     updateData(robotData, shooterData);
 
-    //if climbing, bring the turret forward and don't run any motors
-    if(robotData.controlData.mode == mode_climb_manual || robotData.controlData.mode == mode_climb_sa){
-        flyWheel.Set(0);
-        shooterHood.Set(0);
 
-        setTurret_Pos(turretMiddleDegrees, shooterData);
+    manual(robotData, shooterData);
 
-    }else{ 
-        if (robotData.controlData.mode == mode_teleop_manual)
-        {
-            manual(robotData, shooterData);
-        }
-        else if (robotData.controlData.mode == mode_teleop_sa)
-        {
-            semiAuto(robotData, shooterData);
-        }
-
-    }
 
 }
 
@@ -304,65 +289,9 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
 void Shooter::manual(const RobotData &robotData, ShooterData &shooterData)
 {
     
-    if(robotData.controlData.mShooterWheelForward){ //manual wheel forward
-        flyWheelLead_pidController.SetReference(2000, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
-        hoodRoller_pidController.SetReference(5500, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
+    flyWheelLead_pidController.SetReference(700, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
+    hoodRoller_pidController.SetReference(2000, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
 
-    }else if(robotData.controlData.mShooterWheelBackward){ //wheel backwards
-        flyWheel.Set(-0.6);
-        hoodRoller.Set(-0.8);
-
-    }else{ //stops flywheel
-        flyWheel.Set(0); 
-        hoodRoller.Set(0);
-
-    }
-
-    
-    shooterHood.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse, false);
-    shooterHood.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward, false);
-
-    //LOGIC FOR IF THE CLIMB ELEVATOR IS STILL EXTENDED
-    // if(robotData.climbData.elevatorEncoderPosition < -5){ //if the climb elevator is still up, set the turret to a specific location so that it doesn't hit anything
-    //     if(std::abs(robotData.shooterData.currentTurretAngle - turretMiddleDegrees) < 45){ //if current turret angle is closest to facing forward
-    //         setTurret_Pos(turretMiddleDegrees, shooterData);
-    //     }else if(std::abs(robotData.shooterData.currentTurretAngle - turretMiddleDegrees - 90) < 45){ //if current turret angle is closest to facing right
-    //         setTurret_Pos(turretMiddleDegrees - 90, shooterData);
-    //     }else if(std::abs(robotData.shooterData.currentTurretAngle - turretMiddleDegrees + 90) < 45){ //if current turret angle is closest to facing left
-    //         setTurret_Pos(turretMiddleDegrees + 90, shooterData);
-    //     }
-
-    // }else{
-    //     if(robotData.controlData.mTurret >= 0.015 || robotData.controlData.mTurret <= -0.015){ //accounts for deadzone
-    //         shooterTurret.Set(robotData.controlData.mTurret*.5);
-    //     }else{
-    //         shooterTurret.Set(0);
-    //     }
-    // }
-
-    //manual turret
-    if(robotData.controlData.mTurret >= 0.015 || robotData.controlData.mTurret <= -0.015){ //accounts for deadzone
-        shooterTurret.Set(robotData.controlData.mTurret*.5);
-    }else{
-        shooterTurret.Set(0);
-    }
-   
-    //hood to joystick controls
-     if(robotData.controlData.mHood >= 0.01 || robotData.controlData.mHood <= -0.01){ //accounts for deadzone
-        shooterHood.Set(-robotData.controlData.mHood*.2);
-    }else{
-        shooterHood.Set(0);
-    }
-
-    //zeros hood pos
-    if(robotData.controlData.mZeroHood)
-    {
-        shooterHoodEncoderRev.SetPosition(0);
-    }
-    if(robotData.controlData.mZeroTurret)
-    {
-        shooterTurretEncoderRev.SetPosition(0);
-    }
 
 }
 
