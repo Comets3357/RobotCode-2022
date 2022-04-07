@@ -2,7 +2,6 @@
 
 void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelightData, VisionLookup &visionLookup)
 {
-
     limelightData.validTarget = table->GetNumber("tv", 0.0); //valid target or not
     limelightData.xOffset =  table->GetNumber("tx", 0.0) * (pi/180); //RADIANS
     limelightData.yOffset =  table->GetNumber("ty", 0.0); //DEGREES
@@ -38,6 +37,11 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
 
     //TURRET DIFFERENCE
     limelightData.turretDifference = -robotData.limelightData.angleOffset; // turret turning is not consistent with limelight degrees off
+
+    if (std::abs(limelightData.turretDifference) < std::min((180/pi)*std::atan(12/limelightData.distanceOffset), (double)4))
+    {
+        limelightData.turretDifference = 0;
+    }
     //DESIRED TURRET
     limelightData.desiredTurretAngle = getTurretTurnAngle(limelightData, robotData); //position to go to to shoot
 
@@ -239,7 +243,6 @@ double Limelight::getHoodRollerVel(LimelightData &limelightData, const RobotData
 double Limelight::getTurretTurnAngle(LimelightData &limelightData, const RobotData &robotData){
 
     float desired = robotData.limelightData.turretDifference + robotData.shooterData.currentTurretAngle;
-    double theta = (180/pi)*(std::atan(1/robotData.limelightData.distanceOffset));
 
     if(desired < 0 || desired > turretFullRotationDegrees){ //if you're outside of the range, go through and add/subtract 360 to get in the range
 
@@ -266,10 +269,7 @@ double Limelight::getTurretTurnAngle(LimelightData &limelightData, const RobotDa
         unwrappingVal = desired;
     }
 
-    if (unwrappingVal < std::max(theta, 0.75))
-    {
-        unwrappingVal = 0;
-    }
+    
 
     return unwrappingVal;
 }
