@@ -3,9 +3,22 @@
 #include "Robot.h"
 #include <time.h>
 
+void Arduino::RobotInit()
+{
+    try{
+        arduino = new frc::SerialPort(9600, frc::SerialPort::Port::kUSB);
+    }
+    catch (...)
+    {
+        failedTransfers += 1;
+    }
+
+
+}
+
 void Arduino::RobotPeriodic(const RobotData &robotData, ArduinoData &arduinoData){
 
-    if (frc::DriverStation::IsEnabled()) {
+    if (frc::DriverStation::IsEnabled() && ArduinoWorks) {
 
         // this makes the robot LEDs be different colors depending on the mode
         // writes the value of colorCode to device address 1 (the left arduino), which then color codes the LEDs based upon the value
@@ -25,9 +38,9 @@ void Arduino::RobotPeriodic(const RobotData &robotData, ArduinoData &arduinoData
 
         char value[1] = {(char)colorCode};
 
-        try {
+        try { throw exception();
             if (lastColorCode != colorCode){
-                arduino.Write(value, 1);
+                arduino->Write(value, 1);
             }
         } catch (...)
         {
@@ -43,10 +56,10 @@ void Arduino::RobotPeriodic(const RobotData &robotData, ArduinoData &arduinoData
         arduinoData.ColorData = (int)colors[0];
         // frc::SmartDashboard::PutBoolean("isDisabled", false);
 
-        try{
-            if (arduino.GetBytesReceived() >= 1){
-                arduino.Read(colors,1);
-                arduino.Reset();
+        try{ throw exception();
+            if (arduino->GetBytesReceived() >= 1){
+                arduino->Read(colors,1);
+                arduino->Reset();
             }
         } catch (...)
         {
@@ -59,12 +72,13 @@ void Arduino::RobotPeriodic(const RobotData &robotData, ArduinoData &arduinoData
 }
 
 void Arduino::DisabledPeriodic(){
+    if (ArduinoWorks){
     colorCode = 0;
     char value[1] = {(char)colorCode};
 
-    try {
+    try { throw exception();
         if (lastColorCode != colorCode){
-            arduino.Write(value, 1);
+            arduino->Write(value, 1);
         }
     } catch (...)
     {
@@ -74,4 +88,5 @@ void Arduino::DisabledPeriodic(){
     
 
     lastColorCode = colorCode;
+    }
 }

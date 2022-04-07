@@ -11,13 +11,14 @@ class Arduino {
     public:
         void RobotPeriodic(const RobotData &robotData, ArduinoData &arduinoData);
         void DisabledPeriodic();
+        void RobotInit();
 
         int failedTransfers = 0;
 
     private:
         bool ArduinoWorks = true;
         // in constructor port, deviceaddress
-        frc::SerialPort arduino = frc::SerialPort(9600, frc::SerialPort::Port::kUSB);
+        frc::SerialPort *arduino;
 
         int colorCode = 6;
         int lastColorCode = 6;

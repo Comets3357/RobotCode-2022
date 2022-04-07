@@ -55,6 +55,7 @@ private:
     ColorSensor colorSensor{};
     BenchTest benchTest{};
     Jetson jetson{};
+    NetworkTables networkTables{};
     
 
     // subsystems

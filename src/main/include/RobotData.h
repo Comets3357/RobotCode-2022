@@ -12,6 +12,8 @@
 #include "common/ColorSensor.h"
 #include "common/BenchTest.h"
 
+#include "utils/NetworkTables.h"
+
 #include "auton/Auton.h"
 
 #include "subsystems/Drivebase.h"
