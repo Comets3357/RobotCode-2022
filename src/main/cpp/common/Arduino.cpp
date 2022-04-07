@@ -19,22 +19,23 @@ void Arduino::RobotInit()
 void Arduino::RobotPeriodic(const RobotData &robotData, ArduinoData &arduinoData){
 
     if (frc::DriverStation::IsEnabled() && ArduinoWorks) {
-
+        ballCount = robotData.indexerData.indexerContents.size();
         // this makes the robot LEDs be different colors depending on the mode
         // writes the value of colorCode to device address 1 (the left arduino), which then color codes the LEDs based upon the value
         if (robotData.shooterData.readyShoot){
-            colorCode = 5; //ready to shoot
+            mode = 5; //ready to shoot
         } else if (robotData.controlData.mode == Mode::mode_teleop_manual){
-            colorCode = 4; //teleop manual mode
+            mode = 4; //teleop manual mode
         } else if (robotData.controlData.mode == Mode::mode_climb_sa){
-            colorCode = 3; //climb semiauto mode
+            mode = 3; //climb semiauto mode
         } else if (robotData.controlData.mode == Mode::mode_climb_manual){
-            colorCode = 2; //climb manual mode
+            mode = 2; //climb manual mode
         } else if (robotData.controlData.mode == Mode::mode_teleop_sa){
-            colorCode = 1; //teleop semiauto mode
+            mode = 1; //teleop semiauto mode
         }
 
         //colorCode = 0; //uncomment for reveal video
+        colorCode = (ballCount * 10) + mode;
 
         char value[1] = {(char)colorCode};
 
@@ -50,6 +51,7 @@ void Arduino::RobotPeriodic(const RobotData &robotData, ArduinoData &arduinoData
         
 
         lastColorCode = colorCode;
+        lastBallCount = ballCount;
 
         // frc::SmartDashboard::PutNumber("Color", (int)colors[0]);
         // frc::SmartDashboard::PutNumber("Arduino colorCode for LEDs", colorCode);

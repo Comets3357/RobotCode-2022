@@ -22,5 +22,8 @@ class Arduino {
 
         int colorCode = 6;
         int lastColorCode = 6;
+        int ballCount;
+        int lastBallCount;
+        int mode;
         char colors[1];
 };
