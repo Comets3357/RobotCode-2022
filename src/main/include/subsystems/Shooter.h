@@ -117,7 +117,7 @@ class Shooter{
         //double hoodAbsValues [49] = { };
 
         //Flywheel Lead
-        rev::CANSparkMax flyWheel = rev::CANSparkMax(shooterWheelLeadID, rev::CANSparkMax::MotorType::kBrushless);
+        rev::CANSparkMax flyWheel = rev::CANSparkMax(shooterWheelID, rev::CANSparkMax::MotorType::kBrushless);
         rev::SparkMaxRelativeEncoder flyWheelLeadEncoder = flyWheel.GetEncoder();
         rev::SparkMaxPIDController flyWheelLead_pidController = flyWheel.GetPIDController();
 

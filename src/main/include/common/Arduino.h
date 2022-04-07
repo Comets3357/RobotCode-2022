@@ -10,7 +10,7 @@ struct ArduinoData {
 class Arduino {
     public:
         void RobotPeriodic(const RobotData &robotData, ArduinoData &arduinoData);
-        void DisabledPeriodic();
+        void DisabledPeriodic(ArduinoData &arduinoData);
 
         int failedTransfers = 0;
 

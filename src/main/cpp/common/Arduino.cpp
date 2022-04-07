@@ -58,7 +58,8 @@ void Arduino::RobotPeriodic(const RobotData &robotData, ArduinoData &arduinoData
     
 }
 
-void Arduino::DisabledPeriodic(){
+void Arduino::DisabledPeriodic(ArduinoData &arduinoData){
+    //sets the LEDs to rainbow
     colorCode = 0;
     char value[1] = {(char)colorCode};
 
@@ -66,12 +67,21 @@ void Arduino::DisabledPeriodic(){
         if (lastColorCode != colorCode){
             arduino.Write(value, 1);
         }
-    } catch (...)
-    {
+    } catch (...){
         failedTransfers += 1;
     }
-        
-    
 
     lastColorCode = colorCode;
+
+    //allows the color sensor to function while the robot is disabled (here for bench test)
+    arduinoData.ColorData = (int)colors[0];
+
+    try{
+        if (arduino.GetBytesReceived() >= 1){
+            arduino.Read(colors,1);
+            arduino.Reset();
+        }
+    } catch (...){
+        failedTransfers += 1;
+    }
 }

@@ -15,7 +15,7 @@ void BenchTest::TestPeriodic(const RobotData &robotData, BenchTestData &benchTes
     frc::SmartDashboard::PutBoolean("Bench test automatic mode", robotData.controlData.autoBenchTest); //auto bench test
     frc::SmartDashboard::PutNumber("Bench test motor stage", robotData.benchTestData.stage); //prints the motor stage
     frc::SmartDashboard::PutNumber("Bench test subsystem stage", benchTestData.testStage); //prints the subsystem we're currently on
-    frc::SmartDashboard::PutNumber("Bench test power", robotData.benchTestData.currentSpeed); //prints the current testing speed
+    frc::SmartDashboard::PutNumber("Bench test motor increment power", robotData.benchTestData.currentSpeed); //prints the current testing speed (doesn't update for all motors)
     frc::SmartDashboard::PutBoolean("Bench test PID mode", benchTestData.PIDMode); //PID mode
 
     //toggles PID mode
@@ -58,7 +58,7 @@ void BenchTest::TestPeriodic(const RobotData &robotData, BenchTestData &benchTes
             benchTestData.stage = 0;
             benchTestData.currentSpeed = 0;
         } else if (benchTestData.testStage == 5){
-            benchTestData.testStage = BenchTestStage::BenchTestStage_Climb;//resets back to climb in case you want to test that again (bench test starts in climb)
+            benchTestData.testStage = BenchTestStage::BenchTestStage_Climb; //resets back to climb in case you want to test that again (bench test starts in climb)
             benchTestData.stage = 0;
             benchTestData.currentSpeed = 0;
         }
@@ -74,28 +74,23 @@ void BenchTest::TestPeriodic(const RobotData &robotData, BenchTestData &benchTes
 
         //stage 5 for testing LEDs
         if (benchTestData.testStage == 5){
-            if (benchTestData.stage == 0) controlData.mode = mode_climb_manual;
-            else if (benchTestData.stage == 1) controlData.mode = mode_climb_sa;
-            else if (benchTestData.stage == 2) controlData.mode = mode_teleop_manual;
-            else if (benchTestData.stage == 3) controlData.mode = mode_teleop_sa;
+            if (benchTestData.stage == 0) controlData.mode = Mode::mode_climb_manual;
+            else if (benchTestData.stage == 1) controlData.mode = Mode::mode_climb_sa;
+            else if (benchTestData.stage == 2) controlData.mode = Mode::mode_teleop_manual;
+            else if (benchTestData.stage == 3) controlData.mode = Mode::mode_teleop_sa;
         }
     }
 
     //AUTOMATIC BENCH TEST
     if (controlData.autoBenchTest){
-
-        //janky solution to skipping drivebase; basically at the end of climb, stage gets set to -1, and then here to 0, which
+        //janky solution to skipping drivebase: basically at the end of climb, stage gets set to -1, and then here to 0, which
         //stops it from skipping drivebase. weird solution, kinda janky, not how it should work, but it works, so cool
         if (benchTestData.stage < 0) benchTestData.stage = 0;
 
         //increments motor every 4 seconds (unless the motor has limits/dead stops)
-        //this could all be on one line but I tried that and it made my brain hurt so I broke it up into 3 separate if statements
-        if (benchTestData.testStage != BenchTestStage::BenchTestStage_Climb){
-            if (benchTestData.testStage != BenchTestStage::BenchTestStage_Intake && benchTestData.testStage != BenchTestStage::BenchTestStage_Shooter){
-                increment += .005; //if it's not climb, intake, or shooter, then the automatic bench test increments based on time
-            } else if (benchTestData.stage != 0 && benchTestData.stage != 1){
-                increment += .005; //if it's intake or shooter but it isn't pivoting the intake or moving the hood in or out, then the automatic bench tests increments based on time
-            }
+        //I don't recommend actually reading this if statement unless you want your brain to hurt
+        if (!(benchTestData.testStage == BenchTestStage::BenchTestStage_Climb) && !(benchTestData.testStage == BenchTestStage::BenchTestStage_Intake && (benchTestData.stage == 0 || benchTestData.stage == 1)) && !(benchTestData.testStage == BenchTestStage::BenchTestStage_Shooter && (benchTestData.stage == 0 || benchTestData.stage == 1 || benchTestData.stage == 3 || benchTestData.stage == 4))){
+            increment += .005; //if it's climb, and it's not intake or shooter while pivoting the intake or moving the hood in or out or rotating the shooter, then automatic bench test increments based on time
         }
 
         //sets the speed based on the time; starts slow, and speeds up every second
@@ -104,12 +99,12 @@ void BenchTest::TestPeriodic(const RobotData &robotData, BenchTestData &benchTes
         else if (increment <= .75) benchTestData.currentSpeed = .3;
         else if (increment <= 1) benchTestData.currentSpeed = .4;
 
-        //miscellaneous stage 5 for LEDs
+        //miscellaneous stage 5 for LEDs (just runs through all of the different colors - should be enough to check if the arduino is working?)
         if (benchTestData.testStage == 5 && benchTestData.stage == 0){
-            if (increment <= .25) controlData.mode = mode_climb_manual;
-            else if (increment <= .5) controlData.mode = mode_climb_sa;
-            else if (increment <= .75) controlData.mode = mode_teleop_manual;
-            else if (increment <= 1) controlData.mode = mode_teleop_sa;
+            if (increment <= .25) controlData.mode = Mode::mode_climb_manual;
+            else if (increment <= .5) controlData.mode = Mode::mode_climb_sa;
+            else if (increment <= .75) controlData.mode = Mode::mode_teleop_manual;
+            else if (increment <= 1) controlData.mode = Mode::mode_teleop_sa;
         }
 
         //resets the time increment when moving between motors
@@ -122,7 +117,7 @@ void BenchTest::TestPeriodic(const RobotData &robotData, BenchTestData &benchTes
         if (robotData.climbData.armsLowerLimit) benchTestData.stage = 1;
         else if (robotData.climbData.armsUpperLimit) benchTestData.stage = 2;
         else if (robotData.climbData.elevatorUpperLimit) benchTestData.stage = 3;
-        else if (robotData.climbData.elevatorLowerLimit) benchTestData.stage = -1; //special case explained on lines 27-28
+        else if (robotData.climbData.elevatorLowerLimit) benchTestData.stage = -1; //special case explained on lines 86-87
         else if (robotData.intakeData.bottomDeadStop) benchTestData.stage = 1;
         else if (robotData.intakeData.topDeadStop) benchTestData.stage = 2;
         else if (robotData.shooterData.hoodTopDeadStop) benchTestData.stage = 1;
@@ -148,6 +143,9 @@ void BenchTest::TestPeriodic(const RobotData &robotData, BenchTestData &benchTes
         } else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Drivebase && benchTestData.stage >= 4){
             benchTestData.stage = 0;
             benchTestData.testStage = BenchTestStage::BenchTestStage_Indexer;
+        } else if (benchTestData.testStage == 5 && benchTestData.stage >= 3){ //miscellaneous stage for LEDs and the 8 seconds of delay at the end before rerunning bench test
+            benchTestData.stage = 0;
+            benchTestData.testStage = BenchTestStage::BenchTestStage_Climb;
         }
     }
 }

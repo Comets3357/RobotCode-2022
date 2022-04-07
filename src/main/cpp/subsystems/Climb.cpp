@@ -537,10 +537,10 @@ void Climb::TestInit(ClimbData &climbData){
     elevatorLimitSwitchWorking(climbData); //checks if the limits switch starts in false, which it's supposed to; if it doesn't start in false, then the bench test won't run
     
     //sets pids for bench test
-    climbElevator_pidController.SetP(0.18, 0);
-    climbElevator_pidController.SetOutputRange(-.7, .7, 0);
-    climbArms_pidController.SetP(0.25, 0);
-    climbArms_pidController.SetOutputRange(-1, 1, 0);
+    // climbElevator_pidController.SetP(0.18, 0);
+    // climbElevator_pidController.SetOutputRange(-.7, .7, 0);
+    // climbArms_pidController.SetP(0.25, 0);
+    // climbArms_pidController.SetOutputRange(-1, 1, 0);
 }
 
 void Climb::TestPeriodic(const RobotData &robotData, ClimbData &climbData){
@@ -569,7 +569,7 @@ void Climb::TestPeriodic(const RobotData &robotData, ClimbData &climbData){
                     climbData.benchTestClimbElevatorSpeed = 0; //sets the elevator speed
                 } else {
                     climbData.benchTestClimbElevatorSpeed = 0; //sets elevator speed to 0
-                    climbArms_pidController.SetReference(-250, rev::CANSparkMax::ControlType::kPosition, 0); //arms move according to pid
+                    climbArms_pidController.SetReference(-250, rev::CANSparkMax::ControlType::kPosition); //arms move according to pid
                 }
             } else if (robotData.benchTestData.stage == 1){
                 //move climb arms backwards
@@ -578,7 +578,7 @@ void Climb::TestPeriodic(const RobotData &robotData, ClimbData &climbData){
                     climbData.benchTestClimbElevatorSpeed = 0;
                 } else {
                     climbData.benchTestClimbElevatorSpeed = 0;
-                    climbArms_pidController.SetReference(0, rev::CANSparkMax::ControlType::kPosition, 0); //arms move according to pid
+                    climbArms_pidController.SetReference(0, rev::CANSparkMax::ControlType::kPosition); //arms move according to pid
                 }
             } else if (robotData.benchTestData.stage == 2){
                 //move climb elevator up
@@ -587,7 +587,7 @@ void Climb::TestPeriodic(const RobotData &robotData, ClimbData &climbData){
                     climbData.benchTestClimbElevatorSpeed = -.1;
                 } else {
                     climbData.benchTestClimbArmsSpeed = 0;
-                    climbElevator_pidController.SetReference(-140, rev::CANSparkMax::ControlType::kPosition, 0); //elevator moves according to pid
+                    climbElevator_pidController.SetReference(-140, rev::CANSparkMax::ControlType::kPosition); //elevator moves according to pid
                 }
             } else if (robotData.benchTestData.stage == 3){
                 //move climb elevator down
@@ -596,7 +596,7 @@ void Climb::TestPeriodic(const RobotData &robotData, ClimbData &climbData){
                     climbData.benchTestClimbElevatorSpeed = .1;
                 } else {
                     climbData.benchTestClimbArmsSpeed = 0;
-                    climbElevator_pidController.SetReference(0, rev::CANSparkMax::ControlType::kPosition, 0); //elevator moves according to pid
+                    climbElevator_pidController.SetReference(0, rev::CANSparkMax::ControlType::kPosition); //elevator moves according to pid
                 }
             } else {
                 climbData.benchTestClimbArmsSpeed = 0; //if the stage isn't within 0 to 3, then speeds get set to 0

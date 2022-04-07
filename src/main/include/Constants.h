@@ -22,7 +22,7 @@ static const double
 
     //comp bot intake pivot positions
     absOut = 0.292,
-    absIn = 0.435,
+    absIn = 0.419,
     revOut = 6.14,
     revIn = 0;
 
@@ -33,48 +33,47 @@ static const int
 
 // shooter IDs
 static const int
-    shooterWheelLeadID = 31,
+    shooterWheelID = 31,
     shooterHoodID = 33, 
     shooterTurretID = 34, 
     hoodRollerID = 32; 
 
 static const float
     //comp bot shooter hood positions
-    hoodabsOut = 0.07,
-    hoodabsIn = 0.945,
+    hoodabsOut = 0.058,
+    hoodabsIn = 0.956,
     hoodrevOut = -38,
     hoodrevIn = 0,
     hoodAngleOut = 43,
     hoodAngleIn = 21,
 
     //PRATLAS shooter hood positions
-    // hoodabsOut = 0.103,
-    // hoodabsIn = 0.98,
+    // hoodabsOut = 0.083,
+    // hoodabsIn = 0.987,
     // hoodrevOut = -38,
     // hoodrevIn = 0,
     // hoodAngleOut = 43,
     // hoodAngleIn = 21,
 
-    //turret positions
+    // //ATLAS turret positions
     turretZeroDegrees = 0, 
-    turretFullRotationDegrees = 540, 
+    turretFullRotationDegrees = 450, //540
     turretMiddleDegrees = (turretFullRotationDegrees - turretZeroDegrees)/2,
-    turretZeroRev = 85.74, //87.5
-    turretFullRotationRev_CCW = 174.85, //174.85
-    turretFullRotationRev_C = 0, //0
-    turretZeroAbs = 0.499, //0.479
-    turretFullRotationAbs_CCW = 0.933, //0.91
-    turretFullRotationAbs_C = 0.076; //0.05
+    turretFullRotationRev_CCW = 140.16, //174.85
+    turretFullRotationRev_C = 0, //0 
+    turretMiddleRev = turretFullRotationRev_CCW/2,
+    turretFullRotationAbs_CCW = 0.84, 
+    turretFullRotationAbs_C = 0.157; 
 
     //FOR PRATLAS
     // turretZeroDegrees = 5, //15
     // turretFullRotationDegrees = 535, //540
-    // turretMiddleDegrees = (turretFullRotationDegrees - turretZeroDegrees)/2,
-    // turretZeroRev = 87.5, //87.5
+    // turretMiddleDegrees = 273,
+    // turretZeroRev = 89, //87.5
     // turretFullRotationRev_CCW = 174.85, //174.85
     // turretFullRotationRev_C = 0, //0
-    // turretZeroAbs = 0.479, //0.479
-    // turretFullRotationAbs_CCW = 0.91, //0.91
+    // turretZeroAbs = 0.486, //0.479
+    // turretFullRotationAbs_CCW = 0.906, //0.91
     // turretFullRotationAbs_C = 0.05; //0.05
 
 
@@ -94,12 +93,12 @@ static const double
 static const float
     outerLaunchHood = hoodrevOut,
     outerLaunchVel = 1990,
-    innerLaunchHood = hoodrevOut,
-    innerLaunchVel = 2040,
-    wallHood = -32.33,
-    wallVel = 1860,
-    fenderHood = -0.25,
-    fenderVel = 1690,
+    innerLaunchHood = -35,
+    innerLaunchVel = 1620,
+    wallHood = -25,
+    wallVel = 1500,
+    fenderHood = -2.5,
+    fenderVel = 1500,
 
     outerLaunchHood_Low = hoodrevOut,
     outerLaunchVel_Low = 1990,
@@ -107,8 +106,9 @@ static const float
     innerLaunchVel_Low = 2040,
     wallHood_Low = -32.33,
     wallVel_Low = 1860,
-    fenderHood_Low = -0.25,
-    fenderVel_Low = 1240;
+    fenderHood_Low = -2.5,
+    fenderVel_Low = 1500;
+
 
 // climb
 static const int
@@ -139,7 +139,3 @@ static const int
     bottomBeamBreakPort = 3,
     midBeamBreakPort = 9,
     topBeamBreakPort = 5;
-
-
-
-

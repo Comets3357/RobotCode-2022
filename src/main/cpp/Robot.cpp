@@ -83,7 +83,7 @@ void Robot::DisabledPeriodic()
     shooter.DisabledPeriodic(robotData, robotData.shooterData);
     intake.DisabledPeriodic(robotData, robotData.intakeData);
     indexer.DisabledPeriodic(robotData, robotData.indexerData);
-    arduino.DisabledPeriodic();
+    arduino.DisabledPeriodic(robotData.arduinoData);
 }
 
 
@@ -95,8 +95,10 @@ void Robot::TestInit(){
     benchTest.TestInit(robotData.benchTestData, robotData.controlData);
     drivebase.RobotInit();
     intake.RobotInit();
+    intake.TestInit();
     indexer.RobotInit();
-    //shooter.RobotInit();
+    shooter.RobotInit(robotData.shooterData);
+    shooter.TestInit();
     climb.RobotInit();
     climb.TestInit(robotData.climbData);
 }
@@ -107,9 +109,9 @@ void Robot::TestPeriodic(){
     controller.TestPeriodic(robotData, robotData.controllerData, robotData.controlData);
     benchTest.TestPeriodic(robotData, robotData.benchTestData, robotData.controlData);
 
+    indexer.TestPeriodic(robotData, robotData.indexerData);
     climb.TestPeriodic(robotData, robotData.climbData);
     drivebase.TestPeriodic(robotData, robotData.drivebaseData);
-    indexer.TestPeriodic(robotData, robotData.indexerData);
     intake.TestPeriodic(robotData, robotData.intakeData);
     shooter.TestPeriodic(robotData, robotData.shooterData);
     arduino.RobotPeriodic(robotData, robotData.arduinoData);

@@ -777,11 +777,11 @@ void Shooter::turretControlTurn(float controlTurretDirection, const RobotData &r
 
 void Shooter::TestInit(){
     //sets pids for bench test
-    shooterHood_pidController.SetP(0.378, 0);
-    shooterHood_pidController.SetOutputRange(-0.5, 0.5, 0);
+    // shooterHood_pidController.SetP(0.378, 0);
+    // shooterHood_pidController.SetOutputRange(-0.5, 0.5, 0);
 
-    shooterTurret_pidController.SetP(0.12, 0); 
-    shooterTurret_pidController.SetOutputRange(-1, 1, 0);
+    // shooterTurret_pidController.SetP(0.12, 0); 
+    // shooterTurret_pidController.SetOutputRange(-1, 1, 0);
 }
 
 void Shooter::TestPeriodic(const RobotData &robotData, ShooterData &shooterData){
@@ -821,7 +821,7 @@ void Shooter::TestPeriodic(const RobotData &robotData, ShooterData &shooterData)
                     shooterData.benchTestTurretSpeed = 0; //sets the speed of the turret
                 } else {
                     shooterData.benchTestFlyWheelSpeed = 0;
-                    shooterHood_pidController.SetReference(hoodrevOut, rev::CANSparkMaxLowLevel::ControlType::kPosition, 0); //runs the hood out
+                    shooterHood_pidController.SetReference(hoodrevOut, rev::CANSparkMaxLowLevel::ControlType::kPosition); //runs the hood out
                     shooterData.benchTestTurretSpeed = 0;
                 }
             } else if (robotData.benchTestData.stage == 1){
@@ -832,7 +832,7 @@ void Shooter::TestPeriodic(const RobotData &robotData, ShooterData &shooterData)
                     shooterData.benchTestTurretSpeed = 0;
                 } else {
                     shooterData.benchTestFlyWheelSpeed = 0;
-                    shooterHood_pidController.SetReference(hoodrevIn, rev::CANSparkMaxLowLevel::ControlType::kPosition, 0); //runs the hood in
+                    shooterHood_pidController.SetReference(hoodrevIn, rev::CANSparkMaxLowLevel::ControlType::kPosition); //runs the hood in
                     shooterData.benchTestTurretSpeed = 0;
                 }
             } else if (robotData.benchTestData.stage == 2){
@@ -883,7 +883,7 @@ void Shooter::TestPeriodic(const RobotData &robotData, ShooterData &shooterData)
 
         //if statement to make sure the speed doesn't interfere with PID mode
         if (!robotData.benchTestData.PIDMode){
-            //sets the speed of the motors according to the variables set in the above if statement ^ (unless the hood hit a dead stop)
+            //sets the speed of the motors according to the variables set in the above if statement ^ (unless the motor hit a dead stop)
             if (!shooterData.hoodTopDeadStop && !shooterData.hoodBottomDeadStop){
                 shooterHood.Set(shooterData.benchTestShooterHoodSpeed);
             } else {

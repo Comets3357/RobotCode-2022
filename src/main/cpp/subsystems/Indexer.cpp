@@ -66,6 +66,8 @@ void Indexer::updateData(const RobotData &robotData, IndexerData &indexerData)
     debuggingStuff(robotData, indexerData);
 
     // frc::SmartDashboard::PutBoolean("top beam break", getTopBeam());
+
+    //for bench test so we can test sensors while disabled - don't comment out
     frc::SmartDashboard::PutBoolean("Indexer top beam break sensor", getTopBeam());
     frc::SmartDashboard::PutBoolean("Indexer middle beam break sensor", getMidBeam());
     frc::SmartDashboard::PutBoolean("Indexer bottom beam break sensor", getBottomBeam());
