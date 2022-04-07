@@ -67,8 +67,8 @@ void NetworkTables::TeleopPeriodic(const RobotData &robotData)
     dbInverted.SetDouble(robotData.controlData.dbInverted);
     turnResponsive.SetDouble(robotData.controlData.turnResponsive);
     // Indexer
-    indexerTop.SetDouble(robotData.indexerData.topIndexer);
-    indexerBottom.SetDouble(robotData.indexerData.bottomIndexer);
+    // indexerTop.SetDouble(robotData.indexerData.topIndexer);
+    // indexerBottom.SetDouble(robotData.indexerData.bottomIndexer);
     eBallCountZero.SetDouble(robotData.indexerData.eBallCountZero);
     // Shooter
     readyShoot.SetDouble(robotData.shooterData.readyShoot);
