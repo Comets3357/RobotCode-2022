@@ -12,6 +12,7 @@ void Robot::RobotInit()
     indexer.RobotInit();
     shooter.RobotInit(robotData.shooterData);
     climb.RobotInit();
+    networkTables.RobotInit();
 }
 
 void Robot::RobotPeriodic()
@@ -68,6 +69,7 @@ void Robot::TeleopPeriodic()
     timer.EnabledPeriodic(robotData.timerData);
     controller.TeleopPeriodic(robotData, robotData.controllerData, robotData.controlData);
     // arduino.RobotPeriodic(robotData, robotData.arduinoData);
+    networkTables.TeleopPeriodic(robotData);
 }
 
 void Robot::DisabledInit()
