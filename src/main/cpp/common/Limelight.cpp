@@ -48,6 +48,7 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     //printing data to the dashboard
     frc::SmartDashboard::PutNumber("distance offset", robotData.limelightData.distanceOffset/12);
     frc::SmartDashboard::PutNumber("desired turret", robotData.limelightData.desiredTurretAngle);
+    frc::SmartDashboard::PutNumber("avg desired turret", robotData.limelightData.avgDesiredTurretAngle);
 
     //DECOMMISSIONED
     //updates the angle to be in degrees rather than radians
@@ -272,23 +273,27 @@ double Limelight::getTurretTurnAngle(LimelightData &limelightData, const RobotDa
 /**
  * Returns the avg distance of the last 5 cycles to make the data smoother while shooting
  */
-// void Limelight::averageDistance(const RobotData &robotData, LimelightData &limelightData){
-//     // double distance = robotData.limelightData.desiredTurretAngle;
-//     // double total = 0;
+void Limelight::averageDesiredTurret(const RobotData &robotData, LimelightData &limelightData){
+    double desiredTurretAngle = robotData.limelightData.desiredTurretAngle;
+    double total = 0;
 
-//     // //if size is less then 6 keep adding updated distances until the deque is full
-//     // if(robotData.limelightData.distances.size() < 6){
-//     //     limelightData.distances.push_back(distance);
-//     // }else{ //once it's full run through the deque and add it to the total
-//     //     for(size_t i = 0; i < robotData.limelightData.distances.size(); i ++){
-//     //         total += robotData.limelightData.distances.at(i);
-//     //     }
+    if(robotData.limelightData.unwrapping){
+        limelightData.desiredTurretAngles.clear();
+    }
 
-//     //     //make sure to remove the first value and add an updated distance to the end
-//     //     limelightData.distances.pop_front();
-//     //     limelightData.distances.push_back(distance);
-//     // }
+    //if size is less then 6 keep adding updated distances until the deque is full
+    if(robotData.limelightData.desiredTurretAngles.size() < 6){
+        limelightData.desiredTurretAngles.push_back(desiredTurretAngle);
+    }else{ //once it's full run through the deque and add it to the total
+        for(size_t i = 0; i < robotData.limelightData.desiredTurretAngles.size(); i ++){
+            total += robotData.limelightData.desiredTurretAngles.at(i);
+        }
 
-//     // //return the average of those distances
-//     // limelightData.avgDistance = total / (robotData.limelightData.distances.size().to<double>());
-// }
+        //make sure to remove the first value and add an updated distance to the end
+        limelightData.desiredTurretAngles.pop_front();
+        limelightData.desiredTurretAngles.push_back(desiredTurretAngle);
+    }
+
+    //return the average of those distances
+    limelightData.avgDesiredTurretAngle = total / ((double)robotData.limelightData.desiredTurretAngles.size());
+}

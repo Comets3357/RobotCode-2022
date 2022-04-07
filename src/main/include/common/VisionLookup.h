@@ -18,7 +18,7 @@ class VisionLookup
         double getValue(double key);
         double getLowValue(double key);
         double getVelocity(double key);
-        double getLowVelocity(double key);
+        //double getLowVelocity(double key);
 
         double highestVal();
         double lowestVal();
@@ -33,11 +33,11 @@ class VisionLookup
         //high hub visionMap
         unordered_map<double, double> visionMap;
         //low hub visionMap
-        unordered_map<double, double> lowVisionMap;
+        unordered_map<double, double> forwardVisionMap;
 
         //high hub velocity values
         unordered_map<double, double> velocityMap;
         //low hub velocity values
-        unordered_map<double, double> lowVelocityMap;
+        unordered_map<double, double> fowardVelocityMap;
 
 };

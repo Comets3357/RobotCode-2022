@@ -17,11 +17,16 @@ void Timer::EnabledInit(TimerData &timerData) {
 void Timer::EnabledPeriodic(TimerData &timerData)
 {
     timerData.secSinceEnabled = timer.Get().to<double>();
-    // frc::SmartDashboard::PutNumber("timerData.secSinceEnabled", timerData.secSinceEnabled);
+    frc::SmartDashboard::PutNumber("timerData.secSinceEnabled", timerData.secSinceEnabled);
 }
 
-// void Timer::DisabledInit(TimerData &timerData)
-// {
-//     enabledSPointSet = false;
-//     timerData.secSinceEnabled = 0;
-// }
+void Timer::DisabledInit(TimerData &timerData)
+{
+    initTimer.Reset();
+    initTimer.Start();
+    timerData.secSinceInit = 0;
+}
+
+void Timer::DisabledPeriodic(TimerData &timerData) {
+    timerData.secSinceInit = initTimer.Get().to<double>();
+}

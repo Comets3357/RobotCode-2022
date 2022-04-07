@@ -45,6 +45,7 @@ struct ControlData
     bool mIntakeUp; // (hold)
     bool mIntakeRollersIn; //runs intake forward MANUAL (axis)
     bool mIntakeRollersOut; //runs intake backward MANUAL (axis)
+    bool mZeroIntakePivot;
     bool mZeroHood; //set the hood encoder to zero MANUAL
     bool mZeroTurret; //set the turret encoder to zero MANUAL
     bool saIntake; //runs the intake rollers and brings intake down and the indexer to intake balls SEMIAUTO
@@ -84,12 +85,14 @@ struct ControlData
     float saDistanceOffset = 0; //everytime pressed, add or subtract six inches to distance
 
     //climb:
-    bool saclimbTraversalSequence;
-    bool saclimbHeightSequence;
-    bool sacancelSequence;
-    bool saclimbInit;
+    bool saClimbTraversalSequence;
+    bool saClimbHeightSequence;
+    bool saCancelSequence;
+    bool saClimbInit;
     bool climbZeroing;
-    bool sapauseSequence;
+    bool saPauseSequence;
+    bool mClimbZeroElevatorRev;
+    bool mClimbZeroPivotArmsRev;
     
     double mElevatorExtension;
     double mArmPivot;

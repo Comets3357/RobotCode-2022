@@ -53,12 +53,15 @@ class Shooter{
         double HoodconvertFromAngleToAbs(double angle);
         double HoodconvertFromAbsToAngle(double abs);
         double HoodabsoluteToREV(double value);
+        double hoodRevtoAngle(double value);
+        double hoodAngletoRev(double value);
 
         //converting turret
         double turretConvertFromAngleToAbs(double angle);
         double turretConvertFromAbsToAngle(double abs);
         double turretAbsoluteToREV(double value);
         double turretGyroOffset(double value);
+        double turretRevtoAngle(double rev);
         double averageTurretGyroOffset(const RobotData &robotData, ShooterData &shooterData);
         // double getFieldRelativeToRobotRelativeTurret(const RobotData &robotData, ShooterData &shooterData);
         double getFieldRelativeTurretAngle(const RobotData &robotData, ShooterData &shooterData);
@@ -105,6 +108,8 @@ class Shooter{
         int tickCount;
         double validTargetTurretPos;
         bool isTurretStatic;
+        bool isZeroed_Turret = true; //checks if the abs ecoder is zeroed at the beginning is a flag
+        bool isZeroed_Hood = true;
 
         //for deprecated mode function
         //int modeCounter;
