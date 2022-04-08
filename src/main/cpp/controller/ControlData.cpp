@@ -111,6 +111,7 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
 
     controlData.saShooting = controllerData.sXBtnToggled && !controlData.shift;
     controlData.saFinalShoot = (controllerData.sYBtn || (controllerData.sBBtn && robotData.drivebaseData.dbStationaryForShot)) && !controlData.shift;
+    controlData.saEjectThroughShooter = controllerData.sRBumper && !controlData.shift;
     
     if(controlData.mode == mode_teleop_sa){
         if(controllerData.sRCenterBtnToggled){
