@@ -7,19 +7,22 @@ void Arduino::RobotInit()
 {
     try{
         arduino = new frc::SerialPort(9600, frc::SerialPort::Port::kUSB);
+        frc::SmartDashboard::PutNumber("LEDS", 1);
     }
     catch (...)
     {
-        failedTransfers += 1;
+        ArduinoWorks = false;
     }
 
 
 }
 
 void Arduino::RobotPeriodic(const RobotData &robotData, ArduinoData &arduinoData){
-
+    frc::SmartDashboard::PutNumber("LEDSWOR", ballCount);
     if (frc::DriverStation::IsEnabled() && ArduinoWorks) {
+        //if (ArduinoWorks){
         ballCount = robotData.jetsonData.ballCount;
+        // ballCount = 4;
         // this makes the robot LEDs be different colors depending on the mode
         // writes the value of colorCode to device address 1 (the left arduino), which then color codes the LEDs based upon the value
         if (robotData.shooterData.readyShoot){
@@ -37,9 +40,13 @@ void Arduino::RobotPeriodic(const RobotData &robotData, ArduinoData &arduinoData
         //colorCode = 0; //uncomment for reveal video
         colorCode = (ballCount * 10) + mode;
 
-        char value[1] = {(char)colorCode};
+        // char value[1] = {(char)(colorCode)};
+        char value[1] = {(char)('b')};
+        if(colorCode >= 10){
+            value[1] = 'a' + colorCode - 10;
+        }
 
-        try { throw exception();
+        try {
             if (lastColorCode != colorCode){
                 arduino->Write(value, 1);
             }
@@ -58,7 +65,7 @@ void Arduino::RobotPeriodic(const RobotData &robotData, ArduinoData &arduinoData
         arduinoData.ColorData = (int)colors[0];
         // frc::SmartDashboard::PutBoolean("isDisabled", false);
 
-        try{ throw exception();
+        try{
             if (arduino->GetBytesReceived() >= 1){
                 arduino->Read(colors,1);
                 arduino->Reset();
@@ -67,6 +74,7 @@ void Arduino::RobotPeriodic(const RobotData &robotData, ArduinoData &arduinoData
         {
             failedTransfers += 1;
         }
+        
 
     }
 
@@ -78,7 +86,7 @@ void Arduino::DisabledPeriodic(){
     colorCode = 0;
     char value[1] = {(char)colorCode};
 
-    try { throw exception();
+    try {
         if (lastColorCode != colorCode){
             arduino->Write(value, 1);
         }
