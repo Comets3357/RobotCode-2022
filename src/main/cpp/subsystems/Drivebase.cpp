@@ -131,6 +131,13 @@ void Drivebase::updateData(const RobotData &robotData, DrivebaseData &drivebaseD
 
     drivebaseData.lDriveVel = dbL.GetSensorCollection().GetIntegratedSensorVelocity() / mpsToTpds;
     drivebaseData.rDriveVel = dbR.GetSensorCollection().GetIntegratedSensorVelocity() / mpsToTpds;
+    drivebaseData.avgDriveVel = (drivebaseData.lDriveVel + drivebaseData.rDriveVel) / 2;
+
+    // option 1, will alloy us to shoot while pivoting drivebase
+    drivebaseData.dbStationaryForShot = (std::abs(drivebaseData.avgDriveVel) < 0.2);
+    // option 2, both driverails must be stationary for us to fire
+    // drivebaseData.dbStationaryForShot = ((std::abs(drivebaseData.lDriveVel) < 0.2) && (std::abs(drivebaseData.rDriveVel) < 0.2));
+    frc::SmartDashboard::PutBoolean("dbStationaryForShot", drivebaseData.dbStationaryForShot);
 
     // frc::SmartDashboard::PutNumber("driveMode", drivebaseData.driveMode);
 

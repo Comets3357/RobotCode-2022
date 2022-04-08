@@ -721,6 +721,7 @@ double Shooter::averageTurretGyroOffset(const RobotData &robotData, ShooterData 
 
     //return the average of those speeds
     shooterData.avgTurretOffsetPos = total/6;
+    return shooterData.avgTurretOffsetPos;
 }
 
 

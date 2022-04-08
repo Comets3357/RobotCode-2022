@@ -40,6 +40,8 @@ struct DrivebaseData
 
     double lDriveVel = 0.0; // meters per second
     double rDriveVel = 0.0; // meters per second
+    double avgDriveVel = 0.0;   // meters per second
+    bool dbStationaryForShot = false;   // used to determine if robot is stationary enough to fire
 
     // odometry
     frc::Pose2d currentPose{};
