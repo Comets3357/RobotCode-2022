@@ -65,6 +65,7 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
     if(controllerData.sLCenterBtnToggled && !controlData.shift){
         controlData.staticTurret = !controlData.staticTurret;
     }
+    controlData.vectorDrive = controllerData.pLPalmSwitch; 
 
     // manual:
 

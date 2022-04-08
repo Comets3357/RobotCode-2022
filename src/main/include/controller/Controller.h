@@ -38,6 +38,7 @@ struct ControlData
     bool dbInverted;
     double maxStraight = 1;
     double maxTurn = 0.4;
+    bool vectorDrive;
 
     //intake:
     bool mIntakeDown; 
@@ -121,6 +122,8 @@ struct ControllerData
 
     bool pLShoulderSwitch = false;
     bool pRShoulderSwitch = false;
+    bool pLPalmSwitch = false;
+    bool pRPalmSwitch = false;
 
     // secondary:
 
