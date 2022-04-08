@@ -15,16 +15,16 @@ static const int
 
 static const double
     //practice bot
-    absOut = 0.485,
-    absIn = 0.616,
-    revOut = 6.4,
-    revIn = 0;
+    // absOut = 0.485,
+    // absIn = 0.616,
+    // revOut = 6.4,
+    // revIn = 0;
 
     //comp bot intake pivot positions
-    // absOut = 0.292,
-    // absIn = 0.419,
-    // revOut = 6.14,
-    // revIn = 0;
+    absOut = 0.292,
+    absIn = 0.419,
+    revOut = 6.14,
+    revIn = 0;
 
 //indexer
 static const int
@@ -40,43 +40,41 @@ static const int
 
 static const float
     //comp bot shooter hood positions
-    // hoodabsOut = 0.058,
-    // hoodabsIn = 0.956,
-    // hoodrevOut = -38,
-    // hoodrevIn = 0,
-    // hoodAngleOut = 43,
-    // hoodAngleIn = 21,
-
-    //PRATLAS shooter hood positions
-    hoodabsOut = 0.083,
-    hoodabsIn = 0.987,
+    hoodabsOut = 0.058,
+    hoodabsIn = 0.956,
     hoodrevOut = -38,
     hoodrevIn = 0,
     hoodAngleOut = 43,
     hoodAngleIn = 21,
 
+    //PRATLAS shooter hood positions
+    // hoodabsOut = 0.083,
+    // hoodabsIn = 0.987,
+    // hoodrevOut = -38,
+    // hoodrevIn = 0,
+    // hoodAngleOut = 43,
+    // hoodAngleIn = 21,
+
     // //ATLAS turret positions
-    // turretZeroDegrees = 0, 
-    // turretFullRotationDegrees = 450, //540
-    // turretFullRotationRev_CCW = 140.16, //174.85
-    // turretFullRotationRev_C = 0, //0 
-    // turretFullRotationAbs_CCW = 0.84, 
-    // turretFullRotationAbs_C = 0.157; 
+    turretZeroDegrees = 0, 
+    turretFullRotationDegrees = 450, //540
+    turretMiddleDegrees = (turretFullRotationDegrees - turretZeroDegrees)/2,
+    turretFullRotationRev_CCW = 140.16, //174.85
+    turretFullRotationRev_C = 0, //0 
+    turretMiddleRev = turretFullRotationRev_CCW/2,
+    turretFullRotationAbs_CCW = 0.84, 
+    turretFullRotationAbs_C = 0.157; 
 
     //FOR PRATLAS
-    turretZeroDegrees = 5, //15
-    turretFullRotationDegrees = 535, //540
+    // turretZeroDegrees = 5, //15
+    // turretFullRotationDegrees = 535, //540
     // turretMiddleDegrees = 273,
-    turretZeroRev = 89, //87.5
-    turretFullRotationRev_CCW = 174.85, //174.85
-    turretFullRotationRev_C = 0, //0
-    turretZeroAbs = 0.486, //0.479
-    turretFullRotationAbs_CCW = 0.906, //0.91
-    turretFullRotationAbs_C = 0.05, //0.05
-        turretMiddleDegrees = (turretFullRotationDegrees - turretZeroDegrees)/2,
-            turretMiddleRev = turretFullRotationRev_CCW/2;
-
-
+    // turretZeroRev = 89, //87.5
+    // turretFullRotationRev_CCW = 174.85, //174.85
+    // turretFullRotationRev_C = 0, //0
+    // turretZeroAbs = 0.486, //0.479
+    // turretFullRotationAbs_CCW = 0.906, //0.91
+    // turretFullRotationAbs_C = 0.05; //0.05
 
 
 //turret gyro offset
