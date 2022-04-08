@@ -11,6 +11,7 @@
 #include "common/Jetson.h"
 #include "common/ColorSensor.h"
 #include "common/BenchTest.h"
+#include "common/Jetson.h"
 
 #include "auton/Auton.h"
 
@@ -32,6 +33,7 @@ struct RobotData
     VisionLookupData visionLookupData;
     TimerData timerData;
     BenchTestData benchTestData;
+    JetsonData jetsonData;
 
     AutonData autonData;
 

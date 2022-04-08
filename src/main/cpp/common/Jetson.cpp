@@ -5,7 +5,7 @@ void Jetson::RobotInit()
     currentAlliance = 0;
 }
 
-void Jetson::RobotPeriodic()
+void Jetson::RobotPeriodic(JetsonData &jetsonData)
 {
     auto inst = nt::NetworkTableInstance::GetDefault();
     auto table = inst.GetTable("default");
@@ -18,6 +18,8 @@ void Jetson::RobotPeriodic()
     {
         currentAlliance = 0;
     }
+
+    jetsonData.ballCount = table->GetNumber("ball count", 0);
 
     table->PutNumber("Alliance Jetson", currentAlliance);
     table->PutNumber("blue h min", 90); // THIS CHANGES AT COMPS
