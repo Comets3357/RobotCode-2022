@@ -19,7 +19,7 @@ void Arduino::RobotInit()
 void Arduino::RobotPeriodic(const RobotData &robotData, ArduinoData &arduinoData){
 
     if (frc::DriverStation::IsEnabled() && ArduinoWorks) {
-        ballCount = robotData.indexerData.indexerContents.size();
+        ballCount = robotData.jetsonData.ballCount;
         // this makes the robot LEDs be different colors depending on the mode
         // writes the value of colorCode to device address 1 (the left arduino), which then color codes the LEDs based upon the value
         if (robotData.shooterData.readyShoot){
