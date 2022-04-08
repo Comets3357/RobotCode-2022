@@ -160,7 +160,7 @@ void Climb::manual(const RobotData &robotData, ClimbData &climbData)
     
 
     //manualy sets the arms with limit. The bottom limit is gon because an absolute encode will be there eventually
-    if ((climbArmsEncoder.GetPosition() <= -250 && climbArms.Get() < 0) || (climbArms.Get() > 0 && climbArmsAbs.GetOutput() < climbArmsZero))
+    if ((climbArmsEncoder.GetPosition() <= -250 && climbArms.Get() < 0) || (climbArms.Get() > 0 && climbArmsAbs.GetOutput() > climbArmsZero))
     {    
         //sets climbarms to zero when outside of limit
         climbArms.Set(0); //control arms with right stick
@@ -259,20 +259,23 @@ void Climb::runSequence(const RobotData &robotData, ClimbData &climbData)
     if (executeSequence && climbData.bar < 4)
     { //checks if you want to run the sequence, and also if you're already at bar 4, then you can't run it
         if (stage == 0) ChangeElevatorSpeed(elevatorSpeed, 1);
-        else if (stage == 1) RunArmsAndElevatorToPos(20,1,0,0,1); // get value in manual
-        else if (stage == 1) RunArmsAndElevatorToPos(-1,1,85,0,1);
-        else if (stage == 3) WaitUntilArmsOnBar(); //test 2 get value in manual
-        else if (stage == 4) RunElevatorToPos(20,1,0); //test 3
+        else if (stage == 1) RunArmsAndElevatorToPos(5,1,0,0,1); // get value in manual
+        else if (stage == 2) RunArmsAndElevatorToPos(-2,1,100,0,1);
+        else if (stage == 3) {wait(10); RunElevatorToPos(-2,0,1);}
+        // else if (stage == 3) WaitUntilArmsOnBar(); //test 2 get value in manual
+        else if (stage == 4) ChangeElevatorSpeed(0.3, 1);
+        else if (stage == 5) RunElevatorToPos(20,1,0); //test 3
+        else if (stage == 6) ChangeElevatorSpeed(1,1);
         //top bar transfer
         if (climbData.bar == targetBar-1)
         {
-            if (stage == 10) RunArmsAndElevatorToPos(120,0,70,1,1);
-            else if (stage == 11) WaitUntilGyro(1, -35, 1);
-            else if (stage == 12) RunElevatorToPos(140,1,1);
-            else if (stage == 13) ChangeElevatorSpeed(elevatorSpeed,1);
-            else if (stage == 14) ChangeArmSpeed(1,1);
-            else if (stage == 15) TopTransfer();
-            else if (stage == 17) RunArmsToPos(0,1,1);
+            if (stage == 7) RunArmsAndElevatorToPos(120,0,70,1,1);
+            else if (stage == 8) WaitUntilGyro(1, -30, 1);
+            else if (stage == 9) RunElevatorToPos(146,1,1);
+            else if (stage == 10) ChangeElevatorSpeed(elevatorSpeed,1);
+            else if (stage == 11) ChangeArmSpeed(0.7,1);
+            else if (stage == 12) TopTransfer();
+            else if (stage == 13) RunArmsToPos(0,1,1);
             // else if (stage == 16) ChangeElevatorSpeed(0.6, 1);
             // else if (stage == 17) RunElevatorToPos(70,1,1);
             // else if (stage == 18) ChangeElevatorSpeed(elevatorSpeed, 1);
@@ -280,14 +283,14 @@ void Climb::runSequence(const RobotData &robotData, ClimbData &climbData)
         //transfer onto 3rd bar
         else 
         {
-            if (stage == 10) RunArmsAndElevatorToPos(110,0,200,1,1);
-            else if (stage == 11) WaitUntilGyro(-1, -41, 1);
-            else if (stage == 12) RunElevatorToPos(148,1,1);
-            else if (stage == 14) RunArmsToPos(120,1,1);
-            else if (stage == 16) RunElevatorToPos(110,1,1);
-            else if (stage == 17) ChangeElevatorSpeed(elevatorSpeed, 1);
+            if (stage == 7) RunArmsAndElevatorToPos(110,0,200,1,1);
+            else if (stage == 8) WaitUntilGyro(-1, -41, 1);
+            else if (stage == 9) RunElevatorToPos(152,1,1);
+            else if (stage == 10) RunArmsToPos(120,1,1);
+            else if (stage == 11) RunElevatorToPos(110,1,1);
+            else if (stage == 12) ChangeElevatorSpeed(elevatorSpeed, 1);
         }
-        if (stage == 18)
+        if (stage == 13)
         { //do it again if the bot isnt on the top bar
             //resets everything
             stage = 0;
@@ -303,6 +306,16 @@ void Climb::runSequence(const RobotData &robotData, ClimbData &climbData)
             climbArms.Set(0);
             climbElevator.Set(0);
         }
+    }
+}
+
+void Climb::wait(int time)
+{
+    timer += 1;
+    if (timer > time)
+    {
+        timer = 0;
+        stage += 1;
     }
 }
 
@@ -381,7 +394,7 @@ void Climb::TopTransfer()
 {
 
     //checks for angle where the bot pulls off bar
-    if (angle < -41.5 || climbElevator.Get() != 0)
+    if (angle < -47 || climbElevator.Get() != 0)
     {
         climbArms.Set(0);
         ChangeElevatorSpeed(0.6, 0);

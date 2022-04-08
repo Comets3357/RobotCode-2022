@@ -86,6 +86,8 @@ private:
     bool armsDirection; //True is positive, False is negative
     bool armsRunning = false;
 
+    int timer = 0;
+
     void updateData(const RobotData &robotData, ClimbData &climbData);
     void semiAuto(const RobotData &robotData, ClimbData &climbData);
     void manual(const RobotData &robotData, ClimbData &climbData);
@@ -94,6 +96,7 @@ private:
     void RunArmsToPos(int position, int stageAdd, int onBar);
     void RunArmsAndElevatorToPos(int elevatorPos, int elevatorBar, int armsPos, int armsBar, int stageAdd);
     void ZeroElevator(float power, int stageAdd);
+    void wait(int time);
 
     void ChangeElevatorSpeed(float speed, int stageAdd);
     void ChangeArmSpeed(float speed, int stageAdd);
@@ -101,6 +104,7 @@ private:
     void WaitUntilGyro(int cmp, float gyroValue, int stageAdd);
 
     void CheckArms();
+    void WaitUntilArmsOnBar();
 
     void TopTransfer();
 
