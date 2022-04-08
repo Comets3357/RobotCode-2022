@@ -382,14 +382,14 @@ void Shooter::manual(const RobotData &robotData, ShooterData &shooterData)
     // }
 
     //manual turret
-    if(robotData.controlData.mTurret >= 0.015 || robotData.controlData.mTurret <= -0.015){ //accounts for deadzone
+    if(robotData.controlData.mTurret >= 0.1 || robotData.controlData.mTurret <= -0.1){ //accounts for deadzone
         shooterTurret.Set(robotData.controlData.mTurret*.5);
     }else{
         shooterTurret.Set(0);
     }
    
     //hood to joystick controls
-     if(robotData.controlData.mHood >= 0.01 || robotData.controlData.mHood <= -0.01){ //accounts for deadzone
+     if(robotData.controlData.mHood >= 0.1 || robotData.controlData.mHood <= -0.01){ //accounts for deadzone
         shooterHood.Set(-robotData.controlData.mHood*.2);
     }else{
         shooterHood.Set(0);
