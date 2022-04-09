@@ -28,7 +28,7 @@ class Auton
 public:
     void RobotInit(AutonData &autonData);
     void AutonomousInit(AutonData &autonData);
-    void AutonomousPeriodic(const RobotData &robotData, AutonData &autonData, ControlData &controlData);
+    void AutonomousPeriodic(const RobotData &robotData, AutonData &autonData, ControlData &controlData, ControllerData &controllerData);
     void DisabledInit();
 private:
     void sendAutonSelectionChooser();
@@ -37,20 +37,21 @@ private:
 
 
     // secondary controls:
-    void potato(const RobotData &robotData, ControlData &controlData);
+    void potato(const RobotData &robotData, ControlData &controlData, ControllerData &controllerData);
 
     // exit tarmac, collect 1, turn, shoot 2:
-    void taxiShoot(const RobotData &robotData, ControlData &controlData);
-    void taxiShootA(const RobotData &robotData, ControlData &controlData);
+    void taxiShoot(const RobotData &robotData, ControlData &controlData, ControllerData &controllerData);
+    void taxiShootA(const RobotData &robotData, ControlData &controlData, ControllerData &controllerData);
 
     // three ball autons (taxiShoot + terminal shoot):
-    void threeBallB(const RobotData &robotData, ControlData &controlData);
-    void threeBallC(const RobotData &robotData, ControlData &controlData);
+    void threeBallB(const RobotData &robotData, ControlData &controlData, ControllerData &controllerData);
+    void threeBallC(const RobotData &robotData, ControlData &controlData, ControllerData &controllerData);
 
     // four ball autons (taxiShoot, neighboring ball, termincal shoot):
-    void fourBallC(const RobotData &robotData, ControlData &controlData);
+    // void fourBallB(const RobotData &robotData, ControlData &controlData);
+    void fourBallC(const RobotData &robotData, ControlData &controlData, ControllerData &controllerData);
     
-    void fiveBallC(const RobotData &robotData, ControlData &controlData);
+    void fiveBallC(const RobotData &robotData, ControlData &controlData, ControllerData &controllerData);
 
-    void sixBallC(const RobotData &robotData, ControlData &controlData);
+    void sixBallC(const RobotData &robotData, ControlData &controlData, ControllerData &controllerData);
 };

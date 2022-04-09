@@ -60,6 +60,7 @@ void Auton::sendAutonSelectionChooser() {
     autonChooser.AddOption("taxiShootB", "taxiShootB");
     autonChooser.AddOption("taxiShootC", "taxiShootC");
 
+    autonChooser.AddOption("fourBallB", "fourBallB");
     autonChooser.AddOption("fourBallC", "fourBallC");
     
     autonChooser.AddOption("fiveBallC", "fiveBallC");
@@ -68,57 +69,60 @@ void Auton::sendAutonSelectionChooser() {
     autonChooser.AddOption("citrus", "citrus");
     autonChooser.AddOption("nearFieldOne", "nearFieldOne");
 
-    // autonChooser.AddOption("sixBallC", "sixBallC");
+    autonChooser.AddOption("sixBallC", "sixBallC");
 
     frc::SmartDashboard::PutData("Select Auton:", &autonChooser);
 }
 
 
-void Auton::AutonomousPeriodic(const RobotData &robotData, AutonData &autonData, ControlData &controlData)
+void Auton::AutonomousPeriodic(const RobotData &robotData, AutonData &autonData, ControlData &controlData, ControllerData &controllerData)
 {
     // frc::smartDashboard::PutString("autonRoutineName", autonData.autonRoutineName);
 
     if (autonData.autonRoutineName == "potato")
     {
-        potato(robotData, controlData);
+        potato(robotData, controlData, controllerData);
     }
     else if (autonData.autonRoutineName == "taxiShootA") {
-        taxiShootA(robotData, controlData);
+        taxiShootA(robotData, controlData, controllerData);
     }
     else if (autonData.autonRoutineName == "taxiShootB") {
-        taxiShoot(robotData, controlData);
+        taxiShoot(robotData, controlData, controllerData);
     }
     else if (autonData.autonRoutineName == "taxiShootC") {
-        taxiShoot(robotData, controlData);
+        taxiShoot(robotData, controlData, controllerData);
     }
     else if (autonData.autonRoutineName == "threeBallB") {
-        threeBallB(robotData, controlData);
+        threeBallB(robotData, controlData, controllerData);
     }
     else if (autonData.autonRoutineName == "threeBallC") {
-        threeBallC(robotData, controlData);
+        threeBallC(robotData, controlData, controllerData);
+    }
+    else if (autonData.autonRoutineName == "fourBallB") {
+        // fourBallB(robotData, controlData, controllerData);
     }
     else if (autonData.autonRoutineName == "fourBallC") {
-        fourBallC(robotData, controlData);
+        fourBallC(robotData, controlData, controllerData);
     }
     else if (autonData.autonRoutineName == "fiveBallC") {
-        fiveBallC(robotData, controlData);
+        fiveBallC(robotData, controlData, controllerData);
     }
     else if (autonData.autonRoutineName == "fiveBallCAlt") {
-        fiveBallC(robotData, controlData);
+        fiveBallC(robotData, controlData, controllerData);
     }
     else if (autonData.autonRoutineName == "sixBallC") {
-        sixBallC(robotData, controlData);
+        sixBallC(robotData, controlData, controllerData);
     }
 }
 
 
-void Auton::potato(const RobotData &robotData, ControlData &controlData)
+void Auton::potato(const RobotData &robotData, ControlData &controlData, ControllerData &controllerData)
 {
     controlData.saIntake = false;
 }
 
 
-void Auton::taxiShoot(const RobotData &robotData, ControlData &controlData) {
+void Auton::taxiShoot(const RobotData &robotData, ControlData &controlData, ControllerData &controllerData) {
     double sec = robotData.timerData.secSinceEnabled;
 
     // intake
@@ -142,7 +146,7 @@ void Auton::taxiShoot(const RobotData &robotData, ControlData &controlData) {
     }
 }
 
-void Auton::taxiShootA(const RobotData &robotData, ControlData &controlData) {
+void Auton::taxiShootA(const RobotData &robotData, ControlData &controlData, ControllerData &controllerData) {
     double sec = robotData.timerData.secSinceEnabled;
 
     // intake
@@ -175,7 +179,7 @@ void Auton::taxiShootA(const RobotData &robotData, ControlData &controlData) {
     }
 }
 
-void Auton::threeBallB(const RobotData &robotData, ControlData &controlData) {
+void Auton::threeBallB(const RobotData &robotData, ControlData &controlData, ControllerData &controllerData) {
     double sec = robotData.timerData.secSinceEnabled;
 
     // intake
@@ -202,7 +206,7 @@ void Auton::threeBallB(const RobotData &robotData, ControlData &controlData) {
     }
 }
 
-void Auton::threeBallC(const RobotData &robotData, ControlData &controlData) {
+void Auton::threeBallC(const RobotData &robotData, ControlData &controlData, ControllerData &controllerData) {
     double sec = robotData.timerData.secSinceEnabled;
 
     // intake
@@ -227,7 +231,7 @@ void Auton::threeBallC(const RobotData &robotData, ControlData &controlData) {
     }
 }
 
-void Auton::fourBallC(const RobotData &robotData, ControlData &controlData) {
+void Auton::fourBallC(const RobotData &robotData, ControlData &controlData, ControllerData &controllerData) {
     double sec = robotData.timerData.secSinceEnabled;
 
     // intake
@@ -257,7 +261,7 @@ void Auton::fourBallC(const RobotData &robotData, ControlData &controlData) {
     }
 }
 
-void Auton::fiveBallC(const RobotData &robotData, ControlData &controlData)
+void Auton::fiveBallC(const RobotData &robotData, ControlData &controlData, ControllerData &controllerData)
 {
     double sec = robotData.timerData.secSinceEnabled;
 
@@ -281,7 +285,7 @@ void Auton::fiveBallC(const RobotData &robotData, ControlData &controlData)
 
     // final shoot
     if (sec > 0 && sec < 1) {
-        controlData.saFinalShoot = true;
+        controlDataShoot = true;
     } else if (sec > 3.5 && sec < 7.5) {
         controlData.saFinalShoot = true;
     } else if (sec > 13 && sec < 15) {
@@ -292,4 +296,4 @@ void Auton::fiveBallC(const RobotData &robotData, ControlData &controlData)
 
 }
 
-void Auton::sixBallC(const RobotData &robotData, ControlData &controlData) {}
+void Auton::sixBallC(const RobotData &robotData, ControlData &controlData, ControllerData &controllerData) {}
