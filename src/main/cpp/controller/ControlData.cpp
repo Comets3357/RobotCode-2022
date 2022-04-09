@@ -122,12 +122,6 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
 
     }
     
-    // secondary y to set readyshoot to true in testing
-
-    // disabled because there has not yet been a case where we want to shoot low hub
-    if (controllerData.sRBumperToggled && !controlData.shift) {
-        // controlData.upperHubShot = !controlData.upperHubShot;
-    }
     if (controllerData.sRCenterBtnToggled && !controlData.shift) {
         controlData.autoRejectOpponentCargo = !controlData.autoRejectOpponentCargo;
     }
