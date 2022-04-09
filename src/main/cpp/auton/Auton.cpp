@@ -60,17 +60,15 @@ void Auton::sendAutonSelectionChooser() {
     autonChooser.AddOption("taxiShootB", "taxiShootB");
     autonChooser.AddOption("taxiShootC", "taxiShootC");
 
-    autonChooser.AddOption("threeBallB", "threeBallB");
-    autonChooser.AddOption("threeBallC", "threeBallC");
-
     autonChooser.AddOption("fourBallC", "fourBallC");
     
     autonChooser.AddOption("fiveBallC", "fiveBallC");
     autonChooser.AddOption("fiveBallCAlt", "fiveBallCAlt");
 
-    autonChooser.AddOption("sixBallC", "sixBallC");
+    autonChooser.AddOption("citrus", "citrus");
+    autonChooser.AddOption("nearFieldOne", "nearFieldOne");
 
-    autonChooser.AddOption("test", "test");
+    // autonChooser.AddOption("sixBallC", "sixBallC");
 
     frc::SmartDashboard::PutData("Select Auton:", &autonChooser);
 }
