@@ -1,4 +1,5 @@
 #include "RobotData.h"
+
 /**
  * ---------------------------------------------------------------------------------------------------------------------------------------------------
  * CLASS SPECIFIC INITS
@@ -463,9 +464,26 @@ void Shooter::saTurret(const RobotData &robotData, ShooterData &shooterData){
 
 void Shooter::turretControlTurn(float controlTurretDirection, const RobotData &robotData, ShooterData &shooterData){
     float robotDirection = robotData.drivebaseData.odometryYaw; //in degrees 
-    float turretTurnPos;
+    float turretTurnPos = (controlTurretDirection - robotDirection) + turretMiddleDegrees;
+    turretTurnPos = (int)turretTurnPos % 360;
 
-    turretTurnPos = (controlTurretDirection - robotDirection) + turretMiddleDegrees; //calculates turret pos based on what we know to be the center of the bot
+    frc::SmartDashboard::PutNumber("turret position 2", std::abs(shooterData.currentTurretAngle - (turretTurnPos + 360)));
+    frc::SmartDashboard::PutNumber("turret position 1", std::abs(shooterData.currentTurretAngle - turretTurnPos));
+
+    if (turretTurnPos > 0 && turretTurnPos < 90)
+    {
+        if (std::abs(shooterData.currentTurretAngle - (turretTurnPos + 360)) < std::abs(shooterData.currentTurretAngle - turretTurnPos))
+        {
+            turretTurnPos += 360;
+        }
+    }
+
+    frc::SmartDashboard::PutNumber("turret final position", turretTurnPos);
+    frc::SmartDashboard::PutNumber("robot position", robotData.drivebaseData.odometryYaw);
+
+    setTurret_Pos(turretTurnPos, shooterData);
+
+    //turretTurnPos = (controlTurretDirection - robotDirection) + turretMiddleDegrees; //calculates turret pos based on what we know to be the center of the bot
     
     //is this code necessary??? I don't think it should ever be over or under?????? but its good ig
     // if(turretTurnPos < 0 || turretTurnPos > turretFullRotationDegrees){
@@ -477,21 +495,20 @@ void Shooter::turretControlTurn(float controlTurretDirection, const RobotData &r
     // }
     
     //if its possible to have 2 positions from you're desired location
-    if(turretTurnPos > 360){
-        float turretTurnPos2;
+    // if(turretTurnPos > 360){
+    //     float turretTurnPos2;
 
-        turretTurnPos2 = turretTurnPos - 360; //second position
+    //     turretTurnPos2 = turretTurnPos - 360; //second position
 
-        //checks to see which of the two values is closer to the current turret value and go to that position
-        if(std::abs(robotData.shooterData.currentTurretAngle-turretTurnPos) < std::abs(robotData.shooterData.currentTurretAngle-turretTurnPos2)){
-            setTurret_Pos(turretTurnPos, shooterData);
-        }else{
-            setTurret_Pos(turretTurnPos2, shooterData);
-        }
-    }else{
-        setTurret_Pos(turretTurnPos, shooterData);
-
-    }
+    //     //checks to see which of the two values is closer to the current turret value and go to that position
+    //     if(std::abs(robotData.shooterData.currentTurretAngle-turretTurnPos) < std::abs(robotData.shooterData.currentTurretAngle-turretTurnPos2)){
+    //         setTurret_Pos(turretTurnPos, shooterData);
+    //     }else{
+    //         setTurret_Pos(turretTurnPos2, shooterData);
+    //     }
+    // }else{
+    //     setTurret_Pos(turretTurnPos, shooterData);
+    // }
 }
 
 /**
