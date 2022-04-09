@@ -6,11 +6,16 @@
 #include <networktables/NetworkTableEntry.h>
 #include <networktables/NetworkTableValue.h>
 
+struct JetsonData
+{
+    int ballCount;
+};
+
 class Jetson
 {
 public:
     void RobotInit();
-    void RobotPeriodic();
+    void RobotPeriodic(JetsonData &jetsonData);
 private:
     int currentAlliance;
 };

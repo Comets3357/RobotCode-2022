@@ -23,6 +23,7 @@ void Robot::RobotPeriodic()
     visionLookup.RobotPeriodic(robotData, robotData.visionLookupData);
     arduino.RobotPeriodic(robotData, robotData.arduinoData);
     colorSensor.RobotPeriodic(robotData, robotData.colorSensorData);
+    jetson.RobotPeriodic(robotData.jetsonData);
 
 
     // frc::SmartDashboard::PutNumber("mode", robotData.controlData.mode);
