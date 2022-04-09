@@ -107,7 +107,7 @@ void Shooter::shooterTurretInit()
     shooterTurret_pidController.SetD(0);
     shooterTurret_pidController.SetIZone(0);
     shooterTurret_pidController.SetFF(0);
-    shooterTurret_pidController.SetOutputRange(-1,1);
+    shooterTurret_pidController.SetOutputRange(-0.6,0.6);
 
     shooterTurret.BurnFlash(); 
 
@@ -436,7 +436,7 @@ void Shooter::saTurret(const RobotData &robotData, ShooterData &shooterData){
         // use arbitrary feed forward for PID
         if (shooterData.currentTurretAngle > turretMiddleDegrees + 20) {
             arbFF = -0.02;
-        } else if (shooterData.currentTurretAngle < turretMiddleDegrees - 10) {
+        } else if (shooterData.currentTurretAngle < turretMiddleDegrees - 20) {
             arbFF = 0.02;
         } else {
             arbFF = 0.0;
