@@ -161,7 +161,7 @@ void Climb::manual(const RobotData &robotData, ClimbData &climbData)
     
 
     //manualy sets the arms with limit. The bottom limit is gon because an absolute encode will be there eventually
-    if ((climbArmsEncoder.GetPosition() <= -250 && climbArms.Get() < 0) || (climbArms.Get() > 0 && climbArmsAbs.GetOutput() < climbArmsZero))
+    if ((climbArmsEncoder.GetPosition() <= -250 && climbArms.Get() < 0) || (climbArms.Get() > 0 && climbArmsAbs.GetOutput() > climbArmsZero))
     {    
         //sets climbarms to zero when outside of limit
         climbArms.Set(0); //control arms with right stick
@@ -214,10 +214,12 @@ void Climb::climbInit(const RobotData &robotData, ClimbData &climbData)
 
     if (climbInitiating && climbUp)
     {
+        ChangeElevatorSpeed(1,0);
         RunElevatorToPos(140,0,0); //runs the climb up when button is pressed
     }
     else if (climbInitiating && !climbUp)
     { 
+        ChangeElevatorSpeed(1,0);
         RunElevatorToPos(0,0,0); //runs the climb back down if you press it again
     }
 }
@@ -268,26 +270,22 @@ void Climb::runSequence(const RobotData &robotData, ClimbData &climbData)
     if (executeSequence && climbData.bar < 4)
     { //checks if you want to run the sequence, and also if you're already at bar 4, then you can't run it
         if (stage == 0) ChangeElevatorSpeed(elevatorSpeed, 1);
-        else if (stage == 1) RunArmsAndElevatorToPos(0,1,0,0,1);
-        else if (stage == 2) ChangeElevatorSpeed(elevatorSpeed, 1);
-        else if (stage == 3) {climbElevator_pidController.SetReference(-0, rev::CANSparkMax::ControlType::kPosition, 1); stage++;}
-        else if (stage == 4) {RunArmsToPos(0,1,0); ZeroElevator(0.8,0);}
-        else if (stage == 5) {RunArmsToPos(85,1,0); ZeroElevator(0.8,0);}
-        else if (stage == 6) {CheckArms(); ZeroElevator(0.8,0);}
-        else if (stage == 7) ChangeElevatorSpeed(0.3,1);
-        else if (stage == 8) RunElevatorToPos(30,1,0);
-        else if (stage == 9) ChangeElevatorSpeed(1,1);
+        else if (stage == 1) RunArmsAndElevatorToPos(-1,1,0,0,1); // get value in manual
+        else if (stage == 2) ChangeElevatorSpeed(0.5, 1);
+        else if (stage == 3) RunElevatorToPos(20,1,0); //test 3
+        else if (stage == 4) ChangeElevatorSpeed(1,1);
+        else if (stage == 5) RunArmsToPos(20,1,1);
         //top bar transfer
         if (climbData.bar == targetBar-1)
         {
-            if (stage == 10) RunArmsAndElevatorToPos(120,0,70,1,1);
-            else if (stage == 11) WaitUntilGyro(1, -35, 1);
-            else if (stage == 12) RunElevatorToPos(140,1,1);
-            else if (stage == 13) ChangeElevatorSpeed(elevatorSpeed,1);
-            else if (stage == 14) ChangeArmSpeed(0.5,1);
-            else if (stage == 15) TopTransfer();
-            else if (stage == 16) ChangeArmSpeed(1,1);
-            else if (stage == 17) RunArmsToPos(0,1,1);
+            if (stage == 6) RunArmsAndElevatorToPos(120,0,65,1,1);
+            else if (stage == 7) WaitUntilGyro(1, 2, -33, 1);
+            else if (stage == 8) RunElevatorToPos(146,1,1);
+            else if (stage == 9) ChangeElevatorSpeed(elevatorSpeed,1);
+            else if (stage == 10) ChangeArmSpeed(0.7,1);
+            else if (stage == 11) TopTransfer();
+            else if (stage == 12) {ChangeArmSpeed(1,1); lastTrasfer = false;}
+            else if (stage == 13) RunArmsToPos(0,1,1);
             // else if (stage == 16) ChangeElevatorSpeed(0.6, 1);
             // else if (stage == 17) RunElevatorToPos(70,1,1);
             // else if (stage == 18) ChangeElevatorSpeed(elevatorSpeed, 1);
@@ -295,16 +293,14 @@ void Climb::runSequence(const RobotData &robotData, ClimbData &climbData)
         //transfer onto 3rd bar
         else 
         {
-            if (stage == 10) RunArmsAndElevatorToPos(110,0,200,1,1);
-            else if (stage == 11) WaitUntilGyro(-1, -41, 1);
-            else if (stage == 12) RunElevatorToPos(148,1,1);
-            else if (stage == 13) ChangeElevatorSpeed(elevatorSpeed,1);
-            else if (stage == 14) RunArmsToPos(120,1,1);
-            else if (stage == 15) ChangeElevatorSpeed(0.6, 1);
-            else if (stage == 16) RunElevatorToPos(110,1,1);
-            else if (stage == 17) ChangeElevatorSpeed(elevatorSpeed, 1);
+            if (stage == 6) RunArmsAndElevatorToPos(100,0,165,1,1);
+            else if (stage == 7) WaitUntilGyro(-1, 1, -45, 1);
+            else if (stage == 8) RunElevatorToPos(150,1,1);
+            else if (stage == 9) RunArmsToPos(100,1,1);
+            else if (stage == 10) RunElevatorToPos(110,1,1);
+            else if (stage == 11) ChangeElevatorSpeed(elevatorSpeed, 1);
         }
-        if (stage == 18)
+        if (stage == 12)
         { //do it again if the bot isnt on the top bar
             //resets everything
             stage = 0;
@@ -323,6 +319,34 @@ void Climb::runSequence(const RobotData &robotData, ClimbData &climbData)
     }
 }
 
+void Climb::RunArmsGyroLower()
+{
+
+}
+
+void Climb::RunArmsGyroUpper()
+{
+    
+}
+
+void Climb::wait(int time)
+{
+    timer += 1;
+    if (timer > time)
+    {
+        timer = 0;
+        stage += 1;
+    }
+}
+
+void Climb::WaitUntilArmsOnBar()
+{
+    if (climbArmsAbs.GetOutput() < 0.8)
+    {
+        stage += 1;
+    }
+}
+
 //Runs the elevator to a specific location, specified in semiAuto
 void Climb::RunElevatorToPos(int position, int stageAdd, int onBar)
 {
@@ -330,8 +354,8 @@ void Climb::RunElevatorToPos(int position, int stageAdd, int onBar)
     {
         elevatorRunning = true;
         //only moves when angular rate is low to reduce swinging
-        if (onBar){
-            if (abs(angularRate) < 60)
+        if (onBar==1){
+            if (abs(angularRate) < 70)
             {
                 climbElevator_pidController.SetReference(-position, rev::CANSparkMax::ControlType::kPosition, onBar);
             }
@@ -390,12 +414,13 @@ void Climb::TopTransfer()
 {
 
     //checks for angle where the bot pulls off bar
-    if (angle < -41.5)
+    if (angle < -44 || elevatorRunning)
     {
         climbArms.Set(0);
         ChangeElevatorSpeed(0.6, 0);
-        RunElevatorToPos(90,1,1);
-    } else {
+        RunElevatorToPos(110,1,0);
+        lastTrasfer = true;
+    } else if (!lastTrasfer){
         
         //runs arms down when not at the angle for transfer
         climbArms_pidController.SetReference(-200, rev::CANSparkMax::ControlType::kPosition, 1);
@@ -416,14 +441,25 @@ void Climb::CheckArms()
 }
 
 //checks for a specific gyro value before moving on
-void Climb::WaitUntilGyro(int cmp, float gyroValue, int stageAdd)
+void Climb::WaitUntilGyro(int cmp, int arate, float gyroValue, int stageAdd)
 {
     //checks greater than a value
     if (cmp == 1)
     {
-        if (gyroValue < angle)
+        if (gyroValue < angle )
         {
-            stage += stageAdd;
+            if (arate == 1 && angularRate > 0)
+            {
+                stage += stageAdd;
+            }
+            else if (arate == -1 && angularRate < 0)
+            {
+                stage += stageAdd;
+            }
+            if (arate == 2)
+            {
+                stage += stageAdd;
+            }
         }
     }
     //checks less than a value
@@ -431,14 +467,14 @@ void Climb::WaitUntilGyro(int cmp, float gyroValue, int stageAdd)
     {
         if (gyroValue > angle)
         {
-            stage += stageAdd;
-        }
-    }
-    //checks equal to a value
-    else if (cmp == 0){
-        if (gyroValue == angle)
-        {
-            stage += stageAdd;
+            if (arate == 1 && angularRate > 0)
+            {
+                stage += stageAdd;
+            }
+            else if (arate == -1 && angularRate < 0)
+            {
+                stage += stageAdd;
+            }
         }
     }
 }
@@ -518,6 +554,7 @@ void Climb::updateData(const RobotData &robotData, ClimbData &climbData)
     // frc::smartDashboard::PutNumber("elevator motor temp", elevatorTemp);
     // frc::smartDashboard::PutNumber("arms temp", armsTemp);
     frc::SmartDashboard::PutNumber("climb angle", angle);
+    frc::SmartDashboard::PutNumber("climb angle rate", angularRate);
 }
 
 
