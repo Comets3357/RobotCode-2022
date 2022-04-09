@@ -21,9 +21,9 @@ static const double
     // revIn = 0;
 
     //comp bot intake pivot positions
-    absOut = 0.465,
-    absIn = 0.605,
-    revOut = 6.14,
+    absOut = 0.2938,
+    absIn = 0.434,
+    revOut = 6.12,
     revIn = 0;
 
 //indexer
