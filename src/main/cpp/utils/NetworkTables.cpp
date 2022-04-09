@@ -30,6 +30,7 @@ void NetworkTables::RobotInit()
     // Drivebase
     dbInverted = table->GetEntry("dbInverted");
     turnResponsive = table->GetEntry("turnResponsive");
+    avgDriveVel = table->GetEntry("avgDriveVel");
     // Indexer
     indexerTop = table->GetEntry("indexerTop");
     indexerBottom = table->GetEntry("indexerBottom");
@@ -38,10 +39,13 @@ void NetworkTables::RobotInit()
     readyShoot = table->GetEntry("readyShoot");
     shootMode = table->GetEntry("shootMode");
     targetHub = table->GetEntry("targetHub");
-    shootUBAO = table->GetEntry("shootUBAO");
+    autoReject = table->GetEntry("autoReject");
+    shotDistanceTrim = table->GetEntry("shotDistanceTrim");
     // Climb
     climbSequence = table->GetEntry("climbSequence");
     climbAmperage = table->GetEntry("climbAmperage");
+    // Other
+    ballCount = table->GetEntry("ballCount");
 }
 
 
@@ -52,7 +56,7 @@ void NetworkTables::TeleopPeriodic(const RobotData &robotData)
     */
     // Match
     autonSelect.SetDouble(0.0);
-    timeLeft.SetDouble(215 - robotData.timerData.secSinceEnabled);
+    timeLeft.SetDouble(/* 215 - robotData.timerData.secSinceEnabled */ frc::DriverStation::GetMatchTime());
     // Robot
     controlMode.SetDouble(robotData.controlData.mode);
     driveMode.SetDouble(robotData.drivebaseData.driveMode);
@@ -66,6 +70,7 @@ void NetworkTables::TeleopPeriodic(const RobotData &robotData)
     // Drivebase
     dbInverted.SetDouble(robotData.controlData.dbInverted);
     turnResponsive.SetDouble(robotData.controlData.turnResponsive);
+    avgDriveVel.SetDouble(robotData.drivebaseData.avgDriveVel);
     // Indexer
     // indexerTop.SetDouble(robotData.indexerData.topIndexer);
     // indexerBottom.SetDouble(robotData.indexerData.bottomIndexer);
@@ -73,10 +78,12 @@ void NetworkTables::TeleopPeriodic(const RobotData &robotData)
     // Shooter
     readyShoot.SetDouble(robotData.shooterData.readyShoot);
     shootMode.SetDouble(robotData.controlData.shootMode);
-    targetHub.SetDouble(frc::DriverStation::GetBatteryVoltage());
-    shootUBAO.SetDouble(robotData.controlData.autoRejectOpponentCargo);
-    
+    targetHub.SetDouble(robotData.controlData.upperHubShot);
+    autoReject.SetDouble(robotData.controlData.autoRejectOpponentCargo);
+    shotDistanceTrim.SetDouble(robotData.controlData.saDistanceOffset);
     // Climb
     climbSequence.SetDouble(0.0);
     climbAmperage.SetDouble(0.0);
+    // Other
+    // ballCount.SetDouble(robotData.jetsonData.ballCount);
 }
