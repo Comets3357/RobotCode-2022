@@ -37,17 +37,11 @@ struct LimelightData
     //how many degrees the turret needs to move in order to hit the target
     double turretDifference;
     double desiredTurretAngle;
-    double correctDistance;
 
     //shooter corrections:
     //FINAL CORRECT DISTANCE
     double distanceOffset;
     double angleOffset;
-
-    std::deque<double> desiredTurretAngles;
-    double avgDesiredTurretAngle = 0;
-
-    float hoodFlywheelRatio;
 
     bool unwrapping = false;
 
@@ -75,7 +69,12 @@ private:
     //Intermediate step, is the LIMELIGHTS distance from target, not shooters
     double limelightDistance;
 
-    void averageDesiredTurret(const RobotData &robotData, LimelightData &limelightData);
+    float backwardDesiredVel;
+    float backwardDesiredHood;
+
+    //void averageDesiredTurret(const RobotData &robotData, LimelightData &limelightData);
+    double interpolationVel(LimelightData &limelightData, const RobotData &robotData);
+    double interpolationHood(LimelightData &limelightData, const RobotData &robotData);
 
     //network table for limelight
     std::shared_ptr<nt::NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("limelight");

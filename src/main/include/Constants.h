@@ -21,9 +21,9 @@ static const double
     // revIn = 0;
 
     //comp bot intake pivot positions
-    absOut = 0.292,
-    absIn = 0.419,
-    revOut = 6.14,
+    absOut = 0.2938,
+    absIn = 0.434,
+    revOut = 6.12,
     revIn = 0;
 
 //indexer
@@ -59,11 +59,18 @@ static const float
     turretZeroDegrees = 0, 
     turretFullRotationDegrees = 450, //540
     turretMiddleDegrees = (turretFullRotationDegrees - turretZeroDegrees)/2,
+    turretBackwardsDegrees_C = turretMiddleDegrees - 180,
+    turretBackwardsDegrees_CCW = turretMiddleDegrees + 180,
     turretFullRotationRev_CCW = 140.16, //174.85
     turretFullRotationRev_C = 0, //0 
     turretMiddleRev = turretFullRotationRev_CCW/2,
-    turretFullRotationAbs_CCW = 0.84, 
-    turretFullRotationAbs_C = 0.157; 
+    turretFullRotationAbs_CCW = 0.862, 
+    turretFullRotationAbs_C = 0.174,
+
+    forwardVelOffset = 50,
+    forwardHoodOffsetFar = 1,
+    forwardHoodOffsetClose = 5,
+    change = 8;
 
     //FOR PRATLAS
     // turretZeroDegrees = 5, //15
@@ -78,12 +85,12 @@ static const float
 
 
 //turret gyro offset
-static const float
+static const int
     //at the the corresponding rate of rotation, offset the turret by an extra 20 degrees to account for the extra strength needed (centipetal acceleration?)
     turretGyroOffset2 = -50,
     turretGyroOffset1 = 0;
     
-static const double 
+static const int 
     //at certain rotational rate points add the speed offset above
     rotationalRate2 = 400,
     rotationalRate1 = 0;
@@ -98,16 +105,7 @@ static const float
     wallHood = -25,
     wallVel = 1500,
     fenderHood = -2.5,
-    fenderVel = 1500,
-
-    outerLaunchHood_Low = hoodrevOut,
-    outerLaunchVel_Low = 1990,
-    innerLaunchHood_Low = hoodrevOut,
-    innerLaunchVel_Low = 2040,
-    wallHood_Low = -32.33,
-    wallVel_Low = 1860,
-    fenderHood_Low = -2.5,
-    fenderVel_Low = 1500;
+    fenderVel = 1500;
 
 
 // climb

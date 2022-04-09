@@ -295,7 +295,7 @@ void Drivebase::updateOdometry(const RobotData &robotData, DrivebaseData &driveb
     }
     // frc::SmartDashboard::PutNumber("odometryX", drivebaseData.odometryX);
     // frc::SmartDashboard::PutNumber("odometryY", drivebaseData.odometryY);
-    // frc::SmartDashboard::PutNumber("odometryYaw", drivebaseData.odometryYaw);
+    frc::SmartDashboard::PutNumber("odometryYaw", drivebaseData.odometryYaw);
 }
 
 /**
