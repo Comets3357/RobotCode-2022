@@ -39,7 +39,7 @@ void Arduino::RobotPeriodic(const RobotData &robotData, ArduinoData &arduinoData
         }
         frc::SmartDashboard::PutNumber("mode", mode);
         //colorCode = 0; //uncomment for reveal video
-        colorCode = (ballCount * 10) + mode;
+        colorCode = (ballCount * 10) + mode + 10;
         // char value[1] = {(char)(colorCode)};
         char value[1] = {(char)(colorCode)};
         frc::SmartDashboard::PutString("LDVALUE", std::to_string(char((int)(20))));
