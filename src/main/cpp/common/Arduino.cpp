@@ -13,6 +13,7 @@ void Arduino::RobotInit()
     {
         ArduinoWorks = false;
     }
+    frc::SmartDashboard::PutNumber("LEDNUMBER", 0);
 
 
 }
@@ -22,7 +23,7 @@ void Arduino::RobotPeriodic(const RobotData &robotData, ArduinoData &arduinoData
     if (frc::DriverStation::IsEnabled() && ArduinoWorks) {
         //if (ArduinoWorks){
         ballCount = robotData.jetsonData.ballCount;
-        // ballCount = 4;
+        // ballCount = frc::SmartDashboard::GetNumber("LEDNUMBER", 0);
         // this makes the robot LEDs be different colors depending on the mode
         // writes the value of colorCode to device address 1 (the left arduino), which then color codes the LEDs based upon the value
         if (robotData.shooterData.readyShoot){
@@ -36,15 +37,12 @@ void Arduino::RobotPeriodic(const RobotData &robotData, ArduinoData &arduinoData
         } else if (robotData.controlData.mode == Mode::mode_teleop_sa){
             mode = 1; //teleop semiauto mode
         }
-
+        frc::SmartDashboard::PutNumber("mode", mode);
         //colorCode = 0; //uncomment for reveal video
         colorCode = (ballCount * 10) + mode;
-
         // char value[1] = {(char)(colorCode)};
-        char value[1] = {(char)('b')};
-        if(colorCode >= 10){
-            value[1] = 'a' + colorCode - 10;
-        }
+        char value[1] = {(char)(colorCode)};
+        frc::SmartDashboard::PutString("LDVALUE", std::to_string(char((int)(20))));
 
         try {
             if (lastColorCode != colorCode){
