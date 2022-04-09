@@ -88,6 +88,8 @@ private:
 
     int timer = 0;
 
+    bool lastTrasfer = false;
+
     void updateData(const RobotData &robotData, ClimbData &climbData);
     void semiAuto(const RobotData &robotData, ClimbData &climbData);
     void manual(const RobotData &robotData, ClimbData &climbData);
@@ -101,12 +103,15 @@ private:
     void ChangeElevatorSpeed(float speed, int stageAdd);
     void ChangeArmSpeed(float speed, int stageAdd);
 
-    void WaitUntilGyro(int cmp, float gyroValue, int stageAdd);
+    void WaitUntilGyro(int cmp, int arate, float gyroValue, int stageAdd);
 
     void CheckArms();
     void WaitUntilArmsOnBar();
 
     void TopTransfer();
+
+    void RunArmsGyroLower();
+    void RunArmsGyroUpper();
 
     //CHANGE MOTOr ID STUFF  (just outline lol don't take your life too seriously:))
     //initualizes climb elevator motor
