@@ -6,20 +6,15 @@
 void Arduino::RobotInit()
 {
     try{
-        arduino = new frc::SerialPort(9600, frc::SerialPort::Port::kUSB);
-        frc::SmartDashboard::PutNumber("LEDS", 1);
-    }
+        arduino = new frc::SerialPort(9600, frc::SerialPort::Port::kUSB);    }
     catch (...)
     {
         ArduinoWorks = false;
     }
-    frc::SmartDashboard::PutNumber("LEDNUMBER", 0);
-
 
 }
 
 void Arduino::RobotPeriodic(const RobotData &robotData, ArduinoData &arduinoData){
-    frc::SmartDashboard::PutNumber("LEDSWOR", ballCount);
     if (frc::DriverStation::IsEnabled() && ArduinoWorks) {
         //if (ArduinoWorks){
         ballCount = robotData.jetsonData.ballCount;
@@ -37,12 +32,10 @@ void Arduino::RobotPeriodic(const RobotData &robotData, ArduinoData &arduinoData
         } else if (robotData.controlData.mode == Mode::mode_teleop_sa){
             mode = 1; //teleop semiauto mode
         }
-        frc::SmartDashboard::PutNumber("mode", mode);
         //colorCode = 0; //uncomment for reveal video
         colorCode = (ballCount * 10) + mode + 10;
         // char value[1] = {(char)(colorCode)};
         char value[1] = {(char)(colorCode)};
-        frc::SmartDashboard::PutString("LDVALUE", std::to_string(char((int)(20))));
 
         try {
             if (lastColorCode != colorCode){
