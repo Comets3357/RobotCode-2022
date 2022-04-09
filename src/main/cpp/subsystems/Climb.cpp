@@ -161,7 +161,7 @@ void Climb::manual(const RobotData &robotData, ClimbData &climbData)
     
 
     //manualy sets the arms with limit. The bottom limit is gon because an absolute encode will be there eventually
-    if ((climbArmsEncoder.GetPosition() <= -250 && climbArms.Get() < 0) || (climbArms.Get() > 0 && climbArmsAbs.GetOutput() > climbArmsZero))
+    if ((climbArmsEncoder.GetPosition() <= -250 && climbArms.Get() < 0) || (climbArms.Get() > 0 && climbArmsAbs.GetOutput() < climbArmsZero))
     {    
         //sets climbarms to zero when outside of limit
         climbArms.Set(0); //control arms with right stick
@@ -541,20 +541,20 @@ void Climb::updateData(const RobotData &robotData, ClimbData &climbData)
     climbData.angularRate = angularRate;
     climbData.elevatorLimit = elevatorLimit.Get();
     
-    frc::SmartDashboard::PutNumber("elevator encoder value", climbElevatorEncoder.GetPosition());
+    // frc::SmartDashboard::PutNumber("elevator encoder value", climbElevatorEncoder.GetPosition());
     // frc::smartDashboard::PutBoolean("limit Climb", elevatorLimit.Get());
     // frc::smartDashboard::PutNumber("elevator amps", elevatorAmperage);
     // frc::smartDashboard::PutNumber("Arms amps", armsAmperage);
-    frc::SmartDashboard::PutNumber("climb stage", stage);
+    // frc::SmartDashboard::PutNumber("climb stage", stage);
     // frc::smartDashboard::PutBoolean("running sequence", executeSequence);
-    frc::SmartDashboard::PutNumber("climbarms encoder", climbArmsEncoder.GetPosition());
-    frc::SmartDashboard::PutNumber("climbarms abs encoder", climbArmsAbs.GetOutput());
+    // frc::SmartDashboard::PutNumber("climbarms encoder", climbArmsEncoder.GetPosition());
+    // frc::SmartDashboard::PutNumber("climbarms abs encoder", climbArmsAbs.GetOutput());
     // frc::smartDashboard::PutNumber("which bar is bot on bar", climbData.bar);
     // frc::smartDashboard::PutBoolean("zeroing", climbData.zeroing);
     // frc::smartDashboard::PutNumber("elevator motor temp", elevatorTemp);
     // frc::smartDashboard::PutNumber("arms temp", armsTemp);
-    frc::SmartDashboard::PutNumber("climb angle", angle);
-    frc::SmartDashboard::PutNumber("climb angle rate", angularRate);
+    // frc::SmartDashboard::PutNumber("climb angle", angle);
+    // frc::SmartDashboard::PutNumber("climb angle rate", angularRate);
 }
 
 
