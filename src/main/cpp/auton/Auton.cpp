@@ -33,7 +33,7 @@ void Auton::AutonomousInit(AutonData &autonData)
     }
 
     // remove newline char from all but the final line
-    for (int i = 0; i < autonData.pathGroup.size(); i++) {
+    for (size_t i = 0; i < autonData.pathGroup.size(); i++) {
         std::string correctPathName = autonData.pathGroup[i];
 
         // frc::SmartDashboard::PutBoolean("int bool" + std::to_string(i), correctPathName[correctPathName.length() - 1] == 13);

@@ -84,8 +84,8 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
     
     controlData.mZeroHood = controllerData.sRStickBtn & !controlData.shift;
     controlData.mZeroTurret = controllerData.sLStickBtn && !controlData.shift;
-    controlData.mHood = controllerData.sRYStick && !controlData.shift;
-    controlData.mTurret = controllerData.sLXStick && !controlData.shift;
+    controlData.mHood = controllerData.sRYStick;
+    controlData.mTurret = controllerData.sLXStick;
     controlData.mShooterWheelForward = controllerData.sXBtn && !controlData.shift;
     controlData.mShooterWheelBackward = controllerData.sXBtn && controlData.shift;
 
@@ -110,7 +110,8 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
     controlData.saEjectBalls = controllerData.sABtn && !controlData.shift;
 
     controlData.saShooting = controllerData.sXBtnToggled && !controlData.shift;
-    controlData.saFinalShoot = controllerData.sYBtn && !controlData.shift;
+    controlData.saFinalShoot = (controllerData.sYBtn || (controllerData.sBBtn && robotData.drivebaseData.dbStationaryForShot)) && !controlData.shift;
+    controlData.saEjectThroughShooter = controllerData.sRBumper && !controlData.shift;
     
     if(controlData.mode == mode_teleop_sa){
         if(controllerData.sRCenterBtnToggled){
@@ -183,12 +184,12 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
     //controlData.finalShoot;
   
     //CLIMB
-    controlData.saPauseSequence = controllerData.sLStickBtn;
-    controlData.saCancelSequence = controllerData.sRStickBtn;
-    controlData.saClimbTraversalSequence = controllerData.sLCenterBtn;
-    controlData.saClimbHeightSequence = controllerData.sRCenterBtn;
-    controlData.saClimbInit = controllerData.sBBtn;
-    controlData.climbZeroing = controllerData.sABtnToggled;
+    controlData.saPauseSequence = controllerData.sLStickBtn && !controlData.shift;
+    controlData.saCancelSequence = controllerData.sRStickBtn && !controlData.shift;
+    controlData.saClimbTraversalSequence = controllerData.sLCenterBtn && !controlData.shift;
+    controlData.saClimbHeightSequence = controllerData.sRCenterBtn && !controlData.shift;
+    controlData.saClimbInit = controllerData.sBBtn && !controlData.shift;
+    controlData.climbZeroing = controllerData.sABtnToggled && !controlData.shift;
     controlData.mClimbZeroElevatorRev = controllerData.sLStickBtn && !controlData.shift;
     controlData.mClimbZeroPivotArmsRev = controllerData.sRStickBtn && !controlData.shift;
 

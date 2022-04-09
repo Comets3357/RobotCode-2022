@@ -180,6 +180,16 @@ void Climb::manual(const RobotData &robotData, ClimbData &climbData)
             climbArms.Set(0);
         }
     }
+
+    if (robotData.controlData.mClimbZeroElevatorRev)
+    {
+        climbElevatorEncoder.SetPosition(0);
+    }
+
+    if (robotData.controlData.mClimbZeroPivotArmsRev)
+    {
+        climbArmsEncoder.SetPosition(0);
+    }
 }
 
 void Climb::semiAuto(const RobotData &robotData, ClimbData &climbData)

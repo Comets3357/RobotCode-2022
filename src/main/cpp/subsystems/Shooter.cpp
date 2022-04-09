@@ -102,12 +102,12 @@ void Shooter::shooterTurretInit()
     shooterTurret.SetSmartCurrentLimit(15);
 
     //PIDS
-    shooterTurret_pidController.SetP(0.65); 
+    shooterTurret_pidController.SetP(0.2); 
     shooterTurret_pidController.SetI(0);
     shooterTurret_pidController.SetD(0);
     shooterTurret_pidController.SetIZone(0);
     shooterTurret_pidController.SetFF(0);
-    shooterTurret_pidController.SetOutputRange(-0.75,0.75);
+    shooterTurret_pidController.SetOutputRange(-0.6,0.6);
 
     shooterTurret.BurnFlash(); 
 
@@ -382,14 +382,14 @@ void Shooter::manual(const RobotData &robotData, ShooterData &shooterData)
     // }
 
     //manual turret
-    if(robotData.controlData.mTurret >= 0.015 || robotData.controlData.mTurret <= -0.015){ //accounts for deadzone
+    if(robotData.controlData.mTurret >= 0.1 || robotData.controlData.mTurret <= -0.1){ //accounts for deadzone
         shooterTurret.Set(robotData.controlData.mTurret*.5);
     }else{
         shooterTurret.Set(0);
     }
    
     //hood to joystick controls
-     if(robotData.controlData.mHood >= 0.01 || robotData.controlData.mHood <= -0.01){ //accounts for deadzone
+     if(robotData.controlData.mHood >= 0.1 || robotData.controlData.mHood <= -0.01){ //accounts for deadzone
         shooterHood.Set(-robotData.controlData.mHood*.2);
     }else{
         shooterHood.Set(0);
@@ -417,54 +417,66 @@ void Shooter::manual(const RobotData &robotData, ShooterData &shooterData)
  */
 void Shooter::saTurret(const RobotData &robotData, ShooterData &shooterData){
 
-    if(robotData.controlData.shootMode == shootMode_fender || !isZeroed_Turret){
+    if(robotData.controlData.shootMode == shootMode_fender || !isZeroed_Turret)
+    {
         setTurret_Pos(shooterData.currentTurretAngle, shooterData);
-    }else if(isTurretStatic){
+    }
+    else if (isTurretStatic)
+    {
         //if static turret bring to front and dont move
         //this is set in the semiauto function
         setTurret_Pos(turretMiddleDegrees, shooterData);
-    }else if(robotData.controlData.usingTurretDirection){ //controls turret using field oriented control and joystick
-            turretControlTurn(robotData.controlData.saTurretDirectionController, robotData, shooterData);
-    }else{
-        if(robotData.limelightData.validTarget){ //if you can see a target
-            if(robotData.limelightData.distanceOffset < 7*12){ //takes into account how far away you are, farther away == needs to be more precise
-                //if youre within 2 degrees of the target you can stop turning (mitigates jerky movempent)
-                if(std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 5){
-                    shooterTurret.Set(0);
-                }else{
-                    //turn the turret to face the target
-                    //accounts for if the robot is turning and adds more power
+    }
+    else if(robotData.controlData.usingTurretDirection)
+    { //controls turret using field oriented control and joystick
+        turretControlTurn(robotData.controlData.saTurretDirectionController, robotData, shooterData);
+    }
+    else
+    {
+        // use arbitrary feed forward for PID
+        if (shooterData.currentTurretAngle > turretMiddleDegrees + 20) {
+            arbFF = -0.02;
+        } else if (shooterData.currentTurretAngle < turretMiddleDegrees - 20) {
+            arbFF = 0.02;
+        } else {
+            arbFF = 0.0;
+        }
 
-                    // if(robotData.limelightData.unwrapping){
-                    //     setTurret_Pos(robotData.limelightData.desiredTurretAngle + averageTurretGyroOffset(robotData, shooterData), shooterData);
-                    // }else{
-                    //     setTurret_Pos(robotData.limelightData.avgDesiredTurretAngle + averageTurretGyroOffset(robotData, shooterData), shooterData);
-                    // }
+        frc::SmartDashboard::PutNumber("arbFF", arbFF);
 
-                    setTurret_Pos(robotData.limelightData.desiredTurretAngle + averageTurretGyroOffset(robotData, shooterData), shooterData);
-
-                }
-
-            }else{
-                if(std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 2){
-                    shooterTurret.Set(0);
-                }else{
-
-                    //turn the turret to face the target
-                    //accounts for if the robot is turning and adds more power
-                    // if(robotData.limelightData.unwrapping){
-                    //     setTurret_Pos(robotData.limelightData.desiredTurretAngle + averageTurretGyroOffset(robotData, shooterData), shooterData);
-                    // }else{
-                    //     setTurret_Pos(robotData.limelightData.avgDesiredTurretAngle + averageTurretGyroOffset(robotData, shooterData), shooterData);
-                    // }
-
-                    setTurret_Pos(robotData.limelightData.desiredTurretAngle + averageTurretGyroOffset(robotData, shooterData), shooterData);
-
-
-                } 
-
-
-            }
+        if(robotData.limelightData.validTarget) // all the if statements not needed if the jitter is taken care of in limelight
+        { //if you can see a target
+            setTurret_Pos(robotData.limelightData.desiredTurretAngle + averageTurretGyroOffset(robotData, shooterData), shooterData);
+            // if(robotData.limelightData.distanceOffset < 7*12)
+            // { //takes into account how far away you are, farther away == needs to be more precise
+            //     //if youre within 2 degrees of the target you can stop turning (mitigates jerky movempent)
+            //     if(std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 5)
+            //     {
+            //         shooterTurret.Set(0);
+            //     }else{
+            //         //turn the turret to face the target
+            //         //accounts for if the robot is turning and adds more power
+            //         // if(robotData.limelightData.unwrapping){
+            //         //     setTurret_Pos(robotData.limelightData.desiredTurretAngle + averageTurretGyroOffset(robotData, shooterData), shooterData);
+            //         // }else{
+            //         //     setTurret_Pos(robotData.limelightData.avgDesiredTurretAngle + averageTurretGyroOffset(robotData, shooterData), shooterData);
+            //         // }
+            //         setTurret_Pos(robotData.limelightData.desiredTurretAngle + averageTurretGyroOffset(robotData, shooterData), shooterData);
+            //     }
+            // }else{
+            //     if(std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 2){
+            //         shooterTurret.Set(0);
+            //     }else{
+            //         //turn the turret to face the target
+            //         //accounts for if the robot is turning and adds more power
+            //         // if(robotData.limelightData.unwrapping){
+            //         //     setTurret_Pos(robotData.limelightData.desiredTurretAngle + averageTurretGyroOffset(robotData, shooterData), shooterData);
+            //         // }else{
+            //         //     setTurret_Pos(robotData.limelightData.avgDesiredTurretAngle + averageTurretGyroOffset(robotData, shooterData), shooterData);
+            //         // }
+            //         setTurret_Pos(robotData.limelightData.desiredTurretAngle + averageTurretGyroOffset(robotData, shooterData), shooterData);
+            //     } 
+            // }
             
         }
         
@@ -693,7 +705,8 @@ double Shooter::getFieldRelativeTurretAngle(const RobotData &robotData, ShooterD
  * TURRET
  **/
 void Shooter::setTurret_Pos(double pos, ShooterData &shooterData){
-    shooterTurret_pidController.SetReference(turretAbsoluteToREV(turretConvertFromAngleToAbs(pos)), rev::CANSparkMax::ControlType::kPosition);
+    shooterTurret_pidController.SetReference(turretAbsoluteToREV(turretConvertFromAngleToAbs(pos)), rev::CANSparkMax::ControlType::kPosition, 0, arbFF, rev::SparkMaxPIDController::ArbFFUnits::kPercentOut);
+    frc::SmartDashboard::PutNumber("arbFF", arbFF);
 }
 
 /**
@@ -720,6 +733,7 @@ double Shooter::averageTurretGyroOffset(const RobotData &robotData, ShooterData 
 
     //return the average of those speeds
     shooterData.avgTurretOffsetPos = total/6;
+    return shooterData.avgTurretOffsetPos;
 }
 
 
