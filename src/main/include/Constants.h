@@ -62,8 +62,8 @@ static const float
     turretFullRotationRev_CCW = 140.16, //174.85
     turretFullRotationRev_C = 0, //0 
     turretMiddleRev = turretFullRotationRev_CCW/2,
-    turretFullRotationAbs_CCW = 0.84, 
-    turretFullRotationAbs_C = 0.157; 
+    turretFullRotationAbs_CCW = 0.862, 
+    turretFullRotationAbs_C = 0.174; 
 
     //FOR PRATLAS
     // turretZeroDegrees = 5, //15
