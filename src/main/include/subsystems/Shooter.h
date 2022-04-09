@@ -65,6 +65,7 @@ class Shooter{
         double averageTurretGyroOffset(const RobotData &robotData, ShooterData &shooterData);
         // double getFieldRelativeToRobotRelativeTurret(const RobotData &robotData, ShooterData &shooterData);
         double getFieldRelativeTurretAngle(const RobotData &robotData, ShooterData &shooterData);
+        double arbFF = 0;
 
         
         //init 

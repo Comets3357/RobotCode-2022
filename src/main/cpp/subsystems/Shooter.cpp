@@ -102,12 +102,12 @@ void Shooter::shooterTurretInit()
     shooterTurret.SetSmartCurrentLimit(15);
 
     //PIDS
-    shooterTurret_pidController.SetP(0.65); 
+    shooterTurret_pidController.SetP(0.2); 
     shooterTurret_pidController.SetI(0);
     shooterTurret_pidController.SetD(0);
     shooterTurret_pidController.SetIZone(0);
     shooterTurret_pidController.SetFF(0);
-    shooterTurret_pidController.SetOutputRange(-0.75,0.75);
+    shooterTurret_pidController.SetOutputRange(-1,1);
 
     shooterTurret.BurnFlash(); 
 
@@ -433,6 +433,17 @@ void Shooter::saTurret(const RobotData &robotData, ShooterData &shooterData){
     }
     else
     {
+        // use arbitrary feed forward for PID
+        if (shooterData.currentTurretAngle > turretMiddleDegrees + 20) {
+            arbFF = -0.02;
+        } else if (shooterData.currentTurretAngle < turretMiddleDegrees - 10) {
+            arbFF = 0.02;
+        } else {
+            arbFF = 0.0;
+        }
+
+        frc::SmartDashboard::PutNumber("arbFF", arbFF);
+
         if(robotData.limelightData.validTarget) // all the if statements not needed if the jitter is taken care of in limelight
         { //if you can see a target
             setTurret_Pos(robotData.limelightData.desiredTurretAngle + averageTurretGyroOffset(robotData, shooterData), shooterData);
@@ -694,7 +705,8 @@ double Shooter::getFieldRelativeTurretAngle(const RobotData &robotData, ShooterD
  * TURRET
  **/
 void Shooter::setTurret_Pos(double pos, ShooterData &shooterData){
-    shooterTurret_pidController.SetReference(turretAbsoluteToREV(turretConvertFromAngleToAbs(pos)), rev::CANSparkMax::ControlType::kPosition);
+    shooterTurret_pidController.SetReference(turretAbsoluteToREV(turretConvertFromAngleToAbs(pos)), rev::CANSparkMax::ControlType::kPosition, 0, arbFF, rev::SparkMaxPIDController::ArbFFUnits::kPercentOut);
+    frc::SmartDashboard::PutNumber("arbFF", arbFF);
 }
 
 /**
@@ -721,6 +733,7 @@ double Shooter::averageTurretGyroOffset(const RobotData &robotData, ShooterData 
 
     //return the average of those speeds
     shooterData.avgTurretOffsetPos = total/6;
+    return shooterData.avgTurretOffsetPos;
 }
 
 

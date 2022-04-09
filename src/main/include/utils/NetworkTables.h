@@ -25,6 +25,7 @@ public:
     // Drivebase
     nt::NetworkTableEntry dbInverted;
     nt::NetworkTableEntry turnResponsive;
+    nt::NetworkTableEntry avgDriveVel;
     // Indexer
     nt::NetworkTableEntry indexerTop;
     nt::NetworkTableEntry indexerBottom;
@@ -33,10 +34,13 @@ public:
     nt::NetworkTableEntry readyShoot;
     nt::NetworkTableEntry shootMode;
     nt::NetworkTableEntry targetHub;
-    nt::NetworkTableEntry shootUBAO;
+    nt::NetworkTableEntry autoReject;
+    nt::NetworkTableEntry shotDistanceTrim;
     // Climb
     nt::NetworkTableEntry climbSequence;
     nt::NetworkTableEntry climbAmperage;
+    // Other
+    nt::NetworkTableEntry ballCount;    // balls visible to RealSense
 
     /*
     * @brief Defines events where dashboard entries will be updated
