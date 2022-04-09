@@ -43,12 +43,8 @@ private:
     void taxiShoot(const RobotData &robotData, ControlData &controlData, ControllerData &controllerData);
     void taxiShootA(const RobotData &robotData, ControlData &controlData, ControllerData &controllerData);
 
-    // three ball autons (taxiShoot + terminal shoot):
-    void threeBallB(const RobotData &robotData, ControlData &controlData, ControllerData &controllerData);
-    void threeBallC(const RobotData &robotData, ControlData &controlData, ControllerData &controllerData);
-
     // four ball autons (taxiShoot, neighboring ball, termincal shoot):
-    // void fourBallB(const RobotData &robotData, ControlData &controlData);
+    void fourBallB(const RobotData &robotData, ControlData &controlData, ControllerData &controllerData);
     void fourBallC(const RobotData &robotData, ControlData &controlData, ControllerData &controllerData);
     
     void fiveBallC(const RobotData &robotData, ControlData &controlData, ControllerData &controllerData);
