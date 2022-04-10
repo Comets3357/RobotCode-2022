@@ -70,6 +70,15 @@ void Indexer::updateData(const RobotData &robotData, IndexerData &indexerData)
     frc::SmartDashboard::PutBoolean("Indexer bottom sensor", getBottomBeam());
     //frc::SmartDashboard::PutNumber("indexer speed", indexerBelt.Get());
 
+    //for bench test so we can test sensors while disabled - don't comment out
+    frc::SmartDashboard::PutBoolean("Indexer top beam break sensor", getTopBeam());
+    frc::SmartDashboard::PutBoolean("Indexer middle beam break sensor", getMidBeam());
+    frc::SmartDashboard::PutBoolean("Indexer bottom beam break sensor", getBottomBeam());
+    frc::SmartDashboard::PutBoolean("Indexer color sensor sensed blue?", robotData.arduinoData.ColorData == 11);
+    frc::SmartDashboard::PutBoolean("Indexer color sensor sensed red?", robotData.arduinoData.ColorData == 12);
+    frc::SmartDashboard::PutBoolean("Indexer color sensor sensed nothing?", robotData.arduinoData.ColorData == 10);
+    frc::SmartDashboard::PutBoolean("Indexer color sensor raw data", robotData.arduinoData.ColorData);
+
 }
 
 void Indexer::manual(const RobotData &robotData, IndexerData &indexerData)
@@ -462,12 +471,16 @@ void Indexer::indexerWheelInit(){
  **/
 
 void Indexer::TestPeriodic(const RobotData &robotData, IndexerData &indexerData){
-    // frc::SmartDashboard::PutNumber("Indexer color sensor number", robotData.colorSensorData.colorValue);
+    //diagnosing issues with smart dashboard
+    frc::SmartDashboard::PutBoolean("Indexer color sensor sensed blue?", robotData.arduinoData.ColorData == 11);
+    frc::SmartDashboard::PutBoolean("Indexer color sensor sensed red?", robotData.arduinoData.ColorData == 12);
+    frc::SmartDashboard::PutBoolean("Indexer color sensor sensed nothing?", robotData.arduinoData.ColorData == 10);
+    frc::SmartDashboard::PutBoolean("Indexer color sensor raw data", robotData.arduinoData.ColorData);
     frc::SmartDashboard::PutNumber("Indexer first encoder", indexerBeltEncoder.GetPosition());
     frc::SmartDashboard::PutNumber("Indexer second encoder", indexerWheelEncoder.GetPosition());
-    frc::SmartDashboard::PutBoolean("Indexer top sensor", getTopBeam());
-    frc::SmartDashboard::PutBoolean("Indexer middle sensor", getMidBeam());
-    frc::SmartDashboard::PutBoolean("Indexer bottom sensor", getBottomBeam());
+    frc::SmartDashboard::PutBoolean("Indexer top beam break sensor", getTopBeam());
+    frc::SmartDashboard::PutBoolean("Indexer middle beam break sensor", getMidBeam());
+    frc::SmartDashboard::PutBoolean("Indexer bottom beam break sensor", getBottomBeam());
 
     if (robotData.benchTestData.testStage == BenchTestStage::BenchTestStage_Indexer && (robotData.controlData.manualBenchTest || robotData.controlData.autoBenchTest)){ //checks if we're testing indexer
         if (robotData.benchTestData.stage == 0){
@@ -487,7 +500,7 @@ void Indexer::TestPeriodic(const RobotData &robotData, IndexerData &indexerData)
             indexerBelt.Set(-robotData.benchTestData.currentSpeed);
             indexerWheel.Set(0);
         } else {
-            indexerBelt.Set(0);
+            indexerBelt.Set(0); //if the indexer stage isn't within 0 to 3, then the speeds get set to 0
             indexerWheel.Set(0);
         }
     } else {

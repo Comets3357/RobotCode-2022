@@ -31,8 +31,8 @@ struct ClimbData {
     float benchTestClimbArmsSpeed = 0;
     float benchTestClimbElevatorSpeed = 0;
     bool limitSwitchWorking = false;
-    bool upperLimit = false;
-    bool lowerLimit = false;
+    bool elevatorUpperLimit = false;
+    bool elevatorLowerLimit = false;
     bool armsUpperLimit = false;
     bool armsLowerLimit = false;
 
@@ -63,8 +63,8 @@ private:
     void checkElevatorDeadStop(ClimbData &climbData);
     void checkArmsDeadStop(ClimbData &climbData);
     void elevatorLimitSwitchWorking(ClimbData &climbData);
-    bool encoderPluggedIn(const ClimbData &climbData);
-    bool encoderInRange(const ClimbData &climbData);
+    bool encoderPluggedIn();
+    bool encoderInRange();
 
     int stage = 0;
 

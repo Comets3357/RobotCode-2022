@@ -101,12 +101,9 @@ void Arduino::DisabledPeriodic(){
         if (lastColorCode != colorCode){
             arduino->Write(value, 1);
         }
-    } catch (...)
-    {
+    } catch (...){
         failedTransfers += 1;
     }
-        
-    
 
     lastColorCode = colorCode;
     }

@@ -27,10 +27,13 @@ struct ShooterData
     //float mode;
 
     //Bench test
-    bool topDeadStop = false;
-    bool bottomDeadStop = false;
+    bool hoodTopDeadStop = false;
+    bool hoodBottomDeadStop = false;
+    bool turretTopDeadStop = false;
+    bool turretBottomDeadStop = false;
     float benchTestShooterHoodSpeed = 0;
     float benchTestFlyWheelSpeed = 0;
+    float benchTestTurretSpeed = 0;
 };
 
 class Shooter{
@@ -42,6 +45,7 @@ class Shooter{
         void DisabledPeriodic(const RobotData &robotData, ShooterData &shooterData);
         void EnabledInit(ControlData &controlData, ShooterData &shooterData);
         void TestPeriodic(const RobotData &robotData, ShooterData &shooterData);
+        void TestInit();
     
     private:
         void manual(const RobotData &robotData, ShooterData &shooterData);
@@ -78,11 +82,12 @@ class Shooter{
         double getWheelVel();
         void setShooterWheel(double speed, double pidSlot);
         void setTurret_Pos(double pos, ShooterData &shooterData);
+        void relocateTurretDirection(const RobotData &robotData);
 
         //checks
         void checkReadyShoot(ShooterData &shooterData);
-        bool encoderPluggedInTurret(const ShooterData &shooterData);
-        bool encoderPluggedInHood(ShooterData &shooterData);
+        bool encoderPluggedInTurret();
+        bool encoderPluggedInHood();
         void saTurret(const RobotData &robotData, ShooterData &shooterData);
         void turretControlTurn(float controlTurretDirection, const RobotData &robotData, ShooterData &shooterData);
 
@@ -99,9 +104,10 @@ class Shooter{
 
 
         //bench test
-        bool encoderInRange(const ShooterData &shooterData);
-        void checkDeadStop(ShooterData &shooterData);
-        void relocateTurretDirection(const RobotData &robotData);
+        bool encoderInRangeHood();
+        bool encoderInRangeTurret();
+        void checkHoodDeadStop(ShooterData &shooterData);
+        void checkTurretDeadStop(ShooterData &shooterData);
 
         //shooter velocity min threshold
         int readyShootLimit;
@@ -120,7 +126,6 @@ class Shooter{
         rev::CANSparkMax flyWheel = rev::CANSparkMax(shooterWheelID, rev::CANSparkMax::MotorType::kBrushless);
         rev::SparkMaxRelativeEncoder flyWheelLeadEncoder = flyWheel.GetEncoder();
         rev::SparkMaxPIDController flyWheelLead_pidController = flyWheel.GetPIDController();
-
 
         //lip roller
         rev::CANSparkMax hoodRoller = rev::CANSparkMax(hoodRollerID, rev::CANSparkMax::MotorType::kBrushless);

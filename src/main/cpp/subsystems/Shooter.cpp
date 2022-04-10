@@ -187,14 +187,14 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
     saTurret(robotData, shooterData);
 
     if(robotData.timerData.secSinceInit > 1 && robotData.timerData.secSinceInit < 2){
-        if(encoderPluggedInHood(shooterData)){
+        if(encoderPluggedInHood()){
             shooterHoodEncoderRev.SetPosition(HoodabsoluteToREV(shooterHoodEncoderAbs.GetOutput()));
             isZeroed_Hood = true;
         }else{
             isZeroed_Hood = false;
         }
 
-        if(encoderPluggedInTurret(shooterData)){
+        if(encoderPluggedInTurret()){
             shooterTurretEncoderRev.SetPosition(turretAbsoluteToREV(shooterTurretEncoderAbs.GetOutput()));
             isZeroed_Turret = true;
         }else{
@@ -836,72 +836,147 @@ void Shooter::setShooterWheel(double speed, double pidSlot){
  * ---------------------------------------------------------------------------------------------------------------------------------------------------
  * BENCH TEST CODE
  * ---------------------------------------------------------------------------------------------------------------------------------------------------
- * */
-void Shooter::TestPeriodic(const RobotData &robotData, ShooterData &shooterData){
-    //frc::SmartDashboard::PutBoolean("Shooter abs encoder working", encoderPluggedInHood(shooterData));
-    frc::SmartDashboard::PutBoolean("Shooter abs encoder reading in correct range", encoderInRange(shooterData));
-    frc::SmartDashboard::PutBoolean("Shooter hit bottom dead stop?", shooterData.bottomDeadStop);
-    frc::SmartDashboard::PutBoolean("Shooter hit top dead stop?", shooterData.topDeadStop);
-    frc::SmartDashboard::PutNumber("Shooter Abs Encoder Value", shooterHoodEncoderAbs.GetOutput());
-    frc::SmartDashboard::PutNumber("Shooter min extend expected encoder value", hoodabsIn);
-    frc::SmartDashboard::PutNumber("Shooter max extend expected encoder value", hoodabsOut);
-    frc::SmartDashboard::PutNumber("Shooter hood power", shooterData.benchTestShooterHoodSpeed);
-    frc::SmartDashboard::PutNumber("Fly Wheel Speed", shooterData.benchTestFlyWheelSpeed);
+ **/
 
-    checkDeadStop(shooterData);
+void Shooter::TestInit(){
+    //sets pids for bench test
+    // shooterHood_pidController.SetP(0.378, 0);
+    // shooterHood_pidController.SetOutputRange(-0.5, 0.5, 0);
+
+    // shooterTurret_pidController.SetP(0.12, 0); 
+    // shooterTurret_pidController.SetOutputRange(-1, 1, 0);
+}
+
+void Shooter::TestPeriodic(const RobotData &robotData, ShooterData &shooterData){
+    //diagnosing issues with smart dashboard
+    frc::SmartDashboard::PutBoolean("Shooter hood abs encoder working", encoderPluggedInHood());
+    frc::SmartDashboard::PutBoolean("Shooter hood abs encoder reading in correct range", encoderInRangeHood());
+    frc::SmartDashboard::PutNumber("Shooter hood Abs Encoder Value", shooterHoodEncoderAbs.GetOutput());
+    frc::SmartDashboard::PutNumber("Shooter hood rev encoder value", shooterHoodEncoderRev.GetPosition());
+    frc::SmartDashboard::PutBoolean("Shooter hood hit inner dead stop", shooterData.hoodBottomDeadStop);
+    frc::SmartDashboard::PutBoolean("Shooter hood hit outer dead stop", shooterData.hoodTopDeadStop);
+    frc::SmartDashboard::PutNumber("Shooter hood power", shooterData.benchTestShooterHoodSpeed);
+    frc::SmartDashboard::PutBoolean("Shooter turret abs encoder working", encoderPluggedInTurret());
+    frc::SmartDashboard::PutBoolean("Shooter turret abs encoder reading in correct range", encoderInRangeTurret());
+    frc::SmartDashboard::PutNumber("Shooter turret Abs Encoder Value", shooterTurretEncoderAbs.GetOutput());
+    frc::SmartDashboard::PutNumber("Shooter turret rev encoder value", shooterTurretEncoderRev.GetPosition());
+    frc::SmartDashboard::PutBoolean("Shooter turret hit ccw dead stop", shooterData.turretBottomDeadStop);
+    frc::SmartDashboard::PutBoolean("Shooter turret hit clockwise dead stop", shooterData.turretTopDeadStop);
+    frc::SmartDashboard::PutNumber("Shooter turret power", shooterData.benchTestTurretSpeed);
+
+    //calls dead stop functions so the motors know when to stop
+    checkHoodDeadStop(shooterData);
+    checkTurretDeadStop(shooterData);
 
     //runs the bench test sequence
-    if (robotData.benchTestData.testStage == BenchTestStage::BenchTestStage_Shooter && robotData.controlData.manualBenchTest){ //checks if we're testing shooter
-        if (false){ //checks if the encoder is working
+    if (robotData.benchTestData.testStage == BenchTestStage::BenchTestStage_Shooter && (robotData.controlData.manualBenchTest || robotData.controlData.autoBenchTest)){ //checks if we're testing shooter
+        if (encoderPluggedInHood() && encoderInRangeHood() && encoderPluggedInTurret() && encoderInRangeTurret()){ //checks if the encoder is working
             if (robotData.benchTestData.stage == 0){
                 //run hood forwards
-                shooterData.benchTestShooterHoodSpeed = -.07; //sets the speed of the hood
-                shooterData.benchTestFlyWheelSpeed = 0; //sets the speed of the fly wheel
+                if (!robotData.benchTestData.PIDMode){
+                    shooterData.benchTestShooterHoodSpeed = -.07; //sets the speed of the hood
+                    shooterData.benchTestFlyWheelSpeed = 0; //sets the speed of the fly wheel
+                    shooterData.benchTestTurretSpeed = 0; //sets the speed of the turret
+                } else {
+                    shooterData.benchTestFlyWheelSpeed = 0;
+                    shooterData.benchTestShooterHoodSpeed = -.07;
+                    shooterHood_pidController.SetReference(hoodrevOut, rev::CANSparkMaxLowLevel::ControlType::kPosition); //runs the hood out
+                    shooterData.benchTestTurretSpeed = 0;
+                }
             } else if (robotData.benchTestData.stage == 1){
                 //run hoods backwards
-                shooterData.benchTestShooterHoodSpeed = .07;
-                shooterData.benchTestFlyWheelSpeed = 0;
+                if (!robotData.benchTestData.PIDMode){
+                    shooterData.benchTestShooterHoodSpeed = .07;
+                    shooterData.benchTestFlyWheelSpeed = 0;
+                    shooterData.benchTestTurretSpeed = 0;
+                } else {
+                    shooterData.benchTestFlyWheelSpeed = 0;
+                    shooterData.benchTestShooterHoodSpeed = .07;
+                    shooterHood_pidController.SetReference(hoodrevIn, rev::CANSparkMaxLowLevel::ControlType::kPosition); //runs the hood in
+                    shooterData.benchTestTurretSpeed = 0;
+                }
             } else if (robotData.benchTestData.stage == 2){
                 //run fly wheel
                 shooterData.benchTestShooterHoodSpeed = 0;
-                shooterData.benchTestFlyWheelSpeed = .25;
-            } else if (robotData.benchTestData.PIDMode){ //tests in pid mode
-                if (robotData.benchTestData.stage == 3){
-                    shooterData.benchTestFlyWheelSpeed = 0;
-                    // bring hood out
-                    shooterHood_pidController.SetReference(hoodrevOut, rev::CANSparkMaxLowLevel::ControlType::kPosition);
-                } else if (robotData.benchTestData.stage == 4){
-                    shooterData.benchTestFlyWheelSpeed = 0;
-                    // bring hood in
-                    shooterHood_pidController.SetReference(hoodrevIn, rev::CANSparkMaxLowLevel::ControlType::kPosition);
-                } else {
+                shooterData.benchTestFlyWheelSpeed = robotData.benchTestData.currentSpeed;
+                shooterData.benchTestTurretSpeed = 0;
+            } else if (robotData.benchTestData.stage == 3){
+                //run turret counterclockwise
+                if (!robotData.benchTestData.PIDMode){
                     shooterData.benchTestShooterHoodSpeed = 0;
                     shooterData.benchTestFlyWheelSpeed = 0;
+                    shooterData.benchTestTurretSpeed = .1;
+                } else {
+                    //run turret with PIDs
+                    shooterData.benchTestShooterHoodSpeed = 0;
+                    shooterData.benchTestFlyWheelSpeed = 0;
+                    shooterData.benchTestTurretSpeed = .1;
+                    shooterTurret_pidController.SetReference(turretFullRotationRev_CCW, rev::CANSparkMax::ControlType::kPosition);
                 }
+            } else if (robotData.benchTestData.stage == 4){
+                //run turret clockwise
+                if (!robotData.benchTestData.PIDMode){
+                    shooterData.benchTestShooterHoodSpeed = 0;
+                    shooterData.benchTestFlyWheelSpeed = 0;
+                    shooterData.benchTestTurretSpeed = -.1;
+                } else {
+                    //run turret with PIDs
+                    shooterData.benchTestShooterHoodSpeed = 0;
+                    shooterData.benchTestFlyWheelSpeed = 0;
+                    shooterData.benchTestTurretSpeed = -.1;
+                    shooterTurret_pidController.SetReference(turretFullRotationRev_C, rev::CANSparkMax::ControlType::kPosition);
+                }
+            } else {
+                shooterData.benchTestShooterHoodSpeed = 0; //if the stage isn't within 0 to 4, then speeds get set to 0
+                shooterData.benchTestFlyWheelSpeed = 0;
+                shooterData.benchTestTurretSpeed = 0;
+                shooterHood.Set(0);
+                flyWheel.Set(0);
+                shooterTurret.Set(0);
+            }
+        } else {
+            shooterData.benchTestShooterHoodSpeed = 0; //if the encoders aren't working, then speed gets set to 0
+            shooterData.benchTestFlyWheelSpeed = 0;
+            shooterData.benchTestTurretSpeed = 0;
+            shooterHood.Set(0);
+            flyWheel.Set(0);
+            shooterTurret.Set(0);
+        }
+
+        //if statement to make sure the speed doesn't interfere with PID mode
+        if (!robotData.benchTestData.PIDMode){
+            //sets the speed of the motors according to the variables set in the above if statement ^ (unless the motor hit a dead stop)
+            if (!shooterData.hoodTopDeadStop && !shooterData.hoodBottomDeadStop){
+                shooterHood.Set(shooterData.benchTestShooterHoodSpeed);
+            } else {
+                shooterHood.Set(0); //sets the speed to 0 if the motor is at a dead stop
+            }
+
+            if (!shooterData.turretTopDeadStop && !shooterData.turretBottomDeadStop){
+                shooterTurret.Set(shooterData.benchTestTurretSpeed);
+            } else {
+                shooterTurret.Set(0);
             }
         }
 
-        //sets the speed of the motors according to the variables set in the above if statement ^ (unless the hood hit a dead stop)
-        if (!shooterData.topDeadStop && !shooterData.bottomDeadStop){
-            shooterHood.Set(shooterData.benchTestShooterHoodSpeed);
-        } else {
-            shooterHood.Set(0);
-        }
-
         flyWheel.Set(shooterData.benchTestFlyWheelSpeed);
-        //flyWheel.Set(shooterData.benchTestFlyWheelSpeed);
     } else {
         shooterData.benchTestShooterHoodSpeed = 0; //if not testing shooter, then the speed of the motors is set to 0
         shooterData.benchTestFlyWheelSpeed = 0;
+        shooterData.benchTestTurretSpeed = 0;
+        shooterHood.Set(0);
+        flyWheel.Set(0);
+        shooterTurret.Set(0);
     }
+
+    //calls dead stop functions so the motors know when to stop - necessary to call it again for automatic bench test
+    checkHoodDeadStop(shooterData);
+    checkTurretDeadStop(shooterData);
 }
 
 //checks if the encoder is plugged in and giving an output
-bool Shooter::encoderPluggedInHood(ShooterData &shooterData){
-
-    if (shooterHoodEncoderAbs.GetOutput() > 0.01 && shooterHoodEncoderAbs.GetOutput() < 1)  { //checks if the output of the abs encoder is actually reading a signal
-        //uses mode to find most constant abs value to return 
-        //doesn't work because the encoder abs value changes too much to find a mode
+bool Shooter::encoderPluggedInHood(){
+    if (shooterHoodEncoderAbs.GetOutput() > 0.01) { //checks if the output of the abs encoder is actually reading a signal
         //updates encoder values
         // if (tickCount > 48){
         //     double number = hoodAbsValues[0];
@@ -957,6 +1032,13 @@ bool Shooter::encoderPluggedInHood(ShooterData &shooterData){
         //     tickCount = (tickCount + 1) % 50;
         // }
 
+        if (tickCount > 40){
+            shooterHoodEncoderRev.SetPosition(HoodabsoluteToREV(shooterHoodEncoderAbs.GetOutput()));
+            tickCount = (tickCount + 1) % 50;
+        } else {
+            tickCount = (tickCount + 1) % 50;
+        }
+    
         return true; //returns true to indicate that the encoder is functioning
     } else {
         return false;
@@ -965,8 +1047,11 @@ bool Shooter::encoderPluggedInHood(ShooterData &shooterData){
 }
 
 //checks if the encoder is plugged in and giving an output
-bool Shooter::encoderPluggedInTurret(const ShooterData &shooterData){
+bool Shooter::encoderPluggedInTurret(){
     if (shooterTurretEncoderAbs.GetOutput() > 0.01) { //checks if the output of the abs encoder is actually reading a signal
+        //updates encoder values
+        shooterTurretEncoderRev.SetPosition(turretAbsoluteToREV(shooterTurretEncoderAbs.GetOutput()));
+
         return true;
     } else {
         return false;
@@ -974,30 +1059,51 @@ bool Shooter::encoderPluggedInTurret(const ShooterData &shooterData){
 }
 
 //checks if the encoder is reading presumably correct values (i.e. values in the expected range)
-bool Shooter::encoderInRange(const ShooterData &shooterData){
-    if (shooterData.benchTestShooterHoodSpeed > 0 && shooterHoodEncoderAbs.GetOutput() > hoodabsIn + .02){ //out of range
+bool Shooter::encoderInRangeHood(){
+    if (shooterHoodEncoderAbs.GetOutput() > hoodabsIn + .05){ //out of range
         return false;
-    } else if (shooterData.benchTestShooterHoodSpeed < 0 && shooterHoodEncoderAbs.GetOutput() < hoodabsOut - .02){ //out of range
+    } else if (shooterHoodEncoderAbs.GetOutput() < hoodabsOut - .05){ //out of range
         return false;
     } else {
         return true; //everything else is within range, so return true
     }
 }
 
-//checks if the motor has hit a dead stop
-void Shooter::checkDeadStop(ShooterData &shooterData){
-    if (shooterData.benchTestShooterHoodSpeed < 0 && shooterHoodEncoderAbs.GetOutput() < hoodabsOut + .005){
-        shooterData.topDeadStop = true;
-        shooterData.bottomDeadStop = false;
-    } else if (shooterData.benchTestShooterHoodSpeed > 0 && shooterHoodEncoderAbs.GetOutput() > hoodabsIn - .005){
-        shooterData.topDeadStop = false;
-        shooterData.bottomDeadStop = true;
+//checks if the encoder is reading presumably correct values (i.e. values in the expected range)
+bool Shooter::encoderInRangeTurret(){
+    if (shooterTurretEncoderAbs.GetOutput() > turretFullRotationAbs_CCW + .05){ //out of range
+        return false;
+    } else if (shooterTurretEncoderAbs.GetOutput() < turretFullRotationAbs_C - .05){ //out of range
+        return false;
     } else {
-        shooterData.topDeadStop = false;
-        shooterData.bottomDeadStop = false;
+        return true; //everything else is within range, so return true
     }
 }
 
+//sets the limits and sets variables to the limits to let the TestPeriodic function know when to stop running the motors
+void Shooter::checkHoodDeadStop(ShooterData &shooterData){
+    if (shooterData.benchTestShooterHoodSpeed < 0 && shooterHoodEncoderAbs.GetOutput() < hoodabsOut + .01){
+        shooterData.hoodTopDeadStop = true;
+        shooterData.hoodBottomDeadStop = false;
+    } else if (shooterData.benchTestShooterHoodSpeed > 0 && shooterHoodEncoderAbs.GetOutput() > hoodabsIn - .01){
+        shooterData.hoodTopDeadStop = false;
+        shooterData.hoodBottomDeadStop = true;
+    } else {
+        shooterData.hoodTopDeadStop = false;
+        shooterData.hoodBottomDeadStop = false;
+    }
+}
 
-
-
+//sets the limits and sets variables to the limits to let the TestPeriodic function know when to stop running the motors
+void Shooter::checkTurretDeadStop(ShooterData &shooterData){
+    if (shooterData.benchTestTurretSpeed < 0 && shooterTurretEncoderAbs.GetOutput() < turretFullRotationAbs_C + .01){
+        shooterData.turretTopDeadStop = true;
+        shooterData.turretBottomDeadStop = false;
+    } else if (shooterData.benchTestTurretSpeed > 0 && shooterTurretEncoderAbs.GetOutput() > turretFullRotationAbs_CCW - .01){
+        shooterData.turretTopDeadStop = false;
+        shooterData.turretBottomDeadStop = true;
+    } else {
+        shooterData.turretTopDeadStop = false;
+        shooterData.turretBottomDeadStop = false;
+    }
+}
