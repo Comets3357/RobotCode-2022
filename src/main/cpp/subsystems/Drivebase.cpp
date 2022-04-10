@@ -142,13 +142,15 @@ void Drivebase::updateData(const RobotData &robotData, DrivebaseData &drivebaseD
 // adjusts for the deadzone and converts joystick input to velocity values for PID
 void Drivebase::teleopControl(const RobotData &robotData, DrivebaseData &drivebaseData)
 {
+    frc::SmartDashboard::PutNumber("DRIVE MODE", robotData.drivebaseData.driveMode);
+    frc::SmartDashboard::PutNumber("SHOOT MODE", robotData.controlData.shootMode);
     // assign drive mode
-    if (drivebaseData.driveMode != driveMode_vector &&  (robotData.controlData.lDrive <= -0.08 || robotData.controlData.lDrive >= 0.08) || (robotData.controlData.rDrive <= -0.08 || robotData.controlData.rDrive >= 0.08)) {
+    if ((!robotData.controlData.vectorDrive) && ((robotData.controlData.lDrive <= -0.08 || robotData.controlData.lDrive >= 0.08) || (robotData.controlData.rDrive <= -0.08 || robotData.controlData.rDrive >= 0.08))) {
         drivebaseData.driveMode = driveMode_joystick;
     }
-    else if (robotData.controlData.shootMode == shootMode_vision) {
+    /*else if (robotData.controlData.shootMode == shootMode_vision && !robotData.controlData.vectorDrive) {
         drivebaseData.driveMode = driveMode_turnInPlace;
-    }
+    }*/
     else if (robotData.controlData.vectorDrive) {
         drivebaseData.driveMode = driveMode_vector;
     }  
@@ -187,9 +189,9 @@ void Drivebase::teleopControl(const RobotData &robotData, DrivebaseData &driveba
         //set as percent vbus
         setPercentOutput(tempLDrive, tempRDrive);
     }
-    else if (drivebaseData.driveMode == driveMode_turnInPlace) {
+    /*else if (drivebaseData.driveMode == driveMode_turnInPlace) {
         turnInPlaceTeleop(-robotData.limelightData.angleOffset, robotData);
-    }
+    }*/
     else if (drivebaseData.driveMode == driveMode_vector)
     {
         setPercentOutput(robotData.jetsonData.leftSkew, robotData.jetsonData.rightSkew);

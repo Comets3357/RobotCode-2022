@@ -47,10 +47,20 @@ void Jetson::RobotPeriodic(const RobotData &robotData, JetsonData &jetsonData)
     jetsonData.angleOffBall = table->GetNumber("Angle To Closest Ball", 0);
     jetsonData.ballCount = table->GetNumber("ball count", 0);
     
+    frc::SmartDashboard::PutNumber("BALLLS", jetsonData.distanceFromBall);
+    frc::SmartDashboard::PutNumber("HEHEHEHEHEHEHEHEHEHEH", jetsonData.angleOffBall);
+    
+
     // ATTAINS LEFT AND RIGHT DRIVE BASE DATA
     double leftCurrent = robotData.controlData.lDrive;
     double rightCurrent = robotData.controlData.rDrive;
     double maxCurrent = 0;
+
+    frc::SmartDashboard::PutNumber("left drive12", leftCurrent);
+    frc::SmartDashboard::PutNumber("right drive12", rightCurrent);
+
+    jetsonData.leftSkew = 0;
+    jetsonData.rightSkew = 0;
 
     // SETS WHAT ALLIANCE WE ARE ON AND PUTS THAT OUT TO JETSON
     if (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed)
@@ -68,52 +78,74 @@ void Jetson::RobotPeriodic(const RobotData &robotData, JetsonData &jetsonData)
     if (robotData.drivebaseData.driveMode == driveMode_vector)
     {
         // IF THE AVERAGE OF THE TWO SIDE VELOCITIES IS GREATER THAN 0 THEN PROCEED
-        if (((leftCurrent + rightCurrent) / 2) > 0)
-        {
+        //if (((leftCurrent + rightCurrent) / 2) > 0)
+        //{
             // SETS MAXCURRENT TO THE GREATER JOYSTICK VAL
-            if (rightCurrent > leftCurrent)
+            if (jetsonData.ballCount > 0)
             {
-                maxCurrent = rightCurrent;
+                if (jetsonData.distanceFromBall < 120)
+                {
+                    if (rightCurrent > leftCurrent)
+                    {
+                        maxCurrent = rightCurrent;
+                    }
+                    else
+                    {
+                        maxCurrent = leftCurrent;
+                    }
+
+                    //maxCurrent = rightCurrent;
+
+                    // IF THE MAX CURRENT IS ABOVE DEADZONE THEN GOES INTO ACTUAL SKEW
+                    // if (maxCurrent > 0.08)
+                    // {
+                        
+                        // CREATES DEADZONE OF 4 DEGREES AND THEN SKEWS DB TO THE BALL BASED OFF THE BALLS DISTANCE AND ANGLE OFF 
+                        if (jetsonData.angleOffBall > 2)
+                        {
+                            jetsonData.leftSkew = maxCurrent;
+                            jetsonData.rightSkew = maxCurrent / getSkew(jetsonData.angleOffBall, jetsonData.distanceFromBall);
+                        }
+                        else if (jetsonData.angleOffBall < -2)
+                        {
+                        jetsonData.leftSkew = maxCurrent / getSkew(jetsonData.angleOffBall, jetsonData.distanceFromBall);
+                        jetsonData.rightSkew = maxCurrent;
+                        }
+                        else
+                        {
+                            jetsonData.leftSkew = leftCurrent;
+                            jetsonData.rightSkew = rightCurrent;
+                        }
+                }
             }
             else
-            {
-                maxCurrent = leftCurrent;
-            }
-
-            // IF THE MAX CURRENT IS ABOVE DEADZONE THEN GOES INTO ACTUAL SKEW
-            if (maxCurrent > 0.08)
-            {
-                // CREATES DEADZONE OF 4 DEGREES AND THEN SKEWS DB TO THE BALL BASED OFF THE BALLS DISTANCE AND ANGLE OFF 
-                if (jetsonData.angleOffBall > 2)
-                {
-                    jetsonData.leftSkew = maxCurrent;
-                    jetsonData.rightSkew = maxCurrent / getSkew(jetsonData.angleOffBall, jetsonData.distanceFromBall);
-                }
-                else if (jetsonData.angleOffBall < -2)
-                {
-                    jetsonData.leftSkew = maxCurrent / getSkew(jetsonData.angleOffBall, jetsonData.distanceFromBall);
-                    jetsonData.rightSkew = maxCurrent;
-                }
-            }
-            else if (maxCurrent < -0.08) // IF MAX CURRENT IS BELOW DEADZONE THEN JUST SET VELOCITES TO RIGHT AND LEFT TO ALLOW FOR DRIVING BACKWARDS
             {
                 jetsonData.leftSkew = leftCurrent;
                 jetsonData.rightSkew = rightCurrent;
             }
-        }
-        else // ELSE GO RETURN THE RIGHT AND LEFT VELOCITIES TO ALLOW TURNING
-        {
-            jetsonData.leftSkew = leftCurrent;
-            jetsonData.rightSkew = rightCurrent;    
-        }
+            // }
+            // else if (maxCurrent < -0.08) // IF MAX CURRENT IS BELOW DEADZONE THEN JUST SET VELOCITES TO RIGHT AND LEFT TO ALLOW FOR DRIVING BACKWARDS
+            // {
+            //     jetsonData.leftSkew = leftCurrent;
+            //     jetsonData.rightSkew = rightCurrent;
+            // }
+        //}
+        // else // ELSE GO RETURN THE RIGHT AND LEFT VELOCITIES TO ALLOW TURNING
+        // {
+        //     jetsonData.leftSkew = leftCurrent;
+        //     jetsonData.rightSkew = rightCurrent;    
+        // }
     }
+    frc::SmartDashboard::PutNumber("LEFT SKEW", jetsonData.leftSkew);
+    frc::SmartDashboard::PutNumber("RIGHT SKEW", jetsonData.rightSkew);
+
 }
 
 // SKEW BASED OFF DISTANCE AND ANGLE
 double Jetson::getSkew(double angle, double distance)
 {
     // ANGLE SKEW DERIVED FROM QUADRATIC EQUATION
-    double angleSkew = 0.00022715 * std::pow(angle, 2);
+    double angleSkew = 0.00130715 * std::pow(angle, 2);
     // DISTANCE SKEW DERIVED FROM DECLINING LINEAR EQUATION
     double distanceSkew = (-0.002083 * distance) + 1;
     // RETURNS THE DISTANCE AND ANGLE SKEW BASED OFF THE SELECT POSITION OF THE BALL
