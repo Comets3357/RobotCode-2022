@@ -133,7 +133,7 @@ void BenchTest::TestPeriodic(const RobotData &robotData, BenchTestData &benchTes
         //if the final motor in a subsystem is reached, then the subsystem increments
         //additionally, if it reaches the end of shooter, instead of looping back to climb like manual,
         //it makes it an arbitrary number to have a 8 seconds of delay in case the user wants to run bench test again
-        if (benchTestData.testStage == BenchTestStage::BenchTestStage_Climb && benchTestData.stage == -1){
+        if (benchTestData.testStage == BenchTestStage::BenchTestStage_Climb && benchTestData.stage >= 4){
             benchTestData.stage = 0;
             benchTestData.testStage = BenchTestStage::BenchTestStage_Drivebase;
         } else if (benchTestData.testStage == BenchTestStage::BenchTestStage_Shooter && benchTestData.stage >= 5){

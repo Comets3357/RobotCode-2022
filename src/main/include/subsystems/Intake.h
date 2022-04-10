@@ -19,6 +19,8 @@ struct IntakeData
 {
     bool intakeIdle;
     bool absEncoderInRange = true;
+    bool usingIntake = false;
+
 
     //bench test
     float intakeBenchTestSpeed = 0;
@@ -69,6 +71,8 @@ private:
     int idleCount = 0;
     //used to update rev encoder with abs encoder
     int tickCount = 0;
+
+    bool isZeroed_pivot = false;
 
 
     //rollers

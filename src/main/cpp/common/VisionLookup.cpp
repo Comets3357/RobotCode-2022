@@ -46,52 +46,13 @@ void VisionLookup::RobotPeriodic(const RobotData &robotData, VisionLookupData &v
     velocityMap[12] =  1550; 
     velocityMap[13] = 1600; 
     velocityMap[14] = 1650; 
-
-//hood roller ratio back to 3.5
     velocityMap[15] = 1720; 
     velocityMap[16] = 1800; 
     velocityMap[17] = 1950; 
     velocityMap[18] = 1950; 
     velocityMap[19] = 2100;
 
-    // hood angle map LOW HUB
-    // lowVisionMap[4] = 25.3;
-    // lowVisionMap[5] = 27.3;
-    // lowVisionMap[6] = 28.8;
-    // lowVisionMap[7] = 30.6;
-    // lowVisionMap[8] = 31.9;
-    // lowVisionMap[9] = 34.7;
-    // lowVisionMap[10] = 35.1;
-    // lowVisionMap[11] = 37.25;
-    // lowVisionMap[12] = 37.7;
-    // lowVisionMap[13] = 39;
-    // lowVisionMap[14] = 39.4;
-    // lowVisionMap[15] = ;
-    // lowVisionMap[16] = ;
-    // lowVisionMap[17] = ;
-    // lowVisionMap[18] = ;
-    // lowVisionMap[19] = ;
-    // lowVisionMap[20] = ;
 
-    
-    // velocity map LOW HUB
-    // lowVelocityMap[4] = 1450;
-    // lowVelocityMap[5] = 1500;
-    // lowVelocityMap[6] = 1600;
-    // lowVelocityMap[7] = 1650;
-    // lowVelocityMap[8] = 1750;
-    // lowVelocityMap[9] = 1750;
-    // lowVelocityMap[10] = 1775;
-    // lowVelocityMap[11] = 1850;
-    // lowVelocityMap[12] = 1950;
-    // lowVelocityMap[13] = 2000;
-    // lowVelocityMap[14] = 2100;
-    // lowVelocityMap[15] = 2300;
-    // lowVelocityMap[16] = ;
-    // lowVelocityMap[17] = ;
-    // lowVelocityMap[18] = ;
-    // lowVelocityMap[19] = ;
-    // lowVelocityMap[20] = ;
 }
 
 /**
@@ -174,33 +135,6 @@ double VisionLookup::lowestVelocity(){
     return lowest;
 }
 
-/**
- * @param key the distance from the hub
- * @return the hood angle at the asked for distance
- * FOR LOW HUB 
- **/
-// double VisionLookup::getLowValue(double key){
-
-//     std::unordered_map<double,double>::const_iterator got = lowVisionMap.find(key);
-//     if (got == lowVisionMap.end())
-//         return 0;
-//     else
-//         return got->second;
-// }
-
-/**
- * @param key the distance from the hub
- * @return the desired velocity at the asked for distance 
- * FOR LOW HUB
- **/
-// double VisionLookup::getLowVelocity(double key){
-//     std::unordered_map<double,double>::const_iterator got = lowVelocityMap.find(key);
-//     if (got == lowVelocityMap.end())
-//         return 0;
-//     else
-//         return got->second;
-
-// }
 
 
 
