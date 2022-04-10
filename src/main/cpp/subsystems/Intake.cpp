@@ -24,21 +24,25 @@ void Intake::pivotInit(){
     intakePivot.RestoreFactoryDefaults();
     intakePivot.SetInverted(false);
     intakePivot.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+
+    //up
+    intakePivot_pidController.SetP(0.1, 0);
+    intakePivot_pidController.SetI(0, 0);
+    intakePivot_pidController.SetD(0, 0);
+    intakePivot_pidController.SetIZone(0, 0);
+    intakePivot_pidController.SetFF(0, 0);
+    intakePivot_pidController.SetOutputRange(-1, 1, 0);
+
     //down
-    intakePivot_pidController.SetP(0.23);
-    intakePivot_pidController.SetI(0);
-    intakePivot_pidController.SetD(0.01);
-    intakePivot_pidController.SetIZone(0);
-    intakePivot_pidController.SetFF(0);
-    intakePivot_pidController.SetOutputRange(-0.3, 0.2);
+    intakePivot_pidController.SetP(0.02, 1);
+    intakePivot_pidController.SetI(0, 1);
+    intakePivot_pidController.SetD(0, 1);
+    intakePivot_pidController.SetIZone(0, 1);
+    intakePivot_pidController.SetFF(0, 1);
+    intakePivot_pidController.SetOutputRange(-1, 1, 1);
 
-    intakePivot.SetSmartCurrentLimit(15);
-
-    intakePivot.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse, true);
-    intakePivot.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward, true);
-
-    intakePivot.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse, revIn);
-    intakePivot.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward, revOut);
+    intakePivot.SetSmartCurrentLimit(20);
+    intakePivot.BurnFlash();
 }
 
 void Intake::singulatorInit(){
@@ -229,12 +233,10 @@ void Intake::TestPeriodic(const RobotData &robotData, IntakeData &intakeData){
     //diagnosing issues with smart dashboard
     frc::SmartDashboard::PutBoolean("Intake abs encoder working", encoderPluggedIn());
     frc::SmartDashboard::PutBoolean("Intake abs encoder reading in correct range", encoderInRange());
-    frc::SmartDashboard::PutNumber("Intake encoder position", intakePivotEncoderRev.GetPosition());
+    frc::SmartDashboard::PutNumber("Intake abs encoder value", intakePivotEncoderAbs.GetOutput());
+    frc::SmartDashboard::PutNumber("Intake rev encoder position", intakePivotEncoderRev.GetPosition());
     frc::SmartDashboard::PutBoolean("Intake hit inner dead stop", intakeData.topDeadStop);
     frc::SmartDashboard::PutBoolean("Intake hit outer dead stop", intakeData.bottomDeadStop);
-    frc::SmartDashboard::PutNumber("Intake actual abs encoder value", intakePivotEncoderAbs.GetOutput());
-    frc::SmartDashboard::PutNumber("Intake expected top absolute encoder value", absIn);
-    frc::SmartDashboard::PutNumber("Intake expected bottom absolute encoder value", absOut);
     frc::SmartDashboard::PutNumber("Intake pivot speed", intakeData.benchTestIntakePivotSpeed);
 
     //calls dead stop functions so the motors know when to stop
@@ -252,6 +254,7 @@ void Intake::TestPeriodic(const RobotData &robotData, IntakeData &intakeData){
                 } else {
                     intakeData.benchTestIntakeRollersSpeed = 0;
                     intakeData.benchTestSingulatorSpeed = 0;
+                    intakeData.benchTestIntakePivotSpeed = .05; //sets the pivot speed
                     intakePivot_pidController.SetReference(revOut, rev::CANSparkMaxLowLevel::ControlType::kPosition); //runs the intake out with PIDs
                 }
             } else if (robotData.benchTestData.stage == 1){
@@ -263,6 +266,7 @@ void Intake::TestPeriodic(const RobotData &robotData, IntakeData &intakeData){
                 } else {
                     intakeData.benchTestIntakeRollersSpeed = 0;
                     intakeData.benchTestSingulatorSpeed = 0;
+                    intakeData.benchTestIntakePivotSpeed = -.05;
                     intakePivot_pidController.SetReference(revIn, rev::CANSparkMaxLowLevel::ControlType::kPosition); //runs the intake in with PIDs
                 }
             } else if (robotData.benchTestData.stage == 2){
@@ -322,6 +326,9 @@ void Intake::TestPeriodic(const RobotData &robotData, IntakeData &intakeData){
         intakeRollers.Set(0);
         intakeSingulator.Set(0);
     }
+
+    //calls dead stop functions so the motors know when to stop - necessary to call it again for automatic bench test
+    checkDeadStop(intakeData);
 }
 
 //checks to see if the encoder is reading zero because if it is that means the encoder was most likley unplugged and the current values are wrong and we don't want to run any motors
@@ -343,9 +350,9 @@ bool Intake::encoderPluggedIn(){
 
 //checks if the encoder is reading values in the incorrect range, and if the values aren't reasonable, then the motors stop running in the bench test function
 bool Intake::encoderInRange(){
-    if (intakePivotEncoderAbs.GetOutput() < absOut - .01){
+    if (intakePivotEncoderAbs.GetOutput() < absOut - .05){
         return false;
-    } else if (intakePivotEncoderAbs.GetOutput() > absIn + .01){
+    } else if (intakePivotEncoderAbs.GetOutput() > absIn + .05){
         return false;
     } else {
         return true;

@@ -57,15 +57,19 @@ class Shooter{
         double HoodconvertFromAngleToAbs(double angle);
         double HoodconvertFromAbsToAngle(double abs);
         double HoodabsoluteToREV(double value);
+        double hoodRevtoAngle(double value);
+        double hoodAngletoRev(double value);
 
         //converting turret
         double turretConvertFromAngleToAbs(double angle);
         double turretConvertFromAbsToAngle(double abs);
         double turretAbsoluteToREV(double value);
         double turretGyroOffset(double value);
+        double turretRevtoAngle(double rev);
         double averageTurretGyroOffset(const RobotData &robotData, ShooterData &shooterData);
         // double getFieldRelativeToRobotRelativeTurret(const RobotData &robotData, ShooterData &shooterData);
         double getFieldRelativeTurretAngle(const RobotData &robotData, ShooterData &shooterData);
+        double arbFF = 0;
 
         
         //init 
@@ -78,6 +82,7 @@ class Shooter{
         double getWheelVel();
         void setShooterWheel(double speed, double pidSlot);
         void setTurret_Pos(double pos, ShooterData &shooterData);
+        void relocateTurretDirection(const RobotData &robotData);
 
         //checks
         void checkReadyShoot(ShooterData &shooterData);
@@ -103,7 +108,6 @@ class Shooter{
         bool encoderInRangeTurret();
         void checkHoodDeadStop(ShooterData &shooterData);
         void checkTurretDeadStop(ShooterData &shooterData);
-        void relocateTurretDirection(const RobotData &robotData);
 
         //shooter velocity min threshold
         int readyShootLimit;
@@ -111,6 +115,8 @@ class Shooter{
         int tickCount;
         double validTargetTurretPos;
         bool isTurretStatic;
+        bool isZeroed_Turret = true; //checks if the abs ecoder is zeroed at the beginning is a flag
+        bool isZeroed_Hood = true;
 
         //for deprecated mode function
         //int modeCounter;
@@ -120,7 +126,6 @@ class Shooter{
         rev::CANSparkMax flyWheel = rev::CANSparkMax(shooterWheelID, rev::CANSparkMax::MotorType::kBrushless);
         rev::SparkMaxRelativeEncoder flyWheelLeadEncoder = flyWheel.GetEncoder();
         rev::SparkMaxPIDController flyWheelLead_pidController = flyWheel.GetPIDController();
-
 
         //lip roller
         rev::CANSparkMax hoodRoller = rev::CANSparkMax(hoodRollerID, rev::CANSparkMax::MotorType::kBrushless);

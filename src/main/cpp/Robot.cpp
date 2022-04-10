@@ -114,6 +114,8 @@ void Robot::TestPeriodic(){
     drivebase.TestPeriodic(robotData, robotData.drivebaseData);
     intake.TestPeriodic(robotData, robotData.intakeData);
     shooter.TestPeriodic(robotData, robotData.shooterData);
+
+    
     arduino.RobotPeriodic(robotData, robotData.arduinoData);
     colorSensor.RobotPeriodic(robotData, robotData.colorSensorData);
 }

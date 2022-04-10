@@ -526,7 +526,6 @@ void Climb::DisabledPeriodic(const RobotData &robotData, ClimbData &climbData)
     updateData(robotData, climbData);
 }
 
-
 /**
  * ---------------------------------------------------------------------------------------------------------------------------------------------------
  * BENCH TEST CODE
@@ -545,16 +544,17 @@ void Climb::TestInit(ClimbData &climbData){
 
 void Climb::TestPeriodic(const RobotData &robotData, ClimbData &climbData){
     //diagnosing issues with smart dashboard
-    frc::SmartDashboard::PutNumber("Climb arms encoder value", climbArmsEncoder.GetPosition());
-    frc::SmartDashboard::PutBoolean("Climb elevator limit switch state", elevatorLimit.Get());
-    frc::SmartDashboard::PutNumber("Climb arms absolute encoder value", climbArmsAbs.GetOutput());
+    frc::SmartDashboard::PutNumber("Climb arms abs encoder value", climbArmsAbs.GetOutput());
+    frc::SmartDashboard::PutNumber("Climb arms rev encoder value", climbArmsEncoder.GetPosition());
+    frc::SmartDashboard::PutNumber("Climb elevator rev encoder value", climbElevatorEncoder.GetPosition());
     frc::SmartDashboard::PutBoolean("Climb limit switch working", climbData.limitSwitchWorking);
+    frc::SmartDashboard::PutBoolean("Climb elevator limit switch state", elevatorLimit.Get());
     frc::SmartDashboard::PutNumber("Climb arms speed", climbData.benchTestClimbArmsSpeed);
     frc::SmartDashboard::PutNumber("Climb elevator speed", climbData.benchTestClimbElevatorSpeed);
     frc::SmartDashboard::PutBoolean("Climb elevator hit top dead stop", climbData.elevatorUpperLimit);
     frc::SmartDashboard::PutBoolean("Climb elevator hit bottom dead stop", climbData.elevatorLowerLimit);
-    frc::SmartDashboard::PutBoolean("Climb arms hit top dead stop", climbData.armsUpperLimit);
-    frc::SmartDashboard::PutBoolean("Climb arms hit lower dead stop", climbData.armsLowerLimit);
+    frc::SmartDashboard::PutBoolean("Climb arms hit outer dead stop", climbData.armsLowerLimit);
+    frc::SmartDashboard::PutBoolean("Climb arms hit inner dead stop", climbData.armsUpperLimit);
 
     //calls dead stop functions so the motors know when to stop
     checkElevatorDeadStop(climbData);
@@ -569,6 +569,7 @@ void Climb::TestPeriodic(const RobotData &robotData, ClimbData &climbData){
                     climbData.benchTestClimbElevatorSpeed = 0; //sets the elevator speed
                 } else {
                     climbData.benchTestClimbElevatorSpeed = 0; //sets elevator speed to 0
+                    climbData.benchTestClimbArmsSpeed = -.1; //sets the arms speed
                     climbArms_pidController.SetReference(-250, rev::CANSparkMax::ControlType::kPosition); //arms move according to pid
                 }
             } else if (robotData.benchTestData.stage == 1){
@@ -578,6 +579,7 @@ void Climb::TestPeriodic(const RobotData &robotData, ClimbData &climbData){
                     climbData.benchTestClimbElevatorSpeed = 0;
                 } else {
                     climbData.benchTestClimbElevatorSpeed = 0;
+                    climbData.benchTestClimbArmsSpeed = .1;
                     climbArms_pidController.SetReference(0, rev::CANSparkMax::ControlType::kPosition); //arms move according to pid
                 }
             } else if (robotData.benchTestData.stage == 2){
@@ -587,6 +589,7 @@ void Climb::TestPeriodic(const RobotData &robotData, ClimbData &climbData){
                     climbData.benchTestClimbElevatorSpeed = -.1;
                 } else {
                     climbData.benchTestClimbArmsSpeed = 0;
+                    climbData.benchTestClimbElevatorSpeed = -.1;
                     climbElevator_pidController.SetReference(-140, rev::CANSparkMax::ControlType::kPosition); //elevator moves according to pid
                 }
             } else if (robotData.benchTestData.stage == 3){
@@ -596,6 +599,7 @@ void Climb::TestPeriodic(const RobotData &robotData, ClimbData &climbData){
                     climbData.benchTestClimbElevatorSpeed = .1;
                 } else {
                     climbData.benchTestClimbArmsSpeed = 0;
+                    climbData.benchTestClimbElevatorSpeed = .1;
                     climbElevator_pidController.SetReference(0, rev::CANSparkMax::ControlType::kPosition); //elevator moves according to pid
                 }
             } else {
@@ -632,6 +636,10 @@ void Climb::TestPeriodic(const RobotData &robotData, ClimbData &climbData){
         climbArms.Set(0);
         climbElevator.Set(0);
     }
+
+    //calls dead stop functions so the motors know when to stop - necessary to call it again for automatic bench test
+    checkElevatorDeadStop(climbData);
+    checkArmsDeadStop(climbData);
 }
 
 //sets the limits and sets variables to the limits to let the TestPeriodic function know when to stop running the motors
@@ -682,9 +690,9 @@ bool Climb::encoderPluggedIn(){
 
 //checks if the encoder is reading values in the incorrect range, and if the values aren't reasonable, then the motors stop running in the bench test function
 bool Climb::encoderInRange(){
-    if (climbArmsAbs.GetOutput() < .727 - .01){
+    if (climbArmsAbs.GetOutput() < .727 - .05){
         return false;
-    } else if (climbArmsAbs.GetOutput() > 0.811 + .01){
+    } else if (climbArmsAbs.GetOutput() > 0.811 + .05){
         return false;
     } else {
         return true;
