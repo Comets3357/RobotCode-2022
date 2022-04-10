@@ -248,7 +248,7 @@ double Limelight::interpolationVel(LimelightData &limelightData, const RobotData
     //slope = front - backward desired val/degrees between them
     //return slope*(backwards degree - current degree) + back desired vel
 
-    double velBackwards = backwardDesiredVel;
+    double velBackwards = backwardDesiredVel-20;
     double velFowards = velBackwards+forwardVelOffset;
 
     // if(((robotData.shooterData.currentTurretAngle <= turretMiddleDegrees) && (robotData.shooterData.currentTurretAngle >= turretBackwardsDegrees_C)) || (robotData.shooterData.currentTurretAngle >= turretBackwardsDegrees_CCW)){ //on the right side of the turret   

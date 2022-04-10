@@ -69,7 +69,7 @@ static const float
 
     forwardVelOffset = 50,
     forwardHoodOffsetFar = 1,
-    forwardHoodOffsetClose = 5,
+    forwardHoodOffsetClose = 5.5,
     change = 8;
 
     //FOR PRATLAS
