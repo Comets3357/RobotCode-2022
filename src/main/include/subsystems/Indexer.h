@@ -28,6 +28,9 @@ struct IndexerData
     bool autoRejectBottom;  // true if we are auto ejecting an opponent ball out the bottom of the indexer
     
     bool eBallCountZero; // event boolean for when ball count goes from 1 to 0
+
+    bool topBeamBreak;
+    bool midBeamBreak;
 };
 
 

@@ -36,6 +36,7 @@ public:
     nt::NetworkTableEntry targetHub;
     nt::NetworkTableEntry autoReject;
     nt::NetworkTableEntry shotDistanceTrim;
+    nt::NetworkTableEntry validTarget;
     // Climb
     nt::NetworkTableEntry climbSequence;
     nt::NetworkTableEntry climbAmperage;

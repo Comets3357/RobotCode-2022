@@ -63,6 +63,9 @@ void Indexer::updateData(const RobotData &robotData, IndexerData &indexerData)
     }
     lastTickBallCount = indexerData.indexerContents.size();
 
+    indexerData.topBeamBreak = getTopBeam();
+    indexerData.midBeamBreak = getMidBeam();
+
     debuggingStuff(robotData, indexerData);
 
     frc::SmartDashboard::PutBoolean("Indexer top sensor", getTopBeam());
