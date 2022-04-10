@@ -58,7 +58,7 @@ static const float
     // //ATLAS turret positions
     turretZeroDegrees = 0, 
     turretFullRotationDegrees = 450, //540
-    turretMiddleDegrees = (turretFullRotationDegrees - turretZeroDegrees)/2,
+    turretMiddleDegrees = 210.5,
     turretBackwardsDegrees_C = turretMiddleDegrees - 180,
     turretBackwardsDegrees_CCW = turretMiddleDegrees + 180,
     turretFullRotationRev_CCW = 140.16, //174.85
@@ -98,13 +98,13 @@ static const int
 
 //Set shooting hood positions and velocity 
 static const float
-    outerLaunchHood = hoodrevOut,
-    outerLaunchVel = 1990,
-    innerLaunchHood = -35,
-    innerLaunchVel = 1620,
-    wallHood = -25,
-    wallVel = 1500,
-    fenderHood = -2.5,
+    outerLaunchHood = -35.5,
+    outerLaunchVel = 1950,
+    innerLaunchHood = -29,
+    innerLaunchVel = 1710,
+    wallHood = -21.5,
+    wallVel = 1510,
+    fenderHood = -10,
     fenderVel = 1500;
 
 

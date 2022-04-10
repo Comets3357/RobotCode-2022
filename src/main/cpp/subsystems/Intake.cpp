@@ -19,6 +19,8 @@ void Intake::rollersInit(){
     intakeRollers.SetInverted(true);
     intakeRollers.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
     intakeRollers.SetSmartCurrentLimit(45);
+
+    intakeRollers.BurnFlash();
 }
 
 void Intake::pivotInit(){
@@ -51,6 +53,9 @@ void Intake::singulatorInit(){
     intakeSingulator.SetInverted(true);
     intakeSingulator.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
     intakeSingulator.SetSmartCurrentLimit(15);
+
+    intakeSingulator.BurnFlash();
+
 }
 
 void Intake::RobotPeriodic(const RobotData &robotData, IntakeData &intakeData)
@@ -137,6 +142,8 @@ void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
         //run rollers, singulator
         intakeRollers.Set(intakeRollerSpeed);
         intakeSingulator.Set(intakesingulatorSpeed);
+        intakeData.usingIntake = true;
+
         
     }
     //intake down and rollers backwards
@@ -148,6 +155,8 @@ void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
         }else{
             intakePivot_pidController.SetReference(intakePivotEncoderRev.GetPosition(), rev::CANSparkMaxLowLevel::ControlType::kPosition, 0);
         }
+        intakeData.usingIntake = true;
+
     }
     else if (robotData.controlData.saEjectBalls) //rollers backwards, pivot down
     {
@@ -158,9 +167,12 @@ void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
         }else{
             intakePivot_pidController.SetReference(intakePivotEncoderRev.GetPosition(), rev::CANSparkMaxLowLevel::ControlType::kPosition, 0);
         }
+        intakeData.usingIntake = true;
     }
     else //default case, everything up and not running
     {
+        intakeData.usingIntake = false;
+
         if(!intakeData.intakeIdle){ // run the singulator while the intake is not idle (basically run it for a second after the intake stops)
             intakeSingulator.Set(intakesingulatorSpeed);
         }else{
