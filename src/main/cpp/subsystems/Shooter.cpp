@@ -102,12 +102,12 @@ void Shooter::shooterTurretInit()
     shooterTurret.SetSmartCurrentLimit(15);
 
     //PIDS
-    shooterTurret_pidController.SetP(0.65); 
+    shooterTurret_pidController.SetP(0.2); 
     shooterTurret_pidController.SetI(0);
     shooterTurret_pidController.SetD(0);
     shooterTurret_pidController.SetIZone(0);
     shooterTurret_pidController.SetFF(0);
-    shooterTurret_pidController.SetOutputRange(-0.75,0.75);
+    shooterTurret_pidController.SetOutputRange(-0.6,0.6);
 
     shooterTurret.BurnFlash(); 
 
