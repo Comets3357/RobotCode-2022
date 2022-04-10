@@ -21,9 +21,10 @@ void Robot::RobotPeriodic()
     gyro.RobotPeriodic(robotData.gyroData);
     limelight.RobotPeriodic(robotData, robotData.limelightData, visionLookup);
     visionLookup.RobotPeriodic(robotData, robotData.visionLookupData);
+    jetson.RobotPeriodic(robotData, robotData.jetsonData);
     arduino.RobotPeriodic(robotData, robotData.arduinoData);
     colorSensor.RobotPeriodic(robotData, robotData.colorSensorData);
-    jetson.RobotPeriodic(robotData.jetsonData);
+    jetson.RobotPeriodic(robotData, robotData.jetsonData);
     networkTables.RobotPeriodic(robotData);
 
 
