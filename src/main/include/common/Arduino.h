@@ -19,6 +19,10 @@ class Arduino {
         int ballCount = 0;
         int mode = 0;
 
+        int changeTimer = 0;
+        int realBallCount = 0;
+        int changeTo = 0;
+
     private:
         bool ArduinoWorks = true;
         // in constructor port, deviceaddress

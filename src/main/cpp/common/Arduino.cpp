@@ -11,14 +11,34 @@ void Arduino::RobotInit()
     {
         ArduinoWorks = false;
     }
+    frc::SmartDashboard::PutNumber("LEDNUMBER", 0);
 
 }
 
 void Arduino::RobotPeriodic(const RobotData &robotData, ArduinoData &arduinoData){
+    frc::SmartDashboard::PutBoolean("ARDUINOWORKS", ArduinoWorks);
     if (frc::DriverStation::IsEnabled() && ArduinoWorks) {
         //if (ArduinoWorks){
-        ballCount = robotData.jetsonData.ballCount;
-        // ballCount = frc::SmartDashboard::GetNumber("LEDNUMBER", 0);
+        realBallCount = robotData.jetsonData.ballCount;
+        // realBallCount = frc::SmartDashboard::GetNumber("LEDNUMBER", 0);
+        if (realBallCount > ballCount)
+        {
+            ballCount = realBallCount;
+            changeTimer = 0;
+        }
+        else if (realBallCount < ballCount)
+        {
+            changeTimer += 1;
+        } else{
+            changeTo = 0;
+            changeTimer = 0;
+        }
+        if (changeTimer >= 20)
+        {
+            ballCount = realBallCount;
+            changeTimer = 0;
+        }
+        // realBallCount = frc::SmartDashboard::GetNumber("LEDNUMBER", 0);
         // this makes the robot LEDs be different colors depending on the mode
         // writes the value of colorCode to device address 1 (the left arduino), which then color codes the LEDs based upon the value
         if (robotData.shooterData.readyShoot){

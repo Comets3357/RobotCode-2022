@@ -72,6 +72,7 @@ void Robot::TeleopPeriodic()
     timer.EnabledPeriodic(robotData.timerData);
     controller.TeleopPeriodic(robotData, robotData.controllerData, robotData.controlData);
     // arduino.RobotPeriodic(robotData, robotData.arduinoData);
+
 }
 
 void Robot::DisabledInit()
