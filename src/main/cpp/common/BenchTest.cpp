@@ -83,14 +83,13 @@ void BenchTest::TestPeriodic(const RobotData &robotData, BenchTestData &benchTes
 
     //AUTOMATIC BENCH TEST
     if (controlData.autoBenchTest){
-        //janky solution to skipping drivebase after climb: basically at the end of climb, stage gets set to -1, and then here to 0, which
-        //stops it from skipping drivebase. weird solution, kinda janky, not how it should work, but it works, so cool
-        if (benchTestData.stage < 0) benchTestData.stage = 0;
-
         //increments motor every 4 seconds (unless the motor has limits/dead stops)
-        //I don't recommend actually reading this if statement unless you want your brain to hurt
-        if (!(benchTestData.testStage == BenchTestStage::BenchTestStage_Climb) && !(benchTestData.testStage == BenchTestStage::BenchTestStage_Intake && (benchTestData.stage == 0 || benchTestData.stage == 1)) && !(benchTestData.testStage == BenchTestStage::BenchTestStage_Shooter && (benchTestData.stage == 0 || benchTestData.stage == 1 || benchTestData.stage == 3 || benchTestData.stage == 4))){
-            increment += .005; //if it's not climb, and it's not intake or shooter while pivoting the intake or moving the hood in or out or rotating the turret, then automatic bench test increments based on time
+        if (!benchTestData.PIDMode){
+            if (!(benchTestData.testStage == BenchTestStage::BenchTestStage_Climb) && !(benchTestData.testStage == BenchTestStage::BenchTestStage_Intake && (benchTestData.stage == 0 || benchTestData.stage == 1)) && !(benchTestData.testStage == BenchTestStage::BenchTestStage_Shooter && (benchTestData.stage == 0 || benchTestData.stage == 1 || benchTestData.stage == 3 || benchTestData.stage == 4))){
+                increment += .005; //if it's not climb, and it's not intake or shooter while pivoting the intake or moving the hood in or out or rotating the turret, then automatic bench test increments based on time
+            }
+        } else if (benchTestData.PIDMode){
+            increment += .005; //PID mode increments based on time (4 seconds for each motor)
         }
 
         //sets the speed based on the time; starts slow, and speeds up every second
@@ -112,18 +111,6 @@ void BenchTest::TestPeriodic(const RobotData &robotData, BenchTestData &benchTes
             increment = 0;
             benchTestData.stage++;
         }
-
-        //increments the motors at dead stops
-        // if (robotData.climbData.armsLowerLimit) benchTestData.stage = 1;
-        // else if (robotData.climbData.armsUpperLimit) benchTestData.stage = 2;
-        // else if (robotData.climbData.elevatorUpperLimit) benchTestData.stage = 3;
-        // else if (robotData.climbData.elevatorLowerLimit) benchTestData.stage = -1; //special case explained on lines 86-87
-        // else if (robotData.intakeData.bottomDeadStop) benchTestData.stage = 1;
-        // else if (robotData.intakeData.topDeadStop) benchTestData.stage = 2;
-        // else if (robotData.shooterData.hoodTopDeadStop) benchTestData.stage = 1;
-        // else if (robotData.shooterData.hoodBottomDeadStop) benchTestData.stage = 2;
-        // else if (robotData.shooterData.turretBottomDeadStop) benchTestData.stage = 4;
-        // else if (robotData.shooterData.turretTopDeadStop) benchTestData.stage = 5;
 
         //increments the motors at dead stops
         if (robotData.climbData.armsLowerLimit || robotData.climbData.armsUpperLimit || robotData.climbData.elevatorLowerLimit || robotData.climbData.elevatorUpperLimit || robotData.intakeData.bottomDeadStop || robotData.intakeData.topDeadStop || robotData.shooterData.hoodTopDeadStop || robotData.shooterData.hoodBottomDeadStop || robotData.shooterData.turretTopDeadStop || robotData.shooterData.turretBottomDeadStop){
