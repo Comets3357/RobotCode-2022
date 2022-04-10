@@ -183,6 +183,17 @@ void Shooter::RobotPeriodic(const RobotData &robotData, ShooterData &shooterData
 
 void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
 
+    // for reject code
+    if(!robotData.indexerData.autoRejectTop){
+        rejectInitialized = false;
+        shooterData.readyReject = false;
+        shooterData.desiredRejectAngle = 180;
+    }
+
+    frc::SmartDashboard::PutBoolean("should reject", robotData.indexerData.autoRejectTop);
+    frc::SmartDashboard::PutBoolean("in limelight mode", robotData.controlData.shootMode == shootMode_vision);
+    frc::SmartDashboard::PutBoolean("shoot? at al?", robotData.controlData.autoRejectOpponentCargo);
+
     //Semi auto turret functionality
     saTurret(robotData, shooterData);
 
@@ -216,12 +227,10 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
     
 
     //SHOOTING LOGIC
-    /* if(robotData.indexerData.autoRejectTop && robotData.controlData.autoRejectOpponentCargo){
+    if(robotData.indexerData.autoRejectTop && robotData.controlData.autoRejectOpponentCargo){
         reject(robotData, shooterData);
         isTurretStatic = false;
-    } else */ 
-
-    if(robotData.controlData.shootMode == shootMode_vision){ // Aiming with limelight
+    } else if(robotData.controlData.shootMode == shootMode_vision){ // Aiming with limelight
         isTurretStatic = false;
 
         //if the difference between the current velocity and the desired velocity is greater than a certain amount give it straight 100% vbus to kick start it
@@ -415,6 +424,8 @@ void Shooter::saTurret(const RobotData &robotData, ShooterData &shooterData){
     else if(robotData.controlData.usingTurretDirection)
     { //controls turret using field oriented control and joystick
         turretControlTurn(robotData.controlData.saTurretDirectionController, robotData, shooterData);
+    } else if (robotData.indexerData.autoRejectTop && robotData.controlData.autoRejectOpponentCargo){
+        turretControlTurn(shooterData.desiredRejectAngle, robotData, shooterData);
     }
     else
     {
@@ -807,6 +818,49 @@ void Shooter::fender(const RobotData &robotData)
     readyShootLimit = fenderVel - 30;
     
 }
+
+
+void Shooter::reject(const RobotData &robotData, ShooterData &shooterData){
+    shooterHood_pidController.SetReference(hoodrevOut + 1, rev::CANSparkMaxLowLevel::ControlType::kPosition);
+    setShooterWheel(800, 0);
+    readyShootLimit = 800;
+
+    if(!rejectInitialized){
+        if(std::abs(getFieldRelativeTurretAngle(robotData, shooterData) - shooterData.desiredRejectAngle)  < 5){
+            if(robotData.limelightData.validTarget){
+                shooterData.desiredRejectAngle = 0; // on the other side 
+                rejectInitialized = true;
+            } else {
+                shooterData.desiredRejectAngle = 180;
+                rejectInitialized = true;
+            }
+        } /* else {
+            turretControlTurn(shooterData.desiredRejectAngle, robotData, shooterData);
+        } */
+    } else { // you've figured out which side you're on
+
+        // turretControlTurn(shooterData.desiredRejectAngle, robotData, shooterData); // FIX
+        if(getWheelVel() > readyShootLimit - 30 && getWheelVel() < readyShootLimit + 30){
+            shooterData.readyShoot = true;
+        }
+
+        //you don't see a valid target
+        if(shooterData.desiredRejectAngle == 180){
+            if(!robotData.limelightData.validTarget && (std::abs(getFieldRelativeTurretAngle(robotData, shooterData) - shooterData.desiredRejectAngle)  < 5)){
+                shooterData.readyReject = true;
+            } else {
+                shooterData.readyReject = false;
+            }
+        } else if(shooterData.desiredRejectAngle == 0){
+            if(!robotData.limelightData.validTarget && (getFieldRelativeTurretAngle(robotData, shooterData) < shooterData.desiredRejectAngle + 5 || getFieldRelativeTurretAngle(robotData, shooterData) > shooterData.desiredRejectAngle - 5 + 360)){
+                shooterData.readyReject = true;
+            } else {
+                shooterData.readyReject = false;
+            }
+        }
+    }
+}
+
 
 // checks to see if the flywheel is up to speed
 void Shooter::checkReadyShoot(ShooterData &shooterData){

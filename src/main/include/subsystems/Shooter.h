@@ -18,6 +18,7 @@ struct ShooterData
 {
     bool readyShoot;
     bool readyReject = false;
+    int desiredRejectAngle = 180;
     float currentTurretAngle;
 
     //for rolling average of turret offset 
@@ -93,9 +94,9 @@ class Shooter{
         void wall(const RobotData &robotData);
         void fender(const RobotData &robotData);
 
+        // REJECT
         void reject(const RobotData &robotData, ShooterData &shooterData);
         bool rejectInitialized = false;
-        int desiredAngle = 180;
 
 
         //bench test
