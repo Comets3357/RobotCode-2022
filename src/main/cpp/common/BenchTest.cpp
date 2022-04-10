@@ -83,13 +83,12 @@ void BenchTest::TestPeriodic(const RobotData &robotData, BenchTestData &benchTes
 
     //AUTOMATIC BENCH TEST
     if (controlData.autoBenchTest){
+        //DISABLING PID MODE IN AUTOMATIC BENCH TEST - DELETE LATER THIS IS ONLY HERE BECAUSE PID MODE DOESN'T WORK WITH AUTOMATIC BENCH TEST
+        benchTestData.PIDMode = false;
+
         //increments motor every 4 seconds (unless the motor has limits/dead stops)
-        if (!benchTestData.PIDMode){
-            if (!(benchTestData.testStage == BenchTestStage::BenchTestStage_Climb) && !(benchTestData.testStage == BenchTestStage::BenchTestStage_Intake && (benchTestData.stage == 0 || benchTestData.stage == 1)) && !(benchTestData.testStage == BenchTestStage::BenchTestStage_Shooter && (benchTestData.stage == 0 || benchTestData.stage == 1 || benchTestData.stage == 3 || benchTestData.stage == 4))){
-                increment += .005; //if it's not climb, and it's not intake or shooter while pivoting the intake or moving the hood in or out or rotating the turret, then automatic bench test increments based on time
-            }
-        } else if (benchTestData.PIDMode){
-            increment += .005; //PID mode increments based on time (4 seconds for each motor)
+        if (!(benchTestData.testStage == BenchTestStage::BenchTestStage_Climb) && !(benchTestData.testStage == BenchTestStage::BenchTestStage_Intake && (benchTestData.stage == 0 || benchTestData.stage == 1)) && !(benchTestData.testStage == BenchTestStage::BenchTestStage_Shooter && (benchTestData.stage == 0 || benchTestData.stage == 1 || benchTestData.stage == 3 || benchTestData.stage == 4))){
+            increment += .005; //if it's not climb, and it's not intake or shooter while pivoting the intake or moving the hood in or out or rotating the turret, then automatic bench test increments based on time
         }
 
         //sets the speed based on the time; starts slow, and speeds up every second
