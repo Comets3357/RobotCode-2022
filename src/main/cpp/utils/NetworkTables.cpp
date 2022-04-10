@@ -49,7 +49,7 @@ void NetworkTables::RobotInit()
 }
 
 
-void NetworkTables::TeleopPeriodic(const RobotData &robotData)
+void NetworkTables::RobotPeriodic(const RobotData &robotData)
 {
     /*
     * @brief Updates dashboard network table entries to varaiables from robot code

@@ -24,6 +24,7 @@ void Robot::RobotPeriodic()
     arduino.RobotPeriodic(robotData, robotData.arduinoData);
     colorSensor.RobotPeriodic(robotData, robotData.colorSensorData);
     jetson.RobotPeriodic(robotData.jetsonData);
+    networkTables.RobotPeriodic(robotData);
 
 
     // frc::SmartDashboard::PutNumber("mode", robotData.controlData.mode);
@@ -71,7 +72,6 @@ void Robot::TeleopPeriodic()
     timer.EnabledPeriodic(robotData.timerData);
     controller.TeleopPeriodic(robotData, robotData.controllerData, robotData.controlData);
     // arduino.RobotPeriodic(robotData, robotData.arduinoData);
-    networkTables.TeleopPeriodic(robotData);
 }
 
 void Robot::DisabledInit()
