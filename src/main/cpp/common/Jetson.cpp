@@ -97,8 +97,8 @@ void Jetson::RobotPeriodic(const RobotData &robotData, JetsonData &jetsonData)
                     //maxCurrent = rightCurrent;
 
                     // IF THE MAX CURRENT IS ABOVE DEADZONE THEN GOES INTO ACTUAL SKEW
-                    // if (maxCurrent > 0.08)
-                    // {
+                    if (maxCurrent > 0.08)
+                    {
                         
                         // CREATES DEADZONE OF 4 DEGREES AND THEN SKEWS DB TO THE BALL BASED OFF THE BALLS DISTANCE AND ANGLE OFF 
                         if (jetsonData.angleOffBall > 2)
@@ -108,14 +108,25 @@ void Jetson::RobotPeriodic(const RobotData &robotData, JetsonData &jetsonData)
                         }
                         else if (jetsonData.angleOffBall < -2)
                         {
-                        jetsonData.leftSkew = maxCurrent / getSkew(jetsonData.angleOffBall, jetsonData.distanceFromBall);
-                        jetsonData.rightSkew = maxCurrent;
+                            jetsonData.leftSkew = maxCurrent / getSkew(jetsonData.angleOffBall, jetsonData.distanceFromBall);
+                            jetsonData.rightSkew = maxCurrent;
                         }
                         else
                         {
                             jetsonData.leftSkew = leftCurrent;
                             jetsonData.rightSkew = rightCurrent;
                         }
+                    }
+                    else if (maxCurrent < -0.08)
+                    {
+                        jetsonData.leftSkew = leftCurrent;
+                        jetsonData.rightSkew = rightCurrent;
+                    }
+                }
+                else
+                {
+                    jetsonData.leftSkew = leftCurrent;
+                    jetsonData.rightSkew = rightCurrent;   
                 }
             }
             else

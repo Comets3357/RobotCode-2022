@@ -26,6 +26,4 @@ private:
     int currentAlliance;
 
     double getSkew(double angle, double distance);
-
-    int i = 0;
 };
