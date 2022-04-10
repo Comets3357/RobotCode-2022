@@ -215,9 +215,9 @@ double Limelight::getTurretTurnAngle(LimelightData &limelightData, const RobotDa
     if(desired < 0 || desired > turretFullRotationDegrees){ //if you're outside of the range, go through and add/subtract 360 to get in the range
 
         if(desired < 0){
-            desired += 360;
+            desired += 430;
         }else if(desired > turretFullRotationDegrees){
-            desired -= 360;
+            desired -= 430;
         }
 
         //so you're telling the turret to turn to turn to the unwrapped state, therefore, you are unwrapping
