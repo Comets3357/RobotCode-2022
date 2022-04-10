@@ -99,6 +99,7 @@ void Robot::DisabledPeriodic()
 void Robot::TestInit(){
     frc::LiveWindow::SetEnabled(false); // to block their weird dashboard thing
 
+    arduino.RobotInit();
     gyro.RobotInit();
 
     benchTest.TestInit(robotData.benchTestData, robotData.controlData);
