@@ -68,8 +68,7 @@ void Indexer::updateData(const RobotData &robotData, IndexerData &indexerData)
     frc::SmartDashboard::PutBoolean("Indexer top sensor", getTopBeam());
     frc::SmartDashboard::PutBoolean("Indexer middle sensor", getMidBeam());
     frc::SmartDashboard::PutBoolean("Indexer bottom sensor", getBottomBeam());
-    frc::SmartDashboard::PutNumber("indexer speed", indexerBelt.Get());
-
+    //frc::SmartDashboard::PutNumber("indexer speed", indexerBelt.Get());
 
 }
 
