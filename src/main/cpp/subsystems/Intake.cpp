@@ -61,7 +61,7 @@ void Intake::singulatorInit(){
 void Intake::RobotPeriodic(const RobotData &robotData, IntakeData &intakeData)
 {
 
-    if(robotData.timerData.secSinceInit > 1 && robotData.timerData.secSinceInit < 2){
+    if(robotData.timerData.secSinceInit > 2 && robotData.timerData.secSinceInit < 3){
         if(encoderPluggedIn()){
             intakePivotEncoderRev.SetPosition(absoluteToREV(intakePivotEncoderAbs.GetOutput()));
             isZeroed_pivot = true;
@@ -110,19 +110,11 @@ void Intake::RobotPeriodic(const RobotData &robotData, IntakeData &intakeData)
 void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
     
     //updates rev encoder if abs encoder is working
-    //encoderPluggedIn();
-
     intakePivot.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse, true);
     intakePivot.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward, true);
 
     intakePivot.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse, revIn-0.1);
     intakePivot.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward, revOut+0.1);
-    // if(isZeroed_pivot){
-        
-    // }else{
-    //     intakePivot.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse, false);
-    //     intakePivot.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward, false);
-    // }
     
 
 //INTAKE FUNCTIONALITY
@@ -252,20 +244,9 @@ void Intake::DisabledInit()
 void Intake::updateData(const RobotData &robotData, IntakeData &intakeData)
 {
     intakeData.intakeIdle = intakeIdle(robotData, intakeData);
-    frc::SmartDashboard::PutNumber("Pivot built in Pos", intakePivotEncoderRev.GetPosition());
-    frc::SmartDashboard::PutNumber("Pivot absolute Pos", intakePivotEncoderAbs.GetOutput());
-    frc::SmartDashboard::PutBoolean("is zeroed PIVOT", isZeroed_pivot);
+    // frc::SmartDashboard::PutNumber("Pivot built in Pos", intakePivotEncoderRev.GetPosition());
+    // frc::SmartDashboard::PutNumber("Pivot absolute Pos", intakePivotEncoderAbs.GetOutput());
     frc::SmartDashboard::PutNumber("time since init", robotData.timerData.secSinceInit);
-    frc::SmartDashboard::PutBoolean("eoncder plugged PIVOT", encoderPluggedIn());
-
-    frc::SmartDashboard::PutNumber("current", intakePivot.GetOutputCurrent());
-
-    //frc::SmartDashboard::PutNumber("Changed pos", absoluteToREV(intakePivotEncoder2.GetOutput()));
-
-    //frc::SmartDashboard::PutBoolean("idle?", intakeData.intakeIdle);
-    //frc::SmartDashboard::PutNumber("idle count", idleCount);
-
-    // frc::SmartDashboard::PutNumber("mode", robotData.controlData.mode);
     
 }
 

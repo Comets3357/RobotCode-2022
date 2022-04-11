@@ -156,6 +156,22 @@ void Shooter::RobotPeriodic(const RobotData &robotData, ShooterData &shooterData
 {
     updateData(robotData, shooterData);
 
+    if(robotData.timerData.secSinceInit > 2 && robotData.timerData.secSinceInit < 3){
+        if(encoderPluggedInHood()){
+            shooterHoodEncoderRev.SetPosition(HoodabsoluteToREV(shooterHoodEncoderAbs.GetOutput()));
+            isZeroed_Hood = true;
+        }else{
+            isZeroed_Hood = false;
+        }
+
+        if(encoderPluggedInTurret()){
+            shooterTurretEncoderRev.SetPosition(turretAbsoluteToREV(shooterTurretEncoderAbs.GetOutput()));
+            isZeroed_Turret = true;
+        }else{
+            isZeroed_Turret = false;
+        }
+    }
+
     //if climbing, bring the turret forward and don't run any motors
     if(robotData.controlData.mode == mode_climb_manual || robotData.controlData.mode == mode_climb_sa){
         flyWheel.Set(0);
@@ -186,22 +202,6 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
     //Semi auto turret functionality
     saTurret(robotData, shooterData);
 
-    if(robotData.timerData.secSinceInit > 1 && robotData.timerData.secSinceInit < 2){
-        if(encoderPluggedInHood()){
-            shooterHoodEncoderRev.SetPosition(HoodabsoluteToREV(shooterHoodEncoderAbs.GetOutput()));
-            isZeroed_Hood = true;
-        }else{
-            isZeroed_Hood = false;
-        }
-
-        if(encoderPluggedInTurret()){
-            shooterTurretEncoderRev.SetPosition(turretAbsoluteToREV(shooterTurretEncoderAbs.GetOutput()));
-            isZeroed_Turret = true;
-        }else{
-            isZeroed_Turret = false;
-        }
-    }
-
     shooterHood.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse, true);
     shooterHood.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward, true);
 
@@ -216,10 +216,6 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
     
 
     //SHOOTING LOGIC
-    /* if(robotData.indexerData.autoRejectTop && robotData.controlData.autoRejectOpponentCargo){
-        reject(robotData, shooterData);
-        isTurretStatic = false;
-    } else */ 
 
     if(robotData.controlData.shootMode == shootMode_vision){ // Aiming with limelight
         isTurretStatic = false;
@@ -358,7 +354,6 @@ void Shooter::manual(const RobotData &robotData, ShooterData &shooterData)
         hoodRoller.Set(0);
 
     }
-
     
     shooterHood.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse, false);
     shooterHood.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward, false);
@@ -505,7 +500,6 @@ void Shooter::updateData(const RobotData &robotData, ShooterData &shooterData)
     // frc::SmartDashboard::PutNumber("shooter Turret ABS", shooterTurretEncoderAbs.GetOutput());
     // frc::SmartDashboard::PutNumber("shooter Turret REV", shooterTurretEncoderRev.GetPosition());
     frc::SmartDashboard::PutNumber("turret angle", shooterData.currentTurretAngle);
-    // frc::SmartDashboard::PutNumber("Average gyro offset", averageTurretGyroOffset(robotData, shooterData));
 
     //hood
     // frc::SmartDashboard::PutNumber("shooter hood abs", shooterHoodEncoderAbs.GetOutput());
@@ -517,14 +511,9 @@ void Shooter::updateData(const RobotData &robotData, ShooterData &shooterData)
     frc::SmartDashboard::PutNumber("flywheel vel", flyWheelLeadEncoder.GetVelocity());
     frc::SmartDashboard::PutNumber("desired flywheel vel", robotData.limelightData.desiredVel);
 
-    // frc::SmartDashboard::PutBoolean("isZeroed Hood", isZeroed_Hood);
-    // frc::SmartDashboard::PutBoolean("isZeroed Turret", isZeroed_Turret);
-
-
     //hood roller
     //frc::SmartDashboard::PutNumber("hood roller vel", hoodRollerEncoderRev.GetVelocity());
     //frc::SmartDashboard::PutNumber("desired hood roller", robotData.limelightData.desiredHoodRollerVel);
-    //frc::SmartDashboard::PutNumber("DISTANE OFFEST", robotData.controlData.saDistanceOffset);
 
 }
 
@@ -977,68 +966,6 @@ void Shooter::TestPeriodic(const RobotData &robotData, ShooterData &shooterData)
 //checks if the encoder is plugged in and giving an output
 bool Shooter::encoderPluggedInHood(){
     if (shooterHoodEncoderAbs.GetOutput() > 0.01) { //checks if the output of the abs encoder is actually reading a signal
-        //updates encoder values
-        // if (tickCount > 48){
-        //     double number = hoodAbsValues[0];
-        //     double mode = number;
-        //     int count = 1;
-        //     int countMode = 1;
-
-        //     std::sort(std::begin(hoodAbsValues),std::end(hoodAbsValues));
-
-        //     for(int i=0; i<49; i++){
-        //         if (hoodAbsValues[i] == number) 
-        //         { // count occurrences of the current number
-        //             count++;
-        //         }else{ // now this is a different number
-        //             if (count > countMode) 
-        //             {
-        //                 countMode = count; // mode is the biggest ocurrences
-        //                 mode = number;
-        //             }
-        //             count = 1; // reset count for the new number
-        //             number = hoodAbsValues[i];
-        //         }
-        //     }
-
-        //     // float maxFreq = 0;
-        //     // float mostFrequent = -1;
-
-        //     // for(int i = 0; i < 49; i++){
-        //     //     int countFreq = 1;
-        //     //     for(int j = 0; j < 49; j++){
-        //     //         if(hoodAbsValues[j] == hoodAbsValues[i]){
-        //     //             countFreq ++;
-        //     //         }
-        //     //     }
-
-        //     //     if(maxFreq < countFreq){
-        //     //         maxFreq = countFreq;
-        //     //         mostFrequent = hoodAbsValues[i];
-        //     //     }
-        //     //     else if(maxFreq == countFreq){
-        //     //         mostFrequent = std::min(mostFrequent, hoodAbsValues[i]);
-        //     //     }
-        //     // }
-
-        //     shooterData.mode = mode;
-
-        //     //shooterHoodEncoderRev.SetPosition(HoodabsoluteToREV(mode));
-        //     tickCount = (tickCount + 1) % 50;
-        // } else {
-        //     float hoodAbsValue = 1000*shooterHoodEncoderAbs.GetOutput();
-        //     hoodAbsValue = std::floor(hoodAbsValue);
-        //     hoodAbsValues[tickCount] = hoodAbsValue/1000.0;
-        //     tickCount = (tickCount + 1) % 50;
-        // }
-
-        if (tickCount > 40){
-            shooterHoodEncoderRev.SetPosition(HoodabsoluteToREV(shooterHoodEncoderAbs.GetOutput()));
-            tickCount = (tickCount + 1) % 50;
-        } else {
-            tickCount = (tickCount + 1) % 50;
-        }
-    
         return true; //returns true to indicate that the encoder is functioning
     } else {
         return false;
@@ -1049,9 +976,6 @@ bool Shooter::encoderPluggedInHood(){
 //checks if the encoder is plugged in and giving an output
 bool Shooter::encoderPluggedInTurret(){
     if (shooterTurretEncoderAbs.GetOutput() > 0.01) { //checks if the output of the abs encoder is actually reading a signal
-        //updates encoder values
-        shooterTurretEncoderRev.SetPosition(turretAbsoluteToREV(shooterTurretEncoderAbs.GetOutput()));
-
         return true;
     } else {
         return false;
