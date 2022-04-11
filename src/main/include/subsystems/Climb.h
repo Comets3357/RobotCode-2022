@@ -25,7 +25,7 @@ struct ClimbData {
     int angle, angularRate;
     bool elevatorLimit;
 
-    float armsAmp, elevatorAmp, armsTemp, elevatorTemp, elevatorPos, armsPos, armsAbsPos;
+    // float armsAmp, elevatorAmp, armsTemp, elevatorTemp, elevatorPos, armsPos, armsAbsPos;
 
     //bench test
     float benchTestClimbArmsSpeed = 0;
