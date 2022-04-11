@@ -105,10 +105,8 @@ void Robot::TestInit(){
     benchTest.TestInit(robotData.benchTestData, robotData.controlData);
     drivebase.RobotInit();
     intake.RobotInit();
-    intake.TestInit();
     indexer.RobotInit();
     shooter.RobotInit(robotData.shooterData);
-    shooter.TestInit();
     climb.RobotInit();
     climb.TestInit(robotData.climbData);
 }

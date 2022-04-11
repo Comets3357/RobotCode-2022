@@ -37,7 +37,6 @@ public:
     void RobotInit();
     void RobotPeriodic(const RobotData &robotData, IntakeData &intakeData);
     void TestPeriodic(const RobotData &robotData, IntakeData &intakeData);
-    void TestInit();
     void DisabledInit();
     void DisabledPeriodic(const RobotData &robotData, IntakeData &intakeData);
     void updateData(const RobotData &robotData, IntakeData &intakeData);

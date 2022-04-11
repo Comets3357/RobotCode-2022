@@ -827,15 +827,6 @@ void Shooter::setShooterWheel(double speed, double pidSlot){
  * ---------------------------------------------------------------------------------------------------------------------------------------------------
  **/
 
-void Shooter::TestInit(){
-    //sets pids for bench test
-    // shooterHood_pidController.SetP(0.378, 0);
-    // shooterHood_pidController.SetOutputRange(-0.5, 0.5, 0);
-
-    // shooterTurret_pidController.SetP(0.12, 0); 
-    // shooterTurret_pidController.SetOutputRange(-1, 1, 0);
-}
-
 void Shooter::TestPeriodic(const RobotData &robotData, ShooterData &shooterData){
     //diagnosing issues with smart dashboard
     frc::SmartDashboard::PutBoolean("Shooter hood abs encoder working", encoderPluggedInHood());

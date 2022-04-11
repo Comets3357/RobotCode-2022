@@ -580,12 +580,6 @@ void Climb::DisabledPeriodic(const RobotData &robotData, ClimbData &climbData)
 
 void Climb::TestInit(ClimbData &climbData){
     elevatorLimitSwitchWorking(climbData); //checks if the limits switch starts in false, which it's supposed to; if it doesn't start in false, then the bench test won't run
-    
-    //sets pids for bench test
-    // climbElevator_pidController.SetP(0.18, 0);
-    // climbElevator_pidController.SetOutputRange(-.7, .7, 0);
-    // climbArms_pidController.SetP(0.25, 0);
-    // climbArms_pidController.SetOutputRange(-1, 1, 0);
 }
 
 void Climb::TestPeriodic(const RobotData &robotData, ClimbData &climbData){

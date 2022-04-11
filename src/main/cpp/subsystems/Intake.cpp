@@ -282,12 +282,6 @@ void Intake::DisabledPeriodic(const RobotData &robotData, IntakeData &intakeData
  * ---------------------------------------------------------------------------------------------------------------------------------------------------
  **/
 
-void Intake::TestInit(){
-    //sets pids for bench test
-    // intakePivot_pidController.SetP(0.23, 0);
-    // intakePivot_pidController.SetOutputRange(-0.3, 0.2, 0);
-}
-
 void Intake::TestPeriodic(const RobotData &robotData, IntakeData &intakeData){
     //diagnosing issues with smart dashboard
     frc::SmartDashboard::PutBoolean("Intake abs encoder working", encoderPluggedIn());
