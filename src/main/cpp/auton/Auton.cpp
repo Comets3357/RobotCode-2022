@@ -83,6 +83,12 @@ void Auton::AutonomousPeriodic(const RobotData &robotData, AutonData &autonData,
     {
         potato(robotData, controlData, controllerData);
     }
+    else if (autonData.autonRoutineName == "citrus") {
+        citrus(robotData, controlData, controllerData);
+    }
+    else if (autonData.autonRoutineName == "nearFieldOne") {
+        nearFieldOne(robotData, controlData, controllerData);
+    }
     else if (autonData.autonRoutineName == "taxiShootA") {
         taxiShootA(robotData, controlData, controllerData);
     }
@@ -113,6 +119,53 @@ void Auton::AutonomousPeriodic(const RobotData &robotData, AutonData &autonData,
 void Auton::potato(const RobotData &robotData, ControlData &controlData, ControllerData &controllerData)
 {
     controlData.saIntake = false;
+}
+
+
+void Auton::citrus(const RobotData &robotData, ControlData &controlData, ControllerData &controllerData) {
+    double sec = robotData.timerData.secSinceEnabled;
+
+    // intake
+    if (sec > 0 && sec < 10) {
+        controlData.saIntake = true;
+        controlData.saEjectBalls = false;
+    } else if (sec > 10) {
+        controlData.saIntake = false;
+        controlData.saEjectBalls = true;
+    } else {
+        controlData.saIntake = false;
+        controlData.saEjectBalls = false;
+    }
+
+    // shooting
+    controlData.shootMode = shootMode_vision;
+
+    if (sec > 2 && sec < 5) {
+        controlData.saFinalShoot = robotData.drivebaseData.dbStationaryForShot;
+    } else {
+        controlData.saFinalShoot = false;
+    }
+}
+
+
+void Auton::nearFieldOne(const RobotData &robotData, ControlData &controlData, ControllerData &controllerData) {
+    double sec = robotData.timerData.secSinceEnabled;
+
+    // intake
+    if (sec > 0 && sec < 4) {
+        controlData.saIntake= true;
+    } else {
+        controlData.saIntake = false;
+    }
+
+    // shooting
+    controlData.shootMode = shootMode_vision;
+
+    if (sec > 4 && sec < 8) {
+        controlData.saFinalShoot = robotData.drivebaseData.dbStationaryForShot;
+    } else {
+        controlData.saFinalShoot = false;
+    }
 }
 
 

@@ -154,6 +154,8 @@ void Shooter::EnabledInit(ControlData &controlData, ShooterData &shooterData)
  * */
 void Shooter::RobotPeriodic(const RobotData &robotData, ShooterData &shooterData)
 {
+    frc::SmartDashboard::PutBoolean("wrap around", robotData.limelightData.unwrapping);
+
     updateData(robotData, shooterData);
 
     if(robotData.timerData.secSinceInit > 2 && robotData.timerData.secSinceInit < 3){
