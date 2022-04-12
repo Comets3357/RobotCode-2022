@@ -248,10 +248,10 @@ void Auton::fiveBallC(const RobotData &robotData, ControlData &controlData, Cont
         controlData.saFinalShoot = true;
     } else if (sec > 3.5 && sec < 7.5) {
         controlData.saFinalShoot = robotData.drivebaseData.dbStationaryForShot;
-    } else if (sec > 13 && sec < 15) {
+    } else if (sec > 12 && sec < 15) {
         controlData.saFinalShoot = robotData.drivebaseData.dbStationaryForShot;
     } else {
-        controllerData.sBBtn = false;
+        controlData.saFinalShoot = false;
     }
 
 }

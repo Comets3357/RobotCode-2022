@@ -42,6 +42,9 @@ static const float
     //comp bot shooter hood positions
     hoodabsOut = 0.058,
     hoodabsIn = 0.956,
+    //SPARE BACKUP #1
+    //hoodabsIn 0.931,
+    //hoodabsOut 0.028,
     hoodrevOut = -38,
     hoodrevIn = 0,
     hoodAngleOut = 43,
@@ -67,10 +70,10 @@ static const float
     turretFullRotationAbs_CCW = 0.862, 
     turretFullRotationAbs_C = 0.174,
 
-    forwardVelOffset = 50,
+    forwardVelOffset = 60,
     forwardHoodOffsetFar = 1,
-    forwardHoodOffsetClose = 5.5,
-    change = 8;
+    forwardHoodOffsetClose = 4.5,
+    change = 7;
 
     //FOR PRATLAS
     // turretZeroDegrees = 5, //15
@@ -83,7 +86,6 @@ static const float
     // turretFullRotationAbs_CCW = 0.906, //0.91
     // turretFullRotationAbs_C = 0.05; //0.05
 
-
 //turret gyro offset
 static const int
     //at the the corresponding rate of rotation, offset the turret by an extra 20 degrees to account for the extra strength needed (centipetal acceleration?)
@@ -94,7 +96,6 @@ static const int
     //at certain rotational rate points add the speed offset above
     rotationalRate2 = 400,
     rotationalRate1 = 0;
-
 
 //Set shooting hood positions and velocity 
 static const float
@@ -107,14 +108,13 @@ static const float
     fenderHood = -10,
     fenderVel = 1500;
 
-
 // climb
 static const int
     climbElevatorID = 41,
     climbArmsID = 43;
     
 const float 
-    climbArmsZero = 0.811;
+    climbArmsZero = 0.8105;
 
 //limelight:
 static const double
@@ -126,7 +126,6 @@ static const double
     ycameraDistanceFromBot = 9.5, //offset from center of shooter Y
     shooterDistanceFromCenterOfBot = 2, 
     crosshairOffset = 0;
-
 
 // DIO
 static const int

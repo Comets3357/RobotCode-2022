@@ -33,7 +33,7 @@ void Arduino::RobotPeriodic(const RobotData &robotData, ArduinoData &arduinoData
             changeTo = 0;
             changeTimer = 0;
         }
-        if (changeTimer >= 20)
+        if (changeTimer >= 10)
         {
             ballCount = realBallCount;
             changeTimer = 0;
@@ -41,9 +41,7 @@ void Arduino::RobotPeriodic(const RobotData &robotData, ArduinoData &arduinoData
         // realBallCount = frc::SmartDashboard::GetNumber("LEDNUMBER", 0);
         // this makes the robot LEDs be different colors depending on the mode
         // writes the value of colorCode to device address 1 (the left arduino), which then color codes the LEDs based upon the value
-        if (robotData.shooterData.readyShoot){
-            mode = 5; //ready to shoot
-        } else if (robotData.controlData.mode == Mode::mode_teleop_manual){
+        if (robotData.controlData.mode == Mode::mode_teleop_manual){
             mode = 4; //teleop manual mode
         } else if (robotData.controlData.mode == Mode::mode_climb_sa){
             mode = 3; //climb semiauto mode

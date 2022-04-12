@@ -33,12 +33,10 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
         limelightData.desiredHoodRollerVel = 1250*3.5;
     }else{
         limelightData.desiredVel = interpolationVel(limelightData, robotData);
-        //imelightData.desiredVel = getWheelVelocity(visionLookup, limelightData, robotData); //returns rpm
         limelightData.desiredHoodRollerVel = getHoodRollerVel(limelightData, robotData);
     }
 
     limelightData.desiredHoodPos = interpolationHood(limelightData, robotData);
-    //limelightData.desiredHoodPos = getHoodPOS(visionLookup, limelightData, robotData); //returns an angle
 
     //TURRET DIFFERENCE
     limelightData.turretDifference = -robotData.limelightData.angleOffset; // turret turning is not consistent with limelight degrees off
@@ -53,9 +51,6 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     //printing data to the dashboard
     frc::SmartDashboard::PutNumber("distance offset", robotData.limelightData.distanceOffset/12);
     //frc::SmartDashboard::PutNumber("desired turret", robotData.limelightData.desiredTurretAngle);
-    // frc::SmartDashboard::PutNumber("interpolated vel", interpolationVel(limelightData, robotData));
-    // frc::SmartDashboard::PutNumber("interpolated hood", interpolationHood(limelightData, robotData));
-
 
 }
 
@@ -84,7 +79,7 @@ void Limelight::shooterOffset(const RobotData &robotData, LimelightData &limelig
     double xValueOffset = 0;
 
     //depending on which side of the target we are on, either add the distance between the camera and limelight or subtract them
-    if(robotData.limelightData.xOffset <= 0){
+    if(robotData.limelightData.xOffset >= 0){
         xValueOffset = xValue+xcameraDistanceFromBot;
     }else{
         xValueOffset = xValue-xcameraDistanceFromBot;
@@ -99,8 +94,6 @@ void Limelight::shooterOffset(const RobotData &robotData, LimelightData &limelig
     //calculate the angle between the shooter since it is different from that given by the limelight
     limelightData.angleOffset = (std::asin(xValueOffset/limelightData.distanceOffset));
     limelightData.angleOffset *= (180/pi);
-    
-    //frc::SmartDashboard::PutNumber("limelight angle diff real", limelightData.angleOffset);
 }
 
 /**
@@ -237,17 +230,13 @@ double Limelight::getTurretTurnAngle(LimelightData &limelightData, const RobotDa
         unwrappingVal = desired;
     }
 
-    
-
     return unwrappingVal;
 }
 
 double Limelight::interpolationVel(LimelightData &limelightData, const RobotData &robotData){
     //take in the desired value from front and from back
     //take those two values and the current position of the turret
-    //slope = front - backward desired val/degrees between them
-    //return slope*(backwards degree - current degree) + back desired vel
-
+    
     double velBackwards = backwardDesiredVel-20;
     double velFowards = velBackwards+forwardVelOffset;
 

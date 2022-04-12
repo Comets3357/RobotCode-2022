@@ -1,6 +1,6 @@
 citrus1
 break 1.5
-turnInPlace -100
+turnInPlace 100
 citrus2
 turnInPlace 170
 citrus3

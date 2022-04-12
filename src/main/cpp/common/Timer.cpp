@@ -2,11 +2,12 @@
 
 #include <frc/DriverStation.h>
 
-// void Timer::RobotInit(TimerData &timerData)
-// {
-//     timer.Reset();
-//     timer.Start();
-// }
+void Timer::RobotInit(TimerData &timerData)
+{
+    initTimer.Reset();
+    initTimer.Start();
+    timerData.secSinceInit = 0;
+}
 
 void Timer::EnabledInit(TimerData &timerData) {
     timer.Reset();
@@ -22,9 +23,9 @@ void Timer::EnabledPeriodic(TimerData &timerData)
 
 void Timer::DisabledInit(TimerData &timerData)
 {
-    initTimer.Reset();
-    initTimer.Start();
-    timerData.secSinceInit = 0;
+    // initTimer.Reset();
+    // initTimer.Start();
+    // timerData.secSinceInit = 0;
 }
 
 void Timer::DisabledPeriodic(TimerData &timerData) {

@@ -48,8 +48,8 @@ void Jetson::RobotPeriodic(const RobotData &robotData, JetsonData &jetsonData)
     jetsonData.angleOffBall = table->GetNumber("Angle To Closest Ball", 0);
     jetsonData.ballCount = table->GetNumber("ball count", 0);
     
-    frc::SmartDashboard::PutNumber("BALLLS", jetsonData.distanceFromBall);
-    frc::SmartDashboard::PutNumber("HEHEHEHEHEHEHEHEHEHEH", jetsonData.angleOffBall);
+    // frc::SmartDashboard::PutNumber("BALLLS", jetsonData.distanceFromBall);
+    // frc::SmartDashboard::PutNumber("HEHEHEHEHEHEHEHEHEHEH", jetsonData.angleOffBall);
     
 
     // ATTAINS LEFT AND RIGHT DRIVE BASE DATA
@@ -57,8 +57,8 @@ void Jetson::RobotPeriodic(const RobotData &robotData, JetsonData &jetsonData)
     double rightCurrent = robotData.controlData.rDrive;
     double maxCurrent = 0;
 
-    frc::SmartDashboard::PutNumber("left drive12", leftCurrent);
-    frc::SmartDashboard::PutNumber("right drive12", rightCurrent);
+    // frc::SmartDashboard::PutNumber("left drive12", leftCurrent);
+    // frc::SmartDashboard::PutNumber("right drive12", rightCurrent);
 
     jetsonData.leftSkew = 0;
     jetsonData.rightSkew = 0;
@@ -148,8 +148,8 @@ void Jetson::RobotPeriodic(const RobotData &robotData, JetsonData &jetsonData)
         //     jetsonData.rightSkew = rightCurrent;    
         // }
     }
-    frc::SmartDashboard::PutNumber("LEFT SKEW", jetsonData.leftSkew);
-    frc::SmartDashboard::PutNumber("RIGHT SKEW", jetsonData.rightSkew);
+    // frc::SmartDashboard::PutNumber("LEFT SKEW", jetsonData.leftSkew);
+    // frc::SmartDashboard::PutNumber("RIGHT SKEW", jetsonData.rightSkew);
 
 }
 

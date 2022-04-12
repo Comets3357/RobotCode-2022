@@ -11,7 +11,6 @@ void Intake::RobotInit()
     intakePivot.Set(0);
     intakeRollers.Set(0);
     intakeSingulator.Set(0);
-
 }
 
 void Intake::rollersInit(){
@@ -60,7 +59,6 @@ void Intake::singulatorInit(){
 
 void Intake::RobotPeriodic(const RobotData &robotData, IntakeData &intakeData)
 {
-
     if(robotData.timerData.secSinceInit > 2 && robotData.timerData.secSinceInit < 3){
         if(encoderPluggedIn()){
             intakePivotEncoderRev.SetPosition(absoluteToREV(intakePivotEncoderAbs.GetOutput()));
@@ -94,16 +92,6 @@ void Intake::RobotPeriodic(const RobotData &robotData, IntakeData &intakeData)
             
         }
     }
-    
-
-    //if anything is broken or not working, reset the motor and it's init functions
-    if(intakeRollers.GetFault(rev::CANSparkMax::FaultID::kHasReset)||intakeRollers.GetFault(rev::CANSparkMax::FaultID::kMotorFault)|intakeRollers.GetFault(rev::CANSparkMax::FaultID::kBrownout)){
-        rollersInit();
-    }
-    if(intakePivot.GetFault(rev::CANSparkMax::FaultID::kHasReset)||intakePivot.GetFault(rev::CANSparkMax::FaultID::kMotorFault)|intakePivot.GetFault(rev::CANSparkMax::FaultID::kBrownout)){
-        pivotInit();
-    }
-
 
 }
 
@@ -136,7 +124,6 @@ void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
         intakeSingulator.Set(intakesingulatorSpeed);
         intakeData.usingIntake = true;
 
-        
     }
     //intake down and rollers backwards
     else if (robotData.controlData.saIntakeBackward)
@@ -244,8 +231,8 @@ void Intake::DisabledInit()
 void Intake::updateData(const RobotData &robotData, IntakeData &intakeData)
 {
     intakeData.intakeIdle = intakeIdle(robotData, intakeData);
-    // frc::SmartDashboard::PutNumber("Pivot built in Pos", intakePivotEncoderRev.GetPosition());
-    // frc::SmartDashboard::PutNumber("Pivot absolute Pos", intakePivotEncoderAbs.GetOutput());
+    frc::SmartDashboard::PutNumber("Pivot built in Pos", intakePivotEncoderRev.GetPosition());
+    frc::SmartDashboard::PutNumber("Pivot absolute Pos", intakePivotEncoderAbs.GetOutput());
     frc::SmartDashboard::PutNumber("time since init", robotData.timerData.secSinceInit);
     
 }
