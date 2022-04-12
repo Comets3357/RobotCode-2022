@@ -89,7 +89,7 @@ static const float
 //turret gyro offset
 static const int
     //at the the corresponding rate of rotation, offset the turret by an extra 20 degrees to account for the extra strength needed (centipetal acceleration?)
-    turretGyroOffset2 = 100,
+    turretGyroOffset2 = -50,
     turretGyroOffset1 = 0;
     
 static const int 

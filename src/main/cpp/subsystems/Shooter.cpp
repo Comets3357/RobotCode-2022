@@ -569,8 +569,7 @@ double Shooter::turretAbsoluteToREV(double value){
  **/
 
 double Shooter::turretGyroOffset(double value){
-    frc::SmartDashboard::PutNumber("rotation rate", value);
-    double slope = (turretGyroOffset2 - turretGyroOffset1)/(rotationalRate2 - rotationalRate1);
+    double slope = (turretGyroOffset2 - turretGyroOffset1)/((double)(rotationalRate2 - rotationalRate1));
     double b = turretGyroOffset1 - (slope*rotationalRate1);
     return ((value*slope) + b);
 }
@@ -615,9 +614,6 @@ double Shooter::averageTurretGyroOffset(const RobotData &robotData, ShooterData 
 
     //return the average of those speeds
     shooterData.avgTurretOffsetPos = total/6.0;
-    frc::SmartDashboard::PutNumber("total", total);
-    frc::SmartDashboard::PutNumber("total", offsetPos);
-
     return shooterData.avgTurretOffsetPos;
 
 }
