@@ -590,6 +590,11 @@ void Shooter::setTurret_Pos(double pos, ShooterData &shooterData){
  * NOT FULLY TESTED
  */
 double Shooter::averageTurretGyroOffset(const RobotData &robotData, ShooterData &shooterData){
+
+    if (robotData.limelightData.unwrapping) {
+        return 0;
+    }
+
     double offsetPos = turretGyroOffset(robotData.gyroData.rotationalRate); 
     double total = 0;
 

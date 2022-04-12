@@ -353,7 +353,7 @@ void Climb::RunElevatorToPos(int position, int stageAdd, int onBar)
         elevatorRunning = true;
         //only moves when angular rate is low to reduce swinging
         if (onBar==1){
-            if (abs(angularRate) < 73)
+            if (abs(angularRate) < 70)
             {
                 climbElevator_pidController.SetReference(-position, rev::CANSparkMax::ControlType::kPosition, onBar);
             }
