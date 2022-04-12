@@ -63,12 +63,12 @@ void Drivebase::RobotInit()
     // dbR.Config_kD(0, 0);
 
     // Atlas 04.07.22 Final tread center drop but not fresh treads
-    dbL.Config_kF(0, 0.072551);
-    dbL.Config_kP(0, 0.1068);
+    dbL.Config_kF(0, 0.072601);
+    dbL.Config_kP(0, 0.10767);
     dbL.Config_kD(0, 0);
 
-    dbR.Config_kF(0, 0.072551);
-    dbR.Config_kP(0, 0.1068);
+    dbR.Config_kF(0, 0.072601);
+    dbR.Config_kP(0, 0.10767);
     dbR.Config_kD(0, 0);
 
 
