@@ -235,6 +235,8 @@ void Intake::updateData(const RobotData &robotData, IntakeData &intakeData)
     // frc::SmartDashboard::PutNumber("Pivot absolute Pos", intakePivotEncoderAbs.GetOutput());
     frc::SmartDashboard::PutNumber("time since init", robotData.timerData.secSinceInit);
     
+    frc::SmartDashboard::PutBoolean("isZeroed PIVOT", isZeroed_pivot);
+
 }
 
 bool Intake::intakeIdle(const RobotData &robotData, IntakeData &intakeData){
@@ -373,7 +375,7 @@ void Intake::TestPeriodic(const RobotData &robotData, IntakeData &intakeData){
 
 //checks to see if the encoder is reading zero because if it is that means the encoder was most likley unplugged and the current values are wrong and we don't want to run any motors
 bool Intake::encoderPluggedIn(){
-    if (intakePivotEncoderAbs.GetOutput() > 0.03){
+    if (intakePivotEncoderAbs.GetOutput() > 0.01){
         return true; //returns true to indicate that the encoder is functioning
     } else {
         return false;

@@ -79,7 +79,7 @@ void Limelight::shooterOffset(const RobotData &robotData, LimelightData &limelig
     double xValueOffset = 0;
 
     //depending on which side of the target we are on, either add the distance between the camera and limelight or subtract them
-    if(robotData.limelightData.xOffset >= 0){
+    if(robotData.limelightData.xOffset <= 0){
         xValueOffset = xValue+xcameraDistanceFromBot;
     }else{
         xValueOffset = xValue-xcameraDistanceFromBot;
@@ -237,7 +237,7 @@ double Limelight::interpolationVel(LimelightData &limelightData, const RobotData
     //take in the desired value from front and from back
     //take those two values and the current position of the turret
     
-    double velBackwards = backwardDesiredVel-20;
+    double velBackwards = backwardDesiredVel;
     double velFowards = velBackwards+forwardVelOffset;
 
     if(robotData.limelightData.distanceOffset > change*12){
@@ -273,10 +273,10 @@ double Limelight::interpolationHood(LimelightData &limelightData, const RobotDat
         newHood = slope*((int)(robotData.shooterData.currentTurretAngle - turretBackwardsDegrees_CCW)%360) + hoodBackwards;
     }
 
-    if(newHood < hoodAngleIn-2){
-        return hoodAngleIn-2;
-    }else if(newHood > hoodAngleOut + 1){
-        return hoodAngleOut + 1;
+    if(newHood < hoodAngleIn){
+        return hoodAngleIn;
+    }else if(newHood > hoodAngleOut){
+        return hoodAngleOut;
     }else{
         return newHood;
     }

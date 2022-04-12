@@ -470,8 +470,8 @@ void Shooter::updateData(const RobotData &robotData, ShooterData &shooterData)
     shooterData.currentTurretAngle = turretRevtoAngle(shooterTurretEncoderRev.GetPosition());
 
     //turret 
-    // frc::SmartDashboard::PutNumber("shooter Turret ABS", shooterTurretEncoderAbs.GetOutput());
-    // frc::SmartDashboard::PutNumber("shooter Turret REV", shooterTurretEncoderRev.GetPosition());
+    frc::SmartDashboard::PutNumber("shooter Turret ABS", shooterTurretEncoderAbs.GetOutput());
+    frc::SmartDashboard::PutNumber("shooter Turret REV", shooterTurretEncoderRev.GetPosition());
     frc::SmartDashboard::PutNumber("turret angle", shooterData.currentTurretAngle);
 
     //hood
@@ -483,6 +483,9 @@ void Shooter::updateData(const RobotData &robotData, ShooterData &shooterData)
     //flywheel
     frc::SmartDashboard::PutNumber("flywheel vel", flyWheelLeadEncoder.GetVelocity());
     frc::SmartDashboard::PutNumber("desired flywheel vel", robotData.limelightData.desiredVel);
+
+    frc::SmartDashboard::PutBoolean("isZeroed TURRET", isZeroed_Turret);
+    frc::SmartDashboard::PutBoolean("isZeroed HOOD", isZeroed_Hood);
 
     //hood roller
     //frc::SmartDashboard::PutNumber("hood roller vel", hoodRollerEncoderRev.GetVelocity());
@@ -568,9 +571,6 @@ double Shooter::turretGyroOffset(double value){
     return ((value*slope) + b);
 }
 
-// double Shooter::getFieldRelativeToRobotRelativeTurret(const RobotData &robotData, ShooterData &shooterData){
-    
-// }
 
 /**
  * @return sets the turret to turn to face the target when shooting USING POSITIONS
@@ -893,7 +893,6 @@ bool Shooter::encoderPluggedInHood(){
     } else {
         return false;
     }
-
 }
 
 //checks if the encoder is plugged in and giving an output

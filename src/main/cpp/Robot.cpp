@@ -5,6 +5,7 @@ void Robot::RobotInit()
 {
     gyro.RobotInit();
     jetson.RobotInit();
+    timer.RobotInit(robotData.timerData);
 
     auton.RobotInit(robotData.autonData);
     drivebase.RobotInit();
@@ -78,7 +79,7 @@ void Robot::TeleopPeriodic()
 
 void Robot::DisabledInit()
 {
-    timer.DisabledInit(robotData.timerData);
+    //timer.DisabledInit(robotData.timerData);
     drivebase.DisabledInit();
     intake.DisabledInit();
     indexer.DisabledInit();
