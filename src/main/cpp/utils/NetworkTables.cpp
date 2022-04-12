@@ -41,6 +41,7 @@ void NetworkTables::RobotInit()
     targetHub = table->GetEntry("targetHub");
     autoReject = table->GetEntry("autoReject");
     shotDistanceTrim = table->GetEntry("shotDistanceTrim");
+    validTarget = table->GetEntry("validTarget");
     // Climb
     climbSequence = table->GetEntry("climbSequence");
     climbAmperage = table->GetEntry("climbAmperage");
@@ -72,8 +73,8 @@ void NetworkTables::RobotPeriodic(const RobotData &robotData)
     turnResponsive.SetDouble(robotData.controlData.turnResponsive);
     avgDriveVel.SetDouble(robotData.drivebaseData.avgDriveVel);
     // Indexer
-    // indexerTop.SetDouble(robotData.indexerData.topIndexer);
-    // indexerBottom.SetDouble(robotData.indexerData.bottomIndexer);
+    indexerTop.SetDouble(robotData.indexerData.topBeamBreak);
+    indexerBottom.SetDouble(robotData.indexerData.midBeamBreak);
     eBallCountZero.SetDouble(robotData.indexerData.eBallCountZero);
     // Shooter
     readyShoot.SetDouble(robotData.shooterData.readyShoot);
@@ -81,6 +82,7 @@ void NetworkTables::RobotPeriodic(const RobotData &robotData)
     targetHub.SetDouble(robotData.controlData.upperHubShot);
     autoReject.SetDouble(robotData.controlData.autoRejectOpponentCargo);
     shotDistanceTrim.SetDouble(robotData.controlData.saDistanceOffset);
+    validTarget.SetBoolean(robotData.limelightData.validTarget);
     // Climb
     climbSequence.SetDouble(0.0);
     climbAmperage.SetDouble(0.0);

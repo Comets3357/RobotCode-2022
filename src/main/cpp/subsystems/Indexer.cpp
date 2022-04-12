@@ -63,6 +63,8 @@ void Indexer::updateData(const RobotData &robotData, IndexerData &indexerData)
     }
     lastTickBallCount = indexerData.indexerContents.size();
 
+    indexerData.topBeamBreak = getTopBeam();
+    indexerData.midBeamBreak = getMidBeam();
 }
 
 void Indexer::manual(const RobotData &robotData, IndexerData &indexerData)
