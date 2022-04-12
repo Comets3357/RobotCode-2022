@@ -25,14 +25,14 @@ struct ClimbData {
     int angle, angularRate;
     bool elevatorLimit;
 
-    float armsAmp, elevatorAmp, armsTemp, elevatorTemp, elevatorPos, armsPos, armsAbsPos;
+    // float armsAmp, elevatorAmp, armsTemp, elevatorTemp, elevatorPos, armsPos, armsAbsPos;
 
     //bench test
     float benchTestClimbArmsSpeed = 0;
     float benchTestClimbElevatorSpeed = 0;
     bool limitSwitchWorking = false;
-    bool upperLimit = false;
-    bool lowerLimit = false;
+    bool elevatorUpperLimit = false;
+    bool elevatorLowerLimit = false;
     bool armsUpperLimit = false;
     bool armsLowerLimit = false;
 
@@ -63,8 +63,8 @@ private:
     void checkElevatorDeadStop(ClimbData &climbData);
     void checkArmsDeadStop(ClimbData &climbData);
     void elevatorLimitSwitchWorking(ClimbData &climbData);
-    bool encoderPluggedIn(const ClimbData &climbData);
-    bool encoderInRange(const ClimbData &climbData);
+    bool encoderPluggedIn();
+    bool encoderInRange();
 
     int stage = 0;
 
@@ -86,6 +86,10 @@ private:
     bool armsDirection; //True is positive, False is negative
     bool armsRunning = false;
 
+    int timer = 0;
+
+    bool lastTrasfer = false;
+
     void updateData(const RobotData &robotData, ClimbData &climbData);
     void semiAuto(const RobotData &robotData, ClimbData &climbData);
     void manual(const RobotData &robotData, ClimbData &climbData);
@@ -94,15 +98,20 @@ private:
     void RunArmsToPos(int position, int stageAdd, int onBar);
     void RunArmsAndElevatorToPos(int elevatorPos, int elevatorBar, int armsPos, int armsBar, int stageAdd);
     void ZeroElevator(float power, int stageAdd);
+    void wait(int time);
 
     void ChangeElevatorSpeed(float speed, int stageAdd);
     void ChangeArmSpeed(float speed, int stageAdd);
 
-    void WaitUntilGyro(int cmp, float gyroValue, int stageAdd);
+    void WaitUntilGyro(int cmp, int arate, float gyroValue, int stageAdd);
 
     void CheckArms();
+    void WaitUntilArmsOnBar();
 
     void TopTransfer();
+
+    void RunArmsGyroLower();
+    void RunArmsGyroUpper();
 
     //CHANGE MOTOr ID STUFF  (just outline lol don't take your life too seriously:))
     //initualizes climb elevator motor

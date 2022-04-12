@@ -23,11 +23,9 @@ struct BenchTestData {
 class BenchTest {
 
     public:
-        void RobotInit();
-        void RobotPeriodic(const RobotData &robotData);
-        void DisabledInit();
-        void TestPeriodic(const RobotData &robotData, BenchTestData &benchTestData, const ControlData &controlData);
+        void TestInit(BenchTestData &benchTestData, ControlData &controlData);
+        void TestPeriodic(const RobotData &robotData, BenchTestData &benchTestData, ControlData &controlData);
 
     private:
-        float increment = 0;
+        float increment = 0; //time-based increment for non-dead stop based motors
 };

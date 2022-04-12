@@ -19,6 +19,7 @@ struct IntakeData
 {
     bool intakeIdle;
     bool absEncoderInRange = true;
+    bool usingIntake = false;
 
     //bench test
     float intakeBenchTestSpeed = 0;
@@ -36,7 +37,6 @@ public:
     void RobotInit();
     void RobotPeriodic(const RobotData &robotData, IntakeData &intakeData);
     void TestPeriodic(const RobotData &robotData, IntakeData &intakeData);
-    void TestInit();
     void DisabledInit();
     void DisabledPeriodic(const RobotData &robotData, IntakeData &intakeData);
     void updateData(const RobotData &robotData, IntakeData &intakeData);
@@ -62,7 +62,7 @@ private:
 
     //speeds
     double intakePivotSpeed = 0.1;
-    double intakeRollerSpeed = 0.9;
+    double intakeRollerSpeed = 1;
     double intakesingulatorSpeed = -0.6;
     double intakeRollersEjectSpeed = 0.5;
 

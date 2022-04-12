@@ -1,4 +1,5 @@
 #include "RobotData.h"
+
 /**
  * ---------------------------------------------------------------------------------------------------------------------------------------------------
  * CLASS SPECIFIC INITS
@@ -19,7 +20,7 @@ void Shooter::RobotInit(ShooterData &shooterData)
 
     //FOR TESTING
     // used for reading flywheel speeds from the dashboard
-    //frc::SmartDashboard::PutNumber("flywheel speed", 0);
+    frc::SmartDashboard::PutNumber("flywheel speed", 0);
 
 }
 
@@ -69,9 +70,18 @@ void Shooter::flyWheelInit()
     flyWheelLead_pidController.SetFF(0.000215, 1); 
     flyWheelLead_pidController.SetOutputRange(0, 1, 1);
 
+    flyWheelLead_pidController.SetP(0, 2); 
+    flyWheelLead_pidController.SetI(0, 2);
+    flyWheelLead_pidController.SetD(0, 2); 
+    flyWheelLead_pidController.SetIZone(0, 2);
+    flyWheelLead_pidController.SetFF(0.00022, 2); 
+    flyWheelLead_pidController.SetOutputRange(0, 1, 2);
+
     //flyWheel.EnableVoltageCompensation()
 
-    flyWheel.BurnFlash();            
+    flyWheel.BurnFlash();  
+    //flyWheel.EnableExternalUSBControl(true);
+          
 }
 
 void Shooter::hoodRollerInit()
@@ -146,6 +156,22 @@ void Shooter::RobotPeriodic(const RobotData &robotData, ShooterData &shooterData
 {
     updateData(robotData, shooterData);
 
+    if(robotData.timerData.secSinceInit > 2 && robotData.timerData.secSinceInit < 3){
+        if(encoderPluggedInHood()){
+            shooterHoodEncoderRev.SetPosition(HoodabsoluteToREV(shooterHoodEncoderAbs.GetOutput()));
+            isZeroed_Hood = true;
+        }else{
+            isZeroed_Hood = false;
+        }
+
+        if(encoderPluggedInTurret()){
+            shooterTurretEncoderRev.SetPosition(turretAbsoluteToREV(shooterTurretEncoderAbs.GetOutput()));
+            isZeroed_Turret = true;
+        }else{
+            isZeroed_Turret = false;
+        }
+    }
+
     //if climbing, bring the turret forward and don't run any motors
     if(robotData.controlData.mode == mode_climb_manual || robotData.controlData.mode == mode_climb_sa){
         flyWheel.Set(0);
@@ -155,7 +181,6 @@ void Shooter::RobotPeriodic(const RobotData &robotData, ShooterData &shooterData
             setTurret_Pos(turretMiddleDegrees, shooterData);
         }else{
            setTurret_Pos(robotData.shooterData.currentTurretAngle, shooterData);
-
         }
 
     }else{ 
@@ -176,34 +201,11 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
 
     //Semi auto turret functionality
     saTurret(robotData, shooterData);
-    
-    // if(isZeroed_Hood){
-            
-    // }else{
-    //     shooterHood.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse, false);
-    //     shooterHood.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward, false);
-    // }
-
-    if(robotData.timerData.secSinceInit > 5 && robotData.timerData.secSinceInit < 6){
-        if(encoderPluggedInHood(shooterData)){
-            shooterHoodEncoderRev.SetPosition(HoodabsoluteToREV(shooterHoodEncoderAbs.GetOutput()));
-            isZeroed_Hood = true;
-        }else{
-            isZeroed_Hood = false;
-        }
-
-        if(encoderPluggedInTurret(shooterData)){
-            shooterTurretEncoderRev.SetPosition(turretAbsoluteToREV(shooterTurretEncoderAbs.GetOutput()));
-            isZeroed_Turret = true;
-        }else{
-            isZeroed_Turret = false;
-        }
-    }
 
     shooterHood.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse, true);
     shooterHood.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward, true);
 
-    shooterHood.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward, hoodrevIn -2);
+    shooterHood.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward, hoodrevIn -1);
     shooterHood.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse, hoodrevOut +1);
 
     shooterTurret.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse, true);
@@ -214,31 +216,28 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
     
 
     //SHOOTING LOGIC
-    /* if(robotData.indexerData.autoRejectTop && robotData.controlData.autoRejectOpponentCargo){
-        reject(robotData, shooterData);
-        isTurretStatic = false;
-    } else */ if(robotData.controlData.shootMode == shootMode_vision){ // Aiming with limelight
-        isTurretStatic = false;
 
-        //set the hood and flywheel using pids to the desired values based off the limelight code and how far away you are
-        //if farther away
+    if(robotData.controlData.shootMode == shootMode_vision){ // Aiming with limelight
+        isTurretStatic = false;
 
         //if the difference between the current velocity and the desired velocity is greater than a certain amount give it straight 100% vbus to kick start it
         //then once it's reached a certain amount below the target velocity switch to a pid to get than final desired rpm 
         if(robotData.limelightData.desiredVel - flyWheelLeadEncoder.GetVelocity() > 350){
             flyWheel.Set(1); //give it full power
         }else{
-            if(robotData.limelightData.distanceOffset >= 9*12){
-                flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity ,1);
+            if(robotData.intakeData.usingIntake){
+                flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 2);
 
             }else{
-                flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 0);
-
+                if(robotData.limelightData.distanceOffset >= 9*12){
+                    flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 1);
+                }else{
+                    flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 0);
+                }
             }
 
         }
-        
-
+    
         //sets the hood roller speed as normal
         hoodRoller_pidController.SetReference(robotData.limelightData.desiredHoodRollerVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
 
@@ -266,7 +265,7 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
             shooterData.readyShoot = false;
         }
 
-        //CODE FOR TUNING SHOTS, TESTING CODE
+        // //CODE FOR TUNING SHOTS, TESTING CODE
         // double flywheelSpeed = frc::SmartDashboard::GetNumber("flywheel speed", 0);
         // flyWheelLead_pidController.SetReference(flywheelSpeed, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 0);
         // hoodRoller_pidController.SetReference(flywheelSpeed*3.5, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
@@ -355,31 +354,12 @@ void Shooter::manual(const RobotData &robotData, ShooterData &shooterData)
         hoodRoller.Set(0);
 
     }
-
     
     shooterHood.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse, false);
     shooterHood.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward, false);
 
     shooterTurret.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse, false);
     shooterTurret.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward, false);
-
-    //LOGIC FOR IF THE CLIMB ELEVATOR IS STILL EXTENDED
-    // if(robotData.climbData.elevatorEncoderPosition < -5){ //if the climb elevator is still up, set the turret to a specific location so that it doesn't hit anything
-    //     if(std::abs(robotData.shooterData.currentTurretAngle - turretMiddleDegrees) < 45){ //if current turret angle is closest to facing forward
-    //         setTurret_Pos(turretMiddleDegrees, shooterData);
-    //     }else if(std::abs(robotData.shooterData.currentTurretAngle - turretMiddleDegrees - 90) < 45){ //if current turret angle is closest to facing right
-    //         setTurret_Pos(turretMiddleDegrees - 90, shooterData);
-    //     }else if(std::abs(robotData.shooterData.currentTurretAngle - turretMiddleDegrees + 90) < 45){ //if current turret angle is closest to facing left
-    //         setTurret_Pos(turretMiddleDegrees + 90, shooterData);
-    //     }
-
-    // }else{
-    //     if(robotData.controlData.mTurret >= 0.015 || robotData.controlData.mTurret <= -0.015){ //accounts for deadzone
-    //         shooterTurret.Set(robotData.controlData.mTurret*.5);
-    //     }else{
-    //         shooterTurret.Set(0);
-    //     }
-    // }
 
     //manual turret
     if(robotData.controlData.mTurret >= 0.1 || robotData.controlData.mTurret <= -0.1){ //accounts for deadzone
@@ -434,10 +414,10 @@ void Shooter::saTurret(const RobotData &robotData, ShooterData &shooterData){
     else
     {
         // use arbitrary feed forward for PID
-        if (shooterData.currentTurretAngle > turretMiddleDegrees + 20) {
-            arbFF = -0.02;
-        } else if (shooterData.currentTurretAngle < turretMiddleDegrees - 20) {
+        if (shooterData.currentTurretAngle > turretMiddleDegrees + 45) {
             arbFF = 0.02;
+        } else if (shooterData.currentTurretAngle < turretMiddleDegrees - 45) {
+            arbFF = -0.02;
         } else {
             arbFF = 0.0;
         }
@@ -447,57 +427,9 @@ void Shooter::saTurret(const RobotData &robotData, ShooterData &shooterData){
         if(robotData.limelightData.validTarget) // all the if statements not needed if the jitter is taken care of in limelight
         { //if you can see a target
             setTurret_Pos(robotData.limelightData.desiredTurretAngle + averageTurretGyroOffset(robotData, shooterData), shooterData);
-            // if(robotData.limelightData.distanceOffset < 7*12)
-            // { //takes into account how far away you are, farther away == needs to be more precise
-            //     //if youre within 2 degrees of the target you can stop turning (mitigates jerky movempent)
-            //     if(std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 5)
-            //     {
-            //         shooterTurret.Set(0);
-            //     }else{
-            //         //turn the turret to face the target
-            //         //accounts for if the robot is turning and adds more power
-            //         // if(robotData.limelightData.unwrapping){
-            //         //     setTurret_Pos(robotData.limelightData.desiredTurretAngle + averageTurretGyroOffset(robotData, shooterData), shooterData);
-            //         // }else{
-            //         //     setTurret_Pos(robotData.limelightData.avgDesiredTurretAngle + averageTurretGyroOffset(robotData, shooterData), shooterData);
-            //         // }
-            //         setTurret_Pos(robotData.limelightData.desiredTurretAngle + averageTurretGyroOffset(robotData, shooterData), shooterData);
-            //     }
-            // }else{
-            //     if(std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 2){
-            //         shooterTurret.Set(0);
-            //     }else{
-            //         //turn the turret to face the target
-            //         //accounts for if the robot is turning and adds more power
-            //         // if(robotData.limelightData.unwrapping){
-            //         //     setTurret_Pos(robotData.limelightData.desiredTurretAngle + averageTurretGyroOffset(robotData, shooterData), shooterData);
-            //         // }else{
-            //         //     setTurret_Pos(robotData.limelightData.avgDesiredTurretAngle + averageTurretGyroOffset(robotData, shooterData), shooterData);
-            //         // }
-            //         setTurret_Pos(robotData.limelightData.desiredTurretAngle + averageTurretGyroOffset(robotData, shooterData), shooterData);
-            //     } 
-            // }
             
         }
-        
     }
-
-
-    //DECOMMISIONED CODE
-    //case: you're spinning in circles and you reach one of your limits but youre still spinning so you lose sight of the target
-    //turn the limelight to the last know position
-    //this code only really works if the robot itself isn't moving anywhere crazy and you're just spinning in a circle
-
-    // if(robotData.limelightData.validTarget == 1){ //valid target set the turret position to the desired one from limelight
-    //     validTargetTurretPos = robotData.limelightData.desiredTurretAngle;
-
-    //     setTurret_Pos(robotData.limelightData.desiredTurretAngle, shooterData);
-
-    // }else if(robotData.limelightData.validTarget == 0){ //if you dont see a target,
-    //     setTurret_Pos(validTargetTurretPos, shooterData);
-
-    // }
-    
 }
 
 /**
@@ -507,9 +439,26 @@ void Shooter::saTurret(const RobotData &robotData, ShooterData &shooterData){
 
 void Shooter::turretControlTurn(float controlTurretDirection, const RobotData &robotData, ShooterData &shooterData){
     float robotDirection = robotData.drivebaseData.odometryYaw; //in degrees 
-    float turretTurnPos;
+    float turretTurnPos = (controlTurretDirection - robotDirection) + turretMiddleDegrees;
+    turretTurnPos = (int)turretTurnPos % 360;
 
-    turretTurnPos = (controlTurretDirection - robotDirection) + turretMiddleDegrees; //calculates turret pos based on what we know to be the center of the bot
+    frc::SmartDashboard::PutNumber("turret position 2", std::abs(shooterData.currentTurretAngle - (turretTurnPos + 360)));
+    frc::SmartDashboard::PutNumber("turret position 1", std::abs(shooterData.currentTurretAngle - turretTurnPos));
+
+    if (turretTurnPos > 0 && turretTurnPos < 90)
+    {
+        if (std::abs(shooterData.currentTurretAngle - (turretTurnPos + 360)) < std::abs(shooterData.currentTurretAngle - turretTurnPos))
+        {
+            turretTurnPos += 360;
+        }
+    }
+
+    frc::SmartDashboard::PutNumber("turret final position", turretTurnPos);
+    frc::SmartDashboard::PutNumber("robot position", robotData.drivebaseData.odometryYaw);
+
+    setTurret_Pos(turretTurnPos, shooterData);
+
+    //turretTurnPos = (controlTurretDirection - robotDirection) + turretMiddleDegrees; //calculates turret pos based on what we know to be the center of the bot
     
     //is this code necessary??? I don't think it should ever be over or under?????? but its good ig
     // if(turretTurnPos < 0 || turretTurnPos > turretFullRotationDegrees){
@@ -521,21 +470,20 @@ void Shooter::turretControlTurn(float controlTurretDirection, const RobotData &r
     // }
     
     //if its possible to have 2 positions from you're desired location
-    if(turretTurnPos > 360){
-        float turretTurnPos2;
+    // if(turretTurnPos > 360){
+    //     float turretTurnPos2;
 
-        turretTurnPos2 = turretTurnPos - 360; //second position
+    //     turretTurnPos2 = turretTurnPos - 360; //second position
 
-        //checks to see which of the two values is closer to the current turret value and go to that position
-        if(std::abs(robotData.shooterData.currentTurretAngle-turretTurnPos) < std::abs(robotData.shooterData.currentTurretAngle-turretTurnPos2)){
-            setTurret_Pos(turretTurnPos, shooterData);
-        }else{
-            setTurret_Pos(turretTurnPos2, shooterData);
-        }
-    }else{
-        setTurret_Pos(turretTurnPos, shooterData);
-
-    }
+    //     //checks to see which of the two values is closer to the current turret value and go to that position
+    //     if(std::abs(robotData.shooterData.currentTurretAngle-turretTurnPos) < std::abs(robotData.shooterData.currentTurretAngle-turretTurnPos2)){
+    //         setTurret_Pos(turretTurnPos, shooterData);
+    //     }else{
+    //         setTurret_Pos(turretTurnPos2, shooterData);
+    //     }
+    // }else{
+    //     setTurret_Pos(turretTurnPos, shooterData);
+    // }
 }
 
 /**
@@ -549,13 +497,12 @@ void Shooter::updateData(const RobotData &robotData, ShooterData &shooterData)
     shooterData.currentTurretAngle = turretRevtoAngle(shooterTurretEncoderRev.GetPosition());
 
     //turret 
-    frc::SmartDashboard::PutNumber("shooter Turret ABS", shooterTurretEncoderAbs.GetOutput());
-    frc::SmartDashboard::PutNumber("shooter Turret REV", shooterTurretEncoderRev.GetPosition());
+    // frc::SmartDashboard::PutNumber("shooter Turret ABS", shooterTurretEncoderAbs.GetOutput());
+    // frc::SmartDashboard::PutNumber("shooter Turret REV", shooterTurretEncoderRev.GetPosition());
     frc::SmartDashboard::PutNumber("turret angle", shooterData.currentTurretAngle);
-    frc::SmartDashboard::PutNumber("Average gyro offset", averageTurretGyroOffset(robotData, shooterData));
 
     //hood
-    frc::SmartDashboard::PutNumber("shooter hood abs", shooterHoodEncoderAbs.GetOutput());
+    // frc::SmartDashboard::PutNumber("shooter hood abs", shooterHoodEncoderAbs.GetOutput());
     frc::SmartDashboard::PutNumber("shooter hood rev", shooterHoodEncoderRev.GetPosition());
     frc::SmartDashboard::PutNumber("HOOD ANGLE", hoodRevtoAngle(shooterHoodEncoderRev.GetPosition()));
     frc::SmartDashboard::PutNumber("desired hood pos", robotData.limelightData.desiredHoodPos);
@@ -564,15 +511,9 @@ void Shooter::updateData(const RobotData &robotData, ShooterData &shooterData)
     frc::SmartDashboard::PutNumber("flywheel vel", flyWheelLeadEncoder.GetVelocity());
     frc::SmartDashboard::PutNumber("desired flywheel vel", robotData.limelightData.desiredVel);
 
-    frc::SmartDashboard::PutBoolean("isZeroed Hood", isZeroed_Hood);
-    frc::SmartDashboard::PutBoolean("isZeroed Turret", isZeroed_Turret);
-
-
     //hood roller
     //frc::SmartDashboard::PutNumber("hood roller vel", hoodRollerEncoderRev.GetVelocity());
     //frc::SmartDashboard::PutNumber("desired hood roller", robotData.limelightData.desiredHoodRollerVel);
-
-    frc::SmartDashboard::PutNumber("DISTANE OFFEST", robotData.controlData.saDistanceOffset);
 
 }
 
@@ -745,121 +686,115 @@ double Shooter::averageTurretGyroOffset(const RobotData &robotData, ShooterData 
  * */
 void Shooter::outerLaunch(const RobotData &robotData)
 {
-    if (robotData.controlData.upperHubShot)
-    {
-
+    if(isZeroed_Hood){
         shooterHood_pidController.SetReference(outerLaunchHood, rev::CANSparkMaxLowLevel::ControlType::kPosition);
-        setShooterWheel(outerLaunchVel, 1);
-        hoodRoller_pidController.SetReference(outerLaunchVel*3.5, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
-
-        readyShootLimit = outerLaunchVel - 30;
+    }else{
+        shooterHood_pidController.SetReference(shooterHoodEncoderRev.GetPosition(), rev::CANSparkMaxLowLevel::ControlType::kPosition);
     }
-    else if (!robotData.controlData.upperHubShot)
-    {
-        shooterHood_pidController.SetReference(outerLaunchHood_Low, rev::CANSparkMaxLowLevel::ControlType::kPosition);
-        setShooterWheel(outerLaunchVel_Low, 1);
-        hoodRoller_pidController.SetReference(outerLaunchVel_Low*3.5, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
 
+    if(outerLaunchVel - flyWheelLeadEncoder.GetVelocity() > 350){
+        flyWheel.Set(1); //give it full power
+    }else{
+        if(robotData.intakeData.usingIntake){
+            flyWheelLead_pidController.SetReference(outerLaunchVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 2);
 
-        readyShootLimit = outerLaunchVel_Low - 30;
+        }else{
+            flyWheelLead_pidController.SetReference(outerLaunchVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 2);
+            
+        }
 
     }
+  
+    hoodRoller_pidController.SetReference(outerLaunchVel*3.5, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
+
+    readyShootLimit = outerLaunchVel - 30;
+    
 }
 
 void Shooter::innerLaunch(const RobotData &robotData)
 {
-    if (robotData.controlData.upperHubShot)
-    {
-        if(isZeroed_Hood){
-            shooterHood_pidController.SetReference(innerLaunchHood, rev::CANSparkMaxLowLevel::ControlType::kPosition);
-    
-        }else{
-            shooterHood_pidController.SetReference(shooterHoodEncoderRev.GetPosition(), rev::CANSparkMaxLowLevel::ControlType::kPosition);
-        }
-        setShooterWheel(innerLaunchVel, 1);
-        hoodRoller_pidController.SetReference(innerLaunchVel*3.5, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
-
-
-        readyShootLimit = innerLaunchVel - 30;
+   
+    if(isZeroed_Hood){
+        shooterHood_pidController.SetReference(innerLaunchHood, rev::CANSparkMaxLowLevel::ControlType::kPosition);
+    }else{
+        shooterHood_pidController.SetReference(shooterHoodEncoderRev.GetPosition(), rev::CANSparkMaxLowLevel::ControlType::kPosition);
     }
-    else if (!robotData.controlData.upperHubShot)
-    {
-        if(isZeroed_Hood){
-            shooterHood_pidController.SetReference(innerLaunchHood_Low, rev::CANSparkMaxLowLevel::ControlType::kPosition);
-    
+
+    if(innerLaunchVel - flyWheelLeadEncoder.GetVelocity() > 350){
+        flyWheel.Set(1); //give it full power
+    }else{
+        if(robotData.intakeData.usingIntake){
+            flyWheelLead_pidController.SetReference(innerLaunchVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 2);
+
         }else{
-            shooterHood_pidController.SetReference(shooterHoodEncoderRev.GetPosition(), rev::CANSparkMaxLowLevel::ControlType::kPosition);
+            flyWheelLead_pidController.SetReference(innerLaunchVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 1);
+            
         }
-        setShooterWheel(innerLaunchVel_Low, 1);
-        hoodRoller_pidController.SetReference(innerLaunchVel*3.5, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
 
-
-        readyShootLimit = innerLaunchVel_Low - 30;
     }
+
+    hoodRoller_pidController.SetReference(innerLaunchVel*3.5, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
+
+
+    readyShootLimit = innerLaunchVel - 30;
+
+    
 }
 
 void Shooter::wall(const RobotData &robotData)
 {
-    if (robotData.controlData.upperHubShot)
-    {
-        if(isZeroed_Hood){
-            shooterHood_pidController.SetReference(wallHood, rev::CANSparkMaxLowLevel::ControlType::kPosition);
-    
+    if(isZeroed_Hood){
+        shooterHood_pidController.SetReference(wallHood, rev::CANSparkMaxLowLevel::ControlType::kPosition);
+
+    }else{
+        shooterHood_pidController.SetReference(shooterHoodEncoderRev.GetPosition(), rev::CANSparkMaxLowLevel::ControlType::kPosition);
+    }       
+
+    if(wallVel - flyWheelLeadEncoder.GetVelocity() > 350){
+        flyWheel.Set(1); //give it full power
+    }else{
+        if(robotData.intakeData.usingIntake){
+            flyWheelLead_pidController.SetReference(wallVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 2);
+
         }else{
-            shooterHood_pidController.SetReference(shooterHoodEncoderRev.GetPosition(), rev::CANSparkMaxLowLevel::ControlType::kPosition);
-        }        
-        setShooterWheel(wallVel, 0);
-        hoodRoller_pidController.SetReference(wallVel*3, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
+            flyWheelLead_pidController.SetReference(wallVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 1);
+            
+        }
 
-
-        readyShootLimit = wallVel - 30;
     }
-    else if (!robotData.controlData.upperHubShot)
-    {
-        if(isZeroed_Hood){
-            shooterHood_pidController.SetReference(wallHood_Low, rev::CANSparkMaxLowLevel::ControlType::kPosition);
+
+    hoodRoller_pidController.SetReference(wallVel*3.5, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
+
+    readyShootLimit = wallVel - 30;
     
-        }else{
-            shooterHood_pidController.SetReference(shooterHoodEncoderRev.GetPosition(), rev::CANSparkMaxLowLevel::ControlType::kPosition);
-        }        
-        setShooterWheel(wallVel_Low, 0);
-        hoodRoller_pidController.SetReference(wallVel*3, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
-
-
-        readyShootLimit = wallVel_Low - 30;
-    }
 }
 
 void Shooter::fender(const RobotData &robotData)
 {
-    if (robotData.controlData.upperHubShot)
-    {
-        if(isZeroed_Hood){
-            shooterHood_pidController.SetReference(fenderHood, rev::CANSparkMaxLowLevel::ControlType::kPosition);
-    
-        }else{
-            shooterHood_pidController.SetReference(shooterHoodEncoderRev.GetPosition(), rev::CANSparkMaxLowLevel::ControlType::kPosition);
-        }        
-        setShooterWheel(fenderVel, 0);
-        hoodRoller_pidController.SetReference(fenderVel*3, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
+    if(isZeroed_Hood){
+        shooterHood_pidController.SetReference(fenderHood, rev::CANSparkMaxLowLevel::ControlType::kPosition);
 
-
-        readyShootLimit = fenderVel - 30;
+    }else{
+        shooterHood_pidController.SetReference(shooterHoodEncoderRev.GetPosition(), rev::CANSparkMaxLowLevel::ControlType::kPosition);
     }
-    else if (!robotData.controlData.upperHubShot)
-    {
-        if(isZeroed_Hood){
-            shooterHood_pidController.SetReference(fenderHood_Low, rev::CANSparkMaxLowLevel::ControlType::kPosition);
-    
-        }else{
-            shooterHood_pidController.SetReference(shooterHoodEncoderRev.GetPosition(), rev::CANSparkMaxLowLevel::ControlType::kPosition);
-        }        
-        setShooterWheel(fenderVel_Low, 0);
-        hoodRoller_pidController.SetReference(fenderVel*3, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
 
-        
-        readyShootLimit = fenderVel_Low - 30;
+    if(fenderVel - flyWheelLeadEncoder.GetVelocity() > 350){
+        flyWheel.Set(1); //give it full power
+    }else{
+        if(robotData.intakeData.usingIntake){
+            flyWheelLead_pidController.SetReference(fenderVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 1);
+
+        }else{
+            flyWheelLead_pidController.SetReference(fenderVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 0);
+            
+        }
+
     }
+
+    hoodRoller_pidController.SetReference(fenderVel*3, rev::CANSparkMaxLowLevel::ControlType::kVelocity);
+
+    readyShootLimit = fenderVel - 30;
+    
 }
 
 // checks to see if the flywheel is up to speed
@@ -890,127 +825,138 @@ void Shooter::setShooterWheel(double speed, double pidSlot){
  * ---------------------------------------------------------------------------------------------------------------------------------------------------
  * BENCH TEST CODE
  * ---------------------------------------------------------------------------------------------------------------------------------------------------
- * */
-void Shooter::TestPeriodic(const RobotData &robotData, ShooterData &shooterData){
-    //frc::SmartDashboard::PutBoolean("Shooter abs encoder working", encoderPluggedInHood(shooterData));
-    frc::SmartDashboard::PutBoolean("Shooter abs encoder reading in correct range", encoderInRange(shooterData));
-    frc::SmartDashboard::PutBoolean("Shooter hit bottom dead stop?", shooterData.bottomDeadStop);
-    frc::SmartDashboard::PutBoolean("Shooter hit top dead stop?", shooterData.topDeadStop);
-    frc::SmartDashboard::PutNumber("Shooter Abs Encoder Value", shooterHoodEncoderAbs.GetOutput());
-    frc::SmartDashboard::PutNumber("Shooter min extend expected encoder value", hoodabsIn);
-    frc::SmartDashboard::PutNumber("Shooter max extend expected encoder value", hoodabsOut);
-    frc::SmartDashboard::PutNumber("Shooter hood power", shooterData.benchTestShooterHoodSpeed);
-    frc::SmartDashboard::PutNumber("Fly Wheel Speed", shooterData.benchTestFlyWheelSpeed);
+ **/
 
-    checkDeadStop(shooterData);
+void Shooter::TestPeriodic(const RobotData &robotData, ShooterData &shooterData){
+    //diagnosing issues with smart dashboard
+    frc::SmartDashboard::PutBoolean("Shooter hood abs encoder working", encoderPluggedInHood());
+    frc::SmartDashboard::PutBoolean("Shooter hood abs encoder reading in correct range", encoderInRangeHood());
+    frc::SmartDashboard::PutNumber("Shooter hood Abs Encoder Value", shooterHoodEncoderAbs.GetOutput());
+    frc::SmartDashboard::PutNumber("Shooter hood rev encoder value", shooterHoodEncoderRev.GetPosition());
+    frc::SmartDashboard::PutBoolean("Shooter hood hit inner dead stop", shooterData.hoodBottomDeadStop);
+    frc::SmartDashboard::PutBoolean("Shooter hood hit outer dead stop", shooterData.hoodTopDeadStop);
+    frc::SmartDashboard::PutNumber("Shooter hood power", shooterData.benchTestShooterHoodSpeed);
+    frc::SmartDashboard::PutBoolean("Shooter turret abs encoder working", encoderPluggedInTurret());
+    frc::SmartDashboard::PutBoolean("Shooter turret abs encoder reading in correct range", encoderInRangeTurret());
+    frc::SmartDashboard::PutNumber("Shooter turret Abs Encoder Value", shooterTurretEncoderAbs.GetOutput());
+    frc::SmartDashboard::PutNumber("Shooter turret rev encoder value", shooterTurretEncoderRev.GetPosition());
+    frc::SmartDashboard::PutBoolean("Shooter turret hit ccw dead stop", shooterData.turretBottomDeadStop);
+    frc::SmartDashboard::PutBoolean("Shooter turret hit clockwise dead stop", shooterData.turretTopDeadStop);
+    frc::SmartDashboard::PutNumber("Shooter turret power", shooterData.benchTestTurretSpeed);
+
+    //calls dead stop functions so the motors know when to stop
+    checkHoodDeadStop(shooterData);
+    checkTurretDeadStop(shooterData);
 
     //runs the bench test sequence
-    if (robotData.benchTestData.testStage == BenchTestStage::BenchTestStage_Shooter && robotData.controlData.manualBenchTest){ //checks if we're testing shooter
-        if (false){ //checks if the encoder is working
+    if (robotData.benchTestData.testStage == BenchTestStage::BenchTestStage_Shooter && (robotData.controlData.manualBenchTest || robotData.controlData.autoBenchTest)){ //checks if we're testing shooter
+        if (encoderPluggedInHood() && encoderInRangeHood() && encoderPluggedInTurret() && encoderInRangeTurret()){ //checks if the encoder is working
             if (robotData.benchTestData.stage == 0){
                 //run hood forwards
-                shooterData.benchTestShooterHoodSpeed = -.07; //sets the speed of the hood
-                shooterData.benchTestFlyWheelSpeed = 0; //sets the speed of the fly wheel
+                if (!robotData.benchTestData.PIDMode){
+                    shooterData.benchTestShooterHoodSpeed = -.07; //sets the speed of the hood
+                    shooterData.benchTestFlyWheelSpeed = 0; //sets the speed of the fly wheel
+                    shooterData.benchTestTurretSpeed = 0; //sets the speed of the turret
+                } else {
+                    shooterData.benchTestFlyWheelSpeed = 0;
+                    shooterData.benchTestShooterHoodSpeed = -.07;
+                    shooterHood_pidController.SetReference(hoodrevOut, rev::CANSparkMaxLowLevel::ControlType::kPosition); //runs the hood out
+                    shooterData.benchTestTurretSpeed = 0;
+                }
             } else if (robotData.benchTestData.stage == 1){
                 //run hoods backwards
-                shooterData.benchTestShooterHoodSpeed = .07;
-                shooterData.benchTestFlyWheelSpeed = 0;
+                if (!robotData.benchTestData.PIDMode){
+                    shooterData.benchTestShooterHoodSpeed = .07;
+                    shooterData.benchTestFlyWheelSpeed = 0;
+                    shooterData.benchTestTurretSpeed = 0;
+                } else {
+                    shooterData.benchTestFlyWheelSpeed = 0;
+                    shooterData.benchTestShooterHoodSpeed = .07;
+                    shooterHood_pidController.SetReference(hoodrevIn, rev::CANSparkMaxLowLevel::ControlType::kPosition); //runs the hood in
+                    shooterData.benchTestTurretSpeed = 0;
+                }
             } else if (robotData.benchTestData.stage == 2){
                 //run fly wheel
                 shooterData.benchTestShooterHoodSpeed = 0;
-                shooterData.benchTestFlyWheelSpeed = .25;
-            } else if (robotData.benchTestData.PIDMode){ //tests in pid mode
-                if (robotData.benchTestData.stage == 3){
-                    shooterData.benchTestFlyWheelSpeed = 0;
-                    // bring hood out
-                    shooterHood_pidController.SetReference(hoodrevOut, rev::CANSparkMaxLowLevel::ControlType::kPosition);
-                } else if (robotData.benchTestData.stage == 4){
-                    shooterData.benchTestFlyWheelSpeed = 0;
-                    // bring hood in
-                    shooterHood_pidController.SetReference(hoodrevIn, rev::CANSparkMaxLowLevel::ControlType::kPosition);
-                } else {
+                shooterData.benchTestFlyWheelSpeed = robotData.benchTestData.currentSpeed;
+                shooterData.benchTestTurretSpeed = 0;
+            } else if (robotData.benchTestData.stage == 3){
+                //run turret counterclockwise
+                if (!robotData.benchTestData.PIDMode){
                     shooterData.benchTestShooterHoodSpeed = 0;
                     shooterData.benchTestFlyWheelSpeed = 0;
+                    shooterData.benchTestTurretSpeed = .1;
+                } else {
+                    //run turret with PIDs
+                    shooterData.benchTestShooterHoodSpeed = 0;
+                    shooterData.benchTestFlyWheelSpeed = 0;
+                    shooterData.benchTestTurretSpeed = .1;
+                    shooterTurret_pidController.SetReference(turretFullRotationRev_CCW, rev::CANSparkMax::ControlType::kPosition);
                 }
+            } else if (robotData.benchTestData.stage == 4){
+                //run turret clockwise
+                if (!robotData.benchTestData.PIDMode){
+                    shooterData.benchTestShooterHoodSpeed = 0;
+                    shooterData.benchTestFlyWheelSpeed = 0;
+                    shooterData.benchTestTurretSpeed = -.1;
+                } else {
+                    //run turret with PIDs
+                    shooterData.benchTestShooterHoodSpeed = 0;
+                    shooterData.benchTestFlyWheelSpeed = 0;
+                    shooterData.benchTestTurretSpeed = -.1;
+                    shooterTurret_pidController.SetReference(turretFullRotationRev_C, rev::CANSparkMax::ControlType::kPosition);
+                }
+            } else {
+                shooterData.benchTestShooterHoodSpeed = 0; //if the stage isn't within 0 to 4, then speeds get set to 0
+                shooterData.benchTestFlyWheelSpeed = 0;
+                shooterData.benchTestTurretSpeed = 0;
+                shooterHood.Set(0);
+                flyWheel.Set(0);
+                shooterTurret.Set(0);
+            }
+        } else {
+            shooterData.benchTestShooterHoodSpeed = 0; //if the encoders aren't working, then speed gets set to 0
+            shooterData.benchTestFlyWheelSpeed = 0;
+            shooterData.benchTestTurretSpeed = 0;
+            shooterHood.Set(0);
+            flyWheel.Set(0);
+            shooterTurret.Set(0);
+        }
+
+        //if statement to make sure the speed doesn't interfere with PID mode
+        if (!robotData.benchTestData.PIDMode){
+            //sets the speed of the motors according to the variables set in the above if statement ^ (unless the motor hit a dead stop)
+            if (!shooterData.hoodTopDeadStop && !shooterData.hoodBottomDeadStop){
+                shooterHood.Set(shooterData.benchTestShooterHoodSpeed);
+            } else {
+                shooterHood.Set(0); //sets the speed to 0 if the motor is at a dead stop
+            }
+
+            if (!shooterData.turretTopDeadStop && !shooterData.turretBottomDeadStop){
+                shooterTurret.Set(shooterData.benchTestTurretSpeed);
+            } else {
+                shooterTurret.Set(0);
             }
         }
 
-        //sets the speed of the motors according to the variables set in the above if statement ^ (unless the hood hit a dead stop)
-        if (!shooterData.topDeadStop && !shooterData.bottomDeadStop){
-            shooterHood.Set(shooterData.benchTestShooterHoodSpeed);
-        } else {
-            shooterHood.Set(0);
-        }
-
         flyWheel.Set(shooterData.benchTestFlyWheelSpeed);
-        //flyWheel.Set(shooterData.benchTestFlyWheelSpeed);
     } else {
         shooterData.benchTestShooterHoodSpeed = 0; //if not testing shooter, then the speed of the motors is set to 0
         shooterData.benchTestFlyWheelSpeed = 0;
+        shooterData.benchTestTurretSpeed = 0;
+        shooterHood.Set(0);
+        flyWheel.Set(0);
+        shooterTurret.Set(0);
     }
+
+    //calls dead stop functions so the motors know when to stop - necessary to call it again for automatic bench test
+    checkHoodDeadStop(shooterData);
+    checkTurretDeadStop(shooterData);
 }
 
 //checks if the encoder is plugged in and giving an output
-bool Shooter::encoderPluggedInHood(ShooterData &shooterData){
-
-    if (shooterHoodEncoderAbs.GetOutput() > 0.01 && shooterHoodEncoderAbs.GetOutput() < 1)  { //checks if the output of the abs encoder is actually reading a signal
-        //uses mode to find most constant abs value to return 
-        //doesn't work because the encoder abs value changes too much to find a mode
-        //updates encoder values
-        // if (tickCount > 48){
-        //     double number = hoodAbsValues[0];
-        //     double mode = number;
-        //     int count = 1;
-        //     int countMode = 1;
-
-        //     std::sort(std::begin(hoodAbsValues),std::end(hoodAbsValues));
-
-        //     for(int i=0; i<49; i++){
-        //         if (hoodAbsValues[i] == number) 
-        //         { // count occurrences of the current number
-        //             count++;
-        //         }else{ // now this is a different number
-        //             if (count > countMode) 
-        //             {
-        //                 countMode = count; // mode is the biggest ocurrences
-        //                 mode = number;
-        //             }
-        //             count = 1; // reset count for the new number
-        //             number = hoodAbsValues[i];
-        //         }
-        //     }
-
-        //     // float maxFreq = 0;
-        //     // float mostFrequent = -1;
-
-        //     // for(int i = 0; i < 49; i++){
-        //     //     int countFreq = 1;
-        //     //     for(int j = 0; j < 49; j++){
-        //     //         if(hoodAbsValues[j] == hoodAbsValues[i]){
-        //     //             countFreq ++;
-        //     //         }
-        //     //     }
-
-        //     //     if(maxFreq < countFreq){
-        //     //         maxFreq = countFreq;
-        //     //         mostFrequent = hoodAbsValues[i];
-        //     //     }
-        //     //     else if(maxFreq == countFreq){
-        //     //         mostFrequent = std::min(mostFrequent, hoodAbsValues[i]);
-        //     //     }
-        //     // }
-
-        //     shooterData.mode = mode;
-
-        //     //shooterHoodEncoderRev.SetPosition(HoodabsoluteToREV(mode));
-        //     tickCount = (tickCount + 1) % 50;
-        // } else {
-        //     float hoodAbsValue = 1000*shooterHoodEncoderAbs.GetOutput();
-        //     hoodAbsValue = std::floor(hoodAbsValue);
-        //     hoodAbsValues[tickCount] = hoodAbsValue/1000.0;
-        //     tickCount = (tickCount + 1) % 50;
-        // }
-
+bool Shooter::encoderPluggedInHood(){
+    if (shooterHoodEncoderAbs.GetOutput() > 0.01) { //checks if the output of the abs encoder is actually reading a signal
         return true; //returns true to indicate that the encoder is functioning
     } else {
         return false;
@@ -1019,7 +965,7 @@ bool Shooter::encoderPluggedInHood(ShooterData &shooterData){
 }
 
 //checks if the encoder is plugged in and giving an output
-bool Shooter::encoderPluggedInTurret(const ShooterData &shooterData){
+bool Shooter::encoderPluggedInTurret(){
     if (shooterTurretEncoderAbs.GetOutput() > 0.01) { //checks if the output of the abs encoder is actually reading a signal
         return true;
     } else {
@@ -1028,30 +974,51 @@ bool Shooter::encoderPluggedInTurret(const ShooterData &shooterData){
 }
 
 //checks if the encoder is reading presumably correct values (i.e. values in the expected range)
-bool Shooter::encoderInRange(const ShooterData &shooterData){
-    if (shooterData.benchTestShooterHoodSpeed > 0 && shooterHoodEncoderAbs.GetOutput() > hoodabsIn + .02){ //out of range
+bool Shooter::encoderInRangeHood(){
+    if (shooterHoodEncoderAbs.GetOutput() > hoodabsIn + .05){ //out of range
         return false;
-    } else if (shooterData.benchTestShooterHoodSpeed < 0 && shooterHoodEncoderAbs.GetOutput() < hoodabsOut - .02){ //out of range
+    } else if (shooterHoodEncoderAbs.GetOutput() < hoodabsOut - .05){ //out of range
         return false;
     } else {
         return true; //everything else is within range, so return true
     }
 }
 
-//checks if the motor has hit a dead stop
-void Shooter::checkDeadStop(ShooterData &shooterData){
-    if (shooterData.benchTestShooterHoodSpeed < 0 && shooterHoodEncoderAbs.GetOutput() < hoodabsOut + .005){
-        shooterData.topDeadStop = true;
-        shooterData.bottomDeadStop = false;
-    } else if (shooterData.benchTestShooterHoodSpeed > 0 && shooterHoodEncoderAbs.GetOutput() > hoodabsIn - .005){
-        shooterData.topDeadStop = false;
-        shooterData.bottomDeadStop = true;
+//checks if the encoder is reading presumably correct values (i.e. values in the expected range)
+bool Shooter::encoderInRangeTurret(){
+    if (shooterTurretEncoderAbs.GetOutput() > turretFullRotationAbs_CCW + .05){ //out of range
+        return false;
+    } else if (shooterTurretEncoderAbs.GetOutput() < turretFullRotationAbs_C - .05){ //out of range
+        return false;
     } else {
-        shooterData.topDeadStop = false;
-        shooterData.bottomDeadStop = false;
+        return true; //everything else is within range, so return true
     }
 }
 
+//sets the limits and sets variables to the limits to let the TestPeriodic function know when to stop running the motors
+void Shooter::checkHoodDeadStop(ShooterData &shooterData){
+    if (shooterData.benchTestShooterHoodSpeed < 0 && shooterHoodEncoderAbs.GetOutput() < hoodabsOut + .01){
+        shooterData.hoodTopDeadStop = true;
+        shooterData.hoodBottomDeadStop = false;
+    } else if (shooterData.benchTestShooterHoodSpeed > 0 && shooterHoodEncoderAbs.GetOutput() > hoodabsIn - .01){
+        shooterData.hoodTopDeadStop = false;
+        shooterData.hoodBottomDeadStop = true;
+    } else {
+        shooterData.hoodTopDeadStop = false;
+        shooterData.hoodBottomDeadStop = false;
+    }
+}
 
-
-
+//sets the limits and sets variables to the limits to let the TestPeriodic function know when to stop running the motors
+void Shooter::checkTurretDeadStop(ShooterData &shooterData){
+    if (shooterData.benchTestTurretSpeed < 0 && shooterTurretEncoderAbs.GetOutput() < turretFullRotationAbs_C + .01){
+        shooterData.turretTopDeadStop = true;
+        shooterData.turretBottomDeadStop = false;
+    } else if (shooterData.benchTestTurretSpeed > 0 && shooterTurretEncoderAbs.GetOutput() > turretFullRotationAbs_CCW - .01){
+        shooterData.turretTopDeadStop = false;
+        shooterData.turretBottomDeadStop = true;
+    } else {
+        shooterData.turretTopDeadStop = false;
+        shooterData.turretBottomDeadStop = false;
+    }
+}

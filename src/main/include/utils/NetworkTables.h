@@ -46,7 +46,7 @@ public:
     * @brief Defines events where dashboard entries will be updated
     */
     void RobotInit();
-    void TeleopPeriodic(const RobotData &robotData);
+    void RobotPeriodic(const RobotData &robotData);
 
     frc::PowerDistribution PD{};
 };

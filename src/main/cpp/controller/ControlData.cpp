@@ -65,6 +65,7 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
     if(controllerData.sLCenterBtnToggled && !controlData.shift){
         controlData.staticTurret = !controlData.staticTurret;
     }
+    controlData.vectorDrive = controllerData.pLPalmSwitch; 
 
     // manual:
 
@@ -122,12 +123,6 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
 
     }
     
-    // secondary y to set readyshoot to true in testing
-
-    // disabled because there has not yet been a case where we want to shoot low hub
-    if (controllerData.sRBumperToggled && !controlData.shift) {
-        // controlData.upperHubShot = !controlData.upperHubShot;
-    }
     if (controllerData.sRCenterBtnToggled && !controlData.shift) {
         controlData.autoRejectOpponentCargo = !controlData.autoRejectOpponentCargo;
     }
@@ -199,12 +194,12 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
     //we're not making it in the normal structure because that would be a lot of work - tananya
     controlData.incrementMotor = controllerData.testBButton; // b: increments what motor/encoder/thing that you're testing
     controlData.incrementSpeed = controllerData.testXButton; // x: increases the speed
-    controlData.PIDModeToggle = controllerData.testYButton; //toggles pid mode (if we want to test pids)
-    controlData.incrementSubsystem = controllerData.testAButton; //increments the subsystem
+    controlData.PIDModeToggle = controllerData.testYButton; //y: toggles pid mode (if we want to test pids)
+    controlData.incrementSubsystem = controllerData.testAButton; //a: increments the subsystem
 
     //sets the value of the variables used in robot.cpp based upon the toggle button variables
     if (!controlData.autoBenchTest){ //can't do manual bench test in automatic bench test
-        if (controllerData.testRBumper) controlData.manualBenchTest = !controlData.manualBenchTest; //a: starts and stops manual bench test
+        if (controllerData.testRBumper) controlData.manualBenchTest = !controlData.manualBenchTest; //right bumper: starts and stops manual bench test
     }
     
     if (!controlData.manualBenchTest){ //can't do automatic bench test in manual bench test

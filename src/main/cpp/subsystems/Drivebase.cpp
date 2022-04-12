@@ -163,13 +163,18 @@ void Drivebase::updateData(const RobotData &robotData, DrivebaseData &drivebaseD
 // adjusts for the deadzone and converts joystick input to velocity values for PID
 void Drivebase::teleopControl(const RobotData &robotData, DrivebaseData &drivebaseData)
 {
+    frc::SmartDashboard::PutNumber("DRIVE MODE", robotData.drivebaseData.driveMode);
+    frc::SmartDashboard::PutNumber("SHOOT MODE", robotData.controlData.shootMode);
     // assign drive mode
-    if ((robotData.controlData.lDrive <= -0.08 || robotData.controlData.lDrive >= 0.08) || (robotData.controlData.rDrive <= -0.08 || robotData.controlData.rDrive >= 0.08)) {
+    if ((!robotData.controlData.vectorDrive) && ((robotData.controlData.lDrive <= -0.08 || robotData.controlData.lDrive >= 0.08) || (robotData.controlData.rDrive <= -0.08 || robotData.controlData.rDrive >= 0.08))) {
         drivebaseData.driveMode = driveMode_joystick;
     }
-    // else if (robotData.controlData.shootMode == shootMode_vision) {
-        //drivebaseData.driveMode = driveMode_turnInPlace;
-    // } 
+    /*else if (robotData.controlData.shootMode == shootMode_vision && !robotData.controlData.vectorDrive) {
+        drivebaseData.driveMode = driveMode_turnInPlace;
+    }*/
+    else if (robotData.controlData.vectorDrive) {
+        drivebaseData.driveMode = driveMode_vector;
+    }  
     else {
         drivebaseData.driveMode = driveMode_joystick;
     }
@@ -205,10 +210,13 @@ void Drivebase::teleopControl(const RobotData &robotData, DrivebaseData &driveba
         //set as percent vbus
         setPercentOutput(tempLDrive, tempRDrive);
     }
-    // else if (drivebaseData.driveMode == driveMode_turnInPlace) {
-        // turnInPlaceTeleop(-robotData.limelightData.angleOffset, robotData);
-    // }
-    // frc::SmartDashboard::PutNumber("limelight angle diff", -robotData.limelightData.angleOffset);
+    /*else if (drivebaseData.driveMode == driveMode_turnInPlace) {
+        turnInPlaceTeleop(-robotData.limelightData.angleOffset, robotData);
+    }*/
+    else if (drivebaseData.driveMode == driveMode_vector)
+    {
+        setPercentOutput(robotData.jetsonData.leftSkew, robotData.jetsonData.rightSkew);
+    }
 
 
 }
@@ -304,7 +312,7 @@ void Drivebase::updateOdometry(const RobotData &robotData, DrivebaseData &driveb
     }
     // frc::SmartDashboard::PutNumber("odometryX", drivebaseData.odometryX);
     // frc::SmartDashboard::PutNumber("odometryY", drivebaseData.odometryY);
-    // frc::SmartDashboard::PutNumber("odometryYaw", drivebaseData.odometryYaw);
+    frc::SmartDashboard::PutNumber("odometryYaw", drivebaseData.odometryYaw);
 }
 
 /**
@@ -545,9 +553,6 @@ void Drivebase::calcTurretEjectAngle(DrivebaseData &drivebaseData) {
     }
 }
 
-
-
-//BENCH TEST CODE
 /**
  * ---------------------------------------------------------------------------------------------------------------------------------------------------
  * BENCH TEST CODE
@@ -573,7 +578,7 @@ void Drivebase::TestPeriodic(const RobotData &robotData, DrivebaseData &drivebas
             dbR.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
             dbL.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, -robotData.benchTestData.currentSpeed);
         } else {
-            dbR.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
+            dbR.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0); //if the drivebase stage isn't within 0 to 3, then the speeds get set to 0
             dbL.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
         }
     } else {

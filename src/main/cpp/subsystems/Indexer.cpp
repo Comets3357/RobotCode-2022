@@ -63,10 +63,6 @@ void Indexer::updateData(const RobotData &robotData, IndexerData &indexerData)
     }
     lastTickBallCount = indexerData.indexerContents.size();
 
-    debuggingStuff(robotData, indexerData);
-
-    // frc::SmartDashboard::PutBoolean("top beam break", getTopBeam());
-
 }
 
 void Indexer::manual(const RobotData &robotData, IndexerData &indexerData)
@@ -87,7 +83,7 @@ void Indexer::manual(const RobotData &robotData, IndexerData &indexerData)
 
 void Indexer::semiAuto(const RobotData &robotData, IndexerData &indexerData)
 {
-    rejectDetection(robotData, indexerData);
+
     saBeltControl(robotData, indexerData);
     saWheelControl(robotData, indexerData);
 }
@@ -228,32 +224,11 @@ void Indexer::count(const RobotData &robotData, IndexerData &indexerData){
 
 }
 
-/**
- * @return whether or not the belt should be paused to make sure that every ball stops before being fed into the shooter
- * used to make sure the way that cargo are being fed into the shooter is more consistent
- **/
-bool Indexer::pauseBelt(const RobotData &robotData, IndexerData &indexerData){
-
-    if(getTopBeamToggledOn()){          // the top sensor was just toggled on
-        pauseBeltCount = 20;             // set pause belt count for .1s
-        return true;                    
-    } else if (pauseBeltCount > 0){     // the top sensor was not JUST toggled on but was recently toggled on
-        pauseBeltCount--;               // count down the pause belt counter
-        return true;
-    } else {                            // pause belt false, belt paused for sufficient time since we're done counting down
-        return false;
-    }
-}
 
 /**
  * runs the belt in semi auto mode based on the three sensors and secondary controls
  **/
 void Indexer::saBeltControl(const RobotData &robotData, IndexerData &indexerData){
-
-    frc::SmartDashboard::PutBoolean("indexer for shooting", robotData.shooterData.readyShoot && robotData.controlData.saFinalShoot)|| (!getTopBeam() && !robotData.intakeData.intakeIdle);
-    frc::SmartDashboard::PutBoolean("auton readyShoot", robotData.shooterData.readyShoot);
-    frc::SmartDashboard::PutBoolean("auton finalShoot", robotData.controlData.saFinalShoot);
-    frc::SmartDashboard::PutBoolean("pauseBelt", pauseBelt(robotData, indexerData));
     if(robotData.controlData.saEjectBalls){             // if indexer is REVERSING (saEject curently is the only case where it runs backwards)
         indexerBelt.Set(-indexerShootingBeltSpeed);     // run the belt backwards fast
     } else if ((/* !pauseBelt(robotData, indexerData) && */ (robotData.shooterData.readyShoot || robotData.shooterData.readyReject) && robotData.controlData.saFinalShoot) || (!getTopBeam() && (!robotData.intakeData.intakeIdle || robotData.controlData.saFinalShoot))){ 
@@ -302,18 +277,6 @@ void Indexer::saWheelControl(const RobotData &robotData, IndexerData &indexerDat
     
 }
 
-/**
- * checks if there are opponent cargo in the indexer, and if to reject
- **/
-void Indexer::rejectDetection(const RobotData &robotData, IndexerData &indexerData){
-    if(indexerData.indexerContents.size() > 0){
-        if(indexerData.indexerContents.front() == Cargo::cargo_Opponent){
-            indexerData.autoRejectTop = true;
-        } else {
-            indexerData.autoRejectTop = false;
-        }
-    } 
-}
 
 // basic getter, init functions below
 // usually these sensors return false for when they're tripped, these functions return opposite to match intuitive logic
@@ -459,12 +422,16 @@ void Indexer::indexerWheelInit(){
  **/
 
 void Indexer::TestPeriodic(const RobotData &robotData, IndexerData &indexerData){
-    // frc::SmartDashboard::PutNumber("Indexer color sensor number", robotData.colorSensorData.colorValue);
+    //diagnosing issues with smart dashboard
+    frc::SmartDashboard::PutBoolean("Indexer color sensor sensed blue?", robotData.arduinoData.ColorData == 11);
+    frc::SmartDashboard::PutBoolean("Indexer color sensor sensed red?", robotData.arduinoData.ColorData == 12);
+    frc::SmartDashboard::PutBoolean("Indexer color sensor sensed nothing?", robotData.arduinoData.ColorData == 10);
+    frc::SmartDashboard::PutBoolean("Indexer color sensor raw data", robotData.arduinoData.ColorData);
     frc::SmartDashboard::PutNumber("Indexer first encoder", indexerBeltEncoder.GetPosition());
     frc::SmartDashboard::PutNumber("Indexer second encoder", indexerWheelEncoder.GetPosition());
-    frc::SmartDashboard::PutBoolean("Indexer top sensor", getTopBeam());
-    frc::SmartDashboard::PutBoolean("Indexer middle sensor", getMidBeam());
-    frc::SmartDashboard::PutBoolean("Indexer bottom sensor", getBottomBeam());
+    frc::SmartDashboard::PutBoolean("Indexer top beam break sensor", getTopBeam());
+    frc::SmartDashboard::PutBoolean("Indexer middle beam break sensor", getMidBeam());
+    frc::SmartDashboard::PutBoolean("Indexer bottom beam break sensor", getBottomBeam());
 
     if (robotData.benchTestData.testStage == BenchTestStage::BenchTestStage_Indexer && (robotData.controlData.manualBenchTest || robotData.controlData.autoBenchTest)){ //checks if we're testing indexer
         if (robotData.benchTestData.stage == 0){
@@ -484,82 +451,11 @@ void Indexer::TestPeriodic(const RobotData &robotData, IndexerData &indexerData)
             indexerBelt.Set(-robotData.benchTestData.currentSpeed);
             indexerWheel.Set(0);
         } else {
-            indexerBelt.Set(0);
+            indexerBelt.Set(0); //if the indexer stage isn't within 0 to 3, then the speeds get set to 0
             indexerWheel.Set(0);
         }
     } else {
         indexerBelt.Set(0); //if not testing indexer, then speeds get set to 0
         indexerWheel.Set(0);
-    }
-}
-
-void Indexer::debuggingStuff(const RobotData &robotData, IndexerData &indexerData){
-    // TESTING STUFF
-    frc::SmartDashboard::PutNumber("cargo count", indexerData.indexerContents.size());
-    frc::SmartDashboard::PutNumber("wrong ball?", robotData.controlData.wrongBall);
-    frc::SmartDashboard::PutBoolean("get bottom beam tripped", getBottomBeam());
-
-    if (indexerData.indexerContents.size() == 0){
-
-        frc::SmartDashboard::PutString("top", "empty");
-        frc::SmartDashboard::PutString("bottom", "empty");
-
-    } else if (indexerData.indexerContents.size() == 1){
-
-        if(indexerData.indexerContents.front() == Cargo::cargo_Alliance){
-            frc::SmartDashboard::PutString("top", "alliance");
-            frc::SmartDashboard::PutString("bottom", "empty");
-        } else if (indexerData.indexerContents.front() == Cargo::cargo_Opponent){
-            frc::SmartDashboard::PutString("top", "opponent");
-            frc::SmartDashboard::PutString("bottom", "empty");
-        } else {
-            frc::SmartDashboard::PutString("top", "unassigned");
-            frc::SmartDashboard::PutString("bottom", "empty");
-        }
-
-    } else if (indexerData.indexerContents.size() == 2){
-
-        if(indexerData.indexerContents.front() == Cargo::cargo_Alliance){
-
-            if(indexerData.indexerContents.back() == Cargo::cargo_Alliance){
-                frc::SmartDashboard::PutString("top", "alliance");
-                frc::SmartDashboard::PutString("bottom", "alliance");
-            } else if(indexerData.indexerContents.back() == Cargo::cargo_Opponent){
-                frc::SmartDashboard::PutString("top", "alliance");
-                frc::SmartDashboard::PutString("bottom", "opponent");
-            } else {
-                frc::SmartDashboard::PutString("top", "alliance");
-                frc::SmartDashboard::PutString("bottom", "unassigned");
-            }
-
-        } else if (indexerData.indexerContents.front() == Cargo::cargo_Opponent){
-
-            if(indexerData.indexerContents.back() == Cargo::cargo_Alliance){
-                frc::SmartDashboard::PutString("top", "opponent");
-                frc::SmartDashboard::PutString("bottom", "alliance");
-            } else if(indexerData.indexerContents.back() == Cargo::cargo_Opponent){
-                frc::SmartDashboard::PutString("top", "opponent");
-                frc::SmartDashboard::PutString("bottom", "opponent");
-            } else {
-                frc::SmartDashboard::PutString("top", "opponent");
-                frc::SmartDashboard::PutString("bottom", "unassigned");
-            }
-
-        } else {
-            if(indexerData.indexerContents.back() == Cargo::cargo_Alliance){
-                frc::SmartDashboard::PutString("top", "unassigned");
-                frc::SmartDashboard::PutString("bottom", "alliance");
-            } else if(indexerData.indexerContents.back() == Cargo::cargo_Opponent){
-                frc::SmartDashboard::PutString("top", "unassigned");
-                frc::SmartDashboard::PutString("bottom", "opponent");
-            } else {
-                frc::SmartDashboard::PutString("top", "unassigned");
-                frc::SmartDashboard::PutString("bottom", "unassigned");
-            }
-            
-        }
-    } else {
-        frc::SmartDashboard::PutString("top", "overload");
-        frc::SmartDashboard::PutString("bottom", "overload");
     }
 }

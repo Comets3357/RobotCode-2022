@@ -21,8 +21,11 @@ void Robot::RobotPeriodic()
     gyro.RobotPeriodic(robotData.gyroData);
     limelight.RobotPeriodic(robotData, robotData.limelightData, visionLookup);
     visionLookup.RobotPeriodic(robotData, robotData.visionLookupData);
+    jetson.RobotPeriodic(robotData, robotData.jetsonData);
     arduino.RobotPeriodic(robotData, robotData.arduinoData);
     colorSensor.RobotPeriodic(robotData, robotData.colorSensorData);
+    jetson.RobotPeriodic(robotData, robotData.jetsonData);
+    networkTables.RobotPeriodic(robotData);
 
 
     // frc::SmartDashboard::PutNumber("mode", robotData.controlData.mode);
@@ -70,7 +73,7 @@ void Robot::TeleopPeriodic()
     timer.EnabledPeriodic(robotData.timerData);
     controller.TeleopPeriodic(robotData, robotData.controllerData, robotData.controlData);
     // arduino.RobotPeriodic(robotData, robotData.arduinoData);
-    networkTables.TeleopPeriodic(robotData);
+
 }
 
 void Robot::DisabledInit()
@@ -96,12 +99,14 @@ void Robot::DisabledPeriodic()
 void Robot::TestInit(){
     frc::LiveWindow::SetEnabled(false); // to block their weird dashboard thing
 
+    arduino.RobotInit();
     gyro.RobotInit();
 
+    benchTest.TestInit(robotData.benchTestData, robotData.controlData);
     drivebase.RobotInit();
     intake.RobotInit();
     indexer.RobotInit();
-    //shooter.RobotInit();
+    shooter.RobotInit(robotData.shooterData);
     climb.RobotInit();
     climb.TestInit(robotData.climbData);
 }
@@ -112,11 +117,15 @@ void Robot::TestPeriodic(){
     controller.TestPeriodic(robotData, robotData.controllerData, robotData.controlData);
     benchTest.TestPeriodic(robotData, robotData.benchTestData, robotData.controlData);
 
+    indexer.TestPeriodic(robotData, robotData.indexerData);
     climb.TestPeriodic(robotData, robotData.climbData);
     drivebase.TestPeriodic(robotData, robotData.drivebaseData);
-    indexer.TestPeriodic(robotData, robotData.indexerData);
     intake.TestPeriodic(robotData, robotData.intakeData);
     shooter.TestPeriodic(robotData, robotData.shooterData);
+
+    
+    arduino.RobotPeriodic(robotData, robotData.arduinoData);
+    colorSensor.RobotPeriodic(robotData, robotData.colorSensorData);
 }
 
 #ifndef RUNNING_FRC_TESTS

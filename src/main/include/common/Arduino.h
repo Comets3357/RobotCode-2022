@@ -15,10 +15,19 @@ class Arduino {
 
         int failedTransfers = 0;
 
+        int lastBallCount = 0;
+        int ballCount = 0;
+        int mode = 0;
+
+        int changeTimer = 0;
+        int realBallCount = 0;
+        int changeTo = 0;
+
     private:
         bool ArduinoWorks = true;
         // in constructor port, deviceaddress
         frc::SerialPort *arduino;
+        //frc::SerialPort arduino = frc::SerialPort(9600, frc::SerialPort::Port::kUSB);
 
         int colorCode = 6;
         int lastColorCode = 6;
