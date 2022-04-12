@@ -126,21 +126,18 @@ void Auton::citrus(const RobotData &robotData, ControlData &controlData, Control
     double sec = robotData.timerData.secSinceEnabled;
 
     // intake
-    if (sec > 0 && sec < 10) {
+    if (sec > 0 && sec < 11) {
         controlData.saIntake = true;
         controlData.saEjectBalls = false;
-    } else if (sec > 10) {
+    } else if (sec > 11) {
         controlData.saIntake = false;
         controlData.saEjectBalls = true;
-    } else {
-        controlData.saIntake = false;
-        controlData.saEjectBalls = false;
     }
 
     // shooting
     controlData.shootMode = shootMode_vision;
 
-    if (sec > 2 && sec < 5) {
+    if (sec > 1 && sec < 4) {
         controlData.saFinalShoot = robotData.drivebaseData.dbStationaryForShot;
     } else {
         controlData.saFinalShoot = false;
@@ -152,20 +149,12 @@ void Auton::nearFieldOne(const RobotData &robotData, ControlData &controlData, C
     double sec = robotData.timerData.secSinceEnabled;
 
     // intake
-    if (sec > 0 && sec < 4) {
-        controlData.saIntake= true;
-    } else {
-        controlData.saIntake = false;
-    }
+    controlData.saIntake = false;
 
     // shooting
     controlData.shootMode = shootMode_vision;
 
-    if (sec > 4 && sec < 8) {
-        controlData.saFinalShoot = robotData.drivebaseData.dbStationaryForShot;
-    } else {
-        controlData.saFinalShoot = false;
-    }
+    controlData.saFinalShoot = robotData.drivebaseData.dbStationaryForShot;
 }
 
 
@@ -197,32 +186,21 @@ void Auton::taxiShootA(const RobotData &robotData, ControlData &controlData, Con
     double sec = robotData.timerData.secSinceEnabled;
 
     // intake
-    if (sec > 0 && sec < 4) {
+    if (sec > 0 && sec < 11) {
         controlData.saIntake = true;
-    } else if (sec > 5.5 && sec < 11) {
-        controlData.saIntake = true;
-    } else {
+        controlData.saEjectBalls = false;
+    } else if (sec > 11) {
         controlData.saIntake = false;
+        controlData.saEjectBalls = true;
     }
 
     // shooting
-    // if (sec > 0 && sec < 14.5) {
-        controlData.shootMode = shootMode_vision;
-    // } else {
-        // controlData.shootMode = shootMode_none;
-    // }
+    controlData.shootMode = shootMode_vision;
 
     if (sec > 1.5 && sec < 6) {
         controlData.saFinalShoot = true;
     } else {
         controlData.saFinalShoot = false;
-    }
-
-    // eject
-    if (sec > 11 && sec < 13) {
-        controlData.saEjectBalls = true;
-    } else {
-        controlData.saEjectBalls = false;
     }
 }
 
