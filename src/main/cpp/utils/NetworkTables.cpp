@@ -22,7 +22,7 @@ void NetworkTables::RobotInit()
     driveMode = table->GetEntry("driveMode");
     robotSpeed = table->GetEntry("robotSpeed");
     batteryVoltage = table->GetEntry("batteryVoltage");
-    totalCurrent = table->GetEntry("totalCurrent");
+    // totalCurrent = table->GetEntry("totalCurrent");
     // Gyro
     odometryX = table->GetEntry("odometryX");
     odometryY = table->GetEntry("odometryY");
@@ -63,7 +63,7 @@ void NetworkTables::RobotPeriodic(const RobotData &robotData)
     driveMode.SetDouble(robotData.drivebaseData.driveMode);
     robotSpeed.SetDouble(0.0);
     batteryVoltage.SetDouble(frc::DriverStation::GetBatteryVoltage());
-    totalCurrent.SetDouble(PD.GetTotalCurrent());
+    // totalCurrent.SetDouble(PD.GetTotalCurrent());
     // Gyro
     odometryX.SetDouble(robotData.drivebaseData.currentPose.X().to<double>());
     odometryY.SetDouble(robotData.drivebaseData.currentPose.Y().to<double>());
@@ -82,7 +82,7 @@ void NetworkTables::RobotPeriodic(const RobotData &robotData)
     targetHub.SetDouble(robotData.controlData.upperHubShot);
     autoReject.SetDouble(robotData.controlData.autoRejectOpponentCargo);
     shotDistanceTrim.SetDouble(robotData.controlData.saDistanceOffset);
-    validTarget.SetBoolean(robotData.limelightData.validTarget);
+    validTarget.SetBoolean(robotData.limelightData.validTarget || (robotData.controlData.shootMode != shootMode_vision));
     // Climb
     climbSequence.SetDouble(0.0);
     climbAmperage.SetDouble(0.0);

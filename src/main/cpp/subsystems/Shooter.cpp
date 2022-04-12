@@ -475,6 +475,7 @@ void Shooter::updateData(const RobotData &robotData, ShooterData &shooterData)
     frc::SmartDashboard::PutNumber("shooter Turret ABS", shooterTurretEncoderAbs.GetOutput());
     frc::SmartDashboard::PutNumber("shooter Turret REV", shooterTurretEncoderRev.GetPosition());
     frc::SmartDashboard::PutNumber("turret angle", shooterData.currentTurretAngle);
+    frc::SmartDashboard::PutNumber("OFFSET", robotData.shooterData.avgTurretOffsetPos);
 
     //hood
     frc::SmartDashboard::PutNumber("shooter hood abs", shooterHoodEncoderAbs.GetOutput());
@@ -568,6 +569,7 @@ double Shooter::turretAbsoluteToREV(double value){
  **/
 
 double Shooter::turretGyroOffset(double value){
+    frc::SmartDashboard::PutNumber("rotation rate", value);
     double slope = (turretGyroOffset2 - turretGyroOffset1)/(rotationalRate2 - rotationalRate1);
     double b = turretGyroOffset1 - (slope*rotationalRate1);
     return ((value*slope) + b);
@@ -612,8 +614,12 @@ double Shooter::averageTurretGyroOffset(const RobotData &robotData, ShooterData 
     }
 
     //return the average of those speeds
-    shooterData.avgTurretOffsetPos = total/6;
+    shooterData.avgTurretOffsetPos = total/6.0;
+    frc::SmartDashboard::PutNumber("total", total);
+    frc::SmartDashboard::PutNumber("total", offsetPos);
+
     return shooterData.avgTurretOffsetPos;
+
 }
 
 

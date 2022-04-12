@@ -17,7 +17,7 @@ public:
     nt::NetworkTableEntry driveMode;
     nt::NetworkTableEntry robotSpeed;
     nt::NetworkTableEntry batteryVoltage;
-    nt::NetworkTableEntry totalCurrent;
+    // nt::NetworkTableEntry totalCurrent;
     // Gyro
     nt::NetworkTableEntry odometryX;
     nt::NetworkTableEntry odometryY;
