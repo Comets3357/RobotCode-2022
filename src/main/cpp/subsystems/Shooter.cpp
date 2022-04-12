@@ -156,21 +156,21 @@ void Shooter::RobotPeriodic(const RobotData &robotData, ShooterData &shooterData
 {
     updateData(robotData, shooterData);
 
-    // if(robotData.timerData.secSinceInit > 2 && robotData.timerData.secSinceInit < 3){
-    //     if(encoderPluggedInHood()){
-    //         shooterHoodEncoderRev.SetPosition(HoodabsoluteToREV(shooterHoodEncoderAbs.GetOutput()));
-    //         isZeroed_Hood = true;
-    //     }else{
-    //         isZeroed_Hood = false;
-    //     }
+    if(robotData.timerData.secSinceInit > 2 && robotData.timerData.secSinceInit < 3){
+        if(encoderPluggedInHood()){
+            shooterHoodEncoderRev.SetPosition(HoodabsoluteToREV(shooterHoodEncoderAbs.GetOutput()));
+            isZeroed_Hood = true;
+        }else{
+            isZeroed_Hood = false;
+        }
 
-    //     if(encoderPluggedInTurret()){
-    //         shooterTurretEncoderRev.SetPosition(turretAbsoluteToREV(shooterTurretEncoderAbs.GetOutput()));
-    //         isZeroed_Turret = true;
-    //     }else{
-    //         isZeroed_Turret = false;
-    //     }
-    // }
+        if(encoderPluggedInTurret()){
+            shooterTurretEncoderRev.SetPosition(turretAbsoluteToREV(shooterTurretEncoderAbs.GetOutput()));
+            isZeroed_Turret = true;
+        }else{
+            isZeroed_Turret = false;
+        }
+    }
 
     //if climbing, bring the turret forward and don't run any motors
     if(robotData.controlData.mode == mode_climb_manual || robotData.controlData.mode == mode_climb_sa){
@@ -514,6 +514,17 @@ double Shooter::hoodAngletoRev(double value){
 double Shooter::hoodRevtoAngle(double value){
     double slope = (hoodAngleOut - hoodAngleIn)/(hoodrevOut - hoodrevIn);
     double b = hoodAngleIn - (slope*hoodrevIn);
+    return ((value*slope) + b);
+}
+
+/**
+ * @return converts from the absolute encoder values to ones the rev motor can read
+ * constantly updates the rev position in disabled 
+ * HOOD
+ **/
+double Shooter::HoodabsoluteToREV(double value){
+    double slope = (hoodrevOut - hoodrevIn)/(hoodabsOut - hoodabsIn);
+    double b = hoodrevIn - (slope*hoodabsIn);
     return ((value*slope) + b);
 }
 

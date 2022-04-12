@@ -51,6 +51,7 @@ class Shooter{
         //converting hood
         double hoodRevtoAngle(double value);
         double hoodAngletoRev(double value);
+        double HoodabsoluteToREV(double value);
 
         //converting turret
         double turretConvertFromAngleToAbs(double angle);
