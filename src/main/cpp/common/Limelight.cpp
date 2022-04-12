@@ -79,7 +79,7 @@ void Limelight::shooterOffset(const RobotData &robotData, LimelightData &limelig
     double xValueOffset = 0;
 
     //depending on which side of the target we are on, either add the distance between the camera and limelight or subtract them
-    if(robotData.limelightData.xOffset <= 0){
+    if(robotData.limelightData.xOffset >= 0){
         xValueOffset = xValue+xcameraDistanceFromBot;
     }else{
         xValueOffset = xValue-xcameraDistanceFromBot;

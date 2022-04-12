@@ -58,7 +58,7 @@ void Robot::AutonomousInit()
 void Robot::AutonomousPeriodic()
 {
     timer.EnabledPeriodic(robotData.timerData);
-    auton.AutonomousPeriodic(robotData, robotData.autonData, robotData.controlData);
+    auton.AutonomousPeriodic(robotData, robotData.autonData, robotData.controlData, robotData.controllerData);
     // arduino.RobotPeriodic(robotData);
 }
 

@@ -54,12 +54,21 @@ void Drivebase::RobotInit()
     // dbR.Config_kD(0, 0);
 
     // Atlas 03.26.22 Morning
-    dbL.Config_kF(0, 0.074655);
-    dbL.Config_kP(0, 0.1079);
+    // dbL.Config_kF(0, 0.074655);
+    // dbL.Config_kP(0, 0.1079);
+    // dbL.Config_kD(0, 0);
+
+    // dbR.Config_kF(0, 0.074655);
+    // dbR.Config_kP(0, 0.1079);
+    // dbR.Config_kD(0, 0);
+
+    // Atlas 04.07.22 Final tread center drop but not fresh treads
+    dbL.Config_kF(0, 0.072601);
+    dbL.Config_kP(0, 0.10767);
     dbL.Config_kD(0, 0);
 
-    dbR.Config_kF(0, 0.074655);
-    dbR.Config_kP(0, 0.1079);
+    dbR.Config_kF(0, 0.072601);
+    dbR.Config_kP(0, 0.10767);
     dbR.Config_kD(0, 0);
 
 
@@ -466,8 +475,8 @@ void Drivebase::turnInPlaceAuton(double degrees, const RobotData &robotData, Dri
         // frc::SmartDashboard::PutString("AUTON", "TURN IN PLACE");
     } else {
         // profile that adjusts aggressiveness of turn based on the amount of degrees left to turn. has been tuned for speed & accuracy on both small and large turns
-        leftOutput = std::pow(std::abs(degrees / 400), 1.5) + 0.09;
-        rightOutput = std::pow(std::abs(degrees / 400), 1.5) + 0.09;
+        leftOutput = std::pow(std::abs(degrees / 400), 1.7) + 0.13;
+        rightOutput = std::pow(std::abs(degrees / 400), 1.5) + 0.13;
     }
     
 
