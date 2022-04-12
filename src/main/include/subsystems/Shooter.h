@@ -17,14 +17,11 @@ struct RobotData;
 struct ShooterData
 {
     bool readyShoot;
-    bool readyReject = false;
     float currentTurretAngle;
 
     //for rolling average of turret offset 
     std::deque<double> offsetPos;
     double avgTurretOffsetPos = 0;
-
-    //float mode;
 
     //Bench test
     bool hoodTopDeadStop = false;
@@ -51,26 +48,18 @@ class Shooter{
         void semiAuto(const RobotData &robotData, ShooterData &shooterData);
         void updateData(const RobotData &robotData, ShooterData &shooterData);
 
-
         //converting hood
-        double HoodconvertFromAngleToAbs(double angle);
-        double HoodconvertFromAbsToAngle(double abs);
-        double HoodabsoluteToREV(double value);
         double hoodRevtoAngle(double value);
         double hoodAngletoRev(double value);
 
         //converting turret
         double turretConvertFromAngleToAbs(double angle);
-        double turretConvertFromAbsToAngle(double abs);
         double turretAbsoluteToREV(double value);
         double turretGyroOffset(double value);
         double turretRevtoAngle(double rev);
         double averageTurretGyroOffset(const RobotData &robotData, ShooterData &shooterData);
-        // double getFieldRelativeToRobotRelativeTurret(const RobotData &robotData, ShooterData &shooterData);
-        double getFieldRelativeTurretAngle(const RobotData &robotData, ShooterData &shooterData);
         double arbFF = 0;
 
-        
         //init 
         void flyWheelInit();
         void hoodRollerInit();
@@ -81,7 +70,6 @@ class Shooter{
         double getWheelVel();
         void setShooterWheel(double speed, double pidSlot);
         void setTurret_Pos(double pos, ShooterData &shooterData);
-        void relocateTurretDirection(const RobotData &robotData);
 
         //checks
         void checkReadyShoot(ShooterData &shooterData);
@@ -97,11 +85,6 @@ class Shooter{
         void wall(const RobotData &robotData);
         void fender(const RobotData &robotData);
 
-        void reject(const RobotData &robotData, ShooterData &shooterData);
-        bool rejectInitialized = false;
-        int desiredAngle = 180;
-
-
         //bench test
         bool encoderInRangeHood();
         bool encoderInRangeTurret();
@@ -110,16 +93,9 @@ class Shooter{
 
         //shooter velocity min threshold
         int readyShootLimit;
-        //used to update rev encoder with abs encoder
-        int tickCount;
-        double validTargetTurretPos;
         bool isTurretStatic;
         bool isZeroed_Turret = true; //checks if the abs ecoder is zeroed at the beginning is a flag
         bool isZeroed_Hood = true;
-
-        //for deprecated mode function
-        //int modeCounter;
-        //double hoodAbsValues [49] = { };
 
         //Flywheel Lead
         rev::CANSparkMax flyWheel = rev::CANSparkMax(shooterWheelID, rev::CANSparkMax::MotorType::kBrushless);

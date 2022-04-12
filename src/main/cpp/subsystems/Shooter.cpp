@@ -117,7 +117,7 @@ void Shooter::shooterTurretInit()
     shooterTurret_pidController.SetD(0);
     shooterTurret_pidController.SetIZone(0);
     shooterTurret_pidController.SetFF(0);
-    shooterTurret_pidController.SetOutputRange(-0.6,0.6);
+    shooterTurret_pidController.SetOutputRange(-1,1);
 
     shooterTurret.BurnFlash(); 
 
@@ -156,21 +156,21 @@ void Shooter::RobotPeriodic(const RobotData &robotData, ShooterData &shooterData
 {
     updateData(robotData, shooterData);
 
-    if(robotData.timerData.secSinceInit > 2 && robotData.timerData.secSinceInit < 3){
-        if(encoderPluggedInHood()){
-            shooterHoodEncoderRev.SetPosition(HoodabsoluteToREV(shooterHoodEncoderAbs.GetOutput()));
-            isZeroed_Hood = true;
-        }else{
-            isZeroed_Hood = false;
-        }
+    // if(robotData.timerData.secSinceInit > 2 && robotData.timerData.secSinceInit < 3){
+    //     if(encoderPluggedInHood()){
+    //         shooterHoodEncoderRev.SetPosition(HoodabsoluteToREV(shooterHoodEncoderAbs.GetOutput()));
+    //         isZeroed_Hood = true;
+    //     }else{
+    //         isZeroed_Hood = false;
+    //     }
 
-        if(encoderPluggedInTurret()){
-            shooterTurretEncoderRev.SetPosition(turretAbsoluteToREV(shooterTurretEncoderAbs.GetOutput()));
-            isZeroed_Turret = true;
-        }else{
-            isZeroed_Turret = false;
-        }
-    }
+    //     if(encoderPluggedInTurret()){
+    //         shooterTurretEncoderRev.SetPosition(turretAbsoluteToREV(shooterTurretEncoderAbs.GetOutput()));
+    //         isZeroed_Turret = true;
+    //     }else{
+    //         isZeroed_Turret = false;
+    //     }
+    // }
 
     //if climbing, bring the turret forward and don't run any motors
     if(robotData.controlData.mode == mode_climb_manual || robotData.controlData.mode == mode_climb_sa){
@@ -457,33 +457,6 @@ void Shooter::turretControlTurn(float controlTurretDirection, const RobotData &r
     frc::SmartDashboard::PutNumber("robot position", robotData.drivebaseData.odometryYaw);
 
     setTurret_Pos(turretTurnPos, shooterData);
-
-    //turretTurnPos = (controlTurretDirection - robotDirection) + turretMiddleDegrees; //calculates turret pos based on what we know to be the center of the bot
-    
-    //is this code necessary??? I don't think it should ever be over or under?????? but its good ig
-    // if(turretTurnPos < 0 || turretTurnPos > turretFullRotationDegrees){
-    //     if(turretTurnPos < 0){
-    //         turretTurnPos += 360;
-    //     }else if(turretTurnPos > turretFullRotationDegrees){
-    //         turretTurnPos -=360;
-    //     }
-    // }
-    
-    //if its possible to have 2 positions from you're desired location
-    // if(turretTurnPos > 360){
-    //     float turretTurnPos2;
-
-    //     turretTurnPos2 = turretTurnPos - 360; //second position
-
-    //     //checks to see which of the two values is closer to the current turret value and go to that position
-    //     if(std::abs(robotData.shooterData.currentTurretAngle-turretTurnPos) < std::abs(robotData.shooterData.currentTurretAngle-turretTurnPos2)){
-    //         setTurret_Pos(turretTurnPos, shooterData);
-    //     }else{
-    //         setTurret_Pos(turretTurnPos2, shooterData);
-    //     }
-    // }else{
-    //     setTurret_Pos(turretTurnPos, shooterData);
-    // }
 }
 
 /**
@@ -502,7 +475,7 @@ void Shooter::updateData(const RobotData &robotData, ShooterData &shooterData)
     frc::SmartDashboard::PutNumber("turret angle", shooterData.currentTurretAngle);
 
     //hood
-    // frc::SmartDashboard::PutNumber("shooter hood abs", shooterHoodEncoderAbs.GetOutput());
+    frc::SmartDashboard::PutNumber("shooter hood abs", shooterHoodEncoderAbs.GetOutput());
     frc::SmartDashboard::PutNumber("shooter hood rev", shooterHoodEncoderRev.GetPosition());
     frc::SmartDashboard::PutNumber("HOOD ANGLE", hoodRevtoAngle(shooterHoodEncoderRev.GetPosition()));
     frc::SmartDashboard::PutNumber("desired hood pos", robotData.limelightData.desiredHoodPos);
@@ -531,33 +504,6 @@ double Shooter::getWheelVel(){
     return flyWheelLeadEncoder.GetVelocity();
 }
 
-/**
- * @return converts shooter hood encoder values from angles (degrees) to the values of the absolute encoder
- * HOOD
- **/
-double Shooter::HoodconvertFromAngleToAbs(double angle)
-{
-    double slope = (hoodabsOut - hoodabsIn)/(hoodAngleOut - hoodAngleIn);
-    double b = hoodabsIn - (slope*hoodAngleIn);
-    return ((angle*slope) + b);
-}
-
-/**
- * @return converts from the absolute encoder values to angles (degrees)
- * HOOD
- **/
-double Shooter::HoodconvertFromAbsToAngle(double abs)
-{
-    double slope = (hoodAngleOut - hoodAngleIn)/(hoodabsOut - hoodabsIn);
-    double b = hoodAngleIn - (slope*hoodabsIn);
-    return ((abs*slope) + b);
-}
-
-double Shooter::hoodRevtoAngle(double value){
-    double slope = (hoodAngleOut - hoodAngleIn)/(hoodrevOut - hoodrevIn);
-    double b = hoodAngleIn - (slope*hoodrevIn);
-    return ((value*slope) + b);
-}
 
 double Shooter::hoodAngletoRev(double value){
     double slope = (hoodrevOut - hoodrevIn)/(hoodAngleOut - hoodAngleIn);
@@ -565,14 +511,9 @@ double Shooter::hoodAngletoRev(double value){
     return ((value*slope) + b);
 }
 
-/**
- * @return converts from the absolute encoder values to ones the rev motor can read
- * constantly updates the rev position in disabled 
- * HOOD
- **/
-double Shooter::HoodabsoluteToREV(double value){
-    double slope = (hoodrevOut - hoodrevIn)/(hoodabsOut - hoodabsIn);
-    double b = hoodrevIn - (slope*hoodabsIn);
+double Shooter::hoodRevtoAngle(double value){
+    double slope = (hoodAngleOut - hoodAngleIn)/(hoodrevOut - hoodrevIn);
+    double b = hoodAngleIn - (slope*hoodrevIn);
     return ((value*slope) + b);
 }
 
@@ -585,17 +526,6 @@ double Shooter::turretConvertFromAngleToAbs(double angle)
     double slope = (turretFullRotationAbs_CCW - turretFullRotationAbs_C )/(turretFullRotationDegrees - turretZeroDegrees);
     double b = turretFullRotationAbs_C - (slope*turretZeroDegrees);
     return ((angle*slope) + b);
-}
-
-/**
- * @return converts from the absolute encoder values to angles (degrees)
- * TURRET
- **/
-double Shooter::turretConvertFromAbsToAngle(double abs)
-{
-    double slope = (turretFullRotationDegrees - turretZeroDegrees)/(turretFullRotationAbs_CCW - turretFullRotationAbs_C);
-    double b = turretZeroDegrees - (slope*turretFullRotationAbs_C);
-    return ((abs*slope) + b);
 }
 
 double Shooter::turretRevtoAngle(double rev){
@@ -630,15 +560,6 @@ double Shooter::turretGyroOffset(double value){
 // double Shooter::getFieldRelativeToRobotRelativeTurret(const RobotData &robotData, ShooterData &shooterData){
     
 // }
-
-/**
- * @return the angle of the turret relative to the field, 0-360. 
- * 0 is opponent wall, 180 is our wall, CCW pos
- **/
-double Shooter::getFieldRelativeTurretAngle(const RobotData &robotData, ShooterData &shooterData){
-    // 90 gets turret to robot on the same zero as robot to field
-    return ((int)(shooterData.currentTurretAngle + 90 + robotData.drivebaseData.odometryYaw) % 360);
-}
 
 /**
  * @return sets the turret to turn to face the target when shooting USING POSITIONS

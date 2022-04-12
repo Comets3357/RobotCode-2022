@@ -18,7 +18,6 @@ struct RobotData;
 struct IntakeData
 {
     bool intakeIdle;
-    bool absEncoderInRange = true;
     bool usingIntake = false;
 
     //bench test
