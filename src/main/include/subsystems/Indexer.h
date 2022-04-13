@@ -96,7 +96,7 @@ private:
 
     const double indexerWheelSpeed = 0.6;
     const double indexerShootingBeltSpeed = 0.8;
-    const double indexerIntakingBeltSpeed = 0.15;
+    const double indexerIntakingBeltSpeed = 0.2;
 
     int lastTickBallCount;
 
