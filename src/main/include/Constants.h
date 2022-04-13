@@ -61,10 +61,10 @@ static const float
     // //ATLAS turret positions
     turretZeroDegrees = 0, 
     turretFullRotationDegrees = 425.3, //540
-    turretMiddleDegrees = 212.5,
+    turretMiddleDegrees = 210.5,
     turretBackwardsDegrees_C = turretMiddleDegrees - 180,
     turretBackwardsDegrees_CCW = turretMiddleDegrees + 180,
-    turretFullRotationRev_CCW = 136.38, //174.85
+    turretFullRotationRev_CCW = 140.16, //174.85
     turretFullRotationRev_C = 0, //0 
     turretMiddleRev = turretFullRotationRev_CCW/2,
     turretFullRotationAbs_CCW = 0.844, 
