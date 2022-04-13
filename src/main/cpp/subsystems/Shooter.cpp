@@ -385,7 +385,7 @@ void Shooter::manual(const RobotData &robotData, ShooterData &shooterData)
     }
     if(robotData.controlData.mZeroTurret)
     {
-        shooterTurretEncoderRev.SetPosition(turretMiddleRev);
+        shooterTurretEncoderRev.SetPosition(turretMiddleDegrees);
         isZeroed_Turret = true;
     }
 
