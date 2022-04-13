@@ -10,19 +10,19 @@ void Jetson::RobotInit()
     currentAlliance = 0;
 
     // PUTS OUT VALS INTO NETWORK TABLE TO TUNE JETSON
-    table->PutNumber("blue h min", 90); // THIS CHANGES AT COMPS
+    table->PutNumber("blue h min", 95); // THIS CHANGES AT COMPS
     table->PutNumber("blue h max", 105); // THIS CHANGES AT COMPS
-    table->PutNumber("blue s min", 120); // THIS CHANGES AT COMPS
+    table->PutNumber("blue s min", 180); // THIS CHANGES AT COMPS
     table->PutNumber("blue s max", 255); // THIS CHANGES AT COMPS
-    table->PutNumber("blue v min", 50); // THIS CHANGES AT COMPS
+    table->PutNumber("blue v min", 60); // THIS CHANGES AT COMPS
     table->PutNumber("blue v max", 255); // THIS CHANGES AT COMPS
     table->PutNumber("red h lower min", 0); // THIS CHANGES AT COMPS
-    table->PutNumber("red h lower max", 9); // THIS CHANGES AT COMPS
-    table->PutNumber("red h upper min", 175); // THIS CHANGES AT COMPS
+    table->PutNumber("red h lower max", 7); // THIS CHANGES AT COMPS
+    table->PutNumber("red h upper min", 170); // THIS CHANGES AT COMPS
     table->PutNumber("red h upper max", 180); // THIS CHANGES AT COMPS
-    table->PutNumber("red s min", 160); // THIS CHANGES AT COMPS
+    table->PutNumber("red s min", 120); // THIS CHANGES AT COMPS
     table->PutNumber("red s max", 255); // THIS CHANGES AT COMPS
-    table->PutNumber("red v min", 90); // THIS CHANGES AT COMPS
+    table->PutNumber("red v min", 100); // THIS CHANGES AT COMPS
     table->PutNumber("red v max", 255); // THIS CHANGES AT COMPS
     table->PutNumber("realsense center x", 0);
     table->PutNumber("realsense center y", 0);
@@ -30,10 +30,10 @@ void Jetson::RobotInit()
     table->PutNumber("realsense y fov", 58);
     table->PutNumber("ball radius", 4.75);
     table->PutNumber("realsense height", 34.5);
-    table->PutNumber("red erosion", 6); // THIS CHANGES AT COMPS
-    table->PutNumber("red dilation", 6); // THIS CHANGES AT COMPS
-    table->PutNumber("blue erosion", 2); // THIS CHANGES AT COMPS
-    table->PutNumber("blue dilation", 3); // THIS CHANGES AT COMPS
+    table->PutNumber("red erosion", 14); // THIS CHANGES AT COMPS
+    table->PutNumber("red dilation", 7); // THIS CHANGES AT COMPS
+    table->PutNumber("blue erosion", 6); // THIS CHANGES AT COMPS
+    table->PutNumber("blue dilation", 6); // THIS CHANGES AT COMPS
     table->PutNumber("realsense angle", 33);
 }
 
