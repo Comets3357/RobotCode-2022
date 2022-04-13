@@ -399,7 +399,7 @@ void Shooter::manual(const RobotData &robotData, ShooterData &shooterData)
  */
 void Shooter::saTurret(const RobotData &robotData, ShooterData &shooterData){
 
-    if(robotData.controlData.shootMode == shootMode_fender || !isZeroed_Turret)
+    if(!isZeroed_Turret)
     {
         setTurret_Pos(shooterData.currentTurretAngle, shooterData);
     }
