@@ -220,7 +220,7 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
     //SHOOTING LOGIC
 
     if(robotData.controlData.shootMode == shootMode_vision){ // Aiming with limelight
-        isTurretStatic = false;
+        isTurretStatic = robotData.controlData.staticTurret;
 
         //if the difference between the current velocity and the desired velocity is greater than a certain amount give it straight 100% vbus to kick start it
         //then once it's reached a certain amount below the target velocity switch to a pid to get than final desired rpm 
@@ -304,7 +304,7 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
         fender(robotData);
         checkReadyShoot(shooterData);
 
-        isTurretStatic = false;
+        isTurretStatic = true;
     } 
     else if (robotData.controlData.shootMode == shootMode_sideWall) //FROM THE SIDE WALL FIXED SHOT
     {
@@ -385,7 +385,7 @@ void Shooter::manual(const RobotData &robotData, ShooterData &shooterData)
     }
     if(robotData.controlData.mZeroTurret)
     {
-        shooterTurretEncoderRev.SetPosition(turretMiddleRev);
+        shooterTurretEncoderRev.SetPosition(turretMiddleDegrees);
         isZeroed_Turret = true;
     }
 
@@ -399,7 +399,7 @@ void Shooter::manual(const RobotData &robotData, ShooterData &shooterData)
  */
 void Shooter::saTurret(const RobotData &robotData, ShooterData &shooterData){
 
-    if(robotData.controlData.shootMode == shootMode_fender || !isZeroed_Turret)
+    if(!isZeroed_Turret)
     {
         setTurret_Pos(shooterData.currentTurretAngle, shooterData);
     }
