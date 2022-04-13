@@ -231,11 +231,11 @@ void Intake::DisabledInit()
 void Intake::updateData(const RobotData &robotData, IntakeData &intakeData)
 {
     intakeData.intakeIdle = intakeIdle(robotData, intakeData);
-    frc::SmartDashboard::PutNumber("Pivot built in Pos", intakePivotEncoderRev.GetPosition());
-    frc::SmartDashboard::PutNumber("Pivot absolute Pos", intakePivotEncoderAbs.GetOutput());
-    frc::SmartDashboard::PutNumber("time since init", robotData.timerData.secSinceInit);
+    frc::SmartDashboard::PutNumber("intake pivot rev encoder", intakePivotEncoderRev.GetPosition());
+    frc::SmartDashboard::PutNumber("intake pivot abs encoder", intakePivotEncoderAbs.GetOutput());
+    frc::SmartDashboard::PutNumber("secSinceInit", robotData.timerData.secSinceInit);
     
-    frc::SmartDashboard::PutBoolean("isZeroed PIVOT", isZeroed_pivot);
+    frc::SmartDashboard::PutBoolean("intake isZeroed PIVOT", isZeroed_pivot);
 
 }
 

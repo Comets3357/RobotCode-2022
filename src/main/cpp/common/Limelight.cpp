@@ -49,7 +49,7 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     limelightData.desiredTurretAngle = getTurretTurnAngle(limelightData, robotData); //position to go to to shoot
 
     //printing data to the dashboard
-    frc::SmartDashboard::PutNumber("distance offset", robotData.limelightData.distanceOffset/12);
+    // frc::SmartDashboard::PutNumber("distance offset", robotData.limelightData.distanceOffset/12);
     //frc::SmartDashboard::PutNumber("desired turret", robotData.limelightData.desiredTurretAngle);
 
 }

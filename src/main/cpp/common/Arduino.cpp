@@ -11,12 +11,12 @@ void Arduino::RobotInit()
     {
         ArduinoWorks = false;
     }
-    frc::SmartDashboard::PutNumber("LEDNUMBER", 0);
+    // frc::SmartDashboard::PutNumber("LEDNUMBER", 0);
 
 }
 
 void Arduino::RobotPeriodic(const RobotData &robotData, ArduinoData &arduinoData){
-    frc::SmartDashboard::PutBoolean("ARDUINOWORKS", ArduinoWorks);
+    // frc::SmartDashboard::PutBoolean("ARDUINOWORKS", ArduinoWorks);
     if (frc::DriverStation::IsEnabled() && ArduinoWorks) {
         //if (ArduinoWorks){
         realBallCount = robotData.jetsonData.ballCount;

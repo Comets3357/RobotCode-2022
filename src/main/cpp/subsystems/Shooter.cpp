@@ -20,7 +20,7 @@ void Shooter::RobotInit(ShooterData &shooterData)
 
     //FOR TESTING
     // used for reading flywheel speeds from the dashboard
-    frc::SmartDashboard::PutNumber("flywheel speed", 0);
+    // frc::SmartDashboard::PutNumber("flywheel speed", 0);
 
 }
 
@@ -154,7 +154,7 @@ void Shooter::EnabledInit(ControlData &controlData, ShooterData &shooterData)
  * */
 void Shooter::RobotPeriodic(const RobotData &robotData, ShooterData &shooterData)
 {
-    frc::SmartDashboard::PutBoolean("wrap around", robotData.limelightData.unwrapping);
+    // frc::SmartDashboard::PutBoolean("wrap around", robotData.limelightData.unwrapping);
 
     updateData(robotData, shooterData);
 
@@ -424,7 +424,7 @@ void Shooter::saTurret(const RobotData &robotData, ShooterData &shooterData){
             arbFF = 0.0;
         }
 
-        frc::SmartDashboard::PutNumber("arbFF", arbFF);
+        // frc::SmartDashboard::PutNumber("arbFF", arbFF);
 
         if(robotData.limelightData.validTarget) // all the if statements not needed if the jitter is taken care of in limelight
         { //if you can see a target
@@ -472,23 +472,23 @@ void Shooter::updateData(const RobotData &robotData, ShooterData &shooterData)
     shooterData.currentTurretAngle = turretRevtoAngle(shooterTurretEncoderRev.GetPosition());
 
     //turret 
-    frc::SmartDashboard::PutNumber("shooter Turret ABS", shooterTurretEncoderAbs.GetOutput());
-    frc::SmartDashboard::PutNumber("shooter Turret REV", shooterTurretEncoderRev.GetPosition());
-    frc::SmartDashboard::PutNumber("turret angle", shooterData.currentTurretAngle);
-    frc::SmartDashboard::PutNumber("OFFSET", robotData.shooterData.avgTurretOffsetPos);
+    frc::SmartDashboard::PutNumber("shooter turret abs encoder", shooterTurretEncoderAbs.GetOutput());
+    frc::SmartDashboard::PutNumber("shooter turret rev encoder", shooterTurretEncoderRev.GetPosition());
+    frc::SmartDashboard::PutNumber("shooter turret angle", shooterData.currentTurretAngle);
+    frc::SmartDashboard::PutNumber("shooter turret gyro offset", robotData.shooterData.avgTurretOffsetPos);
 
     //hood
-    frc::SmartDashboard::PutNumber("shooter hood abs", shooterHoodEncoderAbs.GetOutput());
-    frc::SmartDashboard::PutNumber("shooter hood rev", shooterHoodEncoderRev.GetPosition());
-    frc::SmartDashboard::PutNumber("HOOD ANGLE", hoodRevtoAngle(shooterHoodEncoderRev.GetPosition()));
-    frc::SmartDashboard::PutNumber("desired hood pos", robotData.limelightData.desiredHoodPos);
+    frc::SmartDashboard::PutNumber("shooter hood abs encoder", shooterHoodEncoderAbs.GetOutput());
+    frc::SmartDashboard::PutNumber("shooter hood rev encoder", shooterHoodEncoderRev.GetPosition());
+    frc::SmartDashboard::PutNumber("shooter hood angle", hoodRevtoAngle(shooterHoodEncoderRev.GetPosition()));
+    frc::SmartDashboard::PutNumber("shooter hood desired pos", robotData.limelightData.desiredHoodPos);
 
     //flywheel
-    frc::SmartDashboard::PutNumber("flywheel vel", flyWheelLeadEncoder.GetVelocity());
-    frc::SmartDashboard::PutNumber("desired flywheel vel", robotData.limelightData.desiredVel);
+    // frc::SmartDashboard::PutNumber("flywheel vel", flyWheelLeadEncoder.GetVelocity());
+    // frc::SmartDashboard::PutNumber("desired flywheel vel", robotData.limelightData.desiredVel);
 
-    frc::SmartDashboard::PutBoolean("isZeroed TURRET", isZeroed_Turret);
-    frc::SmartDashboard::PutBoolean("isZeroed HOOD", isZeroed_Hood);
+    frc::SmartDashboard::PutBoolean("shooter turret isZeroed", isZeroed_Turret);
+    frc::SmartDashboard::PutBoolean("shooter hood isZeroed", isZeroed_Hood);
 
     //hood roller
     //frc::SmartDashboard::PutNumber("hood roller vel", hoodRollerEncoderRev.GetVelocity());
@@ -582,7 +582,7 @@ double Shooter::turretGyroOffset(double value){
  **/
 void Shooter::setTurret_Pos(double pos, ShooterData &shooterData){
     shooterTurret_pidController.SetReference(turretAbsoluteToREV(turretConvertFromAngleToAbs(pos)), rev::CANSparkMax::ControlType::kPosition, 0, arbFF, rev::SparkMaxPIDController::ArbFFUnits::kPercentOut);
-    frc::SmartDashboard::PutNumber("arbFF", arbFF);
+    // frc::SmartDashboard::PutNumber("arbFF", arbFF);
 }
 
 /**

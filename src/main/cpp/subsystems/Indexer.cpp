@@ -66,8 +66,8 @@ void Indexer::updateData(const RobotData &robotData, IndexerData &indexerData)
     indexerData.topBeamBreak = getTopBeam();
     indexerData.midBeamBreak = getMidBeam();
     
-    frc::SmartDashboard::PutBoolean("top beam", getTopBeam());
-    frc::SmartDashboard::PutBoolean("mid beam", getMidBeam());
+    // frc::SmartDashboard::PutBoolean("top beam", getTopBeam());
+    // frc::SmartDashboard::PutBoolean("mid beam", getMidBeam());
     
 }
 
