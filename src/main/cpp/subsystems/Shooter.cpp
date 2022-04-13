@@ -220,7 +220,7 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
     //SHOOTING LOGIC
 
     if(robotData.controlData.shootMode == shootMode_vision){ // Aiming with limelight
-        //isTurretStatic = false;
+        isTurretStatic = robotData.controlData.staticTurret;
 
         //if the difference between the current velocity and the desired velocity is greater than a certain amount give it straight 100% vbus to kick start it
         //then once it's reached a certain amount below the target velocity switch to a pid to get than final desired rpm 
