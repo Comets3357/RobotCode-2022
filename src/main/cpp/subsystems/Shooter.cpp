@@ -442,7 +442,10 @@ void Shooter::saTurret(const RobotData &robotData, ShooterData &shooterData){
 void Shooter::turretControlTurn(float controlTurretDirection, const RobotData &robotData, ShooterData &shooterData){
     float robotDirection = robotData.drivebaseData.odometryYaw; //in degrees 
     float turretTurnPos = (controlTurretDirection - robotDirection) + turretMiddleDegrees;
-    turretTurnPos = (int)turretTurnPos % 360;
+    // turretTurnPos = (int)turretTurnPos % 360;
+
+    if (turretTurnPos < 0) { turretTurnPos += 360; }
+    else if (turretTurnPos > 360) { turretTurnPos -= 360; }
 
     frc::SmartDashboard::PutNumber("turret position 2", std::abs(shooterData.currentTurretAngle - (turretTurnPos + 360)));
     frc::SmartDashboard::PutNumber("turret position 1", std::abs(shooterData.currentTurretAngle - turretTurnPos));
