@@ -62,7 +62,7 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
         controlData.rDrive = controllerData.pRYStick;
     }
 
-    if(controllerData.sLCenterBtnToggled && !controlData.shift){
+    if(controllerData.sLCenterBtnToggled && !controlData.shift && controlData.mode == mode_teleop_sa){
         controlData.staticTurret = !controlData.staticTurret;
     }
     controlData.vectorDrive = controllerData.pLPalmSwitch; 
@@ -116,7 +116,8 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
     
     if(controlData.mode == mode_teleop_sa){
         if(controllerData.sRCenterBtnToggled){
-            controlData.staticTurret = !controlData.staticTurret;
+            // wrong button, uses sLCenterBtnToggled below
+            // controlData.staticTurret = !controlData.staticTurret;
         }
     }else{
         controlData.mZeroIntakePivot = controllerData.sRCenterBtn;

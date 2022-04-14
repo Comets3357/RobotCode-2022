@@ -497,6 +497,7 @@ void Shooter::updateData(const RobotData &robotData, ShooterData &shooterData)
     //hood roller
     frc::SmartDashboard::PutNumber("shooter hood roller vel", hoodRollerEncoderRev.GetVelocity());
     frc::SmartDashboard::PutNumber("shooter desired hood roller vel", robotData.limelightData.desiredHoodRollerVel);
+    frc::SmartDashboard::PutBoolean("saFinalShoot", robotData.controlData.saFinalShoot);
 
 }
 
