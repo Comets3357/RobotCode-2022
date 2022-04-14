@@ -478,6 +478,7 @@ void Shooter::updateData(const RobotData &robotData, ShooterData &shooterData)
     frc::SmartDashboard::PutNumber("shooter turret abs encoder", shooterTurretEncoderAbs.GetOutput());
     frc::SmartDashboard::PutNumber("shooter turret rev encoder", shooterTurretEncoderRev.GetPosition());
     frc::SmartDashboard::PutNumber("shooter turret angle", shooterData.currentTurretAngle);
+    frc::SmartDashboard::PutNumber("shooter turret desired angle", robotData.limelightData.desiredTurretAngle);
     frc::SmartDashboard::PutNumber("shooter turret gyro offset", robotData.shooterData.avgTurretOffsetPos);
 
     //hood
@@ -487,15 +488,15 @@ void Shooter::updateData(const RobotData &robotData, ShooterData &shooterData)
     frc::SmartDashboard::PutNumber("shooter hood desired pos", robotData.limelightData.desiredHoodPos);
 
     //flywheel
-    // frc::SmartDashboard::PutNumber("flywheel vel", flyWheelLeadEncoder.GetVelocity());
-    // frc::SmartDashboard::PutNumber("desired flywheel vel", robotData.limelightData.desiredVel);
+    frc::SmartDashboard::PutNumber("shooter flywheel vel", flyWheelLeadEncoder.GetVelocity());
+    frc::SmartDashboard::PutNumber("shooter desired flywheel vel", robotData.limelightData.desiredVel);
 
     frc::SmartDashboard::PutBoolean("shooter turret isZeroed", isZeroed_Turret);
     frc::SmartDashboard::PutBoolean("shooter hood isZeroed", isZeroed_Hood);
 
     //hood roller
-    //frc::SmartDashboard::PutNumber("hood roller vel", hoodRollerEncoderRev.GetVelocity());
-    //frc::SmartDashboard::PutNumber("desired hood roller", robotData.limelightData.desiredHoodRollerVel);
+    frc::SmartDashboard::PutNumber("shooter hood roller vel", hoodRollerEncoderRev.GetVelocity());
+    frc::SmartDashboard::PutNumber("shooter desired hood roller vel", robotData.limelightData.desiredHoodRollerVel);
 
 }
 
