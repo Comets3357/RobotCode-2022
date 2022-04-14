@@ -129,7 +129,7 @@ void Auton::citrus(const RobotData &robotData, ControlData &controlData, Control
     if (sec > 0 && sec < 11) {
         controlData.saIntake = true;
         controlData.saEjectBalls = false;
-    } else if (sec > 11) {
+    } else if (sec > 12) {
         controlData.saIntake = false;
         controlData.saEjectBalls = true;
     }
