@@ -100,7 +100,7 @@ static const int
 //Set shooting hood positions and velocity 
 static const float
     outerLaunchHood = -35.5,
-    outerLaunchVel = 1950,
+    outerLaunchVel = 650,
     innerLaunchHood = -29,
     innerLaunchVel = 1710,
     wallHood = -21.5,

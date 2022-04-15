@@ -42,10 +42,25 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
 
     limelightData.desiredHoodPos = interpolationHood(limelightData, robotData);
 
+    // if (robotData.limelightData.angleOffset > 0)
+    // {
+    //     if (robotData.limelightData.angleOffset < std::min((180/pi)*std::atan(12/limelightData.distanceOffset) - 2, (double)3))
+    //     {
+    //         robotData.limelightData.angleOffset = 0;
+    //     }
+    // }
+    // else if (robotData.limelightData.angleOffset < 0)
+    // {
+    //     if (robotData.limelightData.angleOffset < std::min((180/pi)*std::atan(12/limelightData.distanceOffset) - 2, (double)5))
+    //     {
+    //         robotData.limelightData.angleOffset = 0;
+    //     }
+    // }
+
     //TURRET DIFFERENCE
     limelightData.turretDifference = -robotData.limelightData.angleOffset; // turret turning is not consistent with limelight degrees off
 
-    if (std::abs(limelightData.turretDifference) < std::min((180/pi)*std::atan(12/limelightData.distanceOffset), (double)4))
+    if ((std::abs(limelightData.turretDifference)) < std::min((180/pi)*std::atan(12/limelightData.distanceOffset), (double)4))
     {
         limelightData.turretDifference = 0;
     }
