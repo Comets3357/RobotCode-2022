@@ -1,5 +1,9 @@
 #include "RobotData.h"
 
+void Limelight::AutonomousInit(LimelightData &limelightData){
+    limelightData.unwrapping = false;
+}
+
 void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelightData, VisionLookup &visionLookup)
 {
     limelightData.validTarget = table->GetNumber("tv", 0.0); //valid target or not
@@ -51,6 +55,7 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     //printing data to the dashboard
     // frc::SmartDashboard::PutNumber("distance offset", robotData.limelightData.distanceOffset/12);
     //frc::SmartDashboard::PutNumber("desired turret", robotData.limelightData.desiredTurretAngle);
+    frc::SmartDashboard::PutBoolean("Unwrapping", limelightData.unwrapping);
 
 }
 
@@ -202,10 +207,11 @@ double Limelight::getHoodRollerVel(LimelightData &limelightData, const RobotData
  * is constantly updating based on the current Turret Angle and the angle offset from the limelight
  */
 double Limelight::getTurretTurnAngle(LimelightData &limelightData, const RobotData &robotData){
-
+    
+    
     float desired = robotData.limelightData.turretDifference + robotData.shooterData.currentTurretAngle;
 
-    if(desired < 0 || desired > turretFullRotationDegrees){ //if you're outside of the range, go through and add/subtract 360 to get in the range
+    if((desired < 0 || desired > turretFullRotationDegrees) && frc::DriverStation::IsEnabled()){ //if you're outside of the range, go through and add/subtract 360 to get in the range
 
         if(desired < 0){
             desired += 430;

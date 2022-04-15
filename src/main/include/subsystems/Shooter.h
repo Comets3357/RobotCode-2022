@@ -95,8 +95,8 @@ class Shooter{
         //shooter velocity min threshold
         int readyShootLimit;
         bool isTurretStatic;
-        bool isZeroed_Turret = true; //checks if the abs ecoder is zeroed at the beginning is a flag
-        bool isZeroed_Hood = true;
+        bool isZeroed_Turret = false; //checks if the abs ecoder is zeroed at the beginning is a flag
+        bool isZeroed_Hood = false;
 
         //Flywheel Lead
         rev::CANSparkMax flyWheel = rev::CANSparkMax(shooterWheelID, rev::CANSparkMax::MotorType::kBrushless);

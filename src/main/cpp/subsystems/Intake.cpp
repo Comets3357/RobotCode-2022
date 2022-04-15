@@ -11,6 +11,9 @@ void Intake::RobotInit()
     intakePivot.Set(0);
     intakeRollers.Set(0);
     intakeSingulator.Set(0);
+
+        frc::SmartDashboard::PutNumber("ZEROING intake pivot", 0);
+
 }
 
 void Intake::rollersInit(){
@@ -236,7 +239,6 @@ void Intake::updateData(const RobotData &robotData, IntakeData &intakeData)
     frc::SmartDashboard::PutNumber("secSinceInit", robotData.timerData.secSinceInit);
     
     frc::SmartDashboard::PutBoolean("intake isZeroed PIVOT", isZeroed_pivot);
-
 }
 
 bool Intake::intakeIdle(const RobotData &robotData, IntakeData &intakeData){
@@ -263,6 +265,12 @@ double Intake::absoluteToREV(double value){
 
 void Intake::DisabledPeriodic(const RobotData &robotData, IntakeData &intakeData){
     updateData(robotData, intakeData);
+
+    double zeroIntake = frc::SmartDashboard::GetNumber("ZEROING intake pivot", 0);
+    if(zeroIntake >  0.1){
+        intakePivotEncoderRev.SetPosition(revIn);
+        isZeroed_pivot = true;     
+    }
 }
 
 /**

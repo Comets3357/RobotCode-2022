@@ -20,7 +20,9 @@ void Shooter::RobotInit(ShooterData &shooterData)
 
     //FOR TESTING
     // used for reading flywheel speeds from the dashboard
-    // frc::SmartDashboard::PutNumber("flywheel speed", 0);
+    frc::SmartDashboard::PutNumber("ZEROING hood", 0);
+        frc::SmartDashboard::PutNumber("ZEROING turret", 0);
+
 
 }
 
@@ -136,6 +138,18 @@ void Shooter::DisabledInit()
 
 void Shooter::DisabledPeriodic(const RobotData &robotData, ShooterData &shooterData){
     updateData(robotData, shooterData);
+
+    double zeroHood = frc::SmartDashboard::GetNumber("ZEROING hood", 0);
+    if(zeroHood >  0.1){
+        shooterHoodEncoderRev.SetPosition(0.5);
+        isZeroed_Hood = true;
+    }
+
+    double zeroTurret = frc::SmartDashboard::GetNumber("ZEROING turret", 0);
+    if(zeroTurret >  0.1){
+        shooterTurretEncoderRev.SetPosition(10.3);
+        isZeroed_Turret = true;     
+    }
 
 }
 
@@ -385,7 +399,7 @@ void Shooter::manual(const RobotData &robotData, ShooterData &shooterData)
     }
     if(robotData.controlData.mZeroTurret)
     {
-        shooterTurretEncoderRev.SetPosition(turretMiddleDegrees);
+        shooterTurretEncoderRev.SetPosition(turretMiddleRev);
         isZeroed_Turret = true;
     }
 

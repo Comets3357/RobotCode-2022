@@ -51,6 +51,7 @@ class Limelight
 
 public:
     void RobotPeriodic(const RobotData &robotData, LimelightData &limelightData, VisionLookup &visionLookup);
+    void AutonomousInit(LimelightData &limelightData);
 
 private:
     double distanceToTarget();
