@@ -44,19 +44,18 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
 
     // if (robotData.limelightData.angleOffset > 0)
     // {
-    //     if (robotData.limelightData.angleOffset < std::min((180/pi)*std::atan(12/limelightData.distanceOffset) - 2, (double)3))
+    //     if (robotData.limelightData.angleOffset < std::min((180/pi)*std::atan(12/limelightData.distanceOffset) - 2, (double)2))
     //     {
     //         robotData.limelightData.angleOffset = 0;
     //     }
     // }
     // else if (robotData.limelightData.angleOffset < 0)
     // {
-    //     if (robotData.limelightData.angleOffset < std::min((180/pi)*std::atan(12/limelightData.distanceOffset) - 2, (double)5))
+    //     if (robotData.limelightData.angleOffset < std::abs(std::min((180/pi)*std::atan(12/limelightData.distanceOffset) - 2), (double)6))
     //     {
     //         robotData.limelightData.angleOffset = 0;
     //     }
     // }
-
     //TURRET DIFFERENCE
     limelightData.turretDifference = -robotData.limelightData.angleOffset; // turret turning is not consistent with limelight degrees off
 

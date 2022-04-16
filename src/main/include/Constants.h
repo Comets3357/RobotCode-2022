@@ -73,7 +73,7 @@ static const float
     forwardVelOffset = 60,
     forwardHoodOffsetFar = 1,
     forwardHoodOffsetClose = 4.5,
-    change = 7;
+    change = 7.5;
 
     //FOR PRATLAS
     // turretZeroDegrees = 5, //15
