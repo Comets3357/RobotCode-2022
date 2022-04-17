@@ -54,12 +54,21 @@ void Drivebase::RobotInit()
     // dbR.Config_kD(0, 0);
 
     // Atlas 03.26.22 Morning
-    dbL.Config_kF(0, 0.074655);
-    dbL.Config_kP(0, 0.1079);
+    // dbL.Config_kF(0, 0.074655);
+    // dbL.Config_kP(0, 0.1079);
+    // dbL.Config_kD(0, 0);
+
+    // dbR.Config_kF(0, 0.074655);
+    // dbR.Config_kP(0, 0.1079);
+    // dbR.Config_kD(0, 0);
+
+    // Atlas 04.07.22 Final tread center drop but not fresh treads
+    dbL.Config_kF(0, 0.072601);
+    dbL.Config_kP(0, 0.10767);
     dbL.Config_kD(0, 0);
 
-    dbR.Config_kF(0, 0.074655);
-    dbR.Config_kP(0, 0.1079);
+    dbR.Config_kF(0, 0.072601);
+    dbR.Config_kP(0, 0.10767);
     dbR.Config_kD(0, 0);
 
 
@@ -129,8 +138,20 @@ void Drivebase::updateData(const RobotData &robotData, DrivebaseData &drivebaseD
     drivebaseData.currentLDBPos = dbL.GetSensorCollection().GetIntegratedSensorPosition();
     drivebaseData.currentRDBPos = dbR.GetSensorCollection().GetIntegratedSensorPosition();
 
-    drivebaseData.lDriveVel = dbL.GetSensorCollection().GetIntegratedSensorVelocity() / mpsToTpds;
-    drivebaseData.rDriveVel = dbR.GetSensorCollection().GetIntegratedSensorVelocity() / mpsToTpds;
+    drivebaseData.lDriveVel = -dbL.GetSensorCollection().GetIntegratedSensorVelocity() / mpsToTpds;
+    // frc::SmartDashboard::PutNumber("lDriveVel", drivebaseData.lDriveVel);
+    drivebaseData.rDriveVel = -dbR.GetSensorCollection().GetIntegratedSensorVelocity() / mpsToTpds;
+    // frc::SmartDashboard::PutNumber("rDriveVel", -drivebaseData.rDriveVel);
+
+    // WARNING the average calcuation here subtracts for some reason. The values for left and right db velocity act as expected on their own...
+    drivebaseData.avgDriveVel = (drivebaseData.lDriveVel - drivebaseData.rDriveVel) / 2.0;
+    // frc::SmartDashboard::PutNumber("avgDriveVel", drivebaseData.avgDriveVel);
+
+    // option 1, will alloy us to shoot while pivoting drivebase
+    drivebaseData.dbStationaryForShot = (std::abs(drivebaseData.avgDriveVel) < 0.1);
+    // option 2, both driverails must be stationary for us to fire
+    // drivebaseData.dbStationaryForShot = ((std::abs(drivebaseData.lDriveVel) < 0.2) && (std::abs(drivebaseData.rDriveVel) < 0.1));
+    // frc::SmartDashboard::PutBoolean("dbStationaryForShot", drivebaseData.dbStationaryForShot);
 
     // frc::SmartDashboard::PutNumber("driveMode", drivebaseData.driveMode);
 
@@ -142,13 +163,18 @@ void Drivebase::updateData(const RobotData &robotData, DrivebaseData &drivebaseD
 // adjusts for the deadzone and converts joystick input to velocity values for PID
 void Drivebase::teleopControl(const RobotData &robotData, DrivebaseData &drivebaseData)
 {
+    // frc::SmartDashboard::PutNumber("DRIVE MODE", robotData.drivebaseData.driveMode);
+    // frc::SmartDashboard::PutNumber("SHOOT MODE", robotData.controlData.shootMode);
     // assign drive mode
-    if ((robotData.controlData.lDrive <= -0.08 || robotData.controlData.lDrive >= 0.08) || (robotData.controlData.rDrive <= -0.08 || robotData.controlData.rDrive >= 0.08)) {
+    if ((!robotData.controlData.vectorDrive) && ((robotData.controlData.lDrive <= -0.08 || robotData.controlData.lDrive >= 0.08) || (robotData.controlData.rDrive <= -0.08 || robotData.controlData.rDrive >= 0.08))) {
         drivebaseData.driveMode = driveMode_joystick;
     }
-    // else if (robotData.controlData.shootMode == shootMode_vision) {
-        //drivebaseData.driveMode = driveMode_turnInPlace;
-    // } 
+    /*else if (robotData.controlData.shootMode == shootMode_vision && !robotData.controlData.vectorDrive) {
+        drivebaseData.driveMode = driveMode_turnInPlace;
+    }*/
+    else if (robotData.controlData.vectorDrive) {
+        drivebaseData.driveMode = driveMode_vector;
+    }  
     else {
         drivebaseData.driveMode = driveMode_joystick;
     }
@@ -184,10 +210,13 @@ void Drivebase::teleopControl(const RobotData &robotData, DrivebaseData &driveba
         //set as percent vbus
         setPercentOutput(tempLDrive, tempRDrive);
     }
-    // else if (drivebaseData.driveMode == driveMode_turnInPlace) {
-        // turnInPlaceTeleop(-robotData.limelightData.angleOffset, robotData);
-    // }
-    // frc::SmartDashboard::PutNumber("limelight angle diff", -robotData.limelightData.angleOffset);
+    /*else if (drivebaseData.driveMode == driveMode_turnInPlace) {
+        turnInPlaceTeleop(-robotData.limelightData.angleOffset, robotData);
+    }*/
+    else if (drivebaseData.driveMode == driveMode_vector)
+    {
+        setPercentOutput(robotData.jetsonData.leftSkew, robotData.jetsonData.rightSkew);
+    }
 
 
 }
@@ -269,7 +298,7 @@ void Drivebase::updateOdometry(const RobotData &robotData, DrivebaseData &driveb
     odometry.Update(currentRotation, leftDistance, rightDistance);
 
     field.SetRobotPose(odometry.GetPose());
-    frc::SmartDashboard::PutData("Field", &field);
+    // frc::SmartDashboard::PutData("Field", &field);
 
 
     drivebaseData.currentPose = odometry.GetPose();
@@ -446,8 +475,8 @@ void Drivebase::turnInPlaceAuton(double degrees, const RobotData &robotData, Dri
         // frc::SmartDashboard::PutString("AUTON", "TURN IN PLACE");
     } else {
         // profile that adjusts aggressiveness of turn based on the amount of degrees left to turn. has been tuned for speed & accuracy on both small and large turns
-        leftOutput = std::pow(std::abs(degrees / 400), 1.5) + 0.09;
-        rightOutput = std::pow(std::abs(degrees / 400), 1.5) + 0.09;
+        leftOutput = std::pow(std::abs(degrees / 400), 1.7) + 0.13;
+        rightOutput = std::pow(std::abs(degrees / 400), 1.5) + 0.13;
     }
     
 
@@ -508,7 +537,7 @@ bool Drivebase::allValuesWithin(std::deque<double> deque, double tolerance) {
 void Drivebase::sendStartPointChooser() {
     startPointChooser.AddOption("(0, 0), 0 deg", getPose(0, 0, 0));
     startPointChooser.AddOption("(3, 1), 90 deg", getPose(3, 1, 90));
-    frc::SmartDashboard::PutData("Select Start Point:", &startPointChooser);
+    // frc::SmartDashboard::PutData("Select Start Point:", &startPointChooser);
 }
 
 
@@ -524,9 +553,6 @@ void Drivebase::calcTurretEjectAngle(DrivebaseData &drivebaseData) {
     }
 }
 
-
-
-//BENCH TEST CODE
 /**
  * ---------------------------------------------------------------------------------------------------------------------------------------------------
  * BENCH TEST CODE
@@ -552,7 +578,7 @@ void Drivebase::TestPeriodic(const RobotData &robotData, DrivebaseData &drivebas
             dbR.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
             dbL.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, -robotData.benchTestData.currentSpeed);
         } else {
-            dbR.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
+            dbR.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0); //if the drivebase stage isn't within 0 to 3, then the speeds get set to 0
             dbL.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0);
         }
     } else {

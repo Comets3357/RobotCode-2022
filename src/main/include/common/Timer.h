@@ -18,8 +18,10 @@ public:
     void EnabledPeriodic(TimerData &timerData);
     void EnabledInit(TimerData &timerData);
     void DisabledInit(TimerData &timerData);
+    void DisabledPeriodic(TimerData &timerData);
 
 private:
     frc::Timer timer{};
+    frc::Timer initTimer{};
     
 };

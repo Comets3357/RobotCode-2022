@@ -28,6 +28,9 @@ struct IndexerData
     bool autoRejectBottom;  // true if we are auto ejecting an opponent ball out the bottom of the indexer
     
     bool eBallCountZero; // event boolean for when ball count goes from 1 to 0
+
+    bool topBeamBreak;
+    bool midBeamBreak;
 };
 
 
@@ -56,13 +59,9 @@ private:
     void mDecrement(const RobotData &robotData, IndexerData &indexerData);
     void count(const RobotData &robotData, IndexerData &indexerData);
 
-    bool pauseBelt(const RobotData &robotData, IndexerData &indexerData); 
     void saBeltControl(const RobotData &robotData, IndexerData &indexerData);
     void saWheelControl(const RobotData &robotData, IndexerData &indexerData);
     
-
-    void rejectDetection(const RobotData &robotData, IndexerData &indexerData);
-
     // basic sensor getters
     bool getBottomBeam();
     bool getMidBeam();
@@ -78,8 +77,6 @@ private:
     void indexerBeltInit();
     void indexerWheelInit();
 
-    void debuggingStuff(const RobotData &robotData, IndexerData &indexerData);
-    
     frc::DigitalInput bottomBeamBreak{bottomBeamBreakPort};
     frc::DigitalInput midBeamBreak{midBeamBreakPort};
     frc::DigitalInput topBeamBreak{topBeamBreakPort};
@@ -95,12 +92,11 @@ private:
     // debounce counters to time debounce
     int bottomDebounceCount = 0;
     int topDebounceCount = 0;
-    int pauseBeltCount = 0;
     int decrementDelay = 0;
 
     const double indexerWheelSpeed = 0.6;
     const double indexerShootingBeltSpeed = 0.8;
-    const double indexerIntakingBeltSpeed = 0.27;
+    const double indexerIntakingBeltSpeed = 0.2;
 
     int lastTickBallCount;
 

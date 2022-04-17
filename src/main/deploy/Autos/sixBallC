@@ -1,10 +1,8 @@
-sixBallC1
-turnInPlace 175
-break 2
-sixBallC2
-turnInPlace -90
-break 2
+break 0.75
+fiveBallC1
+break 2.5
+turnInPlace 63
+fiveBallC2
+break 0.5
+turnInPlace -57
 sixBallC3
-sixBallC4
-turnInPlace 180
-break 2

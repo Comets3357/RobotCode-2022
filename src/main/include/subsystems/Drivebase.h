@@ -27,7 +27,8 @@ enum DriveMode {
     driveMode_joystick,
     driveMode_turnInPlace,
     driveMode_break,
-    driveMode_trajectory
+    driveMode_trajectory,
+    driveMode_vector
 };
 
 struct DrivebaseData
@@ -40,6 +41,8 @@ struct DrivebaseData
 
     double lDriveVel = 0.0; // meters per second
     double rDriveVel = 0.0; // meters per second
+    double avgDriveVel = 0.0;   // meters per second
+    bool dbStationaryForShot = false;   // used to determine if robot is stationary enough to fire
 
     // odometry
     frc::Pose2d currentPose{};
@@ -130,5 +133,6 @@ private:
 
     ctre::phoenix::motorcontrol::can::TalonFX dbR{rightLeadDeviceID};
     ctre::phoenix::motorcontrol::can::TalonFX dbRF{rightFollowDeviceID};
+
 
 };

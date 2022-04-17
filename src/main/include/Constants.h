@@ -21,9 +21,9 @@ static const double
     // revIn = 0;
 
     //comp bot intake pivot positions
-    absOut = 0.465,
-    absIn = 0.605,
-    revOut = 6.14,
+    absOut = 0.2938,
+    absIn = 0.434,
+    revOut = 8,
     revIn = 0;
 
 //indexer
@@ -42,6 +42,9 @@ static const float
     //comp bot shooter hood positions
     hoodabsOut = 0.058,
     hoodabsIn = 0.956,
+    //SPARE BACKUP #1
+    //hoodabsIn 0.931,
+    //hoodabsOut 0.028,
     hoodrevOut = -38,
     hoodrevIn = 0,
     hoodAngleOut = 43,
@@ -57,12 +60,20 @@ static const float
 
     // //ATLAS turret positions
     turretZeroDegrees = 0, 
-    turretFullRotationDegrees = 450, //540
-    turretMiddleDegrees = (turretFullRotationDegrees - turretZeroDegrees)/2,
-    turretFullRotationRev_CCW = 140.16, //174.85 
+    turretFullRotationDegrees = 425.3, //540
+    turretMiddleDegrees = 210.5,
+    turretBackwardsDegrees_C = 36.22,
+    turretBackwardsDegrees_CCW = turretMiddleDegrees + 180,
+    turretFullRotationRev_CCW = 140.16, //174.85
     turretFullRotationRev_C = 0, //0 
-    turretFullRotationAbs_CCW = 0.84, 
-    turretFullRotationAbs_C = 0.157; 
+    turretMiddleRev = turretFullRotationRev_CCW/2,
+    turretFullRotationAbs_CCW = 0.844, 
+    turretFullRotationAbs_C = 0.154,
+
+    forwardVelOffset = 60,
+    forwardHoodOffsetFar = 1,
+    forwardHoodOffsetClose = 4.5,
+    change = 7.5;
 
     //FOR PRATLAS
     // turretZeroDegrees = 5, //15
@@ -75,39 +86,27 @@ static const float
     // turretFullRotationAbs_CCW = 0.906, //0.91
     // turretFullRotationAbs_C = 0.05; //0.05
 
-
 //turret gyro offset
-static const float
+static const int
     //at the the corresponding rate of rotation, offset the turret by an extra 20 degrees to account for the extra strength needed (centipetal acceleration?)
     turretGyroOffset2 = -50,
     turretGyroOffset1 = 0;
     
-static const double 
+static const int 
     //at certain rotational rate points add the speed offset above
     rotationalRate2 = 400,
     rotationalRate1 = 0;
 
-
 //Set shooting hood positions and velocity 
 static const float
-    outerLaunchHood = hoodrevOut,
-    outerLaunchVel = 1990,
-    innerLaunchHood = -35,
-    innerLaunchVel = 1620,
-    wallHood = -25,
-    wallVel = 1500,
-    fenderHood = -2.5,
-    fenderVel = 1500,
-
-    outerLaunchHood_Low = hoodrevOut,
-    outerLaunchVel_Low = 1990,
-    innerLaunchHood_Low = hoodrevOut,
-    innerLaunchVel_Low = 2040,
-    wallHood_Low = -32.33,
-    wallVel_Low = 1860,
-    fenderHood_Low = -2.5,
-    fenderVel_Low = 1500;
-
+    outerLaunchHood = -35.5,
+    outerLaunchVel = 650,
+    innerLaunchHood = -29,
+    innerLaunchVel = 1710,
+    wallHood = -21.5,
+    wallVel = 1510,
+    fenderHood = -10,
+    fenderVel = 1500;
 
 // climb
 static const int
@@ -115,7 +114,7 @@ static const int
     climbArmsID = 43;
     
 const float 
-    climbArmsZero = 0.811;
+    climbArmsZero = 0.8105;
 
 //limelight:
 static const double
@@ -127,7 +126,6 @@ static const double
     ycameraDistanceFromBot = 9.5, //offset from center of shooter Y
     shooterDistanceFromCenterOfBot = 2, 
     crosshairOffset = 0;
-
 
 // DIO
 static const int

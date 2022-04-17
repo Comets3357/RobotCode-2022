@@ -37,21 +37,13 @@ struct LimelightData
     //how many degrees the turret needs to move in order to hit the target
     double turretDifference;
     double desiredTurretAngle;
-    double correctDistance;
 
     //shooter corrections:
     //FINAL CORRECT DISTANCE
     double distanceOffset;
     double angleOffset;
 
-    // std::deque<double> distances;
-    // double avgDistance = 0;
-
-    float hoodFlywheelRatio;
-
     bool unwrapping = false;
-
-
 };
 
 class Limelight
@@ -59,11 +51,11 @@ class Limelight
 
 public:
     void RobotPeriodic(const RobotData &robotData, LimelightData &limelightData, VisionLookup &visionLookup);
+    void AutonomousInit(LimelightData &limelightData);
 
 private:
     double distanceToTarget();
     void shooterOffset(const RobotData &robotData, LimelightData &limelightData);
-    //double correctDistance(double angleOffset, double originalDistance);
 
     double getHoodPOS(VisionLookup &visionLookup, LimelightData &limelightData, const RobotData &robotData);
     double getWheelVelocity(VisionLookup &visionLookup, LimelightData &limelightData, const RobotData &robotData);
@@ -75,7 +67,12 @@ private:
     //Intermediate step, is the LIMELIGHTS distance from target, not shooters
     double limelightDistance;
 
-    //void averageDistance(const RobotData &robotData, LimelightData &limelightData);
+    float backwardDesiredVel;
+    float backwardDesiredHood;
+
+    //void averageDesiredTurret(const RobotData &robotData, LimelightData &limelightData);
+    double interpolationVel(LimelightData &limelightData, const RobotData &robotData);
+    double interpolationHood(LimelightData &limelightData, const RobotData &robotData);
 
     //network table for limelight
     std::shared_ptr<nt::NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("limelight");
