@@ -137,7 +137,7 @@ void Auton::citrus(const RobotData &robotData, ControlData &controlData, Control
     // shooting
     controlData.shootMode = shootMode_vision;
 
-    if (sec > 1 && sec < 4) {
+    if (sec > 1.3 && sec < 4) {
         controlData.saFinalShoot = robotData.drivebaseData.dbStationaryForShot;
     } else {
         controlData.saFinalShoot = false;

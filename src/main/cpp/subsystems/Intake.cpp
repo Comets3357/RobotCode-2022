@@ -39,7 +39,7 @@ void Intake::pivotInit(){
     intakePivot_pidController.SetOutputRange(-1, 1, 0);
 
     //down
-    intakePivot_pidController.SetP(0.03, 1);
+    intakePivot_pidController.SetP(0.08, 1);
     intakePivot_pidController.SetI(0, 1);
     intakePivot_pidController.SetD(0, 1);
     intakePivot_pidController.SetIZone(0, 1);
