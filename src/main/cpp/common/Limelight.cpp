@@ -6,6 +6,8 @@ void Limelight::AutonomousInit(LimelightData &limelightData){
 
 void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelightData, VisionLookup &visionLookup)
 {
+    double tempOffset;
+
     limelightData.validTarget = table->GetNumber("tv", 0.0); //valid target or not
     limelightData.xOffset =  table->GetNumber("tx", 0.0) * (pi/180); //RADIANS
     limelightData.yOffset =  table->GetNumber("ty", 0.0); //DEGREES
@@ -42,16 +44,18 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
 
     limelightData.desiredHoodPos = interpolationHood(limelightData, robotData);
 
-    if (robotData.limelightData.angleOffset > 0)
+    tempOffset = limelightData.angleOffset - 2;
+
+    if (tempOffset > 0)
     {
-        if (robotData.limelightData.angleOffset < std::min((180/pi)*std::atan(12/limelightData.distanceOffset) - 2, (double)2))
+        if (tempOffset < std::min((180/pi)*std::atan(12/limelightData.distanceOffset) - 2, (double)2))
         {
             limelightData.angleOffset = 0;
         }
     }
-    else if (robotData.limelightData.angleOffset < 0)
+    else if (tempOffset < 0)
     {
-        if (robotData.limelightData.angleOffset < std::min(std::abs((180/pi)*std::atan(12/limelightData.distanceOffset) - 2), (double)6))
+        if (std::abs(tempOffset) < std::min(std::abs((180/pi)*std::atan(12/limelightData.distanceOffset) - 2), (double)6))
         {
             limelightData.angleOffset = 0;
         }
