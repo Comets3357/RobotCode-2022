@@ -112,7 +112,7 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
 
     controlData.saShooting = controllerData.sXBtnToggled && !controlData.shift;
     controlData.saFinalShoot = (controllerData.sYBtn || (controllerData.sBBtn && robotData.drivebaseData.dbStationaryForShot)) && !controlData.shift;
-    controlData.saEjectThroughShooter = controllerData.sRBumper && !controlData.shift;
+    controlData.saIndexerShooting = controllerData.sRBumper && !controlData.shift;
     
     if(controlData.mode == mode_teleop_sa){
         if(controllerData.sRCenterBtnToggled){
@@ -124,9 +124,9 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
 
     }
     
-    if (controllerData.sRCenterBtnToggled && !controlData.shift) {
-        controlData.autoRejectOpponentCargo = !controlData.autoRejectOpponentCargo;
-    }
+    // if (controllerData.sRCenterBtnToggled && !controlData.shift) {
+    //     controlData.autoRejectOpponentCargo = !controlData.autoRejectOpponentCargo;
+    // }
     
     controlData.fenderShot = controllerData.sABtnToggled && controlData.shift;
     controlData.sideWallShot = controllerData.sBBtnToggled && controlData.shift;
