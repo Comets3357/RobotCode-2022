@@ -48,14 +48,14 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
 
     if (tempOffset > 0)
     {
-        if (tempOffset < std::min((180/pi)*std::atan(12/limelightData.distanceOffset) - 2, (double)2))
+        if (tempOffset < std::min((180/pi)*std::atan(12/limelightData.distanceOffset), (double)2))
         {
             limelightData.angleOffset = 0;
         }
     }
     else if (tempOffset < 0)
     {
-        if (std::abs(tempOffset) < std::min(std::abs((180/pi)*std::atan(12/limelightData.distanceOffset) - 2), (double)6))
+        if (std::abs(tempOffset) < std::min(std::abs((180/pi)*std::atan(12/limelightData.distanceOffset)), (double)6))
         {
             limelightData.angleOffset = 0;
         }
@@ -71,7 +71,7 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     limelightData.desiredTurretAngle = getTurretTurnAngle(limelightData, robotData); //position to go to to shoot
 
     //printing data to the dashboard
-    // frc::SmartDashboard::PutNumber("distance offset", robotData.limelightData.distanceOffset/12);
+    frc::SmartDashboard::PutNumber("distance offset", robotData.limelightData.distanceOffset/12);
     //frc::SmartDashboard::PutNumber("desired turret", robotData.limelightData.desiredTurretAngle);
     frc::SmartDashboard::PutBoolean("Unwrapping", limelightData.unwrapping);
 

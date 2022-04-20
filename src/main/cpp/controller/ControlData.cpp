@@ -124,10 +124,6 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
 
     }
     
-    // if (controllerData.sRCenterBtnToggled && !controlData.shift) {
-    //     controlData.autoRejectOpponentCargo = !controlData.autoRejectOpponentCargo;
-    // }
-    
     controlData.fenderShot = controllerData.sABtnToggled && controlData.shift;
     controlData.sideWallShot = controllerData.sBBtnToggled && controlData.shift;
     controlData.wallLaunchPadShot = controllerData.sXBtnToggled && controlData.shift;
@@ -163,22 +159,7 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
         controlData.usingTurretDirection = false;
     }
 
-    //if we need 0 degrees to be up we can just add 90 to all these numbers right???
-    
 
-    
-
-    
-    // if(robotData.indexerData.indexerContents.front() == Cargo::cargo_Opponent){
-    //     controlData.wrongBall = true;
-    // } else if(robotData.indexerData.indexerContents.front() == Cargo::cargo_Alliance){
-    //     controlData.wrongBall = false;
-    // } else if (robotData.indexerData.indexerContents.front() == Cargo::cargo_Unassigned){
-    //     controlData.wrongBall = true; 
-        // change to button for driver control?
-    // }
-    //controlData.finalShoot;
-  
     //CLIMB
     controlData.saPauseSequence = controllerData.sLStickBtn && !controlData.shift;
     controlData.saCancelSequence = controllerData.sRStickBtn && !controlData.shift;
