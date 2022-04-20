@@ -18,6 +18,7 @@ struct ShooterData
 {
     bool readyShoot;
     float currentTurretAngle;
+    float currentHoodAngle;
 
     //for rolling average of turret offset 
     std::deque<double> offsetPos;

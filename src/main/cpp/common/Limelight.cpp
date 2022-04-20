@@ -6,6 +6,8 @@ void Limelight::AutonomousInit(LimelightData &limelightData){
 
 void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelightData, VisionLookup &visionLookup)
 {
+    double tempOffset;
+
     limelightData.validTarget = table->GetNumber("tv", 0.0); //valid target or not
     limelightData.xOffset =  table->GetNumber("tx", 0.0) * (pi/180); //RADIANS
     limelightData.yOffset =  table->GetNumber("ty", 0.0); //DEGREES
@@ -42,32 +44,34 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
 
     limelightData.desiredHoodPos = interpolationHood(limelightData, robotData);
 
-    // if (robotData.limelightData.angleOffset > 0)
-    // {
-    //     if (robotData.limelightData.angleOffset < std::min((180/pi)*std::atan(12/limelightData.distanceOffset) - 2, (double)2))
-    //     {
-    //         robotData.limelightData.angleOffset = 0;
-    //     }
-    // }
-    // else if (robotData.limelightData.angleOffset < 0)
-    // {
-    //     if (robotData.limelightData.angleOffset < std::abs(std::min((180/pi)*std::atan(12/limelightData.distanceOffset) - 2), (double)6))
-    //     {
-    //         robotData.limelightData.angleOffset = 0;
-    //     }
-    // }
+    tempOffset = limelightData.angleOffset - 2;
+
+    if (tempOffset > 0)
+    {
+        if (tempOffset < std::min((180/pi)*std::atan(12/limelightData.distanceOffset), (double)2))
+        {
+            limelightData.angleOffset = 0;
+        }
+    }
+    else if (tempOffset < 0)
+    {
+        if (std::abs(tempOffset) < std::min(std::abs((180/pi)*std::atan(12/limelightData.distanceOffset)), (double)6))
+        {
+            limelightData.angleOffset = 0;
+        }
+    }
     //TURRET DIFFERENCE
     limelightData.turretDifference = -robotData.limelightData.angleOffset; // turret turning is not consistent with limelight degrees off
 
-    if ((std::abs(limelightData.turretDifference)) < std::min((180/pi)*std::atan(12/limelightData.distanceOffset), (double)4))
-    {
-        limelightData.turretDifference = 0;
-    }
+    // if ((std::abs(limelightData.turretDifference)) < std::min((180/pi)*std::atan(12/limelightData.distanceOffset), (double)4))
+    // {
+    //     limelightData.turretDifference = 0;
+    // }
     //DESIRED TURRET
     limelightData.desiredTurretAngle = getTurretTurnAngle(limelightData, robotData); //position to go to to shoot
 
     //printing data to the dashboard
-    // frc::SmartDashboard::PutNumber("distance offset", robotData.limelightData.distanceOffset/12);
+    frc::SmartDashboard::PutNumber("distance offset", robotData.limelightData.distanceOffset/12);
     //frc::SmartDashboard::PutNumber("desired turret", robotData.limelightData.desiredTurretAngle);
     frc::SmartDashboard::PutBoolean("Unwrapping", limelightData.unwrapping);
 

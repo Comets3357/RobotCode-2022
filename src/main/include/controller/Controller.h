@@ -67,7 +67,7 @@ struct ControlData
     //shooter:
     bool saShooting; //gets hood at right angle, shooter wheel up to speed SEMIAUTO
     bool saFinalShoot; //makes belts run to actually fire balls SEMIAUTO
-    bool saEjectThroughShooter;   // semi auto command
+    bool saIndexerShooting;   // semi auto command
     bool staticTurret;
 
     bool upperHubShot = true;
