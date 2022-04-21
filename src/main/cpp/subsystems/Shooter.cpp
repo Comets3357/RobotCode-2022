@@ -21,7 +21,7 @@ void Shooter::RobotInit(ShooterData &shooterData)
     //FOR TESTING
     // used for reading flywheel speeds from the dashboard
     frc::SmartDashboard::PutNumber("ZEROING hood", 0);
-    frc::SmartDashboard::PutNumber("ZEROING turret", 0);
+        frc::SmartDashboard::PutNumber("ZEROING turret", 0);
 
 
 }
@@ -76,7 +76,7 @@ void Shooter::flyWheelInit()
     flyWheelLead_pidController.SetI(0, 2);
     flyWheelLead_pidController.SetD(0, 2); 
     flyWheelLead_pidController.SetIZone(0, 2);
-    flyWheelLead_pidController.SetFF(0.000224, 2); 
+    flyWheelLead_pidController.SetFF(0.00022, 2); 
     flyWheelLead_pidController.SetOutputRange(0, 1, 2);
 
     //flyWheel.EnableVoltageCompensation()
@@ -269,14 +269,13 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
         }
         
 
-        
         //once it's a high enough velocity its ready for indexer to run
-        if (shooterData.readyShoot == false && (getWheelVel() > (robotData.limelightData.desiredVel - 30)) && (std::abs(robotData.limelightData.desiredHoodPos - robotData.shooterData.currentHoodAngle) <= 1) && (hoodRollerEncoderRev.GetVelocity() > (robotData.limelightData.desiredHoodRollerVel - 100)))
+        if (shooterData.readyShoot == false && (getWheelVel() > (robotData.limelightData.desiredVel - 30)) /**&& (std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 3)**/)
         //if you're not in readyShoot yet and the wheel velocity is above 30 under the desire velocity, readyShoot will become true
         {
             shooterData.readyShoot = true;
         }
-        else if (shooterData.readyShoot == true && (getWheelVel() < (robotData.limelightData.desiredVel - 50)) && (std::abs(robotData.limelightData.desiredHoodPos - robotData.shooterData.currentHoodAngle) > 1) && (hoodRollerEncoderRev.GetVelocity() > (robotData.limelightData.desiredHoodRollerVel - 200))) 
+        else if (shooterData.readyShoot == true && (getWheelVel() < (robotData.limelightData.desiredVel - 100)) /**&& (std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 3)**/)
         // if you're already in readyShoot, you'll only exit readyShoot if the wheel velocity drops below 100 below the desired velocity
         {
             shooterData.readyShoot = false;
@@ -462,9 +461,6 @@ void Shooter::turretControlTurn(float controlTurretDirection, const RobotData &r
     if (turretTurnPos < 0) { turretTurnPos += 360; }
     else if (turretTurnPos > 360) { turretTurnPos -= 360; }
 
-    frc::SmartDashboard::PutNumber("turret position 2", std::abs(shooterData.currentTurretAngle - (turretTurnPos + 360)));
-    frc::SmartDashboard::PutNumber("turret position 1", std::abs(shooterData.currentTurretAngle - turretTurnPos));
-
     if (turretTurnPos > 0 && turretTurnPos < 90)
     {
         if (std::abs(shooterData.currentTurretAngle - (turretTurnPos + 360)) < std::abs(shooterData.currentTurretAngle - turretTurnPos))
@@ -472,9 +468,6 @@ void Shooter::turretControlTurn(float controlTurretDirection, const RobotData &r
             turretTurnPos += 360;
         }
     }
-
-    frc::SmartDashboard::PutNumber("turret final position", turretTurnPos);
-    frc::SmartDashboard::PutNumber("robot position", robotData.drivebaseData.odometryYaw);
 
     setTurret_Pos(turretTurnPos, shooterData);
 }
@@ -488,14 +481,13 @@ void Shooter::turretControlTurn(float controlTurretDirection, const RobotData &r
 void Shooter::updateData(const RobotData &robotData, ShooterData &shooterData)
 {
     shooterData.currentTurretAngle = turretRevtoAngle(shooterTurretEncoderRev.GetPosition());
-    shooterData.currentHoodAngle = hoodRevtoAngle(shooterHoodEncoderRev.GetPosition());
 
     //turret 
     frc::SmartDashboard::PutNumber("shooter turret abs encoder", shooterTurretEncoderAbs.GetOutput());
     frc::SmartDashboard::PutNumber("shooter turret rev encoder", shooterTurretEncoderRev.GetPosition());
     frc::SmartDashboard::PutNumber("shooter turret angle", shooterData.currentTurretAngle);
-    frc::SmartDashboard::PutNumber("shooter turret desired angle", robotData.limelightData.desiredTurretAngle);
-    frc::SmartDashboard::PutNumber("shooter turret gyro offset", robotData.shooterData.avgTurretOffsetPos);
+    //frc::SmartDashboard::PutNumber("shooter turret desired angle", robotData.limelightData.desiredTurretAngle);
+    //frc::SmartDashboard::PutNumber("shooter turret gyro offset", robotData.shooterData.avgTurretOffsetPos);
 
     //hood
     frc::SmartDashboard::PutNumber("shooter hood abs encoder", shooterHoodEncoderAbs.GetOutput());
@@ -602,7 +594,7 @@ double Shooter::turretGyroOffset(double value){
  * TURRET
  **/
 void Shooter::setTurret_Pos(double pos, ShooterData &shooterData){
-    shooterTurret_pidController.SetReference(turretAbsoluteToREV(turretConvertFromAngleToAbs(pos)), rev::CANSparkMax::ControlType::kPosition, 0, arbFF, rev::SparkMaxPIDController::ArbFFUnits::kPercentOut);
+    shooterTurret_pidController.SetReference(turretAbsoluteToREV(turretConvertFromAngleToAbs(pos + 2)), rev::CANSparkMax::ControlType::kPosition, 0, arbFF, rev::SparkMaxPIDController::ArbFFUnits::kPercentOut);
     // frc::SmartDashboard::PutNumber("arbFF", arbFF);
 }
 

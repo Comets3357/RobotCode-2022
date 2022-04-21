@@ -106,7 +106,7 @@ static const float
     wallHood = -21.5,
     wallVel = 1510,
     fenderHood = -10,
-    fenderVel = 1500;
+    fenderVel = 1375;
 
 // climb
 static const int

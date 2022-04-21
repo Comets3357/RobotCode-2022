@@ -238,7 +238,7 @@ void Indexer::count(const RobotData &robotData, IndexerData &indexerData){
 void Indexer::saBeltControl(const RobotData &robotData, IndexerData &indexerData){
     if(robotData.controlData.saEjectBalls){             // if indexer is REVERSING (saEject curently is the only case where it runs backwards)
         indexerBelt.Set(-indexerShootingBeltSpeed);     // run the belt backwards fast
-    } else if ((/* !pauseBelt(robotData, indexerData) && */ (robotData.shooterData.readyShoot) && robotData.controlData.saFinalShoot) || (!getTopBeam() && (!robotData.intakeData.intakeIdle || robotData.controlData.saFinalShoot)) || (robotData.controlData.saIndexerShooting)){ 
+    } else if ((/* !pauseBelt(robotData, indexerData) && */ (robotData.shooterData.readyShoot) && robotData.controlData.saFinalShoot) || (!getTopBeam() && (!robotData.intakeData.intakeIdle || robotData.controlData.saFinalShoot))){ 
         // there are two main cases when you run the indexer forward: when you shoot, and when you're intaking
         // when shooting, you check that you're done pausing (see pauseBelt) to make sure every ball pauses before going into the shooter, 
         // anyways, we have to get the signal that the shooter is ready to eject AND that the top ball in the indexer is the opponent color to run it in that case
@@ -250,7 +250,7 @@ void Indexer::saBeltControl(const RobotData &robotData, IndexerData &indexerData
         // actually, new code
         // currently not stopping it if in ejecting mode because I don't want to think about that right now
         // anyways, we have to get the signal that the shooter is ready to eject AND that the top ball in the indexer is the opponent color to run it in that case
-        if((robotData.controlData.saFinalShoot && robotData.shooterData.readyShoot) || robotData.controlData.saIndexerShooting){
+        if(robotData.controlData.saFinalShoot && robotData.shooterData.readyShoot){
             indexerBelt.Set(indexerShootingBeltSpeed);  // robot shoots at a higher speed than it intakes
         } else {
             indexerBelt.Set(indexerIntakingBeltSpeed);

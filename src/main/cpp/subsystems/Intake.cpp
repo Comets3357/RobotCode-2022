@@ -259,7 +259,6 @@ bool Intake::intakeIdle(const RobotData &robotData, IntakeData &intakeData){
 double Intake::absoluteToREV(double value){
     double slope = (revOut - revIn)/(absOut - absIn);
     double b = revIn - (slope*absIn);
-    frc::SmartDashboard::PutNumber("Pivot built in Pos Calc", ((value*slope) + b));
     return ((value*slope) + b);
 }
 
