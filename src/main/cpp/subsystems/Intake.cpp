@@ -12,7 +12,7 @@ void Intake::RobotInit()
     intakeRollers.Set(0);
     intakeSingulator.Set(0);
 
-        frc::SmartDashboard::PutNumber("ZEROING intake pivot", 0);
+    frc::SmartDashboard::PutNumber("ZEROING intake pivot", 0);
 
 }
 
@@ -118,6 +118,11 @@ void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
             }else {
                 intakePivot_pidController.SetReference(revOut, rev::CANSparkMaxLowLevel::ControlType::kPosition, 1);
             }
+
+            if((intakePivotEncoderRev.GetPosition() > revOut - 1) && encoderPluggedIn()){
+                intakePivotEncoderRev.SetPosition(absoluteToREV(intakePivotEncoderAbs.GetOutput()));
+            }
+            
         }else{
             intakePivot_pidController.SetReference(intakePivotEncoderRev.GetPosition(), rev::CANSparkMaxLowLevel::ControlType::kPosition, 0);
         }

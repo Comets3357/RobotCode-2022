@@ -46,27 +46,28 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
 
     tempOffset = limelightData.angleOffset - 2;
 
-    if (tempOffset > 0)
-    {
-        if (tempOffset < std::min((180/pi)*std::atan(12/limelightData.distanceOffset), (double)2))
-        {
-            limelightData.angleOffset = 0;
-        }
-    }
-    else if (tempOffset < 0)
-    {
-        if (std::abs(tempOffset) < std::min(std::abs((180/pi)*std::atan(12/limelightData.distanceOffset)), (double)6))
-        {
-            limelightData.angleOffset = 0;
-        }
-    }
+    // if (tempOffset > 0)
+    // {
+    //     if (tempOffset < std::min((180/pi)*std::atan(12/limelightData.distanceOffset), (double)2))
+    //     {
+    //         limelightData.angleOffset = 0;
+    //     }
+    // }
+    // else if (tempOffset < 0)
+    // {
+    //     if (std::abs(tempOffset) < std::min(std::abs((180/pi)*std::atan(12/limelightData.distanceOffset)), (double)6))
+    //     {
+    //         limelightData.angleOffset = 0;
+    //     }
+    // }
     //TURRET DIFFERENCE
     limelightData.turretDifference = -robotData.limelightData.angleOffset; // turret turning is not consistent with limelight degrees off
 
-    // if ((std::abs(limelightData.turretDifference)) < std::min((180/pi)*std::atan(12/limelightData.distanceOffset), (double)4))
-    // {
-    //     limelightData.turretDifference = 0;
-    // }
+    if ((std::abs(limelightData.turretDifference)) < std::min((180/pi)*std::atan(12/limelightData.distanceOffset), (double)4))
+    {
+        limelightData.turretDifference = 0;
+    }
+
     //DESIRED TURRET
     limelightData.desiredTurretAngle = getTurretTurnAngle(limelightData, robotData); //position to go to to shoot
 
@@ -199,7 +200,13 @@ double Limelight::getWheelVelocity(VisionLookup &visionLookup, LimelightData &li
 
     //multiply the difference in the distance and floored value by the slope to get desired velocity for that small distance 
     //then add that to the desired position of the lower floored value
-    return ( (desiredSlope*((originalDistance - limelightData.lowerVal)*12) + limelightData.lowerValVel) );   // 320 for front!
+
+    if(robotData.limelightData.distanceOffset > 14*12){
+        return ( (desiredSlope*((originalDistance - limelightData.lowerVal)*12) + limelightData.lowerValVel) );   // 320 for front!
+    }else{
+        return ( (desiredSlope*((originalDistance - limelightData.lowerVal)*12) + limelightData.lowerValVel) + 20);   // 320 for front!
+
+    }
 
 }
 
