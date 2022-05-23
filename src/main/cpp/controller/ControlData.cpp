@@ -75,6 +75,8 @@ void Controller::updateControlData(const RobotData &robotData, const ControllerD
     }else if(controllerData.sRStickBtnToggled && !controlData.shift){
         controlData.saDistanceOffset = controlData.saDistanceOffset - 6;
     }
+
+    frc::SmartDashboard::PutNumber("distance offset", controlData.saDistanceOffset);
     
 
     

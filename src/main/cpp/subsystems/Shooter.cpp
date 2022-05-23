@@ -141,14 +141,16 @@ void Shooter::DisabledPeriodic(const RobotData &robotData, ShooterData &shooterD
 
     double zeroHood = frc::SmartDashboard::GetNumber("ZEROING hood", 0);
     if(zeroHood >  0.1){
-        shooterHoodEncoderRev.SetPosition(0.5);
+        shooterHoodEncoderRev.SetPosition(hoodrevIn);
         isZeroed_Hood = true;
+        //frc::SmartDashboard::PutNumber("ZEROING hood", 0);
     }
 
     double zeroTurret = frc::SmartDashboard::GetNumber("ZEROING turret", 0);
     if(zeroTurret >  0.1){
-        shooterTurretEncoderRev.SetPosition(10.3);
-        isZeroed_Turret = true;     
+        shooterTurretEncoderRev.SetPosition(10.3); 
+        isZeroed_Turret = true; 
+        //frc::SmartDashboard::PutNumber("ZEROING turret", 0);
     }
 
 }
@@ -269,12 +271,12 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
         }
         
         //once it's a high enough velocity its ready for indexer to run
-        if (!shooterData.readyShoot && (getWheelVel() > (robotData.limelightData.desiredVel - 10)) /**&& (std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 3)**/)
+        if (!shooterData.readyShoot && (getWheelVel() > (robotData.limelightData.desiredVel - 20)) /**&& (std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 3)**/)
         //if you're not in readyShoot yet and the wheel velocity is above 30 under the desire velocity, readyShoot will become true
         {
             shooterData.readyShoot = true;
         }
-        else if (shooterData.readyShoot && (getWheelVel() < (robotData.limelightData.desiredVel - 10)) /**&& (std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 3)**/)
+        else if (shooterData.readyShoot && (getWheelVel() < (robotData.limelightData.desiredVel - 20)) /**&& (std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 3)**/)
         // if you're already in readyShoot, you'll only exit readyShoot if the wheel velocity drops below 100 below the desired velocity
         {
             shooterData.readyShoot = false;

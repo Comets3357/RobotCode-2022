@@ -66,6 +66,8 @@ void Intake::RobotPeriodic(const RobotData &robotData, IntakeData &intakeData)
         if(encoderPluggedIn()){
             intakePivotEncoderRev.SetPosition(absoluteToREV(intakePivotEncoderAbs.GetOutput()));
             isZeroed_pivot = true;
+            //frc::SmartDashboard::PutNumber("ZEROING turret", 0);
+
         }else{
             intakePivotEncoderRev.SetPosition(0);
             isZeroed_pivot = false;
@@ -171,7 +173,7 @@ void Intake::semiAuto(const RobotData &robotData, IntakeData &intakeData){
             if (intakePivotEncoderRev.GetPosition() >= revOut - 4) {
                 intakePivot.Set(-1);
             }else {
-                intakePivot_pidController.SetReference(revIn-0.02, rev::CANSparkMaxLowLevel::ControlType::kPosition, 0);
+                intakePivot_pidController.SetReference(revIn-0.04, rev::CANSparkMaxLowLevel::ControlType::kPosition, 0);
             }
         }else{
             intakePivot_pidController.SetReference(intakePivotEncoderRev.GetPosition(), rev::CANSparkMaxLowLevel::ControlType::kPosition, 0);

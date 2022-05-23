@@ -202,9 +202,9 @@ double Limelight::getWheelVelocity(VisionLookup &visionLookup, LimelightData &li
     //then add that to the desired position of the lower floored value
 
     if(robotData.limelightData.distanceOffset > 14*12){
-        return ( (desiredSlope*((originalDistance - limelightData.lowerVal)*12) + limelightData.lowerValVel) );   // 320 for front!
-    }else{
         return ( (desiredSlope*((originalDistance - limelightData.lowerVal)*12) + limelightData.lowerValVel) + 20);   // 320 for front!
+    }else{
+        return ( (desiredSlope*((originalDistance - limelightData.lowerVal)*12) + limelightData.lowerValVel) + 40);   // 320 for front!
 
     }
 
@@ -294,6 +294,7 @@ double Limelight::interpolationHood(LimelightData &limelightData, const RobotDat
 
     if(robotData.limelightData.distanceOffset > change*12){
         hoodFowards = hoodBackwards + forwardHoodOffsetFar;
+        //hoodBackwards -= 0.3;
     }else{
         hoodFowards = hoodBackwards + forwardHoodOffsetClose;  
     }
