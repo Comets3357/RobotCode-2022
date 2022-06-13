@@ -44,7 +44,7 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
 
     limelightData.desiredHoodPos = interpolationHood(limelightData, robotData);
 
-    tempOffset = limelightData.angleOffset - 2;
+    tempOffset = limelightData.angleOffset;
 
     // if (tempOffset > 0)
     // {
