@@ -90,7 +90,7 @@ void Shooter::hoodRollerInit()
 {
     //hood roller
     hoodRoller.RestoreFactoryDefaults();
-    hoodRoller.SetInverted(false);
+    hoodRoller.SetInverted(true);
     hoodRoller.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
     hoodRoller.SetSmartCurrentLimit(45);
 
@@ -762,7 +762,7 @@ void Shooter::checkReadyShoot(ShooterData &shooterData){
     {
         shooterData.readyShoot = true;
     }
-    else if(shooterData.readyShoot == true && (getWheelVel() < (readyShootLimit - 70))) /**&& (std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 3)**/
+    else if(shooterData.readyShoot == true && (getWheelVel() < (readyShootLimit - 20))) /**&& (std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 3)**/
     // if you're already in readyShoot, you'll only exit readyShoot if the wheel velocity drops below 100 below the desired velocity
     {
         shooterData.readyShoot = false;

@@ -122,7 +122,7 @@ static const double
     hubHeight = 104,
     limelightMount = 36.5, //height of mount
     limelightAngle = 36.2, //angle of limelight on mount
-    xcameraDistanceFromBot = 3.2, //3.0625, //offset from center of shooter X
+    xcameraDistanceFromBot = 3.35, //3.2, //3.0625, //offset from center of shooter X
     ycameraDistanceFromBot = 9.5, //offset from center of shooter Y
     shooterDistanceFromCenterOfBot = 2, 
     crosshairOffset = 0;

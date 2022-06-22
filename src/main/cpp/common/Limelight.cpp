@@ -63,7 +63,7 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     //TURRET DIFFERENCE
     limelightData.turretDifference = -robotData.limelightData.angleOffset; // turret turning is not consistent with limelight degrees off
 
-    if ((std::abs(limelightData.turretDifference)) < std::min((180/pi)*std::atan(12/limelightData.distanceOffset), (double)4))
+    if ((std::abs(limelightData.turretDifference)) < std::min((180/pi)*std::atan(8/limelightData.distanceOffset), (double)4))
     {
         limelightData.turretDifference = 0;
     }
@@ -202,9 +202,9 @@ double Limelight::getWheelVelocity(VisionLookup &visionLookup, LimelightData &li
     //then add that to the desired position of the lower floored value
 
     if(robotData.limelightData.distanceOffset > 14*12){
-        return ( (desiredSlope*((originalDistance - limelightData.lowerVal)*12) + limelightData.lowerValVel) + 20);   // 320 for front!
+        return ( (desiredSlope*((originalDistance - limelightData.lowerVal)*12) + limelightData.lowerValVel) -70);   // 320 for front!
     }else{
-        return ( (desiredSlope*((originalDistance - limelightData.lowerVal)*12) + limelightData.lowerValVel) + 40);   // 320 for front!
+        return ( (desiredSlope*((originalDistance - limelightData.lowerVal)*12) + limelightData.lowerValVel) - 60);   // 320 for front!
 
     }
 
