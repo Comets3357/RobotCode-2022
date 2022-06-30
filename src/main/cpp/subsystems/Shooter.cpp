@@ -61,7 +61,7 @@ void Shooter::flyWheelInit()
     flyWheelLead_pidController.SetI(0, 0);
     flyWheelLead_pidController.SetD(0, 0);
     flyWheelLead_pidController.SetIZone(0, 0);
-    flyWheelLead_pidController.SetFF(0.00021, 0);
+    flyWheelLead_pidController.SetFF(0.00020333, 0);
     flyWheelLead_pidController.SetOutputRange(0, 1, 0);
 
     //for farther range
@@ -69,14 +69,14 @@ void Shooter::flyWheelInit()
     flyWheelLead_pidController.SetI(0, 1);
     flyWheelLead_pidController.SetD(0, 1); 
     flyWheelLead_pidController.SetIZone(0, 1);
-    flyWheelLead_pidController.SetFF(0.000215, 1); 
+    flyWheelLead_pidController.SetFF(0.000201083, 1); 
     flyWheelLead_pidController.SetOutputRange(0, 1, 1);
 
     flyWheelLead_pidController.SetP(0, 2); 
     flyWheelLead_pidController.SetI(0, 2);
     flyWheelLead_pidController.SetD(0, 2); 
     flyWheelLead_pidController.SetIZone(0, 2);
-    flyWheelLead_pidController.SetFF(0.00022, 2); 
+    flyWheelLead_pidController.SetFF(0.00020, 2); 
     flyWheelLead_pidController.SetOutputRange(0, 1, 2);
 
     //flyWheel.EnableVoltageCompensation()
@@ -99,7 +99,7 @@ void Shooter::hoodRollerInit()
     hoodRoller_pidController.SetI(0);
     hoodRoller_pidController.SetD(0);
     hoodRoller_pidController.SetIZone(0);
-    hoodRoller_pidController.SetFF(0.0000955);
+    hoodRoller_pidController.SetFF(0.00009);
     hoodRoller_pidController.SetOutputRange(-1, 1);
     hoodRoller.BurnFlash(); 
 
@@ -271,12 +271,12 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
         }
         
         //once it's a high enough velocity its ready for indexer to run
-        if (!shooterData.readyShoot && (getWheelVel() > (robotData.limelightData.desiredVel - 20)) /**&& (std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 3)**/)
+        if (!shooterData.readyShoot && (getWheelVel() > (robotData.limelightData.desiredVel - 25)) /**&& (std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 3)**/)
         //if you're not in readyShoot yet and the wheel velocity is above 30 under the desire velocity, readyShoot will become true
         {
             shooterData.readyShoot = true;
         }
-        else if (shooterData.readyShoot && (getWheelVel() < (robotData.limelightData.desiredVel - 20)) /**&& (std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 3)**/)
+        else if (shooterData.readyShoot && (getWheelVel() < (robotData.limelightData.desiredVel - 25)) /**&& (std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 3)**/)
         // if you're already in readyShoot, you'll only exit readyShoot if the wheel velocity drops below 100 below the desired velocity
         {
             shooterData.readyShoot = false;
