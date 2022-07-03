@@ -95,11 +95,11 @@ void Shooter::hoodRollerInit()
     hoodRoller.SetSmartCurrentLimit(45);
 
     // //PIDS
-    hoodRoller_pidController.SetP(0.00001);
+    hoodRoller_pidController.SetP(0.0000);
     hoodRoller_pidController.SetI(0);
     hoodRoller_pidController.SetD(0);
     hoodRoller_pidController.SetIZone(0);
-    hoodRoller_pidController.SetFF(0.00009);
+    hoodRoller_pidController.SetFF(0.0000935);
     hoodRoller_pidController.SetOutputRange(-1, 1);
     hoodRoller.BurnFlash(); 
 
@@ -271,12 +271,12 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
         }
         
         //once it's a high enough velocity its ready for indexer to run
-        if (!shooterData.readyShoot && (getWheelVel() > (robotData.limelightData.desiredVel - 25)) /**&& (std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 3)**/)
+        if (!shooterData.readyShoot && (getWheelVel() > (robotData.limelightData.desiredVel - 30)) /**&& (std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 3)**/)
         //if you're not in readyShoot yet and the wheel velocity is above 30 under the desire velocity, readyShoot will become true
         {
             shooterData.readyShoot = true;
         }
-        else if (shooterData.readyShoot && (getWheelVel() < (robotData.limelightData.desiredVel - 25)) /**&& (std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 3)**/)
+        else if (shooterData.readyShoot && (getWheelVel() < (robotData.limelightData.desiredVel - 30)) /**&& (std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 3)**/)
         // if you're already in readyShoot, you'll only exit readyShoot if the wheel velocity drops below 100 below the desired velocity
         {
             shooterData.readyShoot = false;
