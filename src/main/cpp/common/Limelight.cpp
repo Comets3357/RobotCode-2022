@@ -36,22 +36,21 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     }
     
     //Intermediate desired position and velocity
-    // backwardDesiredHood = getHoodPOS(visionLookup, limelightData, robotData); //returns an angle
-    // backwardDesiredVel = getWheelVelocity(visionLookup, limelightData, robotData); //returns rpm
+    backwardDesiredHood = getHoodPOS(visionLookup, limelightData, robotData); //returns an angle
+    backwardDesiredVel = getWheelVelocity(visionLookup, limelightData, robotData); //returns rpm
 
-    limelightData.desiredHoodPos = getHoodPOS(visionLookup, limelightData, robotData);
-    limelightData.desiredVel = getWheelVelocity(visionLookup, limelightData, robotData);
+    // limelightData.desiredHoodPos = getHoodPOS(visionLookup, limelightData, robotData);
 
     //the desired hood and velocity for shooting from anywhere
     if(robotData.limelightData.validTarget == 0){
         limelightData.desiredVel = 1250; //returns rpm
         limelightData.desiredHoodRollerVel = 1250*3.5;
     }else{
-        // limelightData.desiredVel = interpolationVel(limelightData, robotData);
+        limelightData.desiredVel = interpolationVel(limelightData, robotData);
         limelightData.desiredHoodRollerVel = getHoodRollerVel(limelightData, robotData);
     }
 
-    // limelightData.desiredHoodPos = interpolationHood(limelightData, robotData);
+    limelightData.desiredHoodPos = interpolationHood(limelightData, robotData);
 
     tempOffset = limelightData.angleOffset;
 
@@ -77,7 +76,7 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
         limelightData.turretDifference = 0;
     }
 
-    limelightData.turretDifference = 0;
+    // limelightData.turretDifference = 0;
 
     //DESIRED TURRET
     limelightData.desiredTurretAngle = getTurretTurnAngle(limelightData, robotData); //position to go to to shoot
@@ -166,8 +165,8 @@ double Limelight::getHoodPOS(VisionLookup &visionLookup, LimelightData &limeligh
     }else if(desiredHood < hoodAngleIn){
         return hoodAngleIn;
     }else{
-        // return desiredHood;
-        return frc::SmartDashboard::GetNumber("LIMELIGHT TUNING DESIRED HOOD",0);
+        return desiredHood;
+        // return frc::SmartDashboard::GetNumber("LIMELIGHT TUNING DESIRED HOOD",0);
     }
 }
 
@@ -213,13 +212,13 @@ double Limelight::getWheelVelocity(VisionLookup &visionLookup, LimelightData &li
     //multiply the difference in the distance and floored value by the slope to get desired velocity for that small distance 
     //then add that to the desired position of the lower floored value
 
-    // if(robotData.limelightData.distanceOffset > 14*12){
-    //     return ( (desiredSlope*((originalDistance - limelightData.lowerVal)*12) + limelightData.lowerValVel));   // 320 for front!
-    // }else{
-    //     return ( (desiredSlope*((originalDistance - limelightData.lowerVal)*12) + limelightData.lowerValVel));   // 320 for front!
+    if(robotData.limelightData.distanceOffset > 14*12){
+        return ( (desiredSlope*((originalDistance - limelightData.lowerVal)*12) + limelightData.lowerValVel));   // 320 for front!
+    }else{
+        return ( (desiredSlope*((originalDistance - limelightData.lowerVal)*12) + limelightData.lowerValVel));   // 320 for front!
 
-    // }
-    return frc::SmartDashboard::GetNumber("LIMELIGHT TUNING DESIRED VELOCITY",0);
+    }
+    // return frc::SmartDashboard::GetNumber("LIMELIGHT TUNING DESIRED VELOCITY",0);
 }
 
 /**
@@ -281,11 +280,23 @@ double Limelight::interpolationVel(LimelightData &limelightData, const RobotData
     //take those two values and the current position of the turret
     
     double velBackwards = backwardDesiredVel;
-    double velFowards = velBackwards+forwardVelOffset;
+    double velFowards = velBackwards;
     
     // if (limelightData.distanceOffset < 8) {
         // backwardDesiredVel += 10;
     // }
+
+    if(robotData.limelightData.distanceOffset > 30*12){
+        velFowards = velBackwards + forwardVelOffsetFar;
+        //hoodBackwards -= 0.3;
+    }
+    else if (robotData.limelightData.distanceOffset > 8*12)
+    {
+        velFowards = velBackwards + 300;
+    }
+    else{
+        velFowards = velBackwards + forwardVelOffsetClose;  
+    }
 
     if(robotData.limelightData.distanceOffset > change*12){
         return backwardDesiredVel;

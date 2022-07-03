@@ -33,7 +33,7 @@ void VisionLookup::RobotPeriodic(const RobotData &robotData, VisionLookupData &v
     visionMap[19] = 42; 
     visionMap[20] = 42.5;
     visionMap[21] = 43;
-    visionMap[22] = 43;
+    // visionMap[22] = 43;
 
     // velocity map
     // key is the distance in feet
@@ -56,7 +56,7 @@ void VisionLookup::RobotPeriodic(const RobotData &robotData, VisionLookupData &v
     velocityMap[19] = 1660;
     velocityMap[20] = 1700;
     velocityMap[21] = 1770;
-    velocityMap[22] = 1860;
+    // velocityMap[22] = 1860;
 
 }
 
