@@ -1,11 +1,5 @@
 #include "RobotData.h"
 
-void Limelight::RobotInit()
-{
-    frc::SmartDashboard::PutNumber("LIMELIGHT TUNING DESIRED VELOCITY", 0);
-    frc::SmartDashboard::PutNumber("LIMELIGHT TUNING DESIRED HOOD", 0);
-}
-
 void Limelight::AutonomousInit(LimelightData &limelightData){
     limelightData.unwrapping = false;
 }
@@ -36,10 +30,8 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     }
     
     //Intermediate desired position and velocity
-    backwardDesiredHood = getHoodPOS(visionLookup, limelightData, robotData); //returns an angle
+    limelightData.desiredHoodPos = getHoodPOS(visionLookup, limelightData, robotData); //returns an angle
     backwardDesiredVel = getWheelVelocity(visionLookup, limelightData, robotData); //returns rpm
-
-    // limelightData.desiredHoodPos = getHoodPOS(visionLookup, limelightData, robotData);
 
     //the desired hood and velocity for shooting from anywhere
     if(robotData.limelightData.validTarget == 0){
@@ -50,7 +42,7 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
         limelightData.desiredHoodRollerVel = getHoodRollerVel(limelightData, robotData);
     }
 
-    limelightData.desiredHoodPos = interpolationHood(limelightData, robotData);
+    // limelightData.desiredHoodPos = interpolationHood(limelightData, robotData);
 
     tempOffset = limelightData.angleOffset;
 
@@ -75,8 +67,6 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     {
         limelightData.turretDifference = 0;
     }
-
-    // limelightData.turretDifference = 0;
 
     //DESIRED TURRET
     limelightData.desiredTurretAngle = getTurretTurnAngle(limelightData, robotData); //position to go to to shoot
@@ -166,7 +156,6 @@ double Limelight::getHoodPOS(VisionLookup &visionLookup, LimelightData &limeligh
         return hoodAngleIn;
     }else{
         return desiredHood;
-        // return frc::SmartDashboard::GetNumber("LIMELIGHT TUNING DESIRED HOOD",0);
     }
 }
 
@@ -218,7 +207,7 @@ double Limelight::getWheelVelocity(VisionLookup &visionLookup, LimelightData &li
         return ( (desiredSlope*((originalDistance - limelightData.lowerVal)*12) + limelightData.lowerValVel));   // 320 for front!
 
     }
-    // return frc::SmartDashboard::GetNumber("LIMELIGHT TUNING DESIRED VELOCITY",0);
+
 }
 
 /**
@@ -280,34 +269,22 @@ double Limelight::interpolationVel(LimelightData &limelightData, const RobotData
     //take those two values and the current position of the turret
     
     double velBackwards = backwardDesiredVel;
-    double velFowards = velBackwards;
+    double velFowards = velBackwards+forwardVelOffset;
     
     // if (limelightData.distanceOffset < 8) {
         // backwardDesiredVel += 10;
     // }
 
-    if(robotData.limelightData.distanceOffset > 30*12){
-        velFowards = velBackwards + forwardVelOffsetFar;
-        //hoodBackwards -= 0.3;
-    }
-    else if (robotData.limelightData.distanceOffset > 8*12)
-    {
-        velFowards = velBackwards + 300;
-    }
-    else{
-        velFowards = velBackwards + forwardVelOffsetClose;  
-    }
-
-    if(robotData.limelightData.distanceOffset > change*12){
-        return backwardDesiredVel;
-    }else{
+    // if(robotData.limelightData.distanceOffset > change*12){
+    //     return backwardDesiredVel;
+    // }else{
         if(((robotData.shooterData.currentTurretAngle <= turretMiddleDegrees) && (robotData.shooterData.currentTurretAngle >= turretBackwardsDegrees_C)) || (robotData.shooterData.currentTurretAngle >= turretBackwardsDegrees_CCW)){ //on the right side of the turret   
             double slope = (velFowards - velBackwards)/(turretMiddleDegrees - turretBackwardsDegrees_C);
             return slope*((int)(robotData.shooterData.currentTurretAngle - turretBackwardsDegrees_C)%360) + velBackwards; 
         }else{ //left side of the robot
             double slope = (velFowards - velBackwards)/(turretMiddleDegrees - turretBackwardsDegrees_CCW);
             return slope*((int)(robotData.shooterData.currentTurretAngle - turretBackwardsDegrees_CCW)%360) + velBackwards;
-        }
+        // }
     }
 }
 

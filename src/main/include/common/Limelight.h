@@ -50,7 +50,7 @@ class Limelight
 {
 
 public:
-    void RobotInit();
+
     void RobotPeriodic(const RobotData &robotData, LimelightData &limelightData, VisionLookup &visionLookup);
     void AutonomousInit(LimelightData &limelightData);
 

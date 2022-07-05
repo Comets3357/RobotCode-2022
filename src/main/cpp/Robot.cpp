@@ -15,7 +15,7 @@ void Robot::RobotInit()
     climb.RobotInit();
     networkTables.RobotInit();
     arduino.RobotInit();
-    limelight.RobotInit();
+    
 }
 
 void Robot::RobotPeriodic()

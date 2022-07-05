@@ -99,6 +99,8 @@ class Shooter{
         bool isZeroed_Turret = false; //checks if the abs ecoder is zeroed at the beginning is a flag
         bool isZeroed_Hood = false;
 
+        bool hoodInPlace = false;
+
         //Flywheel Lead
         rev::CANSparkMax flyWheel = rev::CANSparkMax(shooterWheelID, rev::CANSparkMax::MotorType::kBrushless);
         rev::SparkMaxRelativeEncoder flyWheelLeadEncoder = flyWheel.GetEncoder();

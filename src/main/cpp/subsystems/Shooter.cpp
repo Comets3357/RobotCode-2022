@@ -263,24 +263,29 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
         if(isZeroed_Hood){
             if(std::abs(hoodAngletoRev(robotData.limelightData.desiredHoodPos) - shooterHoodEncoderRev.GetPosition()) <= 1){
                 shooterHood.Set(0);
+                hoodInPlace = true;
             }else{
                 shooterHood_pidController.SetReference(hoodAngletoRev(robotData.limelightData.desiredHoodPos), rev::CANSparkMaxLowLevel::ControlType::kPosition);
+                hoodInPlace = false;
             }
         }else{
             shooterHood_pidController.SetReference(shooterHoodEncoderRev.GetPosition(), rev::CANSparkMaxLowLevel::ControlType::kPosition);
         }
         
         //once it's a high enough velocity its ready for indexer to run
-        if (!shooterData.readyShoot && (getWheelVel() > (robotData.limelightData.desiredVel - 30)) /**&& (std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 3)**/)
+        if ((!shooterData.readyShoot && (getWheelVel() > (robotData.limelightData.desiredVel - 30)) && !robotData.limelightData.unwrapping && hoodInPlace) /**&& (std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 3)**/)
         //if you're not in readyShoot yet and the wheel velocity is above 30 under the desire velocity, readyShoot will become true
         {
             shooterData.readyShoot = true;
         }
-        else if (shooterData.readyShoot && (getWheelVel() < (robotData.limelightData.desiredVel - 30)) /**&& (std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 3)**/)
+        else if (shooterData.readyShoot && (getWheelVel() < (robotData.limelightData.desiredVel - 30) || robotData.limelightData.unwrapping || !hoodInPlace) /**&& (std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 3)**/)
         // if you're already in readyShoot, you'll only exit readyShoot if the wheel velocity drops below 100 below the desired velocity
         {
             shooterData.readyShoot = false;
         }
+
+        // frc::SmartDashboard::PutBoolean("hoodInPlace", hoodInPlace);
+        
 
         // //CODE FOR TUNING SHOTS, TESTING CODE
         // double flywheelSpeed = frc::SmartDashboard::GetNumber("flywheel speed", 0);
