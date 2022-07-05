@@ -199,33 +199,37 @@ void Controller::updateShootMode(const RobotData &robotData, ControlData &contro
         return;
     }
 
-    if (robotData.controlData.saShooting) {
+    else if (robotData.controlData.saShooting) {
         if (controlData.shootMode == shootMode_vision) {
             controlData.shootMode = shootMode_none;
         } else {controlData.shootMode = shootMode_vision; }
     }
 
-    if (robotData.controlData.fenderShot) {
+    else if (robotData.controlData.fenderShot) {
         if (controlData.shootMode == shootMode_fender) {
             controlData.shootMode = shootMode_none;
         } else { controlData.shootMode = shootMode_fender; }
     }
 
-    if (robotData.controlData.sideWallShot) {
+    else if (robotData.controlData.sideWallShot) {
         if (controlData.shootMode == shootMode_sideWall) {
             controlData.shootMode = shootMode_none;
         } else { controlData.shootMode = shootMode_sideWall; }
     }
 
-    if (robotData.controlData.wallLaunchPadShot) {
-        if (controlData.shootMode == shootMode_wallLaunchPad) {
-            controlData.shootMode = shootMode_none;
-        } else { controlData.shootMode = shootMode_wallLaunchPad; }
+    else if (robotData.controlData.wallLaunchPadShot) {
+        controlData.shootMode = shootMode_wallLaunchPad;
+        controlData.saFinalShoot = true;
     }
 
-    if (robotData.controlData.cornerLaunchPadShot) {
+    else if (robotData.controlData.cornerLaunchPadShot) {
         if (controlData.shootMode == shootMode_cornerLaunchPad) {
             controlData.shootMode = shootMode_none;
         } else { controlData.shootMode = shootMode_cornerLaunchPad; }
+    }
+
+    else if (robotData.controlData.shootMode == shootMode_wallLaunchPad && !robotData.controlData.wallLaunchPadShot) {
+        controlData.shootMode = shootMode_none;
+        controlData.saFinalShoot = false;
     }
 }

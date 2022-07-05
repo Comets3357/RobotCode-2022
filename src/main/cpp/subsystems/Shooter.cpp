@@ -325,6 +325,7 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
         checkReadyShoot(shooterData);
 
         isTurretStatic = true;
+        positionTurretForEject = false;
 
     }
     else if (robotData.controlData.shootMode == shootMode_wallLaunchPad) //FROM THE FARTHER LAUNCH PAD
@@ -332,7 +333,9 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
         outerLaunch(robotData);
         checkReadyShoot(shooterData);
 
-        isTurretStatic = true;
+        
+        isTurretStatic = false;
+        positionTurretForEject = true;
     }
     else if(robotData.controlData.shootMode == shootMode_fender) //FROM THE FENDER FIXED SHOT
     {
@@ -340,6 +343,7 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
         checkReadyShoot(shooterData);
 
         isTurretStatic = true;
+        positionTurretForEject = false;
     } 
     else if (robotData.controlData.shootMode == shootMode_sideWall) //FROM THE SIDE WALL FIXED SHOT
     {
@@ -347,10 +351,12 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
         checkReadyShoot(shooterData);
 
         isTurretStatic = true;
+        positionTurretForEject = false;
     } 
     else //IF NO SHOOTING DON'T DO ANYTHING
     {
         shooterData.readyShoot = false;
+        positionTurretForEject = false;
 
         flyWheel.Set(0);
         hoodRoller.Set(0);
@@ -447,6 +453,9 @@ void Shooter::saTurret(const RobotData &robotData, ShooterData &shooterData){
     else if(robotData.controlData.usingTurretDirection)
     { //controls turret using field oriented control and joystick
         turretControlTurn(robotData.controlData.saTurretDirectionController, robotData, shooterData);
+    }
+    else if (positionTurretForEject) {
+        turretControlTurn(180, robotData, shooterData);
     }
     else
     {
@@ -673,10 +682,10 @@ void Shooter::outerLaunch(const RobotData &robotData)
         flyWheel.Set(1); //give it full power
     }else{
         if(robotData.intakeData.usingIntake){
-            flyWheelLead_pidController.SetReference(outerLaunchVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 2);
+            flyWheelLead_pidController.SetReference(outerLaunchVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 0);
 
         }else{
-            flyWheelLead_pidController.SetReference(outerLaunchVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 2);
+            flyWheelLead_pidController.SetReference(outerLaunchVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 0);
             
         }
 
@@ -701,7 +710,7 @@ void Shooter::innerLaunch(const RobotData &robotData)
         flyWheel.Set(1); //give it full power
     }else{
         if(robotData.intakeData.usingIntake){
-            flyWheelLead_pidController.SetReference(innerLaunchVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 2);
+            flyWheelLead_pidController.SetReference(innerLaunchVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 3);
 
         }else{
             flyWheelLead_pidController.SetReference(innerLaunchVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 1);
@@ -731,7 +740,7 @@ void Shooter::wall(const RobotData &robotData)
         flyWheel.Set(1); //give it full power
     }else{
         if(robotData.intakeData.usingIntake){
-            flyWheelLead_pidController.SetReference(wallVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 2);
+            flyWheelLead_pidController.SetReference(wallVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 3);
 
         }else{
             flyWheelLead_pidController.SetReference(wallVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 1);
@@ -759,7 +768,7 @@ void Shooter::fender(const RobotData &robotData)
         flyWheel.Set(1); //give it full power
     }else{
         if(robotData.intakeData.usingIntake){
-            flyWheelLead_pidController.SetReference(fenderVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 1);
+            flyWheelLead_pidController.SetReference(fenderVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 2);
 
         }else{
             flyWheelLead_pidController.SetReference(fenderVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 0);

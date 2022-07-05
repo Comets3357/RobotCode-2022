@@ -96,6 +96,7 @@ class Shooter{
         //shooter velocity min threshold
         int readyShootLimit;
         bool isTurretStatic;
+        bool positionTurretForEject = false;
         bool isZeroed_Turret = false; //checks if the abs ecoder is zeroed at the beginning is a flag
         bool isZeroed_Hood = false;
 
