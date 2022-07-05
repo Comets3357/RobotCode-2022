@@ -72,12 +72,21 @@ void Shooter::flyWheelInit()
     flyWheelLead_pidController.SetFF(0.000201083, 1); 
     flyWheelLead_pidController.SetOutputRange(0, 1, 1);
 
+    // close range while intake running
     flyWheelLead_pidController.SetP(0, 2); 
     flyWheelLead_pidController.SetI(0, 2);
     flyWheelLead_pidController.SetD(0, 2); 
     flyWheelLead_pidController.SetIZone(0, 2);
-    flyWheelLead_pidController.SetFF(0.00020, 2); 
+    flyWheelLead_pidController.SetFF(0.00020943, 2); 
     flyWheelLead_pidController.SetOutputRange(0, 1, 2);
+
+    // far range while intake running
+    flyWheelLead_pidController.SetP(0, 3); 
+    flyWheelLead_pidController.SetI(0, 3);
+    flyWheelLead_pidController.SetD(0, 3); 
+    flyWheelLead_pidController.SetIZone(0, 3);
+    flyWheelLead_pidController.SetFF(0.0002071155, 3); 
+    flyWheelLead_pidController.SetOutputRange(0, 1, 3);
 
     //flyWheel.EnableVoltageCompensation()
 
@@ -243,16 +252,22 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
         if(robotData.limelightData.desiredVel - flyWheelLeadEncoder.GetVelocity() > 350){
             flyWheel.Set(1); //give it full power
         }else{
-            if(robotData.intakeData.usingIntake){
-                flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 2);
-
-            }else{
+            
                 if(robotData.limelightData.distanceOffset >= 9*12){
-                    flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 1);
+                    // far range PIDs
+                    if(robotData.intakeData.usingIntake){
+                        flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 3);
+                    }else{
+                        flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 1);
+                    }
+                // close range PIDs
                 }else{
+                    if(robotData.intakeData.usingIntake){
+                        flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 2);
+                    }else{
                     flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 0);
+                    }
                 }
-            }
 
         }
     
