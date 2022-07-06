@@ -278,7 +278,7 @@ void Climb::runSequence(const RobotData &robotData, ClimbData &climbData)
         {
             if (stage == 6) RunArmsAndElevatorToPos(120,0,65,1,1);
             else if (stage == 7) WaitUntilGyro(1, 2, -33, 1);
-            else if (stage == 8) RunElevatorToPos(146,1,1);
+            else if (stage == 8) RunElevatorToPos(141,1,1);
             else if (stage == 9) ChangeElevatorSpeed(elevatorSpeed,1);
             else if (stage == 10) ChangeArmSpeed(0.7,1);
             else if (stage == 11) TopTransfer();
@@ -415,7 +415,7 @@ void Climb::TopTransfer()
     if (angle < -44 || elevatorRunning)
     {
         climbArms.Set(0);
-        ChangeElevatorSpeed(0.6, 0);
+        ChangeElevatorSpeed(0.7, 0);
         RunElevatorToPos(110,1,0);
         lastTrasfer = true;
     } else if (!lastTrasfer){
@@ -553,6 +553,7 @@ void Climb::updateData(const RobotData &robotData, ClimbData &climbData)
     // frc::smartDashboard::PutNumber("arms temp", armsTemp);
     // frc::SmartDashboard::PutNumber("climb angle", angle);
     // frc::SmartDashboard::PutNumber("climb angle rate", angularRate);
+    frc::SmartDashboard::PutNumber("angle", angle);
 }
 
 
