@@ -15,6 +15,7 @@ void Robot::RobotInit()
     climb.RobotInit();
     networkTables.RobotInit();
     arduino.RobotInit();
+    
 }
 
 void Robot::RobotPeriodic()

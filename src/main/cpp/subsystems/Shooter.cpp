@@ -61,7 +61,7 @@ void Shooter::flyWheelInit()
     flyWheelLead_pidController.SetI(0, 0);
     flyWheelLead_pidController.SetD(0, 0);
     flyWheelLead_pidController.SetIZone(0, 0);
-    flyWheelLead_pidController.SetFF(0.00021, 0);
+    flyWheelLead_pidController.SetFF(0.00020333, 0);
     flyWheelLead_pidController.SetOutputRange(0, 1, 0);
 
     //for farther range
@@ -69,15 +69,24 @@ void Shooter::flyWheelInit()
     flyWheelLead_pidController.SetI(0, 1);
     flyWheelLead_pidController.SetD(0, 1); 
     flyWheelLead_pidController.SetIZone(0, 1);
-    flyWheelLead_pidController.SetFF(0.000215, 1); 
+    flyWheelLead_pidController.SetFF(0.000201083, 1); 
     flyWheelLead_pidController.SetOutputRange(0, 1, 1);
 
+    // close range while intake running
     flyWheelLead_pidController.SetP(0, 2); 
     flyWheelLead_pidController.SetI(0, 2);
     flyWheelLead_pidController.SetD(0, 2); 
     flyWheelLead_pidController.SetIZone(0, 2);
-    flyWheelLead_pidController.SetFF(0.00022, 2); 
+    flyWheelLead_pidController.SetFF(0.00020943, 2); 
     flyWheelLead_pidController.SetOutputRange(0, 1, 2);
+
+    // far range while intake running
+    flyWheelLead_pidController.SetP(0, 3); 
+    flyWheelLead_pidController.SetI(0, 3);
+    flyWheelLead_pidController.SetD(0, 3); 
+    flyWheelLead_pidController.SetIZone(0, 3);
+    flyWheelLead_pidController.SetFF(0.0002071155, 3); 
+    flyWheelLead_pidController.SetOutputRange(0, 1, 3);
 
     //flyWheel.EnableVoltageCompensation()
 
@@ -95,11 +104,11 @@ void Shooter::hoodRollerInit()
     hoodRoller.SetSmartCurrentLimit(45);
 
     // //PIDS
-    hoodRoller_pidController.SetP(0.00001);
+    hoodRoller_pidController.SetP(0.0000);
     hoodRoller_pidController.SetI(0);
     hoodRoller_pidController.SetD(0);
     hoodRoller_pidController.SetIZone(0);
-    hoodRoller_pidController.SetFF(0.0000955);
+    hoodRoller_pidController.SetFF(0.0000935);
     hoodRoller_pidController.SetOutputRange(-1, 1);
     hoodRoller.BurnFlash(); 
 
@@ -243,16 +252,22 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
         if(robotData.limelightData.desiredVel - flyWheelLeadEncoder.GetVelocity() > 350){
             flyWheel.Set(1); //give it full power
         }else{
-            if(robotData.intakeData.usingIntake){
-                flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 2);
-
-            }else{
+            
                 if(robotData.limelightData.distanceOffset >= 9*12){
-                    flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 1);
+                    // far range PIDs
+                    if(robotData.intakeData.usingIntake){
+                        flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 3);
+                    }else{
+                        flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 1);
+                    }
+                // close range PIDs
                 }else{
+                    if(robotData.intakeData.usingIntake){
+                        flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 2);
+                    }else{
                     flyWheelLead_pidController.SetReference(robotData.limelightData.desiredVel, rev::CANSparkMaxLowLevel::ControlType::kVelocity, 0);
+                    }
                 }
-            }
 
         }
     
@@ -263,24 +278,29 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
         if(isZeroed_Hood){
             if(std::abs(hoodAngletoRev(robotData.limelightData.desiredHoodPos) - shooterHoodEncoderRev.GetPosition()) <= 1){
                 shooterHood.Set(0);
+                hoodInPlace = true;
             }else{
                 shooterHood_pidController.SetReference(hoodAngletoRev(robotData.limelightData.desiredHoodPos), rev::CANSparkMaxLowLevel::ControlType::kPosition);
+                hoodInPlace = false;
             }
         }else{
             shooterHood_pidController.SetReference(shooterHoodEncoderRev.GetPosition(), rev::CANSparkMaxLowLevel::ControlType::kPosition);
         }
         
         //once it's a high enough velocity its ready for indexer to run
-        if (!shooterData.readyShoot && (getWheelVel() > (robotData.limelightData.desiredVel - 20)) /**&& (std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 3)**/)
+        if ((!shooterData.readyShoot && (getWheelVel() > (robotData.limelightData.desiredVel - 30)) && !robotData.limelightData.unwrapping && hoodInPlace) /**&& (std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 3)**/)
         //if you're not in readyShoot yet and the wheel velocity is above 30 under the desire velocity, readyShoot will become true
         {
             shooterData.readyShoot = true;
         }
-        else if (shooterData.readyShoot && (getWheelVel() < (robotData.limelightData.desiredVel - 20)) /**&& (std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 3)**/)
+        else if (shooterData.readyShoot && (getWheelVel() < (robotData.limelightData.desiredVel - 30) || robotData.limelightData.unwrapping || !hoodInPlace) /**&& (std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 3)**/)
         // if you're already in readyShoot, you'll only exit readyShoot if the wheel velocity drops below 100 below the desired velocity
         {
             shooterData.readyShoot = false;
         }
+
+        // frc::SmartDashboard::PutBoolean("hoodInPlace", hoodInPlace);
+        
 
         // //CODE FOR TUNING SHOTS, TESTING CODE
         // double flywheelSpeed = frc::SmartDashboard::GetNumber("flywheel speed", 0);

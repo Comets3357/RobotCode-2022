@@ -30,7 +30,7 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     }
     
     //Intermediate desired position and velocity
-    backwardDesiredHood = getHoodPOS(visionLookup, limelightData, robotData); //returns an angle
+    limelightData.desiredHoodPos = getHoodPOS(visionLookup, limelightData, robotData); //returns an angle
     backwardDesiredVel = getWheelVelocity(visionLookup, limelightData, robotData); //returns rpm
 
     //the desired hood and velocity for shooting from anywhere
@@ -42,7 +42,7 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
         limelightData.desiredHoodRollerVel = getHoodRollerVel(limelightData, robotData);
     }
 
-    limelightData.desiredHoodPos = interpolationHood(limelightData, robotData);
+    // limelightData.desiredHoodPos = interpolationHood(limelightData, robotData);
 
     tempOffset = limelightData.angleOffset;
 
@@ -202,9 +202,9 @@ double Limelight::getWheelVelocity(VisionLookup &visionLookup, LimelightData &li
     //then add that to the desired position of the lower floored value
 
     if(robotData.limelightData.distanceOffset > 14*12){
-        return ( (desiredSlope*((originalDistance - limelightData.lowerVal)*12) + limelightData.lowerValVel) -70);   // 320 for front!
+        return ( (desiredSlope*((originalDistance - limelightData.lowerVal)*12) + limelightData.lowerValVel));   // 320 for front!
     }else{
-        return ( (desiredSlope*((originalDistance - limelightData.lowerVal)*12) + limelightData.lowerValVel) - 60);   // 320 for front!
+        return ( (desiredSlope*((originalDistance - limelightData.lowerVal)*12) + limelightData.lowerValVel));   // 320 for front!
 
     }
 
@@ -275,16 +275,16 @@ double Limelight::interpolationVel(LimelightData &limelightData, const RobotData
         // backwardDesiredVel += 10;
     // }
 
-    if(robotData.limelightData.distanceOffset > change*12){
-        return backwardDesiredVel;
-    }else{
+    // if(robotData.limelightData.distanceOffset > change*12){
+    //     return backwardDesiredVel;
+    // }else{
         if(((robotData.shooterData.currentTurretAngle <= turretMiddleDegrees) && (robotData.shooterData.currentTurretAngle >= turretBackwardsDegrees_C)) || (robotData.shooterData.currentTurretAngle >= turretBackwardsDegrees_CCW)){ //on the right side of the turret   
             double slope = (velFowards - velBackwards)/(turretMiddleDegrees - turretBackwardsDegrees_C);
             return slope*((int)(robotData.shooterData.currentTurretAngle - turretBackwardsDegrees_C)%360) + velBackwards; 
         }else{ //left side of the robot
             double slope = (velFowards - velBackwards)/(turretMiddleDegrees - turretBackwardsDegrees_CCW);
             return slope*((int)(robotData.shooterData.currentTurretAngle - turretBackwardsDegrees_CCW)%360) + velBackwards;
-        }
+        // }
     }
 }
 

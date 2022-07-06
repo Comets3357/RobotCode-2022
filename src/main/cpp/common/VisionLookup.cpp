@@ -15,43 +15,48 @@ void VisionLookup::RobotPeriodic(const RobotData &robotData, VisionLookupData &v
     // hood angle map HIGH HUB
     // key is the distance in feet
     // assigned value is the hood position in angle measurment(degrees)
-    visionMap[4] = 23.31;
-    visionMap[5] = 23.5;
-    visionMap[6] = 25.07; 
-    visionMap[7] = 26.21; 
-    visionMap[8] = 27.37; 
-    visionMap[9] = 29.62; 
-    visionMap[10] = 33.78; 
-    visionMap[11] = 34.90; 
-    visionMap[12] = 36.49; 
-    visionMap[13] = 36.39; 
-    visionMap[14] = 37.27; 
-    visionMap[15] = 37.28; 
-    visionMap[16] = 37.29; 
-    visionMap[17] = 40.02; 
-    visionMap[18] = 39.87; 
-    visionMap[19] = 40; 
+    visionMap[4] = 24.00;
+    visionMap[5] = 25.90;
+    visionMap[6] = 26.45; 
+    visionMap[7] = 27.70; 
+    visionMap[8] = 30.50; 
+    visionMap[9] = 31.50; 
+    visionMap[10] = 32.90; // 7.5 feet in real life with bumpers (edge of tarmac) - back of robot / HOOD ROLLER PID tuned here
+    visionMap[11] = 33.70; // 8.5 feet in real life with bumpers (side field) - back of robot
+    visionMap[12] = 35.20; 
+    visionMap[13] = 36.30; 
+    visionMap[14] = 37.10; 
+    visionMap[15] = 37.90; //  12 feet in real life with bumpers (close protected zone) - back of robot
+    visionMap[16] = 38.40; 
+    visionMap[17] = 38.90; 
+    visionMap[18] = 40.9; 
+    visionMap[19] = 42; 
+    visionMap[20] = 42.5;
+    visionMap[21] = 43;
+    // visionMap[22] = 43;
 
     // velocity map
     // key is the distance in feet
     // assigned value is the desired flywheel velocity in rpm
-    velocityMap[4] = 1250;
-    velocityMap[5] = 1250; 
-    velocityMap[6] = 1300; 
-    velocityMap[7] = 1325; 
-    velocityMap[8] = 1370; 
-    velocityMap[9] =  1430; 
-    velocityMap[10] =  1430;  
-    velocityMap[11] = 1510; 
-    velocityMap[12] =  1550; 
-    velocityMap[13] = 1600; 
-    velocityMap[14] = 1650; 
-    velocityMap[15] = 1720; 
-    velocityMap[16] = 1800; 
-    velocityMap[17] = 1950; 
-    velocityMap[18] = 1950; 
-    velocityMap[19] = 2100;
-
+    velocityMap[4] = 1110;
+    velocityMap[5] = 1120; 
+    velocityMap[6] = 1140; 
+    velocityMap[7] = 1180; 
+    velocityMap[8] = 1200; 
+    velocityMap[9] =  1225; 
+    velocityMap[10] =  1270;  
+    velocityMap[11] = 1310; 
+    velocityMap[12] =  1340; 
+    velocityMap[13] = 1380;
+    velocityMap[14] = 1420; 
+    velocityMap[15] = 1460; 
+    velocityMap[16] = 1500; 
+    velocityMap[17] = 1560; 
+    velocityMap[18] = 1610; 
+    velocityMap[19] = 1660;
+    velocityMap[20] = 1700;
+    velocityMap[21] = 1770;
+    // velocityMap[22] = 1860;
 
 }
 
