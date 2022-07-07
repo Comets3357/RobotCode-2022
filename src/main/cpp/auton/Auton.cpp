@@ -57,6 +57,7 @@ void Auton::sendAutonSelectionChooser() {
     autonChooser.AddOption("potato", "potato");
 
     autonChooser.AddOption("taxiShootA", "taxiShootA");
+    autonChooser.AddOption("taxiShootAHide", "taxiShootAHide");
     autonChooser.AddOption("taxiShootB", "taxiShootB");
     autonChooser.AddOption("taxiShootC", "taxiShootC");
 
@@ -95,6 +96,9 @@ void Auton::AutonomousPeriodic(const RobotData &robotData, AutonData &autonData,
         nearFieldOne(robotData, controlData, controllerData);
     }
     else if (autonData.autonRoutineName == "taxiShootA") {
+        taxiShootA(robotData, controlData, controllerData);
+    }
+    else if (autonData.autonRoutineName == "taxiShootAHide") {
         taxiShootA(robotData, controlData, controllerData);
     }
     else if (autonData.autonRoutineName == "taxiShootB") {
