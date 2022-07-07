@@ -67,6 +67,8 @@ void Auton::sendAutonSelectionChooser() {
     autonChooser.AddOption("fiveBallCAlt", "fiveBallCAlt");
 
     autonChooser.AddOption("citrus", "citrus");
+    autonChooser.AddOption("hideBallsA", "hideBallsA");
+
     autonChooser.AddOption("nearFieldOne", "nearFieldOne");
 
     autonChooser.AddOption("sixBallC", "sixBallC");
@@ -84,6 +86,9 @@ void Auton::AutonomousPeriodic(const RobotData &robotData, AutonData &autonData,
         potato(robotData, controlData, controllerData);
     }
     else if (autonData.autonRoutineName == "citrus") {
+        citrus(robotData, controlData, controllerData);
+    }
+    else if (autonData.autonRoutineName == "hideBallsA") {
         citrus(robotData, controlData, controllerData);
     }
     else if (autonData.autonRoutineName == "nearFieldOne") {
