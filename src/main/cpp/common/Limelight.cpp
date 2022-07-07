@@ -44,7 +44,7 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
 
     // limelightData.desiredHoodPos = interpolationHood(limelightData, robotData);
 
-    tempOffset = limelightData.angleOffset;
+    // tempOffset = limelightData.angleOffset;
 
     // if (tempOffset > 0)
     // {
@@ -279,48 +279,49 @@ double Limelight::interpolationVel(LimelightData &limelightData, const RobotData
     // if(robotData.limelightData.distanceOffset > change*12){
     //     return backwardDesiredVel;
     // }else{
-        double slope = 0;
-        double turretAngle = robotData.shooterData.currentTurretAngle;
+    double slope = 0;
+    double turretAngle = robotData.shooterData.currentTurretAngle;
 
-        if(((robotData.shooterData.currentTurretAngle <= turretMiddleDegrees) && (robotData.shooterData.currentTurretAngle >= turretBackwardsDegrees_C)) || (robotData.shooterData.currentTurretAngle >= turretBackwardsDegrees_CCW))
-        { //on the right side of the turret   
-            // double slope = (velFowards - velBackwards)/(turretMiddleDegrees - turretBackwardsDegrees_C);
-            
-
-            if ((robotData.shooterData.currentTurretAngle >= turretBackwardsDegrees_CCW) || (robotData.shooterData.currentTurretAngle <= (turretMiddleDegrees - turretBackwardsDegrees_C) / 2))
+    if(((robotData.shooterData.currentTurretAngle <= turretMiddleDegrees) && (robotData.shooterData.currentTurretAngle >= turretBackwardsDegrees_C)) || (robotData.shooterData.currentTurretAngle >= turretBackwardsDegrees_CCW))
+    { //on the right side of the turret   
+        // double slope = (velFowards - velBackwards)/(turretMiddleDegrees - turretBackwardsDegrees_C);
+        
+        if ((robotData.shooterData.currentTurretAngle >= turretBackwardsDegrees_CCW) || (robotData.shooterData.currentTurretAngle <= (turretMiddleDegrees - turretBackwardsDegrees_C) / 2))
+        {
+            if (turretAngle > turretBackwardsDegrees_CCW)
             {
-                turretAngle = robotData.shooterData.currentTurretAngle;
-                if (turretAngle > turretBackwardsDegrees_CCW)
-                {
-                    turretAngle -= (turretBackwardsDegrees_CCW - turretBackwardsDegrees_C);
-                }
-                slope = (-1.379 + (0.07714 * (turretAngle)) - (0.0004713 * (pow(turretAngle, 2))));
+                turretAngle -= (turretBackwardsDegrees_CCW - turretBackwardsDegrees_C);
             }
-            else 
-            {
-                slope = (velFowards - velBackwards)/(turretMiddleDegrees - turretBackwardsDegrees_C);
-            }
+            slope = (-1.379 + (0.07714 * (turretAngle)) - (0.0004713 * (pow(turretAngle, 2))));
+        }
+        else 
+        {
+            slope = (velFowards - velBackwards)/(turretMiddleDegrees - turretBackwardsDegrees_C);
+        }
 
-            return slope*((int)(turretAngle - turretBackwardsDegrees_C)%360) + velBackwards; 
+        return slope*((int)(turretAngle - turretBackwardsDegrees_C)%360) + velBackwards; 
+    }
+    else
+    { //left side of the robot
+        // double slope = (velFowards - velBackwards)/(turretMiddleDegrees - turretBackwardsDegrees_CCW);
+
+        if ((robotData.shooterData.currentTurretAngle <= turretBackwardsDegrees_C) || (robotData.shooterData.currentTurretAngle >= (((turretBackwardsDegrees_CCW - turretMiddleDegrees) / 2) + turretMiddleDegrees)))
+        {
+            if (robotData.shooterData.currentTurretAngle <= turretBackwardsDegrees_C)
+            {
+                turretAngle += (turretBackwardsDegrees_CCW - turretBackwardsDegrees_C);
+            }
+            slope = (0.0004318 * (pow(turretAngle, 2))) - (0.2963 * turretAngle) + 49.05;
         }
         else
-        { //left side of the robot
-            // double slope = (velFowards - velBackwards)/(turretMiddleDegrees - turretBackwardsDegrees_CCW);
-
-            if ((robotData.shooterData.currentTurretAngle <= turretBackwardsDegrees_C) || (robotData.shooterData.currentTurretAngle >= (((turretBackwardsDegrees_CCW - turretMiddleDegrees) / 2) + turretMiddleDegrees)))
-            {
-                
-            }
-            else
-            {
-               slope = (velFowards - velBackwards)/(turretMiddleDegrees - turretBackwardsDegrees_C); 
-            }
-
-
-            return slope*((int)(turretAngle - turretBackwardsDegrees_CCW)%360) + velBackwards;
-        // }
-        
+        {
+            slope = (velFowards - velBackwards)/(turretMiddleDegrees - turretBackwardsDegrees_CCW); 
         }
+
+    // slope and turretangle - turretbackdegrees will always produce a positive number
+    return slope*((int)(turretAngle - turretBackwardsDegrees_CCW)%360) + velBackwards;
+        
+    }
 }
 
 double Limelight::interpolationHood(LimelightData &limelightData, const RobotData &robotData){
