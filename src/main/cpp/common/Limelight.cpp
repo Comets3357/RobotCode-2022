@@ -292,7 +292,7 @@ double Limelight::interpolationVel(LimelightData &limelightData, const RobotData
             {
                 turretAngle -= (turretBackwardsDegrees_CCW - turretBackwardsDegrees_C);
             }
-            slope = (-1.379 + (0.07714 * (turretAngle)) - (0.0004713 * (pow(turretAngle, 2))));
+            slope = (-0.5007 + (0.04477 * (turretAngle)) - (0.0002661 * (pow(turretAngle, 2))));
         }
         else 
         {
@@ -311,7 +311,7 @@ double Limelight::interpolationVel(LimelightData &limelightData, const RobotData
             {
                 turretAngle += (turretBackwardsDegrees_CCW - turretBackwardsDegrees_C);
             }
-            slope = (0.0004318 * (pow(turretAngle, 2))) - (0.2963 * turretAngle) + 49.05;
+            slope = (0.0002384 * (pow(turretAngle, 2))) - (0.1628 * turretAngle) + 26.46;
         }
         else
         {
