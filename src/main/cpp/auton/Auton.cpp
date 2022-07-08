@@ -57,6 +57,7 @@ void Auton::sendAutonSelectionChooser() {
     autonChooser.AddOption("potato", "potato");
 
     autonChooser.AddOption("taxiShootA", "taxiShootA");
+    autonChooser.AddOption("taxiShootAHide", "taxiShootAHide");
     autonChooser.AddOption("taxiShootB", "taxiShootB");
     autonChooser.AddOption("taxiShootC", "taxiShootC");
 
@@ -67,6 +68,8 @@ void Auton::sendAutonSelectionChooser() {
     autonChooser.AddOption("fiveBallCAlt", "fiveBallCAlt");
 
     autonChooser.AddOption("citrus", "citrus");
+    autonChooser.AddOption("hideBallsA", "hideBallsA");
+
     autonChooser.AddOption("nearFieldOne", "nearFieldOne");
 
     autonChooser.AddOption("sixBallC", "sixBallC");
@@ -86,10 +89,16 @@ void Auton::AutonomousPeriodic(const RobotData &robotData, AutonData &autonData,
     else if (autonData.autonRoutineName == "citrus") {
         citrus(robotData, controlData, controllerData);
     }
+    else if (autonData.autonRoutineName == "hideBallsA") {
+        citrus(robotData, controlData, controllerData);
+    }
     else if (autonData.autonRoutineName == "nearFieldOne") {
         nearFieldOne(robotData, controlData, controllerData);
     }
     else if (autonData.autonRoutineName == "taxiShootA") {
+        taxiShootA(robotData, controlData, controllerData);
+    }
+    else if (autonData.autonRoutineName == "taxiShootAHide") {
         taxiShootA(robotData, controlData, controllerData);
     }
     else if (autonData.autonRoutineName == "taxiShootB") {
