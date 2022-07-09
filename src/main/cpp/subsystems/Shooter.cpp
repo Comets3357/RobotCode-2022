@@ -56,37 +56,37 @@ void Shooter::flyWheelInit()
     readyShootLimit = 1200;
 
     //PIDS
-    //for closer range
-    flyWheelLead_pidController.SetP(0, 0);
-    flyWheelLead_pidController.SetI(0, 0);
-    flyWheelLead_pidController.SetD(0, 0);
-    flyWheelLead_pidController.SetIZone(0, 0);
-    flyWheelLead_pidController.SetFF(0.00020333, 0);
-    flyWheelLead_pidController.SetOutputRange(0, 1, 0);
-
-    //for farther range
-    flyWheelLead_pidController.SetP(0, 1); 
+    //for far range
+    flyWheelLead_pidController.SetP(0, 1);
     flyWheelLead_pidController.SetI(0, 1);
-    flyWheelLead_pidController.SetD(0, 1); 
+    flyWheelLead_pidController.SetD(0, 1);
     flyWheelLead_pidController.SetIZone(0, 1);
-    flyWheelLead_pidController.SetFF(0.000201083, 1); 
+    flyWheelLead_pidController.SetFF(0.00020333, 1);
     flyWheelLead_pidController.SetOutputRange(0, 1, 1);
 
-    // close range while intake running
-    flyWheelLead_pidController.SetP(0, 2); 
-    flyWheelLead_pidController.SetI(0, 2);
-    flyWheelLead_pidController.SetD(0, 2); 
-    flyWheelLead_pidController.SetIZone(0, 2);
-    flyWheelLead_pidController.SetFF(0.00020943, 2); 
-    flyWheelLead_pidController.SetOutputRange(0, 1, 2);
+    //for short range
+    flyWheelLead_pidController.SetP(0, 0); 
+    flyWheelLead_pidController.SetI(0, 0);
+    flyWheelLead_pidController.SetD(0, 0); 
+    flyWheelLead_pidController.SetIZone(0, 0);
+    flyWheelLead_pidController.SetFF(0.000201083, 0); 
+    flyWheelLead_pidController.SetOutputRange(0, 1, 0);
 
     // far range while intake running
     flyWheelLead_pidController.SetP(0, 3); 
     flyWheelLead_pidController.SetI(0, 3);
     flyWheelLead_pidController.SetD(0, 3); 
     flyWheelLead_pidController.SetIZone(0, 3);
-    flyWheelLead_pidController.SetFF(0.0002071155, 3); 
+    flyWheelLead_pidController.SetFF(0.0002135, 3); 
     flyWheelLead_pidController.SetOutputRange(0, 1, 3);
+
+    // close range while intake running
+    flyWheelLead_pidController.SetP(0, 2); 
+    flyWheelLead_pidController.SetI(0, 2);
+    flyWheelLead_pidController.SetD(0, 2); 
+    flyWheelLead_pidController.SetIZone(0, 2);
+    flyWheelLead_pidController.SetFF(0.000211137, 2); 
+    flyWheelLead_pidController.SetOutputRange(0, 1, 2);
 
     //flyWheel.EnableVoltageCompensation()
 
@@ -288,12 +288,12 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
         }
         
         //once it's a high enough velocity its ready for indexer to run
-        if ((!shooterData.readyShoot && (getWheelVel() > (robotData.limelightData.desiredVel - 30)) && !robotData.limelightData.unwrapping && hoodInPlace) /**&& (std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 3)**/)
+        if ((!shooterData.readyShoot && (getWheelVel() > (robotData.limelightData.desiredVel - 5)) && !robotData.limelightData.unwrapping && hoodInPlace) /**&& (std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 3)**/)
         //if you're not in readyShoot yet and the wheel velocity is above 30 under the desire velocity, readyShoot will become true
         {
             shooterData.readyShoot = true;
         }
-        else if (shooterData.readyShoot && (getWheelVel() < (robotData.limelightData.desiredVel - 30) || robotData.limelightData.unwrapping || !hoodInPlace) /**&& (std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 3)**/)
+        else if (shooterData.readyShoot && (getWheelVel() < (robotData.limelightData.desiredVel - 5) || robotData.limelightData.unwrapping || !hoodInPlace) /**&& (std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 3)**/)
         // if you're already in readyShoot, you'll only exit readyShoot if the wheel velocity drops below 100 below the desired velocity
         {
             shooterData.readyShoot = false;

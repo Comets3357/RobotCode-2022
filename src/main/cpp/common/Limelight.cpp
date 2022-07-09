@@ -201,12 +201,12 @@ double Limelight::getWheelVelocity(VisionLookup &visionLookup, LimelightData &li
     //multiply the difference in the distance and floored value by the slope to get desired velocity for that small distance 
     //then add that to the desired position of the lower floored value
 
-    if(robotData.limelightData.distanceOffset > 14*12){
-        return ( (desiredSlope*((originalDistance - limelightData.lowerVal)*12) + limelightData.lowerValVel));   // 320 for front!
-    }else{
-        return ( (desiredSlope*((originalDistance - limelightData.lowerVal)*12) + limelightData.lowerValVel));   // 320 for front!
-
-    }
+    // if(robotData.limelightData.distanceOffset > 14*12){
+    //     return ( (desiredSlope*((originalDistance - limelightData.lowerVal)*12) + limelightData.lowerValVel));   // 320 for front!
+    // }else{
+    //     return ( (desiredSlope*((originalDistance - limelightData.lowerVal)*12) + limelightData.lowerValVel));   // 320 for front!
+    // }
+    return ( (desiredSlope*((originalDistance - limelightData.lowerVal)*12) + limelightData.lowerValVel)) + 40;
 
 }
 
