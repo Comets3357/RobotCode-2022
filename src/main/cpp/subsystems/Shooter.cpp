@@ -52,16 +52,21 @@ void Shooter::flyWheelInit()
     flyWheel.SetInverted(true);
     flyWheel.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
     flyWheel.SetSmartCurrentLimit(70);
+    
+    flyWheel.EnableVoltageCompensation(10.5);
 
     readyShootLimit = 1200;
 
+    
+
     //PIDS
     //for far range
+
     flyWheelLead_pidController.SetP(0, 1);
     flyWheelLead_pidController.SetI(0, 1);
     flyWheelLead_pidController.SetD(0, 1);
     flyWheelLead_pidController.SetIZone(0, 1);
-    flyWheelLead_pidController.SetFF(0.0002033, 1);
+    flyWheelLead_pidController.SetFF(0.0002293, 1);
     flyWheelLead_pidController.SetOutputRange(0, 1, 1);
 
     //for short range
@@ -69,7 +74,7 @@ void Shooter::flyWheelInit()
     flyWheelLead_pidController.SetI(0, 0);
     flyWheelLead_pidController.SetD(0, 0); 
     flyWheelLead_pidController.SetIZone(0, 0);
-    flyWheelLead_pidController.SetFF(0.000201083, 0); 
+    flyWheelLead_pidController.SetFF(0.000229083, 0); 
     flyWheelLead_pidController.SetOutputRange(0, 1, 0);
 
     // far range while intake running
