@@ -293,12 +293,12 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
         }
         
         //once it's a high enough velocity its ready for indexer to run
-        if ((!shooterData.readyShoot && (getWheelVel() > (robotData.limelightData.desiredVel)) /*&& (getWheelVel() <= (robotData.limelightData.desiredVel + 45))*/ && !robotData.limelightData.unwrapping && hoodInPlace) /**&& (std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 3)**/)
+        if ((!shooterData.readyShoot && (getWheelVel() > (robotData.limelightData.desiredVel)) && (getWheelVel() <= (robotData.limelightData.desiredVel + 45)) && !robotData.limelightData.unwrapping && hoodInPlace) /**&& (std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 3)**/)
         //if you're not in readyShoot yet and the wheel velocity is above 30 under the desire velocity, readyShoot will become true
         {
             shooterData.readyShoot = true;
         }
-        else if (shooterData.readyShoot && (getWheelVel() < (robotData.limelightData.desiredVel) /*|| (getWheelVel() > (robotData.limelightData.desiredVel + 45))*/ || robotData.limelightData.unwrapping || !hoodInPlace) /**&& (std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 3)**/)
+        else if (shooterData.readyShoot && (getWheelVel() < (robotData.limelightData.desiredVel) || (getWheelVel() > (robotData.limelightData.desiredVel + 45)) || robotData.limelightData.unwrapping || !hoodInPlace) /**&& (std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 3)**/)
         // if you're already in readyShoot, you'll only exit readyShoot if the wheel velocity drops below 100 below the desired velocity
         {
             shooterData.readyShoot = false;
