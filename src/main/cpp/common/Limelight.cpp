@@ -221,7 +221,7 @@ double Limelight::getWheelVelocity(VisionLookup &visionLookup, LimelightData &li
     // }else{
     //     return ( (desiredSlope*((originalDistance - limelightData.lowerVal)*12) + limelightData.lowerValVel));   // 320 for front!
     // }
-    return ( (desiredSlope*((originalDistance - limelightData.lowerVal)*12) + limelightData.lowerValVel)) + 40;
+    return ( (desiredSlope*((originalDistance - limelightData.lowerVal)*12) + limelightData.lowerValVel)) + 50;
 
 }
 
