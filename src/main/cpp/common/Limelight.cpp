@@ -65,9 +65,19 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     //TURRET DIFFERENCE
     limelightData.turretDifference = -robotData.limelightData.angleOffset; // turret turning is not consistent with limelight degrees off
 
-    if ((std::abs(limelightData.turretDifference)) < std::min((180/pi)*std::atan(7/limelightData.distanceOffset), (double)4))
+    if (robotData.shooterData.currentTurretAngle > turretBackwardsDegrees_CCW + 2 || (robotData.shooterData.currentTurretAngle > turretBackwardsDegrees_C + 2 && robotData.shooterData.currentTurretAngle < turretBackwardsDegrees_C + 35))
     {
-        limelightData.turretDifference = 0;
+        if ((std::abs(limelightData.turretDifference + 2)) < std::min((180/pi)*std::atan(7/limelightData.distanceOffset), (double)4))
+        {
+            limelightData.turretDifference = 0;
+        }
+    }
+    else
+    {
+        if ((std::abs(limelightData.turretDifference)) < std::min((180/pi)*std::atan(7/limelightData.distanceOffset), (double)4))
+        {
+            limelightData.turretDifference = 0;
+        }
     }
 
   
@@ -240,6 +250,11 @@ double Limelight::getTurretTurnAngle(LimelightData &limelightData, const RobotDa
     
     
     float desired = robotData.limelightData.turretDifference + robotData.shooterData.currentTurretAngle;
+
+    if (robotData.shooterData.currentTurretAngle > turretBackwardsDegrees_CCW + 2 || (robotData.shooterData.currentTurretAngle > turretBackwardsDegrees_C + 2 && robotData.shooterData.currentTurretAngle < turretBackwardsDegrees_C + 35))
+    {
+        desired += 2;
+    }
 
     if((desired < 0 || desired > turretFullRotationDegrees) && frc::DriverStation::IsEnabled()){ //if you're outside of the range, go through and add/subtract 360 to get in the range
 
