@@ -238,7 +238,11 @@ void Indexer::count(const RobotData &robotData, IndexerData &indexerData){
 void Indexer::saBeltControl(const RobotData &robotData, IndexerData &indexerData){
     if(robotData.controlData.saEjectBalls){             // if indexer is REVERSING (saEject curently is the only case where it runs backwards)
         indexerBelt.Set(-indexerShootingBeltSpeed);     // run the belt backwards fast
-    } else if ((/* !pauseBelt(robotData, indexerData) && */ (robotData.shooterData.readyShoot) && robotData.controlData.saFinalShoot) || (!getTopBeam() && (!robotData.intakeData.intakeIdle || robotData.controlData.saFinalShoot))){ 
+    }
+    else if (robotData.controlData.saIndexerShooting) {
+        indexerBelt.Set(indexerShootingBeltSpeed);
+    }
+    else if ((/* !pauseBelt(robotData, indexerData) && */ (robotData.shooterData.readyShoot) && robotData.controlData.saFinalShoot) || (!getTopBeam() && (!robotData.intakeData.intakeIdle || robotData.controlData.saFinalShoot))){ 
         // there are two main cases when you run the indexer forward: when you shoot, and when you're intaking
         // when shooting, you check that you're done pausing (see pauseBelt) to make sure every ball pauses before going into the shooter, 
         // anyways, we have to get the signal that the shooter is ready to eject AND that the top ball in the indexer is the opponent color to run it in that case
