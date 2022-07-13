@@ -47,14 +47,14 @@ void VisionLookup::RobotPeriodic(const RobotData &robotData, VisionLookupData &v
     velocityMap[10] =  1270;  
     velocityMap[11] = 1310; 
     velocityMap[12] =  1340; 
-    velocityMap[13] = 1380;
+    velocityMap[13] = 1390;
     velocityMap[14] = 1420; 
     velocityMap[15] = 1460; 
-    velocityMap[16] = 1500; 
+    velocityMap[16] = 1510; 
     velocityMap[17] = 1560; 
     velocityMap[18] = 1610; 
     velocityMap[19] = 1660;
-    velocityMap[20] = 1700;
+    velocityMap[20] = 1740;
     velocityMap[21] = 1770;
     // velocityMap[22] = 1860;
 

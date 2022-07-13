@@ -25,6 +25,8 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     //takes into account the limelight's position offset from shooter
     shooterOffset(robotData, limelightData);
 
+    
+
     if(robotData.controlData.mode == mode_teleop_sa){
         limelightData.distanceOffset = limelightData.distanceOffset + robotData.controlData.saDistanceOffset; //adds 6 inches everytime it's clicked
     }
@@ -44,7 +46,7 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
 
     // limelightData.desiredHoodPos = interpolationHood(limelightData, robotData);
 
-    tempOffset = limelightData.angleOffset;
+    // tempOffset = limelightData.angleOffset;
 
     // if (tempOffset > 0)
     // {
@@ -63,10 +65,23 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     //TURRET DIFFERENCE
     limelightData.turretDifference = -robotData.limelightData.angleOffset; // turret turning is not consistent with limelight degrees off
 
-    if ((std::abs(limelightData.turretDifference)) < std::min((180/pi)*std::atan(8/limelightData.distanceOffset), (double)4))
+    if (robotData.shooterData.currentTurretAngle > turretBackwardsDegrees_CCW + 2 || (robotData.shooterData.currentTurretAngle > turretBackwardsDegrees_C + 2 && robotData.shooterData.currentTurretAngle < turretBackwardsDegrees_C + 35))
     {
-        limelightData.turretDifference = 0;
+        if ((std::abs(limelightData.turretDifference + 4)) < std::min((180/pi)*std::atan(7/limelightData.distanceOffset), (double)4))
+        {
+            limelightData.turretDifference = 0;
+        }
     }
+    else
+    {
+        if ((std::abs(limelightData.turretDifference)) < std::min((180/pi)*std::atan(7/limelightData.distanceOffset), (double)4))
+        {
+            limelightData.turretDifference = 0;
+        }
+    }
+
+  
+
 
     //DESIRED TURRET
     limelightData.desiredTurretAngle = getTurretTurnAngle(limelightData, robotData); //position to go to to shoot
@@ -201,12 +216,12 @@ double Limelight::getWheelVelocity(VisionLookup &visionLookup, LimelightData &li
     //multiply the difference in the distance and floored value by the slope to get desired velocity for that small distance 
     //then add that to the desired position of the lower floored value
 
-    if(robotData.limelightData.distanceOffset > 14*12){
-        return ( (desiredSlope*((originalDistance - limelightData.lowerVal)*12) + limelightData.lowerValVel));   // 320 for front!
-    }else{
-        return ( (desiredSlope*((originalDistance - limelightData.lowerVal)*12) + limelightData.lowerValVel));   // 320 for front!
-
-    }
+    // if(robotData.limelightData.distanceOffset > 14*12){
+    //     return ( (desiredSlope*((originalDistance - limelightData.lowerVal)*12) + limelightData.lowerValVel));   // 320 for front!
+    // }else{
+    //     return ( (desiredSlope*((originalDistance - limelightData.lowerVal)*12) + limelightData.lowerValVel));   // 320 for front!
+    // }
+    return ( (desiredSlope*((originalDistance - limelightData.lowerVal)*12) + limelightData.lowerValVel)) + 50;
 
 }
 
@@ -236,6 +251,11 @@ double Limelight::getTurretTurnAngle(LimelightData &limelightData, const RobotDa
     
     float desired = robotData.limelightData.turretDifference + robotData.shooterData.currentTurretAngle;
 
+    if (robotData.shooterData.currentTurretAngle > turretBackwardsDegrees_CCW + 2 || (robotData.shooterData.currentTurretAngle > turretBackwardsDegrees_C + 2 && robotData.shooterData.currentTurretAngle < turretBackwardsDegrees_C + 35))
+    {
+        desired += 2;
+    }
+
     if((desired < 0 || desired > turretFullRotationDegrees) && frc::DriverStation::IsEnabled()){ //if you're outside of the range, go through and add/subtract 360 to get in the range
 
         if(desired < 0){
@@ -261,10 +281,17 @@ double Limelight::getTurretTurnAngle(LimelightData &limelightData, const RobotDa
         unwrappingVal = desired;
     }
 
+    // if (robotData.shooterData.currentTurretAngle > turretBackwardsDegrees_CCW + 2 || (robotData.shooterData.currentTurretAngle > turretBackwardsDegrees_C + 2 && robotData.shooterData.currentTurretAngle < turretBackwardsDegrees_C + 35))
+    // {
+    //     unwrappingVal = 1;
+    // }
+
+
     return unwrappingVal;
 }
 
-double Limelight::interpolationVel(LimelightData &limelightData, const RobotData &robotData){
+double Limelight::interpolationVel(LimelightData &limelightData, const RobotData &robotData)
+{
     //take in the desired value from front and from back
     //take those two values and the current position of the turret
     
@@ -278,13 +305,48 @@ double Limelight::interpolationVel(LimelightData &limelightData, const RobotData
     // if(robotData.limelightData.distanceOffset > change*12){
     //     return backwardDesiredVel;
     // }else{
-        if(((robotData.shooterData.currentTurretAngle <= turretMiddleDegrees) && (robotData.shooterData.currentTurretAngle >= turretBackwardsDegrees_C)) || (robotData.shooterData.currentTurretAngle >= turretBackwardsDegrees_CCW)){ //on the right side of the turret   
-            double slope = (velFowards - velBackwards)/(turretMiddleDegrees - turretBackwardsDegrees_C);
-            return slope*((int)(robotData.shooterData.currentTurretAngle - turretBackwardsDegrees_C)%360) + velBackwards; 
-        }else{ //left side of the robot
-            double slope = (velFowards - velBackwards)/(turretMiddleDegrees - turretBackwardsDegrees_CCW);
-            return slope*((int)(robotData.shooterData.currentTurretAngle - turretBackwardsDegrees_CCW)%360) + velBackwards;
-        // }
+    double slope = 0;
+    double turretAngle = robotData.shooterData.currentTurretAngle;
+
+    if(((robotData.shooterData.currentTurretAngle <= turretMiddleDegrees) && (robotData.shooterData.currentTurretAngle >= turretBackwardsDegrees_C)) || (robotData.shooterData.currentTurretAngle >= turretBackwardsDegrees_CCW))
+    { //on the right side of the turret   
+        // double slope = (velFowards - velBackwards)/(turretMiddleDegrees - turretBackwardsDegrees_C);
+        
+        if ((robotData.shooterData.currentTurretAngle >= turretBackwardsDegrees_CCW) || (robotData.shooterData.currentTurretAngle <= (turretMiddleDegrees - turretBackwardsDegrees_C) / 2))
+        {
+            if (turretAngle > turretBackwardsDegrees_CCW)
+            {
+                turretAngle -= (turretBackwardsDegrees_CCW - turretBackwardsDegrees_C);
+            }
+            slope = (-0.5007 + (0.04477 * (turretAngle)) - (0.0002661 * (pow(turretAngle, 2))));
+        }
+        else 
+        {
+            slope = (velFowards - velBackwards)/(turretMiddleDegrees - turretBackwardsDegrees_C);
+        }
+
+        return slope*((int)(turretAngle - turretBackwardsDegrees_C)%360) + velBackwards; 
+    }
+    else
+    { //left side of the robot
+        // double slope = (velFowards - velBackwards)/(turretMiddleDegrees - turretBackwardsDegrees_CCW);
+
+        if ((robotData.shooterData.currentTurretAngle <= turretBackwardsDegrees_C) || (robotData.shooterData.currentTurretAngle >= (((turretBackwardsDegrees_CCW - turretMiddleDegrees) / 2) + turretMiddleDegrees)))
+        {
+            if (robotData.shooterData.currentTurretAngle <= turretBackwardsDegrees_C)
+            {
+                turretAngle += (turretBackwardsDegrees_CCW - turretBackwardsDegrees_C);
+            }
+            slope = (0.0002384 * (pow(turretAngle, 2))) - (0.1628 * turretAngle) + 26.46;
+        }
+        else
+        {
+            slope = (velFowards - velBackwards)/(turretMiddleDegrees - turretBackwardsDegrees_CCW); 
+        }
+
+    // slope and turretangle - turretbackdegrees will always produce a positive number
+    return slope*((int)(turretAngle - turretBackwardsDegrees_CCW)%360) + velBackwards;
+        
     }
 }
 

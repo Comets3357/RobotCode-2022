@@ -52,41 +52,46 @@ void Shooter::flyWheelInit()
     flyWheel.SetInverted(true);
     flyWheel.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
     flyWheel.SetSmartCurrentLimit(70);
+    
+    flyWheel.EnableVoltageCompensation(10.5);
 
     readyShootLimit = 1200;
 
-    //PIDS
-    //for closer range
-    flyWheelLead_pidController.SetP(0, 0);
-    flyWheelLead_pidController.SetI(0, 0);
-    flyWheelLead_pidController.SetD(0, 0);
-    flyWheelLead_pidController.SetIZone(0, 0);
-    flyWheelLead_pidController.SetFF(0.00020333, 0);
-    flyWheelLead_pidController.SetOutputRange(0, 1, 0);
+    
 
-    //for farther range
-    flyWheelLead_pidController.SetP(0, 1); 
+    //PIDS
+    //for far range
+
+    flyWheelLead_pidController.SetP(0, 1);
     flyWheelLead_pidController.SetI(0, 1);
-    flyWheelLead_pidController.SetD(0, 1); 
+    flyWheelLead_pidController.SetD(0, 1);
     flyWheelLead_pidController.SetIZone(0, 1);
-    flyWheelLead_pidController.SetFF(0.000201083, 1); 
+    flyWheelLead_pidController.SetFF(0.0002293, 1);
     flyWheelLead_pidController.SetOutputRange(0, 1, 1);
 
-    // close range while intake running
-    flyWheelLead_pidController.SetP(0, 2); 
-    flyWheelLead_pidController.SetI(0, 2);
-    flyWheelLead_pidController.SetD(0, 2); 
-    flyWheelLead_pidController.SetIZone(0, 2);
-    flyWheelLead_pidController.SetFF(0.00020943, 2); 
-    flyWheelLead_pidController.SetOutputRange(0, 1, 2);
+    //for short range
+    flyWheelLead_pidController.SetP(0, 0); 
+    flyWheelLead_pidController.SetI(0, 0);
+    flyWheelLead_pidController.SetD(0, 0); 
+    flyWheelLead_pidController.SetIZone(0, 0);
+    flyWheelLead_pidController.SetFF(0.000229083, 0); 
+    flyWheelLead_pidController.SetOutputRange(0, 1, 0);
 
     // far range while intake running
     flyWheelLead_pidController.SetP(0, 3); 
     flyWheelLead_pidController.SetI(0, 3);
     flyWheelLead_pidController.SetD(0, 3); 
     flyWheelLead_pidController.SetIZone(0, 3);
-    flyWheelLead_pidController.SetFF(0.0002071155, 3); 
+    flyWheelLead_pidController.SetFF(0.0002205, 3); 
     flyWheelLead_pidController.SetOutputRange(0, 1, 3);
+
+    // close range while intake running
+    flyWheelLead_pidController.SetP(0, 2); 
+    flyWheelLead_pidController.SetI(0, 2);
+    flyWheelLead_pidController.SetD(0, 2); 
+    flyWheelLead_pidController.SetIZone(0, 2);
+    flyWheelLead_pidController.SetFF(0.000211137, 2); 
+    flyWheelLead_pidController.SetOutputRange(0, 1, 2);
 
     //flyWheel.EnableVoltageCompensation()
 
@@ -288,12 +293,12 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
         }
         
         //once it's a high enough velocity its ready for indexer to run
-        if ((!shooterData.readyShoot && (getWheelVel() > (robotData.limelightData.desiredVel - 30)) && !robotData.limelightData.unwrapping && hoodInPlace) /**&& (std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 3)**/)
+        if ((!shooterData.readyShoot && (getWheelVel() > (robotData.limelightData.desiredVel)) && (getWheelVel() <= (robotData.limelightData.desiredVel + 35)) && !robotData.limelightData.unwrapping && hoodInPlace) /**&& (std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 3)**/)
         //if you're not in readyShoot yet and the wheel velocity is above 30 under the desire velocity, readyShoot will become true
         {
             shooterData.readyShoot = true;
         }
-        else if (shooterData.readyShoot && (getWheelVel() < (robotData.limelightData.desiredVel - 30) || robotData.limelightData.unwrapping || !hoodInPlace) /**&& (std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 3)**/)
+        else if (shooterData.readyShoot && (getWheelVel() < (robotData.limelightData.desiredVel) || (getWheelVel() > (robotData.limelightData.desiredVel + 35)) || robotData.limelightData.unwrapping || !hoodInPlace) /**&& (std::abs(robotData.limelightData.desiredTurretAngle - robotData.shooterData.currentTurretAngle) <= 3)**/)
         // if you're already in readyShoot, you'll only exit readyShoot if the wheel velocity drops below 100 below the desired velocity
         {
             shooterData.readyShoot = false;
@@ -616,7 +621,15 @@ double Shooter::turretGyroOffset(double value){
  * TURRET
  **/
 void Shooter::setTurret_Pos(double pos, ShooterData &shooterData){
-    shooterTurret_pidController.SetReference(turretAbsoluteToREV(turretConvertFromAngleToAbs(pos)), rev::CANSparkMax::ControlType::kPosition, 0, arbFF, rev::SparkMaxPIDController::ArbFFUnits::kPercentOut);
+    if (shooterData.currentTurretAngle > turretBackwardsDegrees_CCW + 2 || (shooterData.currentTurretAngle > turretBackwardsDegrees_C + 2 && shooterData.currentTurretAngle < turretBackwardsDegrees_C + 35))
+    {
+        shooterTurret_pidController.SetReference(turretAbsoluteToREV(turretConvertFromAngleToAbs(pos + 4)), rev::CANSparkMax::ControlType::kPosition, 0, arbFF, rev::SparkMaxPIDController::ArbFFUnits::kPercentOut);
+    }
+    else
+    {
+        shooterTurret_pidController.SetReference(turretAbsoluteToREV(turretConvertFromAngleToAbs(pos)), rev::CANSparkMax::ControlType::kPosition, 0, arbFF, rev::SparkMaxPIDController::ArbFFUnits::kPercentOut);
+    }
+    // shooterTurret_pidController.SetReference(turretAbsoluteToREV(turretConvertFromAngleToAbs(pos)), rev::CANSparkMax::ControlType::kPosition, 0, arbFF, rev::SparkMaxPIDController::ArbFFUnits::kPercentOut);
     // frc::SmartDashboard::PutNumber("arbFF", arbFF);
 }
 
