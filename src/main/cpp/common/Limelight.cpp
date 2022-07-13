@@ -25,6 +25,8 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     //takes into account the limelight's position offset from shooter
     shooterOffset(robotData, limelightData);
 
+    
+
     if(robotData.controlData.mode == mode_teleop_sa){
         limelightData.distanceOffset = limelightData.distanceOffset + robotData.controlData.saDistanceOffset; //adds 6 inches everytime it's clicked
     }
@@ -67,6 +69,9 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     {
         limelightData.turretDifference = 0;
     }
+
+  
+
 
     //DESIRED TURRET
     limelightData.desiredTurretAngle = getTurretTurnAngle(limelightData, robotData); //position to go to to shoot
@@ -260,6 +265,12 @@ double Limelight::getTurretTurnAngle(LimelightData &limelightData, const RobotDa
     if(!limelightData.unwrapping){
         unwrappingVal = desired;
     }
+
+    // if (robotData.shooterData.currentTurretAngle > turretBackwardsDegrees_CCW + 2 || (robotData.shooterData.currentTurretAngle > turretBackwardsDegrees_C + 2 && robotData.shooterData.currentTurretAngle < turretBackwardsDegrees_C + 35))
+    // {
+    //     unwrappingVal = 1;
+    // }
+
 
     return unwrappingVal;
 }
