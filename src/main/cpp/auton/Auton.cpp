@@ -268,9 +268,9 @@ void Auton::fiveBallC(const RobotData &robotData, ControlData &controlData, Cont
     double sec = robotData.timerData.secSinceEnabled;
 
     // intake
-    if (sec > 0.5 && sec < 5) {
+    if (sec > 1 && sec < 5.5) {
         controlData.saIntake = true;
-    } else if (sec > 7.5 && sec < 12) {
+    } else if (sec > 8 && sec < 12.5) {
         controlData.saIntake = true;
     } else {
         controlData.saIntake = false;
@@ -286,11 +286,11 @@ void Auton::fiveBallC(const RobotData &robotData, ControlData &controlData, Cont
     
 
     // final shoot
-    if (sec > 0 && sec < 1) {
+    if (sec > 0 && sec < 1.5) {
         controlData.saFinalShoot = true;
-    } else if (sec > 3.5 && sec < 7.5) {
+    } else if (sec > 4 && sec < 8) {
         controlData.saFinalShoot = robotData.drivebaseData.dbStationaryForShot;
-    } else if (sec > 12 && sec < 15) {
+    } else if (sec > 12.5 && sec < 15) {
         controlData.saFinalShoot = robotData.drivebaseData.dbStationaryForShot;
     } else {
         controlData.saFinalShoot = false;
