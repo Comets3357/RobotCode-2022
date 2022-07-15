@@ -312,13 +312,14 @@ double Limelight::interpolationVel(LimelightData &limelightData, const RobotData
     { //on the right side of the turret   
         // double slope = (velFowards - velBackwards)/(turretMiddleDegrees - turretBackwardsDegrees_C);
         
-        if ((robotData.shooterData.currentTurretAngle >= turretBackwardsDegrees_CCW) || (robotData.shooterData.currentTurretAngle <= (turretMiddleDegrees - turretBackwardsDegrees_C) / 2))
+        if ((robotData.shooterData.currentTurretAngle >= turretBackwardsDegrees_CCW) || (robotData.shooterData.currentTurretAngle <= ((turretMiddleDegrees - turretBackwardsDegrees_C) / 2) + turretBackwardsDegrees_C))
         {
             if (turretAngle > turretBackwardsDegrees_CCW)
             {
                 turretAngle -= (turretBackwardsDegrees_CCW - turretBackwardsDegrees_C);
             }
-            slope = (-0.5007 + (0.04477 * (turretAngle)) - (0.0002661 * (pow(turretAngle, 2))));
+            
+            slope = (-0.09149 + (0.03504 * (turretAngle)) - (0.0002141 * (pow(turretAngle, 2))));
         }
         else 
         {
@@ -337,7 +338,8 @@ double Limelight::interpolationVel(LimelightData &limelightData, const RobotData
             {
                 turretAngle += (turretBackwardsDegrees_CCW - turretBackwardsDegrees_C);
             }
-            slope = (0.0002384 * (pow(turretAngle, 2))) - (0.1628 * turretAngle) + 26.46;
+
+            slope = (0.000164 * (pow(turretAngle, 2))) - (0.1148 * turretAngle) + 18.74;
         }
         else
         {
