@@ -106,7 +106,7 @@ static const float
     innerLaunchVel = 1710,
     wallHood = -21.5,
     wallVel = 1510,
-    fenderHood = -10,
+    fenderHood = 0,
     fenderVel = 1375;
 
 // climb
