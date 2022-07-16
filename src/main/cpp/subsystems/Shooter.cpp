@@ -623,7 +623,7 @@ double Shooter::turretGyroOffset(double value){
 void Shooter::setTurret_Pos(double pos, ShooterData &shooterData){
     if (shooterData.currentTurretAngle > turretBackwardsDegrees_CCW + 2 || (shooterData.currentTurretAngle > turretBackwardsDegrees_C + 2 && shooterData.currentTurretAngle < turretBackwardsDegrees_C + 35))
     {
-        shooterTurret_pidController.SetReference(turretAbsoluteToREV(turretConvertFromAngleToAbs(pos + 4)), rev::CANSparkMax::ControlType::kPosition, 0, arbFF, rev::SparkMaxPIDController::ArbFFUnits::kPercentOut);
+        shooterTurret_pidController.SetReference(turretAbsoluteToREV(turretConvertFromAngleToAbs(pos + 2)), rev::CANSparkMax::ControlType::kPosition, 0, arbFF, rev::SparkMaxPIDController::ArbFFUnits::kPercentOut);
     }
     else
     {
