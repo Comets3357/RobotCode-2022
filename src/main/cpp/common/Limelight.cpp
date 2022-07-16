@@ -67,7 +67,7 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
 
     if (robotData.shooterData.currentTurretAngle > turretBackwardsDegrees_CCW + 2 || (robotData.shooterData.currentTurretAngle > turretBackwardsDegrees_C + 2 && robotData.shooterData.currentTurretAngle < turretBackwardsDegrees_C + 35))
     {
-        if ((std::abs(limelightData.turretDifference + 2)) < std::min((180/pi)*std::atan(7/limelightData.distanceOffset), (double)4))
+        if ((std::abs(limelightData.turretDifference + 3)) < std::min((180/pi)*std::atan(7/limelightData.distanceOffset), (double)4))
         {
             limelightData.turretDifference = 0;
         }
@@ -164,7 +164,7 @@ double Limelight::getHoodPOS(VisionLookup &visionLookup, LimelightData &limeligh
 
     //multiply the difference in the distance and floored value by the slope to get desired position of hood for that small distance 
     //then add that to the desired position of the lower floored value
-    float desiredHood = (desiredSlope*((originalDistance - limelightData.lowerVal)*12)+limelightData.lowerValPos) - 0.5;
+    float desiredHood = (desiredSlope*((originalDistance - limelightData.lowerVal)*12)+limelightData.lowerValPos);
     if(desiredHood > hoodAngleOut){
         return hoodAngleOut;
     }else if(desiredHood < hoodAngleIn){
