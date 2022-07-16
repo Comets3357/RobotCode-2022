@@ -164,7 +164,7 @@ double Limelight::getHoodPOS(VisionLookup &visionLookup, LimelightData &limeligh
 
     //multiply the difference in the distance and floored value by the slope to get desired position of hood for that small distance 
     //then add that to the desired position of the lower floored value
-    float desiredHood = (desiredSlope*((originalDistance - limelightData.lowerVal)*12)+limelightData.lowerValPos) - 0.5;
+    float desiredHood = (desiredSlope*((originalDistance - limelightData.lowerVal)*12)+limelightData.lowerValPos);
     if(desiredHood > hoodAngleOut){
         return hoodAngleOut;
     }else if(desiredHood < hoodAngleIn){
@@ -216,12 +216,12 @@ double Limelight::getWheelVelocity(VisionLookup &visionLookup, LimelightData &li
     //multiply the difference in the distance and floored value by the slope to get desired velocity for that small distance 
     //then add that to the desired position of the lower floored value
 
-    // if(robotData.limelightData.distanceOffset > 14*12){
-    //     return ( (desiredSlope*((originalDistance - limelightData.lowerVal)*12) + limelightData.lowerValVel));   // 320 for front!
-    // }else{
-    //     return ( (desiredSlope*((originalDistance - limelightData.lowerVal)*12) + limelightData.lowerValVel));   // 320 for front!
-    // }
-    return ( (desiredSlope*((originalDistance - limelightData.lowerVal)*12) + limelightData.lowerValVel)) + 50;
+    if(robotData.limelightData.distanceOffset > 11*12){
+        return ( (desiredSlope*((originalDistance - limelightData.lowerVal)*12) + limelightData.lowerValVel)) + 50;   // 320 for front!
+    }else{
+        return ( (desiredSlope*((originalDistance - limelightData.lowerVal)*12) + limelightData.lowerValVel)) + 70;   // 320 for front!
+    }
+    // return ( (desiredSlope*((originalDistance - limelightData.lowerVal)*12) + limelightData.lowerValVel)) + 50;
 
 }
 
@@ -322,7 +322,7 @@ double Limelight::interpolationVel(LimelightData &limelightData, const RobotData
 
         if (tempTurretAngle < 90)
         {
-            additionalRPM = 30 + (1.167*(tempTurretAngle)) - (0.006173 * pow(tempTurretAngle, 2));
+            additionalRPM = 20 + (1.5*(tempTurretAngle)) - (0.008642 * pow(tempTurretAngle, 2));
         }
         else
         {
@@ -344,7 +344,7 @@ double Limelight::interpolationVel(LimelightData &limelightData, const RobotData
 
         if (tempTurretAngle < 90)
         {
-            additionalRPM = 30 + (1.167*(tempTurretAngle)) - (0.006173 * pow(tempTurretAngle, 2));
+            additionalRPM = 20 + (1.5*(tempTurretAngle)) - (0.008642 * pow(tempTurretAngle, 2));
         }
         else
         {
