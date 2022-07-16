@@ -268,7 +268,7 @@ void Auton::fiveBallC(const RobotData &robotData, ControlData &controlData, Cont
     double sec = robotData.timerData.secSinceEnabled;
 
     // intake
-    if (sec > 1 && sec < 5.5) {
+    if (sec > 1 && sec < 5) {
         controlData.saIntake = true;
     } else if (sec > 8 && sec < 12.5) {
         controlData.saIntake = true;
