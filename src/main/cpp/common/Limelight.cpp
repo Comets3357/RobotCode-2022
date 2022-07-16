@@ -67,14 +67,14 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
 
     if (robotData.shooterData.currentTurretAngle > turretBackwardsDegrees_CCW + 2 || (robotData.shooterData.currentTurretAngle > turretBackwardsDegrees_C + 2 && robotData.shooterData.currentTurretAngle < turretBackwardsDegrees_C + 35))
     {
-        if ((std::abs(limelightData.turretDifference + 3)) < std::min((180/pi)*std::atan(7/limelightData.distanceOffset), (double)4))
+        if ((std::abs(limelightData.turretDifference + 3)) < std::min((180/pi)*std::atan(9/limelightData.distanceOffset), (double)4))
         {
             limelightData.turretDifference = 0;
         }
     }
     else
     {
-        if ((std::abs(limelightData.turretDifference)) < std::min((180/pi)*std::atan(7/limelightData.distanceOffset), (double)4))
+        if ((std::abs(limelightData.turretDifference)) < std::min((180/pi)*std::atan(9/limelightData.distanceOffset), (double)4))
         {
             limelightData.turretDifference = 0;
         }
