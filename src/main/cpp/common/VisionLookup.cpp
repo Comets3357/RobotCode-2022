@@ -18,8 +18,8 @@ void VisionLookup::RobotPeriodic(const RobotData &robotData, VisionLookupData &v
     visionMap[4] = 24.00;
     visionMap[5] = 25.90;
     visionMap[6] = 26.45; 
-    visionMap[7] = 27.70; 
-    visionMap[8] = 30.50; 
+    visionMap[7] = 28; 
+    visionMap[8] = 31.0; 
     visionMap[9] = 31.50; 
     visionMap[10] = 32.90; // 7.5 feet in real life with bumpers (edge of tarmac) - back of robot / HOOD ROLLER PID tuned here
     visionMap[11] = 33.70; // 8.5 feet in real life with bumpers (side field) - back of robot

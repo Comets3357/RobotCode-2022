@@ -326,7 +326,7 @@ double Limelight::interpolationVel(LimelightData &limelightData, const RobotData
         }
         else
         {
-            additionalRPM = (forwardVelOffset/180) * tempTurretAngle + 12.5;
+            additionalRPM = (forwardVelOffset/180) * tempTurretAngle + 7.5;
         }
         
         
@@ -348,7 +348,7 @@ double Limelight::interpolationVel(LimelightData &limelightData, const RobotData
         }
         else
         {
-            additionalRPM = (forwardVelOffset/180) * tempTurretAngle + 12.5;
+            additionalRPM = (forwardVelOffset/180) * tempTurretAngle + 7.5;
         }
         
     }
