@@ -169,9 +169,9 @@ void Drivebase::teleopControl(const RobotData &robotData, DrivebaseData &driveba
     if ((!robotData.controlData.vectorDrive) && ((robotData.controlData.lDrive <= -0.08 || robotData.controlData.lDrive >= 0.08) || (robotData.controlData.rDrive <= -0.08 || robotData.controlData.rDrive >= 0.08))) {
         drivebaseData.driveMode = driveMode_joystick;
     }
-    /*else if (robotData.controlData.shootMode == shootMode_vision && !robotData.controlData.vectorDrive) {
+    else if (robotData.controlData.shootMode == shootMode_vision && !robotData.controlData.vectorDrive) {
         drivebaseData.driveMode = driveMode_turnInPlace;
-    }*/
+    }
     else if (robotData.controlData.vectorDrive) {
         drivebaseData.driveMode = driveMode_vector;
     }  
@@ -210,9 +210,9 @@ void Drivebase::teleopControl(const RobotData &robotData, DrivebaseData &driveba
         //set as percent vbus
         setPercentOutput(tempLDrive, tempRDrive);
     }
-    /*else if (drivebaseData.driveMode == driveMode_turnInPlace) {
+    else if (drivebaseData.driveMode == driveMode_turnInPlace) {
         turnInPlaceTeleop(-robotData.limelightData.angleOffset, robotData);
-    }*/
+    }
     else if (drivebaseData.driveMode == driveMode_vector)
     {
         setPercentOutput(robotData.jetsonData.leftSkew, robotData.jetsonData.rightSkew);
@@ -233,7 +233,7 @@ void Drivebase::autonControl(const RobotData &robotData, DrivebaseData &drivebas
     if (drivebaseData.driveMode == driveMode_break)
     {
         if (robotData.controlData.shootMode == shootMode_vision) {
-            // turnInPlaceTeleop(-robotData.limelightData.angleOffset, robotData);
+            turnInPlaceTeleop(-robotData.limelightData.angleOffset, robotData);
             // frc::smartDashboard::PutNumber("angleOffsetLimelight", robotData.limelightData.angleOffset);
         } else {
             setVelocity(0, 0);
