@@ -66,7 +66,7 @@ void Jetson::RobotPeriodic(const RobotData &robotData, JetsonData &jetsonData)
     // SETS WHAT ALLIANCE WE ARE ON AND PUTS THAT OUT TO JETSON
     if (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed)
     {
-       currentAlliance = 1;
+        currentAlliance = 1;
     }
     else if (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue)
     {
