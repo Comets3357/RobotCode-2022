@@ -62,14 +62,7 @@ void Climb::RobotPeriodic(const RobotData &robotData, ClimbData &climbData)
             manual(robotData, climbData);
         }else{
             //checks is turret is facing forward
-            if((std::abs(turretMiddleDegrees - robotData.shooterData.currentTurretAngle) >= 30)) //if you're centered forward you can climb
-            {
-                //sets powers to 0 if the mode is changed out of climb mode
-                climbElevator.Set(0);
-                climbArms.Set(0);
-            }else{
-                semiAuto(robotData, climbData);
-            }
+            semiAuto(robotData, climbData);
         }
         
         
@@ -276,9 +269,9 @@ void Climb::runSequence(const RobotData &robotData, ClimbData &climbData)
         //top bar transfer
         if (climbData.bar == targetBar-1)
         {
-            if (stage == 6) RunArmsAndElevatorToPos(120,0,65,1,1);
+            if (stage == 6) RunArmsAndElevatorToPos(120,0,50,1,1);
             else if (stage == 7) WaitUntilGyro(1, 2, -33, 1);
-            else if (stage == 8) RunElevatorToPos(141,1,1);
+            else if (stage == 8) RunElevatorToPos(147,1,1);
             else if (stage == 9) ChangeElevatorSpeed(elevatorSpeed,1);
             else if (stage == 10) ChangeArmSpeed(0.7,1);
             else if (stage == 11) TopTransfer();
@@ -293,7 +286,7 @@ void Climb::runSequence(const RobotData &robotData, ClimbData &climbData)
         {
             if (stage == 6) RunArmsAndElevatorToPos(100,0,165,1,1);
             else if (stage == 7) WaitUntilGyro(-1, 1, -45, 1);
-            else if (stage == 8) RunElevatorToPos(150,1,1);
+            else if (stage == 8) RunElevatorToPos(149,1,1);
             else if (stage == 9) RunArmsToPos(100,1,1);
             else if (stage == 10) RunElevatorToPos(110,1,1);
             else if (stage == 11) ChangeElevatorSpeed(elevatorSpeed, 1);
