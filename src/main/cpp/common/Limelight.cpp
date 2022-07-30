@@ -6,7 +6,7 @@ void Limelight::AutonomousInit(LimelightData &limelightData){
 
 void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelightData, VisionLookup &visionLookup)
 {
-    double tempOffset;
+    // double tempOffset;
 
     limelightData.validTarget = table->GetNumber("tv", 0.0); //valid target or not
     limelightData.xOffset =  table->GetNumber("tx", 0.0) * (pi/180); //RADIANS
@@ -33,14 +33,14 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     
     //Intermediate desired position and velocity
     limelightData.desiredHoodPos = getHoodPOS(visionLookup, limelightData, robotData); //returns an angle
-    backwardDesiredVel = getWheelVelocity(visionLookup, limelightData, robotData); //returns rpm
+    limelightData.desiredVel = getWheelVelocity(visionLookup, limelightData, robotData); //returns rpm
 
     //the desired hood and velocity for shooting from anywhere
     if(robotData.limelightData.validTarget == 0){
         limelightData.desiredVel = 1250; //returns rpm
         limelightData.desiredHoodRollerVel = 1250*3.5;
     }else{
-        limelightData.desiredVel = interpolationVel(limelightData, robotData);
+        // limelightData.desiredVel = interpolationVel(limelightData, robotData);
         limelightData.desiredHoodRollerVel = getHoodRollerVel(limelightData, robotData);
     }
 
@@ -63,31 +63,31 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     //     }
     // }
     //TURRET DIFFERENCE
-    limelightData.turretDifference = -robotData.limelightData.angleOffset; // turret turning is not consistent with limelight degrees off
+    // robotData.limelightData.angleOffset; // turret turning is not consistent with limelight degrees off
 
-    if (robotData.shooterData.currentTurretAngle > turretBackwardsDegrees_CCW + 2 || (robotData.shooterData.currentTurretAngle > turretBackwardsDegrees_C + 2 && robotData.shooterData.currentTurretAngle < turretBackwardsDegrees_C + 35))
-    {
-        if ((std::abs(limelightData.turretDifference + 2)) < std::min((180/pi)*std::atan(7/limelightData.distanceOffset), (double)4))
-        {
-            limelightData.turretDifference = 0;
-        }
-    }
-    else
-    {
-        if ((std::abs(limelightData.turretDifference)) < std::min((180/pi)*std::atan(7/limelightData.distanceOffset), (double)4))
-        {
-            limelightData.turretDifference = 0;
-        }
-    }
+    // if (robotData.shooterData.currentTurretAngle > turretBackwardsDegrees_CCW + 2 || (robotData.shooterData.currentTurretAngle > turretBackwardsDegrees_C + 2 && robotData.shooterData.currentTurretAngle < turretBackwardsDegrees_C + 35))
+    // {
+    //     if ((std::abs(limelightData.turretDifference + 2)) < std::min((180/pi)*std::atan(7/limelightData.distanceOffset), (double)4))
+    //     {
+    //         limelightData.turretDifference = 0;
+    //     }
+    // }
+    // else
+    // {
+    //     if ((std::abs(limelightData.turretDifference)) < std::min((180/pi)*std::atan(7/limelightData.distanceOffset), (double)4))
+    //     {
+    //         limelightData.turretDifference = 0;
+    //     }
+    // }
 
   
 
 
     //DESIRED TURRET
-    limelightData.desiredTurretAngle = getTurretTurnAngle(limelightData, robotData); //position to go to to shoot
+    // limelightData.desiredTurretAngle = getTurretTurnAngle(limelightData, robotData); //position to go to to shoot
 
     //printing data to the dashboard
-    frc::SmartDashboard::PutNumber("distance offset", robotData.limelightData.distanceOffset/12);
+    // frc::SmartDashboard::PutNumber("distance offset", robotData.limelightData.distanceOffset/12);
     //frc::SmartDashboard::PutNumber("desired turret", robotData.limelightData.desiredTurretAngle);
     //frc::SmartDashboard::PutBoolean("Unwrapping", limelightData.unwrapping);
 
