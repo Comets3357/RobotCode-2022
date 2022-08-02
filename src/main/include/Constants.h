@@ -15,9 +15,9 @@ static const int
 
 static const double
     //practice bot
-    absOut = 0.480,
-    absIn = 0.614,
-    revOut = 6.4,
+    absOut = 0.481,
+    absIn = 0.615,
+    revOut = 5.2,
     revIn = 0;
 
     //comp bot intake pivot positions
