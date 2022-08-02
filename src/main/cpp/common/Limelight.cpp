@@ -6,7 +6,7 @@ void Limelight::AutonomousInit(LimelightData &limelightData){
 
 void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelightData, VisionLookup &visionLookup)
 {
-    double tempOffset;
+    // double tempOffset;
 
     limelightData.validTarget = table->GetNumber("tv", 0.0); //valid target or not
     limelightData.xOffset =  table->GetNumber("tx", 0.0) * (pi/180); //RADIANS
@@ -87,7 +87,7 @@ void Limelight::RobotPeriodic(const RobotData &robotData, LimelightData &limelig
     // limelightData.desiredTurretAngle = getTurretTurnAngle(limelightData, robotData); //position to go to to shoot
 
     //printing data to the dashboard
-    frc::SmartDashboard::PutNumber("distance offset", robotData.limelightData.distanceOffset/12);
+    // frc::SmartDashboard::PutNumber("distance offset", robotData.limelightData.distanceOffset/12);
     //frc::SmartDashboard::PutNumber("desired turret", robotData.limelightData.desiredTurretAngle);
     //frc::SmartDashboard::PutBoolean("Unwrapping", limelightData.unwrapping);
 

@@ -234,11 +234,11 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
     //Semi auto turret functionality
     // saTurret(robotData, shooterData);
 
-    shooterHood.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse, true);
-    shooterHood.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward, true);
+    // shooterHood.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse, true);
+    // shooterHood.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward, true);
 
-    shooterHood.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward, hoodrevIn -1);
-    shooterHood.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse, hoodrevOut +1);
+    // shooterHood.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward, hoodrevIn -1);
+    // shooterHood.SetSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse, hoodrevOut +1);
 
     // shooterTurret.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kReverse, true);
     // shooterTurret.EnableSoftLimit(rev::CANSparkMax::SoftLimitDirection::kForward, true);
@@ -250,7 +250,7 @@ void Shooter::semiAuto(const RobotData &robotData, ShooterData &shooterData){
     //SHOOTING LOGIC
 
     if(robotData.controlData.shootMode == shootMode_vision){ // Aiming with limelight
-        isTurretStatic = robotData.controlData.staticTurret;
+        // isTurretStatic = robotData.controlData.staticTurret;
 
         //if the difference between the current velocity and the desired velocity is greater than a certain amount give it straight 100% vbus to kick start it
         //then once it's reached a certain amount below the target velocity switch to a pid to get than final desired rpm 
