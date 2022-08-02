@@ -2,5 +2,7 @@ taxiShootC1
 turnInPlace 180
 taxiShootC2
 break 5
-turnInPlace -73
+turnInPlace 85
 taxiShootC3
+break 2
+turnInPlace 180

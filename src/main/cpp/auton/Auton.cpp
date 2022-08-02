@@ -107,7 +107,7 @@ void Auton::AutonomousPeriodic(const RobotData &robotData, AutonData &autonData,
         taxiShoot(robotData, controlData, controllerData);
     }
     else if (autonData.autonRoutineName == "taxiShootC") {
-        taxiShoot(robotData, controlData, controllerData);
+        taxiShootC(robotData, controlData, controllerData);
     }
     else if (autonData.autonRoutineName == "fourBallB") {
         fourBallB(robotData, controlData, controllerData);
@@ -215,6 +215,30 @@ void Auton::taxiShootA(const RobotData &robotData, ControlData &controlData, Con
     }
 }
 
+void Auton::taxiShootC(const RobotData &robotData, ControlData &controlData, ControllerData &controllerData) {
+    double sec = robotData.timerData.secSinceEnabled;
+
+    // intake
+    if (sec > 0 && sec < 4) {
+        controlData.saIntake= true;
+    } else {
+        controlData.saIntake = false;
+    }
+
+    // shooting
+    if (sec > 3 && sec < 7) {
+        controlData.shootMode = shootMode_vision;
+    } else {
+        controlData.shootMode = shootMode_none;
+    }
+
+    if (sec > 5 && sec < 7) {
+        controlData.saFinalShoot = true;
+    } else {
+        controlData.saFinalShoot = false;
+    }
+}
+
 void Auton::fourBallB(const RobotData &robotData, ControlData &controlData, ControllerData &controllerData) {
     double sec = robotData.timerData.secSinceEnabled;
 
@@ -268,9 +292,9 @@ void Auton::fiveBallC(const RobotData &robotData, ControlData &controlData, Cont
     double sec = robotData.timerData.secSinceEnabled;
 
     // intake
-    if (sec > 1 && sec < 5.5) {
+    if (sec > 0 && sec < 2) {
         controlData.saIntake = true;
-    } else if (sec > 8 && sec < 12.5) {
+    } else if (sec > 7 && sec < 12.5) {
         controlData.saIntake = true;
     } else {
         controlData.saIntake = false;
@@ -286,10 +310,8 @@ void Auton::fiveBallC(const RobotData &robotData, ControlData &controlData, Cont
     
 
     // final shoot
-    if (sec > 0 && sec < 1.5) {
+    if (sec > 2 && sec < 3.5) {
         controlData.saFinalShoot = true;
-    } else if (sec > 4 && sec < 8) {
-        controlData.saFinalShoot = robotData.drivebaseData.dbStationaryForShot;
     } else if (sec > 12.5 && sec < 15) {
         controlData.saFinalShoot = robotData.drivebaseData.dbStationaryForShot;
     } else {

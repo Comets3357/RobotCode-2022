@@ -1,8 +1,8 @@
-break 1.25
 fiveBallC1
+turnInPlace 180
 break 1.75
-turnInPlace 58
+turnInPlace 90
 fiveBallC2
-break 0.35
 fiveBallC3
-break 2.75
+turnInPlace -135
+fiveBallC4
