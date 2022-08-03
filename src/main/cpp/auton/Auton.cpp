@@ -137,10 +137,10 @@ void Auton::citrus(const RobotData &robotData, ControlData &controlData, Control
     double sec = robotData.timerData.secSinceEnabled;
 
     // intake
-    if (sec > 0 && sec < 11) {
+    if (sec > 0 && sec < 13) {
         controlData.saIntake = true;
         controlData.saEjectBalls = false;
-    } else if (sec > 12) {
+    } else if (sec > 13.5) {
         controlData.saIntake = false;
         controlData.saEjectBalls = true;
     }
@@ -148,7 +148,7 @@ void Auton::citrus(const RobotData &robotData, ControlData &controlData, Control
     // shooting
     controlData.shootMode = shootMode_vision;
 
-    if (sec > 1.3 && sec < 4) {
+    if (sec > 4 && sec < 5.5) {
         controlData.saFinalShoot = robotData.drivebaseData.dbStationaryForShot;
     } else {
         controlData.saFinalShoot = false;
@@ -165,7 +165,11 @@ void Auton::nearFieldOne(const RobotData &robotData, ControlData &controlData, C
     // shooting
     controlData.shootMode = shootMode_vision;
 
-    controlData.saFinalShoot = robotData.drivebaseData.dbStationaryForShot;
+    if (sec > 8) {
+        controlData.saFinalShoot = true;
+    } else {
+        controlData.saFinalShoot = false;
+    }
 }
 
 
@@ -197,10 +201,10 @@ void Auton::taxiShootA(const RobotData &robotData, ControlData &controlData, Con
     double sec = robotData.timerData.secSinceEnabled;
 
     // intake
-    if (sec > 0 && sec < 11) {
+    if (sec > 0 && sec < 13) {
         controlData.saIntake = true;
         controlData.saEjectBalls = false;
-    } else if (sec > 11) {
+    } else if (sec > 13.5) {
         controlData.saIntake = false;
         controlData.saEjectBalls = true;
     }
@@ -208,7 +212,7 @@ void Auton::taxiShootA(const RobotData &robotData, ControlData &controlData, Con
     // shooting
     controlData.shootMode = shootMode_vision;
 
-    if (sec > 1.5 && sec < 6) {
+    if (sec > 4 && sec < 5.5) {
         controlData.saFinalShoot = true;
     } else {
         controlData.saFinalShoot = false;
@@ -221,9 +225,14 @@ void Auton::taxiShootC(const RobotData &robotData, ControlData &controlData, Con
     // intake
     if (sec > 0 && sec < 4) {
         controlData.saIntake= true;
-    } else {
+    } else if (sec > 7 && sec < 10) {
+        controlData.saIntake= true;
+    }
+    else {
         controlData.saIntake = false;
     }
+
+    controlData.saEjectBalls = sec > 12;
 
     // shooting
     if (sec > 3 && sec < 7) {
