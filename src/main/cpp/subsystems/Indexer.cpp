@@ -413,7 +413,7 @@ void Indexer::indexerBeltInit(){
     indexerBelt.RestoreFactoryDefaults();
     indexerBelt.SetInverted(true);
     indexerBelt.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-    indexerBelt.SetSmartCurrentLimit(35);
+    indexerBelt.SetSmartCurrentLimit(45);
 }
 
 /**
