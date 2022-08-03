@@ -164,7 +164,15 @@ double Limelight::getHoodPOS(VisionLookup &visionLookup, LimelightData &limeligh
 
     //multiply the difference in the distance and floored value by the slope to get desired position of hood for that small distance 
     //then add that to the desired position of the lower floored value
-    float desiredHood = (desiredSlope*((originalDistance - limelightData.lowerVal)*12)+limelightData.lowerValPos) - 3;
+    float desiredHood = 0;
+
+    if(robotData.limelightData.distanceOffset > 7*12){
+        desiredHood = (desiredSlope*((originalDistance - limelightData.lowerVal)*12)+limelightData.lowerValPos) - 4;   // 320 for front!
+    }else{
+        desiredHood = (desiredSlope*((originalDistance - limelightData.lowerVal)*12)+limelightData.lowerValPos) - 3;   // 320 for front!
+    }
+
+
     if(desiredHood > hoodAngleOut){
         return hoodAngleOut;
     }else if(desiredHood < hoodAngleIn){
