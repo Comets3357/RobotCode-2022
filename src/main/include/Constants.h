@@ -67,8 +67,8 @@ static const float
     turretFullRotationRev_CCW = 139.85,
     turretFullRotationRev_C = 0,
     turretMiddleRev = turretFullRotationRev_CCW/2,
-    turretFullRotationAbs_CCW = 0.830242,
-    turretFullRotationAbs_C = 0.143406,
+    turretFullRotationAbs_CCW = 0.78,
+    turretFullRotationAbs_C = 0.09,
 
     forwardVelOffset = 160,
     // forwardVelOffsetFar = 220,
