@@ -63,14 +63,22 @@ void Drivebase::RobotInit()
     // dbR.Config_kD(0, 0);
 
     // Atlas 04.07.22 Final tread center drop but not fresh treads
-    dbL.Config_kF(0, 0.071797);
-    dbL.Config_kP(0, 0.10814);
+    // dbL.Config_kF(0, 0.071797);
+    // dbL.Config_kP(0, 0.10814);
+    // dbL.Config_kD(0, 0);
+
+    // dbR.Config_kF(0, 0.071797);
+    // dbR.Config_kP(0, 0.10814);
+    // dbR.Config_kD(0, 0);
+
+    //Atlas 10.18.22 characterization for WMRI
+    dbL.Config_kF(0, 0.070868);
+    dbL.Config_kP(0, 0.29647);
     dbL.Config_kD(0, 0);
 
-    dbR.Config_kF(0, 0.071797);
-    dbR.Config_kP(0, 0.10814);
+    dbR.Config_kF(0, 0.070868);
+    dbR.Config_kP(0, 0.29647);
     dbR.Config_kD(0, 0);
-
 
     setPercentOutput(0, 0);
 
